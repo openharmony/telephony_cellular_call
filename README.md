@@ -1,37 +1,58 @@
-# telephony_cellular_call
+# Cellular Call<a name="EN-US_TOPIC_0000001105379632"></a>
 
-#### 介绍
-Implementing basic call services over carrier networks | 负责运营商网络的基础通话实现
+-   [Introduction](#section117mcpsimp)
+-   [Directory Structure](#section127mcpsimp)
+-   [Constraints](#section131mcpsimp)
+-   [Repositories Involved](#section204mcpsimp)
 
-#### 软件架构
-软件架构说明
+## Introduction<a name="section117mcpsimp"></a>
 
+The cellular call module provides basic call services based on carrier networks, including 2G/3G circuit switch \(CS\) calls and 4G/5G IP multimedia subsystem \(IMS\) calls \(VoLTE/VoWIFI/VoNR voice, video, and conference calls\). It also supports domain selection and handover between CS and IMS calls, as well as emergency calls. The module is compatible with mainstream modem chip platforms.
 
-#### 安装教程
+The following figure shows the architecture of the cellular call module.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+**Figure  1**  Architecture of the cellular call module<a name="fig970511919486"></a>
 
 
-#### 特技
+![](figures/en-us_architecture-of-the-cellular-call-module.png)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+The cellular call module consists of three layers:
+
+1.  Cellular call management layer \(CellularCallService\): consists of CellularCallRegister, CellularCallProxy, and CellularCallHandler. CellularCallRegister provides the function of registering an observer for call information changes; CellularCallProxy functions as a proxy for implementing external APIs of CellularCallService; CellularCallHandler processes callback events reported by the RIL Adapter.
+2.  Cellular call service layer \(CellularCallStub\): consists of CSControl, IMSControl, CellularCallConfig, and CellularCallSupplement. CSControl implements CS call control; IMSControl implements IMS call control; CellularCallConfig implements call information configuration and query; CellularCallSupplement implements supplementary services.
+3.  Cellular call connection layer \(Connection\): consists of BaseConnection, ConfigRequest, and SupplementRequest. BaseConnection implements the call session connection function; ConfigRequest implements configuration requests; SupplementRequest implements supplementary service requests.
+
+## Directory Structure<a name="section127mcpsimp"></a>
+
+```
+/base/telephony/cellular_call #Cellular call module
+├─ BUILD.gn                       # Build script (gn)
+├─ README.md                      # Readme
+├─ services
+│  ├─ common                      # Tools
+│  ├─ connection                  # Connection layer
+│  ├─ control                     # Control service layer
+│  └─ manager                     # Management layer
+├─ sa_profile                     # SA profile
+├─ ohos.build                     # Build code
+└─ test                           # Test code
+```
+
+## Constraints<a name="section131mcpsimp"></a>
+
+-   Programming language: JavaScript
+-   In terms of software, this module needs to work with the telephony core service \(core\_service\) and Call Manager \(call\_manger\).
+-   In terms of hardware, the accommodating device must be equipped with a speaker or earphone, a headset, and a modem and a SIM card capable of independent cellular communication.
+
+>**NOTE:**
+>Interfaces for cellular calls are not exposed externally and are directly called by the Call Manager.
+
+## Repositories Involved<a name="section204mcpsimp"></a>
+
+Telephony
+
+telephony_cellular_call
+
+telephony_core_service
+
+telephony_call_manager
