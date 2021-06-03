@@ -49,10 +49,10 @@ The cellular call module consists of three layers:
 
 ## Repositories Involved<a name="section204mcpsimp"></a>
 
-Telephony
+[Telephony](https://gitee.com/openharmony/docs/blob/master/en/readme/telephony.md)
 
-telephony_cellular_call
+**telephony_cellular_call**
 
-telephony_core_service
+[telephony_core_service](https://gitee.com/openharmony/telephony_core_service/blob/master/README.md)
 
-telephony_call_manager
+[telephony_call_manager](https://gitee.com/openharmony/telephony_call_manager/blob/master/README.md)
