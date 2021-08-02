@@ -16,88 +16,171 @@
 #include "mmi_code_utils.h"
 
 #include <regex>
+#include "cellular_call_supplement.h"
 
 #include "securec.h"
 
-#include "cellular_call_hilog.h"
+#include "standardize_utils.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 MMICodeUtils::MMICodeUtils()
 {
-    fullString_ = "";
-    actionStr_ = "";
-    serviceCode_ = "";
-    serviceInfoA_ = "";
-    serviceInfoB_ = "";
-    serviceInfoC_ = "";
-    pwdString_ = "";
-    dialingNumber_ = "";
+    TELEPHONY_LOGD("MMICodeUtils entry.");
 }
 
-bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, CLIRMode &clirMode)
+constexpr unsigned long long operator"" _hash(char const *p, size_t s)
+{
+    return StandardizeUtils::HashCompileTime(p);
+}
+
+bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
 {
     if (analyseString.empty()) {
-        HILOG_INFO("IsNeedExecuteMmi return, analyseString is empty.");
+        TELEPHONY_LOGE("IsNeedExecuteMmi return, analyseString is empty.");
         return false;
     }
-    if (!RegexMatchMmi(analyseString)) {
-        return false;
-    }
-    SetCliRMode(clirMode);
-    return false;
+    return RegexMatchMmi(analyseString);
 }
 
 bool MMICodeUtils::ExecuteMmiCode()
 {
-    if (fullString_.empty() && actionStr_.empty() && serviceCode_.empty() && serviceInfoA_.empty() &&
-        serviceInfoB_.empty() && serviceInfoC_.empty() && pwdString_.empty() && dialingNumber_.empty()) {
-        HILOG_INFO("MMICodeUtils::ExecuteMmiCode processCode: all string empty.");
-        return false;
+    CellularCallSupplement supplement;
+
+    /**
+     * "30" Processing caller ID
+     * "31" Processing calling number display
+     * "21" Deal with unconditional transfer
+     * "61" Handling no answer transfer
+     * "62" Handling no signal transfer
+     * "67" Deal with busy transfer
+     * "002" Process all transfers
+     * "004" Handle transfer under all conditions
+     * "33" Processing limits all outgoing calls
+     * "330" Processing all restrictions
+     * "331" Processing limits all international calls
+     * "332" Handling international outgoing calls belonging to foreign countries when roaming is
+     * restricted
+     * "35" Processing limits all incoming calls
+     * "351" Handle all incoming calls when roaming is restricted
+     * "03" Processing network password
+     * "43" Handling call waiting
+     */
+    if (!mmiData_.serviceCode.empty()) {
+        switch (StandardizeUtils::Hash_(mmiData_.serviceCode.c_str())) {
+            // 3GPP TS 22.030 V4.0.0 (2001-03) 6.5.6.2  Calling Line Identification Presentation (CLIP)
+            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+            case "30"_hash:
+                supplement.GetClip(mmiData_);
+                return true;
+
+            // 3GPP TS 22.081 V4.0.0 (2001-03) 2 Calling Line Identification Restriction (CLIR)
+            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+            case "31"_hash:
+                supplement.GetClir(mmiData_);
+                return true;
+
+            // 3GPP TS 22.081 V4.0.0 (2001-03)
+            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+            // 3GPP TS 24.082 V4.0.0 (2001-03) 1 Call Forwarding Unconditional (CFU)
+            // 3GPP TS 24.082 V4.0.0 (2001-03) 2 Call Forwarding on mobile subscriber Busy (CFB)
+            // 3GPP TS 24.082 V4.0.0 (2001-03) 3 Call Forwarding on No Reply (CFNRy)
+            // 3GPP TS 24.082 V4.0.0 (2001-03) 4 Call Forwarding on mobile subscriber Not Reachable (CFNRc)
+            case "21"_hash:
+            case "61"_hash:
+            case "62"_hash:
+            case "67"_hash:
+            case "002"_hash:
+            case "004"_hash:
+                supplement.DealCallTransfer(mmiData_);
+                return true;
+
+            // 27007-430_2001 7.4	Facility lock +CLCK
+            // 3GPP TS 22.088 [6] 1	Barring of outgoing calls
+            // 3GPP TS 22.088 [6] 2	Barring of incoming calls
+            /* 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+             * BAOC	                33
+             * BAOIC	            331
+             * BAOIC exc home	    332
+             * BAIC	                35
+             * BAIC roaming	        351
+             * all Barring Serv.	330
+             * Outg. Barr. Serv.	333
+             * Inc. Barr. Serv.	    353
+             */
+            case "33"_hash:
+            case "330"_hash:
+            case "331"_hash:
+            case "332"_hash:
+            case "35"_hash:
+            case "351"_hash:
+                supplement.DealCallRestriction(mmiData_);
+                return true;
+
+            // 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.4 Registration of new password
+            case "03"_hash:
+                return true;
+
+            // 27007-430_2001 7.12	Call waiting +CCWA
+            // 3GPP TS 22.083 [5] 1	Call waiting (CW)
+            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+            case "43"_hash:
+                supplement.DealCallWaiting(mmiData_);
+                return true;
+            default:
+                TELEPHONY_LOGI("ExecuteMmiCode return, default case, need check serviceCode.");
+                break;
+        }
     }
     return true;
 }
 
-bool MMICodeUtils::RegexMatchMmi(std::string analyseString)
+bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 {
-    std::string patternStr =
-        "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)"
-        "?)?)?"
-        "#)(.*)";
-    std::regex pattern(patternStr);
+    std::regex pattern(
+        "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)");
     std::smatch results;
     if (regex_match(analyseString, results, pattern)) {
-        int32_t fullString = 0;
-        int32_t action = 1;
-        int32_t serviceCode = 2;
-        int32_t sia = 4;
-        int32_t sib = 6;
-        int32_t sic = 8;
-        int32_t pwdConfirm = 10;
-        int32_t dialingNumber = 11;
-        fullString_ = results.str(fullString);
-        actionStr_ = results.str(action);
-        serviceCode_ = results.str(serviceCode);
-        serviceInfoA_ = results.str(sia);
-        serviceInfoB_ = results.str(sib);
-        serviceInfoC_ = results.str(sic);
-        pwdString_ = results.str(pwdConfirm);
-        dialingNumber_ = results.str(dialingNumber);
+        TELEPHONY_LOGI("MMICodeUtils::RegexMatchMmi, regex_match ture");
+
+        /**
+         * The following sequence of functions shall be used for the control of Supplementary Services:
+         *  SELECT:	Entry of the procedure information (may be a digit or a sequence of characters).
+         *  SEND: Transmission of the information to the network.
+         *  INDICATION:	Call progress indications.
+         */
+        int32_t fullString = 1;
+        int32_t action = 2;
+        // 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.2 Structure of the MMI
+        // This structure consists of the following parts:
+        //     Service Code, SC( (2 or 3 digits)
+        //     Supplementary Information, SI (variable length).
+        int32_t serviceCode = 3;
+        int32_t sia = 5;
+        int32_t sib = 7;
+        int32_t sic = 9;
+        int32_t pwdConfirm = 11;
+        int32_t dialingNumber = 12;
+        mmiData_.fullString = results.str(fullString);
+        mmiData_.actionString = results.str(action);
+        mmiData_.serviceCode = results.str(serviceCode);
+        mmiData_.serviceInfoA = results.str(sia);
+        mmiData_.serviceInfoB = results.str(sib);
+        mmiData_.serviceInfoC = results.str(sic);
+        mmiData_.pwdString = results.str(pwdConfirm);
+        mmiData_.dialString = results.str(dialingNumber);
+
+        /* 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.2 Structure of the MMI
+         * The procedure always starts with *, #, **, ## or *# and is finished by #.
+         * Each part within the procedure is separated by *.
+         */
+        if (!mmiData_.dialString.empty() && mmiData_.dialString.back() == '#' && analyseString.back() == '#') {
+            mmiData_.fullString = analyseString;
+        }
+        return true;
     }
     return false;
 }
-
-void MMICodeUtils::SetCliRMode(CLIRMode &clirMode)
-{
-    std::string clip = "30";
-    if (!serviceCode_.empty() && serviceCode_ == clip && !dialingNumber_.empty() && !actionStr_.empty()) {
-        if (actionStr_ == "*") {
-            clirMode = TRANSFER;
-        }
-        if (actionStr_ == "#") {
-            clirMode = INHIBITION;
-        }
-    }
-}
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
