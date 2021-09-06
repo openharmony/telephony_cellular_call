@@ -15,12 +15,11 @@
 
 #include "cellular_call_service.h"
 #include "system_ability_definition.h"
-#include "phone_manager.h"
+#include "module_service_utils.h"
 #include "cs_control.h"
 
 namespace OHOS {
-namespace CellularCall {
-const int32_t M_SLEEPT_TIME = 5;
+namespace Telephony {
 bool g_registerResult =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<CellularCallService>::GetInstance().get());
 
@@ -36,31 +35,27 @@ CellularCallService::~CellularCallService()
 
 bool CellularCallService::Init()
 {
-    HILOG_DEBUG("CellularCallService Init");
+    TELEPHONY_LOGD("CellularCallService Init");
     eventLoop_ = AppExecFwk::EventRunner::Create("CellularCallService");
     if (eventLoop_ == nullptr) {
-        HILOG_ERROR("failed to create EventRunner");
+        TELEPHONY_LOGE("failed to create EventRunner");
         return false;
     }
-    handler_ = std::make_shared<CellularCallHandler>(eventLoop_);
-    if (handler_ == nullptr) {
-        HILOG_ERROR("failed to make_shared handler_");
-        return false;
-    }
-    RegisterHandler();
-    HILOG_DEBUG("init success");
+    CreateHandler();
+    AsynchronousRegister();
+    TELEPHONY_LOGD("init success");
     return true;
 }
 
 void CellularCallService::OnStart()
 {
-    HILOG_DEBUG("CellularCallService OnStart");
+    TELEPHONY_LOGD("CellularCallService OnStart");
     if (state_ == ServiceRunningState::STATE_RUNNING) {
-        HILOG_DEBUG("CellularCallService has already started.");
+        TELEPHONY_LOGE("CellularCallService has already started.");
         return;
     }
     if (!Init()) {
-        HILOG_ERROR("failed to init service.");
+        TELEPHONY_LOGE("failed to init service.");
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
@@ -69,55 +64,113 @@ void CellularCallService::OnStart()
     }
     bool ret = Publish(DelayedSingleton<CellularCallService>::GetInstance().get());
     if (!ret) {
-        HILOG_DEBUG("CellularCallService::Init Publish failed!");
+        TELEPHONY_LOGE("CellularCallService::OnStart Publish failed!");
     }
-    HILOG_DEBUG("CellularCallService start success.");
+    TELEPHONY_LOGD("CellularCallService start success.");
 }
 
 void CellularCallService::OnStop()
 {
-    HILOG_DEBUG("CellularCallService stop service");
+    TELEPHONY_LOGD("CellularCallService stop service");
     if (eventLoop_ != nullptr) {
         eventLoop_.reset();
     }
-    if (handler_ != nullptr) {
-        handler_.reset();
-    }
+
     state_ = ServiceRunningState::STATE_STOPPED;
-    DelayedSingleton<CSControl>::GetInstance()->ReleaseAllConnection();
-    IRilManager *rilManager = PhoneManager::GetInstance().phone_[slotId_]->rilManager_;
-    if (rilManager == nullptr) {
-        HILOG_ERROR("CellularCallService::OnStop, rilManager is nullptr");
-        return;
-    }
-    rilManager->UnRegisterPhoneNotify(ObserverHandler::RADIO_CALL_STATE);
-    rilManager->UnRegisterPhoneNotify(ObserverHandler::RADIO_AVAIL);
-    rilManager->UnRegisterPhoneNotify(ObserverHandler::RADIO_NOT_AVAIL);
+
+    HandlerResetUnRegister();
 }
 
 void CellularCallService::RegisterHandler()
 {
-    sleep(M_SLEEPT_TIME);
-    IRilManager *rilManager = PhoneManager::GetInstance().phone_[slotId_]->rilManager_;
-    if (rilManager == nullptr) {
-        HILOG_ERROR("RegisterHandler, rilManager is nullptr");
-        return;
+    TELEPHONY_LOGI("connect core service RegisterHandler start  ");
+    for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
+        auto core = CoreManager::GetInstance().getCore(CoreManager::DEFAULT_SLOT_ID);
+        TELEPHONY_LOGI("connect core service count: %{public}d", i);
+        if (core != nullptr && core->IsInitCore()) {
+            RegisterCoreServiceHandler();
+            break;
+        }
+        TELEPHONY_LOGI("connect core service RegisterHandler null or not init ");
     }
-    if (handler_ != nullptr) {
-        rilManager->RegisterPhoneNotify(handler_, ObserverHandler::RADIO_CALL_STATE, nullptr);
-        rilManager->RegisterPhoneNotify(handler_, ObserverHandler::RADIO_AVAIL, nullptr);
-        rilManager->RegisterPhoneNotify(handler_, ObserverHandler::RADIO_NOT_AVAIL, nullptr);
-    }
+    TELEPHONY_LOGI("connect core service RegisterHandler end ");
 }
 
 void CellularCallService::OnDump()
 {
-    HILOG_DEBUG("CellularCallService OnDump");
+    TELEPHONY_LOGD("CellularCallService OnDump");
 }
 
-std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler()
+std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler(int32_t slot)
 {
-    return handler_;
+    return handlerMap_[slot];
 }
-} // namespace CellularCall
+
+void CellularCallService::CreateHandler()
+{
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (auto &it : slotVector) {
+        auto handler = std::make_shared<CellularCallHandler>(eventLoop_);
+        handler->SetSlotId(it);
+        handler->SetCSControl(GetCsControl(it));
+        handlerMap_.insert(std::make_pair(it, handler));
+    }
+}
+
+void CellularCallService::HandlerResetUnRegister()
+{
+    std::map<int, std::shared_ptr<CellularCallHandler>>::iterator it;
+    for (it = handlerMap_.begin(); it != handlerMap_.end(); ++it) {
+        int32_t slot = it->first;
+        auto handler = it->second;
+        if (handler != nullptr) {
+            handler.reset();
+        }
+        auto rilCore = CoreManager::GetInstance().getCore(slot);
+        if (rilCore == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::HandlerResetUnRegister, rilCore is nullptr");
+            return;
+        }
+        rilCore->UnRegisterPhoneNotify(handler, ObserverHandler::RADIO_CALL_STATE);
+        rilCore->UnRegisterPhoneNotify(handler, ObserverHandler::RADIO_AVAIL);
+        rilCore->UnRegisterPhoneNotify(handler, ObserverHandler::RADIO_NOT_AVAIL);
+
+        if (GetCsControl(slot) == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::HandlerResetUnRegister, csControl is nullptr");
+            return;
+        }
+        GetCsControl(slot)->ReleaseAllConnection();
+    }
+}
+
+void CellularCallService::RegisterCoreServiceHandler()
+{
+    std::map<int, std::shared_ptr<CellularCallHandler>>::iterator it;
+    for (it = handlerMap_.begin(); it != handlerMap_.end(); ++it) {
+        int32_t slot = it->first;
+        auto handler = it->second;
+        auto rilCore = CoreManager::GetInstance().getCore(slot);
+        if (rilCore == nullptr) {
+            TELEPHONY_LOGE("RegisterHandler, rilCore is nullptr");
+            return;
+        }
+        if (handler != nullptr) {
+            TELEPHONY_LOGE("RegisterHandler, RegisterPhoneNotify handler");
+            rilCore->RegisterPhoneNotify(handler, ObserverHandler::RADIO_CALL_STATE, nullptr);
+            rilCore->RegisterPhoneNotify(handler, ObserverHandler::RADIO_AVAIL, nullptr);
+            rilCore->RegisterPhoneNotify(handler, ObserverHandler::RADIO_NOT_AVAIL, nullptr);
+        }
+    }
+}
+
+void CellularCallService::AsynchronousRegister()
+{
+    TELEPHONY_LOGD("CellularCallService::AsynchronousRegister entry");
+    int64_t delayTime_ = 1000;
+    auto handler = handlerMap_[CoreManager::DEFAULT_SLOT_ID];
+    handler->SendEvent(handler->ASYNCHRONOUS_REGISTER_ID, delayTime_, CellularCallHandler::Priority::HIGH);
+}
+} // namespace Telephony
 } // namespace OHOS
