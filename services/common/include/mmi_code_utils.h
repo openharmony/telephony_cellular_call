@@ -19,10 +19,11 @@
 #include <string>
 #include "cellular_call_data_struct.h"
 
-#include "cellular_call_hilog.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
+// Man-Machine Interface
 class MMICodeUtils {
 public:
     /**
@@ -31,17 +32,20 @@ public:
     MMICodeUtils();
 
     /**
-     * ~MMICodeUtils deconstructor
+     * ~MMICodeUtils destructor
      */
-    virtual ~MMICodeUtils() = default;
+    ~MMICodeUtils() = default;
 
     /**
-     * @brief IsNeedExecuteMmi
+     * IsNeedExecuteMmi
+     *
+     * 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.2 Structure of the MMI
+     * TS 24.080 [10]
+     *
      * @param analyseString
-     * @param clirMode
      * @return Whether to execute the MMI
      */
-    bool IsNeedExecuteMmi(const std::string &analyseString, CLIRMode &clirMode);
+    bool IsNeedExecuteMmi(const std::string &analyseString);
 
     /**
      * ExecuteMmiCode
@@ -49,33 +53,27 @@ public:
      */
     bool ExecuteMmiCode();
 
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "MMICodeUtils"};
+public:
+    MMIData mmiData_;
 
 private:
     /**
+     * RegexMatchMmi
+     *
+     * 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.2 Structure of the MMI
+     * TS 24.080 [10]
+     *
      * Regex Match Mmi Code
+     *
      * @param analyseString
      * @return bool
      */
-    bool RegexMatchMmi(std::string analyseString);
-
-    /**
-     * Set CliR Mode
-     * @param clirMode
-     */
-    void SetCliRMode(CLIRMode &clirMode);
+    bool RegexMatchMmi(const std::string &analyseString);
 
 private:
-    std::string fullString_;
-    std::string actionStr_;
-    std::string serviceCode_;
-    std::string serviceInfoA_;
-    std::string serviceInfoB_;
-    std::string serviceInfoC_;
-    std::string pwdString_;
-    std::string dialingNumber_;
+    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "MMICodeUtils"};
 };
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
 
 #endif // TELEPHONY_CELLULAR_CALL_MMI_CODE_UTILS_H

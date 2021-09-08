@@ -12,51 +12,88 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "module_service_utils.h"
 #include "cellular_call_types.h"
 #include "ipc_skeleton.h"
 #include "string_ex.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 int32_t ModuleServiceUtils::GetRadioStatus(int32_t slotId)
 {
-    auto networkSearchManager_ = PhoneManager::GetInstance().phone_[slotId]->networkSearchManager_;
+    if (GetCore(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioStatus error, return.");
+        return ERR_RESOURCE_UNAVAILABLE;
+    }
+
+    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
     if (networkSearchManager_ == nullptr) {
-        HILOG_ERROR("ModuleServiceUtils::GetRadioStatus error.");
+        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioStatus error.");
         return ERR_GET_RADIO_STATE;
     }
     return networkSearchManager_->GetRadioState(slotId);
 }
 
-sptr<NetworkState> ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
+RadioTech ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
 {
-    auto networkSearchManager_ = PhoneManager::GetInstance().phone_[slotId]->networkSearchManager_;
-    if (networkSearchManager_ == nullptr) {
-        HILOG_ERROR("ModuleServiceUtils::GetNetworkStatus ERROR");
-        return nullptr;
+    if (GetCore(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus error, return.");
+        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
     }
-    return networkSearchManager_->GetNetworkStatus(slotId);
+    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
+    if (networkSearchManager_ == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus ERROR");
+        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
+    }
+    if (networkSearchManager_->GetNetworkStatus(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus GetNetworkStatus() is nullptr");
+        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
+    }
+    auto type = static_cast<RadioTech>(networkSearchManager_->GetCsRadioTech(slotId));
+    TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus network type is %{public}d", type);
+    return RadioTech::RADIO_TECHNOLOGY_GSM;
 }
 
 std::string ModuleServiceUtils::GetIsoCountryCode(int32_t slotId)
 {
-    auto simFileManager = PhoneManager::GetInstance().phone_[slotId]->simFileManager_;
-    if (simFileManager == nullptr) {
-        HILOG_ERROR("simFileManager::GetIsoCountryCode ERROR");
+    if (GetCore(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetIsoCountryCode error, return.");
         return std::string();
     }
-    return Str16ToStr8(simFileManager->GetIsoCountryCode(slotId));
+    auto simFileManager = GetCore(slotId)->GetSimFileManager();
+    if (simFileManager == nullptr) {
+        TELEPHONY_LOGE("simFileManager::GetIsoCountryCode ERROR");
+        return std::string();
+    }
+    return Str16ToStr8(simFileManager->GetIsoCountryCodeForSim(slotId));
 }
 
 std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
 {
-    auto networkSearchManager_ = PhoneManager::GetInstance().phone_[slotId]->networkSearchManager_;
-    if (networkSearchManager_ == nullptr) {
-        HILOG_ERROR("ModuleServiceUtils::GetNetworkCountryCode ERROR");
+    if (GetCore(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkCountryCode error, return.");
         return std::string();
     }
-    return Str16ToStr8(networkSearchManager_->GetOperatorNumeric(slotId));
+    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
+    if (networkSearchManager_ == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkCountryCode error");
+        return std::string();
+    }
+    return Str16ToStr8(networkSearchManager_->GetIsoCountryCodeForNetwork(slotId));
 }
-} // namespace CellularCall
+
+std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()
+{
+    std::vector<int32_t> slotVector;
+    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    slotVector.push_back(slot);
+    return slotVector;
+}
+
+std::shared_ptr<Core> ModuleServiceUtils::GetCore(int32_t slotId)
+{
+    return CoreManager::GetInstance().getCore(slotId);
+}
+} // namespace Telephony
 } // namespace OHOS

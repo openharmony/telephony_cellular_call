@@ -18,10 +18,10 @@
 
 #include <string>
 
-#include "cellular_call_hilog.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 class StandardizeUtils {
 public:
     /**
@@ -30,9 +30,9 @@ public:
     StandardizeUtils();
 
     /**
-     * ~StandardizeUtils deconstructor
+     * ~StandardizeUtils destructor
      */
-    virtual ~StandardizeUtils() = default;
+    ~StandardizeUtils() = default;
 
     /**
      * Strips separators from a phone number string
@@ -41,22 +41,29 @@ public:
      */
     std::string RemoveSeparatorsPhoneNumber(const std::string &phoneNum);
 
-    /**
-     * @brief Standardize phone number
-     * @param string phone number to standardize
-     * @return Returns Standardize newString.
-     */
-    std::string StandardizePhoneNumber(const std::string &phoneNum);
+    typedef std::uint64_t hash_t64;
 
-    /**
-     * @brief When there are converted maps, convert according to the map configuration
-     * @param convertString
-     * @return string
-     */
-    std::string ConvertNumberIfNeed(const std::string &convertString);
+    static hash_t64 Hash_(char const *hashStr)
+    {
+        hash_t64 result {cellular_call_b};
+        while (*hashStr) {
+            result ^= *hashStr;
+            result *= cellular_call_p;
+            hashStr++;
+        }
+        return result;
+    }
 
+    static constexpr hash_t64 HashCompileTime(char const *str, hash_t64 last_value = cellular_call_b)
+    {
+        return *str ? HashCompileTime(str + 1, (*str ^ last_value) * cellular_call_p) : last_value;
+    }
+
+private:
+    static constexpr hash_t64 cellular_call_p = 0x100000001B3ull;
+    static constexpr hash_t64 cellular_call_b = 0xCBF29CE484222325ull;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "StandardizeUtils"};
 };
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
 #endif // TELEPHONY_CELLULAR_CALL_STANDARDIZE_UTILS_H

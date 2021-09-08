@@ -14,14 +14,10 @@
  */
 
 #include "standardize_utils.h"
-#include "cellular_call_hilog.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
-namespace CellularCall {
-namespace {
-const int CONVERT_VALID_COMPARE_LENGTH = 3;
-}
-
+namespace Telephony {
 StandardizeUtils::StandardizeUtils() {}
 
 std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &phoneString)
@@ -29,7 +25,7 @@ std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &pho
     std::string newString("");
 
     if (phoneString.empty()) {
-        HILOG_INFO("RemoveSeparatorsPhoneNumber return, phoneStr is empty.");
+        TELEPHONY_LOGE("RemoveSeparatorsPhoneNumber return, phoneStr is empty.");
         return newString;
     }
 
@@ -42,41 +38,5 @@ std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &pho
 
     return newString;
 }
-
-std::string StandardizeUtils::StandardizePhoneNumber(const std::string &phoneString)
-{
-    std::string newString("");
-
-    if (phoneString.empty()) {
-        HILOG_INFO("StandardizePhoneNumber return, phoneString is empty.");
-        return newString;
-    }
-
-    return phoneString;
-}
-
-std::string StandardizeUtils::ConvertNumberIfNeed(const std::string &convertString)
-{
-    std::string newString("");
-
-    if (convertString.empty()) {
-        HILOG_INFO("ConvertNumberIfNeed return, convertString is empty.");
-        return convertString;
-    }
-
-    // get: Conversion rules
-    std::string *convertStr = nullptr;
-
-    if (convertStr == nullptr) {
-        HILOG_INFO("ConvertNumberIfNeed return, convert string is nullptr.");
-        return convertString;
-    }
-
-    if (convertStr->length() < 1 || convertString.length() < CONVERT_VALID_COMPARE_LENGTH) {
-        return convertString;
-    }
-
-    return newString;
-}
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
