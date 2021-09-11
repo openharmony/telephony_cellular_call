@@ -16,13 +16,13 @@
 #ifndef CELLULAR_CALL_MODULE_SERVICE_UTILS_H
 #define CELLULAR_CALL_MODULE_SERVICE_UTILS_H
 
-#include "phone_manager.h"
-#include "cellular_call_hilog.h"
+#include "core_manager.h"
+#include "telephony_log_wrapper.h"
 #include "iservice_registry.h"
 #include "singleton.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 class ModuleServiceUtils {
 public:
     /**
@@ -37,7 +37,7 @@ public:
      * @param slotId
      * @return Network State
      */
-    sptr<NetworkState> GetNetworkStatus(int32_t slotId);
+    RadioTech GetNetworkStatus(int32_t slotId);
 
     /**
      * Get Iso Country Code
@@ -53,8 +53,21 @@ public:
      */
     std::string GetNetworkCountryCode(int32_t slotId);
 
+    /**
+     * Get slot info
+     * @return slot id
+     */
+    std::vector<int32_t> GetSlotInfo();
+
+    /**
+     * Get core
+     * @return slot id
+     */
+    std::shared_ptr<Core> GetCore(int32_t slotId);
+
+private:
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "ModuleServiceUtils"};
 };
-} // namespace CellularCall
-}; // namespace OHOS
+} // namespace Telephony
+} // namespace OHOS
 #endif // CELLULAR_CALL_MODULE_SERVICE_UTILS_H
