@@ -16,24 +16,20 @@
 #ifndef TELEPHONY_CELLULAR_CALL_MMI_HANDLER_H
 #define TELEPHONY_CELLULAR_CALL_MMI_HANDLER_H
 
+#include <map>
 #include "event_handler.h"
 #include "event_runner.h"
-#include "cellular_call_hilog.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 class MMIHandler : public AppExecFwk::EventHandler {
 public:
     /**
      * MMIHandler
      * @param runner
      */
-    MMIHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
-
-    /**
-     * ~MMIHandler
-     */
-    ~MMIHandler() = default;
+    explicit MMIHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
 
     /**
      * ProcessEvent.
@@ -42,8 +38,87 @@ public:
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event);
 
+    /**
+     * ~MMIHandler
+     */
+    ~MMIHandler() = default;
+
+private:
+    /**
+     * GetMMIResponse.
+     *
+     * @param mmi code process
+     */
+    void GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallWaitResponse.
+     *
+     * @param mmi code process
+     */
+    void GetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallWaitResponse.
+     *
+     * @param mmi code process
+     */
+    void SetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetClirResponse.
+     *
+     * @param mmi code process
+     */
+    void GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetClirResponse.
+     *
+     * @param mmi code process
+     */
+    void SetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetClipResponse.
+     *
+     * @param mmi code process
+     */
+    void GetClipResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallTransferResponse.
+     *
+     * @param mmi code process
+     */
+    void GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallTransferResponse.
+     *
+     * @param mmi code process
+     */
+    void SetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallRestrictionResponse.
+     *
+     * @param mmi code process
+     */
+    void GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallRestrictionResponse.
+     *
+     * @param mmi code process
+     */
+    void SetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+private:
+    using RequestFuncType = void (MMIHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
+    std::map<uint32_t, RequestFuncType> requestFuncMap_;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "MMIHandler"};
 };
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
 #endif // TELEPHONY_CELLULAR_CALL_MMI_HANDLER_H

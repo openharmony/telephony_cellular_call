@@ -11,24 +11,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos.gni")
+import("//build/test.gni")
 
-ohos_executable("tel_cellular_call_cs_test") {
+ohos_unittest("tel_cellular_call_cs_test") {
+  subsystem_name = "telephony"
+  part_name = "cellular_call"
+  test_module = "tel_cellular_call_cs_test"
+  module_out_path = part_name + "/" + test_module
+
   sources = [
     "//base/telephony/core_service/interfaces/innerkits/cellular_call/proxy/cellular_call_proxy.cpp",
     "cs_test.cpp",
   ]
 
   include_dirs = [
-    "//base/telephony/cellular_call/include/manager",
-    "//base/telephony/cellular_call/include/common",
+    "//base/telephony/cellular_call/services/manager/include",
+    "//base/telephony/cellular_call/services/common/include",
     "//base/telephony/core_service/interfaces/innerkits/cellular_call/common",
     "//base/telephony/core_service/interfaces/innerkits/cellular_call/proxy",
     "//base/telephony/core_service/interfaces/innerkits/call_manager/common",
     "//base/telephony/core_service/interfaces/innerkits/call_manager/proxy",
+    "//base/telephony/ril_adapter/interfaces/innerkits",
   ]
 
-  deps = [ "//utils/native/base:utils" ]
+  deps = [
+    "//third_party/googletest:gtest_main",
+    "//utils/native/base:utils",
+  ]
 
   external_deps = [
     "appexecfwk_standard:libeventhandler",
@@ -42,7 +51,9 @@ ohos_executable("tel_cellular_call_cs_test") {
   } else {
     external_deps += [ "hilog:libhilog" ]
   }
+}
 
-  part_name = "cellular_call"
-  subsystem_name = "telephony"
+group("unittest") {
+  testonly = true
+  deps = [ ":tel_cellular_call_cs_test" ]
 }

@@ -19,8 +19,7 @@
 #include <memory>
 
 #include "singleton.h"
-
-#include <event_runner.h>
+#include "event_runner.h"
 #include "iremote_broker.h"
 #include "system_ability.h"
 
@@ -28,7 +27,7 @@
 #include "cellular_call_stub.h"
 
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 enum class ServiceRunningState { STATE_STOPPED, STATE_RUNNING };
 
 class CellularCallService : public SystemAbility,
@@ -54,12 +53,15 @@ public:
     void OnDump() override;
 
     /**
+     * Register Handler
+     */
+    void RegisterHandler();
+
+    /**
      * Get Handler
      * @return CellularCallHandler
      */
-    std::shared_ptr<CellularCallHandler> GetHandler();
-
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallService"};
+    std::shared_ptr<CellularCallHandler> GetHandler(int32_t slot);
 
 private:
     /**
@@ -71,15 +73,32 @@ private:
     /**
      * Register Handler
      */
-    void RegisterHandler();
+    void RegisterCoreServiceHandler();
+
+    /**
+     * Create Handler
+     */
+    void CreateHandler();
+
+    /**
+     * Handler Reset UnRegister
+     */
+    void HandlerResetUnRegister();
+
+    /**
+     * ThreadRegister
+     */
+    void AsynchronousRegister();
 
 private:
+    const uint32_t CONNECT_MAX_TRY_COUNT = 20;
+    const uint32_t CONNECT_SERVICE_WAIT_TIME = 2000; // ms
     ServiceRunningState state_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
-    std::shared_ptr<CellularCallHandler> handler_;
-    int32_t slotId_ = 1;
+    std::map<int32_t, std::shared_ptr<CellularCallHandler>> handlerMap_;
+    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallService"};
 };
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
 
 #endif // CELLULAR_CALL_SERVICE_H

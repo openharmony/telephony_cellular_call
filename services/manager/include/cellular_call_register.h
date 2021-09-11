@@ -21,42 +21,114 @@
 #include "cellular_call_connection_cs.h"
 #include "i_call_status_callback.h"
 #include "singleton.h"
+
 namespace OHOS {
-namespace CellularCall {
+namespace Telephony {
 class CellularCallRegister {
     DECLARE_DELAYED_SINGLETON(CellularCallRegister);
 
 public:
     /**
      * ReportCallsInfo.
+     *
      * @param callsReportInfo data list
      */
-    void ReportCallsInfo(const OHOS::TelephonyCallManager::CallsReportInfo &callsReportInfo);
+    void ReportCallsInfo(const CallsReportInfo &callsReportInfo);
 
     /**
      * ReportCallsInfo.
+     *
      * @param Single CallInfo
      */
-    void ReportSingleCallInfo(CellularCallConnectionCS &pCs, TelCallStates callState);
+    void ReportSingleCallInfo(CellularCallConnectionCS &pCs, TelCallState callState);
+
+    /**
+     * ReportEventResultInfo.
+     *
+     * @param CellularCallEventInfo
+     */
+    void ReportEventResultInfo(CellularCallEventInfo &info);
+
+    /**
+     * ReportGetWaitingResult.
+     *
+     * @param CallWaitResponse
+     */
+    void ReportGetWaitingResult(CallWaitResponse &callWaitResponse);
+
+    /**
+     * ReportSetWaitingResult.
+     *
+     * @param CallWaitResponse
+     */
+    void ReportSetWaitingResult(CallWaitResponse &callWaitResponse);
+
+    /**
+     * ReportGetRestrictionResult.
+     *
+     * @param CallRestrictionResponse
+     */
+    void ReportGetRestrictionResult(const CallRestrictionResponse &callRestrictionResponse);
+
+    /**
+     * ReportSetRestrictionResult.
+     *
+     * @param result
+     */
+    void ReportSetRestrictionResult(int32_t result);
+
+    /**
+     * ReportGetTransferResult.
+     *
+     * @param CallTransferResponse
+     */
+    void ReportGetTransferResult(CallTransferResponse &callTransferResponse);
+
+    /**
+     * ReportSetTransferResult.
+     *
+     * @param result
+     */
+    void ReportSetTransferResult(int32_t result);
+
+    /**
+     * ReportGetClipResult.
+     *
+     * @param ClipResponse
+     */
+    void ReportGetClipResult(ClipResponse &clipResponse);
+
+    /**
+     * ReportGetClirResult.
+     *
+     * @param ClirResponse
+     */
+    void ReportGetClirResult(ClirResponse &clirResponse);
+
+    /**
+     * ReportSetClirResult.
+     *
+     * @param ClirResponse
+     */
+    void ReportSetClirResult(ClirResponse &clirResponses);
 
     /**
      * Register CallManagerCallBack
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t RegisterCallManagerCallBack(const sptr<OHOS::TelephonyCallManager::ICallStatusCallback> &callback);
+    int32_t RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback);
 
     /**
      * UnRegister CallManagerCallBack
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t UnRegisterCallManagerCallBack();
 
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallRegister"};
-
 private:
-    sptr<OHOS::TelephonyCallManager::ICallStatusCallback> callManagerCallBack_;
+    sptr<ICallStatusCallback> callManagerCallBack_;
+    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallRegister"};
 };
-} // namespace CellularCall
+} // namespace Telephony
 } // namespace OHOS
 
 #endif // CELLULAR_CALL_REGISTER_H
