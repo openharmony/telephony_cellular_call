@@ -86,7 +86,8 @@ void CellularCallService::RegisterHandler()
     TELEPHONY_LOGI("connect core service RegisterHandler start  ");
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
-        auto core = CoreManager::GetInstance().getCore(CoreManager::DEFAULT_SLOT_ID);
+        int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+        auto core = CoreManager::GetInstance().getCore(slot);
         TELEPHONY_LOGI("connect core service count: %{public}d", i);
         if (core != nullptr && core->IsInitCore()) {
             RegisterCoreServiceHandler();
@@ -169,7 +170,13 @@ void CellularCallService::AsynchronousRegister()
 {
     TELEPHONY_LOGD("CellularCallService::AsynchronousRegister entry");
     int64_t delayTime_ = 1000;
-    auto handler = handlerMap_[CoreManager::DEFAULT_SLOT_ID];
+    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    auto handler = handlerMap_[slot];
+
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("AsynchronousRegister return, handler is nullptr");
+        return;
+    }
     handler->SendEvent(handler->ASYNCHRONOUS_REGISTER_ID, delayTime_, CellularCallHandler::Priority::HIGH);
 }
 } // namespace Telephony
