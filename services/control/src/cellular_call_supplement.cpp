@@ -276,7 +276,7 @@ void CellularCallSupplement::EventSetCallWait(HRilRadioResponseInfo &responseInf
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult(callWaitResponse);
 }
 
-void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &callForwardQueryResult)
+void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &queryResult)
 {
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("EventInquireCallTransfer return, GetInstance is nullptr.");
@@ -285,12 +285,12 @@ void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &ca
 
     // 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
     CallTransferResponse callTransferResponse;
-    callTransferResponse.result = callForwardQueryResult.result;
+    callTransferResponse.result = queryResult.result;
 
     /*
      * <status>:0	not active    1	  active
      * */
-    callTransferResponse.status = callForwardQueryResult.status;
+    callTransferResponse.status = queryResult.status;
 
     /*
      * <classx> is a sum of integers each representing a class of information (default 7):
@@ -303,12 +303,12 @@ void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &ca
      * 64	dedicated packet access
      * 128	dedicated PAD access
      */
-    callTransferResponse.classx = callForwardQueryResult.classx;
+    callTransferResponse.classx = queryResult.classx;
     // <number>: string type phone number of forwarding address in format specified by <type>
-    callTransferResponse.number = callForwardQueryResult.number;
+    callTransferResponse.number = queryResult.number;
     // <type>: type of address octet in integer format (refer GSM 04.08 [8] subclause 10.5.4.7);
     // default 145 when dialling string includes international access code character "+", otherwise 129
-    callTransferResponse.type = callForwardQueryResult.type;
+    callTransferResponse.type = queryResult.type;
 
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetTransferResult(callTransferResponse);
 }
@@ -403,7 +403,8 @@ int32_t CellularCallSupplement::InquireCallTransfer(CallTransferType type)
 bool CellularCallSupplement::PhoneTypeGsmOrNot()
 {
     ModuleServiceUtils moduleServiceUtils;
-    return moduleServiceUtils.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == RadioTech::RADIO_TECHNOLOGY_GSM;
+    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    return moduleServiceUtils.GetNetworkStatus(slot) == RadioTech::RADIO_TECHNOLOGY_GSM;
 }
 
 int32_t CellularCallSupplement::SetCallWaiting(bool activate)

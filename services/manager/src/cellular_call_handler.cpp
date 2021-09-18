@@ -15,7 +15,6 @@
 
 #include "cellular_call_handler.h"
 #include "cellular_call_register.h"
-#include "core_manager.h"
 #include "hril_call_parcel.h"
 
 namespace OHOS {
