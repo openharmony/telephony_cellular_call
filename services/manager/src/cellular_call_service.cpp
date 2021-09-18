@@ -172,11 +172,6 @@ void CellularCallService::AsynchronousRegister()
     int64_t delayTime_ = 1000;
     int32_t slot = CoreManager::DEFAULT_SLOT_ID;
     auto handler = handlerMap_[slot];
-
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("AsynchronousRegister return, handler is nullptr");
-        return;
-    }
     handler->SendEvent(handler->ASYNCHRONOUS_REGISTER_ID, delayTime_, CellularCallHandler::Priority::HIGH);
 }
 } // namespace Telephony
