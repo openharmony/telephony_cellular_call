@@ -32,7 +32,7 @@ int32_t ModuleServiceUtils::GetRadioStatus(int32_t slotId)
         TELEPHONY_LOGE("ModuleServiceUtils::GetRadioStatus error.");
         return ERR_GET_RADIO_STATE;
     }
-    return networkSearchManager_->GetRadioState(slotId);
+    return networkSearchManager_->GetRadioState();
 }
 
 RadioTech ModuleServiceUtils::GetNetworkStatus(int32_t slotId)

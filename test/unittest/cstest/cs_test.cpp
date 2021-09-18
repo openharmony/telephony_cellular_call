@@ -305,7 +305,7 @@ int CsTest::TransmitDTMFString(const sptr<CellularCallInterface> &telephonyServi
 int CsTest::SetCallTransfer(const sptr<CellularCallInterface> &telephonyService) const
 {
     printf("test SetCallTransfer entry.\n");
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     CallTransferInfo callTransferInfo;
     std::cout << "please enter the transfer type(0 - 5):";
     int32_t type = 0;
@@ -324,7 +324,7 @@ int CsTest::SetCallTransfer(const sptr<CellularCallInterface> &telephonyService)
 int CsTest::InquireCallTransfer(const sptr<CellularCallInterface> &telephonyService) const
 {
     printf("test InquireCallTransfer entry.\n");
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     std::cout << "please enter the transfer type(0 - 5):";
     int32_t type = 0;
     std::cin >> type;
@@ -336,7 +336,7 @@ int CsTest::SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) 
 {
     printf("test SetCallWaiting entry.\n");
     bool activate = true;
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     telephonyService->SetCallWaiting(activate, slotId);
     return CELLULAR_CALL_SUCCESS;
 }
@@ -344,7 +344,7 @@ int CsTest::SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) 
 int CsTest::InquireCallWaiting(const sptr<CellularCallInterface> &telephonyService) const
 {
     printf("test InquireCallWaiting entry.\n");
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     telephonyService->InquireCallWaiting(slotId);
     return CELLULAR_CALL_SUCCESS;
 }
@@ -352,7 +352,7 @@ int CsTest::InquireCallWaiting(const sptr<CellularCallInterface> &telephonyServi
 int CsTest::SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
 {
     printf("test SetCallRestriction entry.\n");
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     CallRestrictionInfo info;
     std::cout << "please enter the fac(0 - 4):";
     int32_t fac = 0;
@@ -371,7 +371,7 @@ int CsTest::SetCallRestriction(const sptr<CellularCallInterface> &telephonyServi
 int CsTest::InquireCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
 {
     printf("test InquireCallRestriction entry.\n");
-    int32_t slotId = 1;
+    int32_t slotId = 0;
     std::cout << "please enter the fac(0 - 4):";
     int32_t facType = 0;
     std::cin >> facType;

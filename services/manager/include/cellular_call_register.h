@@ -68,7 +68,7 @@ public:
      *
      * @param CallRestrictionResponse
      */
-    void ReportGetRestrictionResult(const CallRestrictionResponse &callRestrictionResponse);
+    void ReportGetRestrictionResult(const CallRestrictionResponse &response);
 
     /**
      * ReportSetRestrictionResult.
