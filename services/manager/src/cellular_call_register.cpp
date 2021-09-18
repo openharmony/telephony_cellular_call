@@ -86,14 +86,14 @@ void CellularCallRegister::ReportSetWaitingResult(CallWaitResponse &callWaitResp
     callManagerCallBack_->OnUpdateSetWaitingResult(callWaitResponse.result);
 }
 
-void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionResponse &callRestrictionResponse)
+void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionResponse &response)
 {
     TELEPHONY_LOGD("ReportGetRestrictionResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetRestrictionResult(callRestrictionResponse);
+    callManagerCallBack_->OnUpdateGetRestrictionResult(response);
 }
 
 void CellularCallRegister::ReportSetRestrictionResult(int32_t result)

@@ -403,7 +403,8 @@ int32_t CellularCallSupplement::InquireCallTransfer(CallTransferType type)
 bool CellularCallSupplement::PhoneTypeGsmOrNot()
 {
     ModuleServiceUtils moduleServiceUtils;
-    return moduleServiceUtils.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == RadioTech::RADIO_TECHNOLOGY_GSM;
+    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    return moduleServiceUtils.GetNetworkStatus(slot) == RadioTech::RADIO_TECHNOLOGY_GSM;
 }
 
 int32_t CellularCallSupplement::SetCallWaiting(bool activate)
