@@ -226,7 +226,7 @@ public:
      *
      * @param CallForwardQueryResult
      */
-    void EventInquireCallTransfer(CallForwardQueryResult &callForwardQueryResult);
+    void EventInquireCallTransfer(CallForwardQueryResult &queryResult);
 
     /**
      * Event Set Call Transfer
