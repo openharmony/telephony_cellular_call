@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_connection_cs.h"
+
 #include <securec.h>
 
 #include "core_manager.h"

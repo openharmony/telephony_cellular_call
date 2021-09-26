@@ -13,59 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef CELLULAR_CALL_CS_TEST_H
-#define CELLULAR_CALL_CS_TEST_H
+#include "cs_test.h"
 
 #include <iostream>
 
-#include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "securec.h"
 #include "system_ability_definition.h"
-
-#include "cellular_call_data_struct.h"
-#include "cellular_call_interface.h"
 
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 const int CELLULAR_CALL_SUCCESS = 0;
-class CsTest : public testing::Test {
-public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
-    void TearDown();
-
-    using RequestFuncType = int (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
-    std::map<char, RequestFuncType> requestFuncMap_;
-
-    int Dial(const sptr<CellularCallInterface> &telephonyService) const;
-    int End(const sptr<CellularCallInterface> &telephonyService) const;
-    int Answer(const sptr<CellularCallInterface> &telephonyService) const;
-    int Reject(const sptr<CellularCallInterface> &telephonyService) const;
-    int Hold(const sptr<CellularCallInterface> &telephonyService) const;
-    int Active(const sptr<CellularCallInterface> &telephonyService) const;
-    int Swap(const sptr<CellularCallInterface> &telephonyService) const;
-    int IsUrgentCall(const sptr<CellularCallInterface> &telephonyService) const;
-    int Join(const sptr<CellularCallInterface> &telephonyService) const;
-    int Split(const sptr<CellularCallInterface> &telephonyService) const;
-    int CallSupplement(const sptr<CellularCallInterface> &telephonyService) const;
-    int InitiateDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int CeaseDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int TransmitDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int TransmitDTMFString(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallTransfer(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallTransfer(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
-    int RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
-    int InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
-    bool InputAndSwitch(char interfaceNum, const sptr<CellularCallInterface> &telephonyService) const;
-};
-
 void CsTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
@@ -455,5 +414,3 @@ HWTEST_F(CsTest, cellular_call_interface_001, TestSize.Level1)
 }
 } // namespace Telephony
 } // namespace OHOS
-
-#endif // CELLULAR_CALL_CS_TEST_H
