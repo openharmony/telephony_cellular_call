@@ -13,10 +13,10 @@
 
 import("//build/test.gni")
 
-ohos_unittest("tel_cellular_call_cs_test") {
+ohos_unittest("tel_cellular_call_gtest") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
-  test_module = "tel_cellular_call_cs_test"
+  test_module = "tel_cellular_call_gtest"
   module_out_path = part_name + "/" + test_module
 
   sources = [
@@ -55,5 +55,5 @@ ohos_unittest("tel_cellular_call_cs_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":tel_cellular_call_cs_test" ]
+  deps = [ ":tel_cellular_call_gtest" ]
 }
