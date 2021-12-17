@@ -16,27 +16,22 @@
 #ifndef CELLULAR_CALL_CONNECTION_CS_H
 #define CELLULAR_CALL_CONNECTION_CS_H
 
-#include "core.h"
-#include "call_manager_inner_type.h"
 #include "hril_call_parcel.h"
-#include "telephony_errors.h"
-#include "cellular_call_data_struct.h"
-#include "telephony_log_wrapper.h"
+#include "base_connection.h"
 
 namespace OHOS {
 namespace Telephony {
-class CellularCallConnectionCS {
+class CellularCallConnectionCS : public BaseConnection {
 public:
     /**
-     * MO new CellularCallConnectionCS
-     *
+     * Constructor
      */
-    CellularCallConnectionCS();
+    CellularCallConnectionCS() = default;
 
     /**
-     * ~CellularCallConnectionCS. destructor
+     * Destructor
      */
-    ~CellularCallConnectionCS();
+    ~CellularCallConnectionCS() = default;
 
     /**
      *  DialRequest
@@ -46,11 +41,11 @@ public:
     int32_t DialRequest(const DialRequestStruct &dialRequest, int32_t slotId);
 
     /**
-     *  EndRequest
+     *  HangUpRequest
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t EndRequest(int32_t slotId);
+    int32_t HangUpRequest(int32_t slotId);
 
     /**
      *  AnswerRequest
@@ -69,12 +64,12 @@ public:
     int32_t RejectRequest(int32_t slotId);
 
     /**
-     *  SwapRequest
+     *  SwitchCallRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SwapRequest(int32_t slotId);
+    int32_t SwitchCallRequest(int32_t slotId);
 
     /**
      *  HoldRequest
@@ -85,31 +80,31 @@ public:
     int32_t HoldRequest(int32_t slotId);
 
     /**
-     *  ActiveRequest
+     *  UnHoldCallRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ActiveRequest(int32_t slotId);
+    int32_t UnHoldCallRequest(int32_t slotId);
 
     /**
-     *  JoinRequest
+     *  CombineConferenceRequest
      *
      * @param slotId
      * @param voiceCall
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t JoinRequest(int32_t slotId, int32_t voiceCall);
+    int32_t CombineConferenceRequest(int32_t slotId, int32_t voiceCall);
 
     /**
-     *  SplitRequest
+     *  SeparateConferenceRequest
      *
      * @param index
      * @param slotId
      * @param voiceCall
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SplitRequest(int32_t index, int32_t slotId, int32_t voiceCall);
+    int32_t SeparateConferenceRequest(int32_t index, int32_t slotId, int32_t voiceCall);
 
     /**
      * CallSupplement Request
@@ -144,110 +139,47 @@ public:
     int32_t SendCDMAThreeWayDialRequest(int32_t slotId);
 
     /**
-     *  TransmitDTMFRequest
+     *  SendDtmfRequest
      *
-     * @param char cDTMFCode
+     * @param char cDtmfCode
+     * @param index
      * @param slotId
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t TransmitDTMFRequest(char cDTMFCode, int32_t index, int32_t slotId);
+    int32_t SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
 
     /**
-     *  InitiateDTMFRequest
+     *  StartDtmfRequest
      *
-     * @param char cDTMFCode
+     * @param char cDtmfCode
+     * @param index
      * @param slotId
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t InitiateDTMFRequest(char cDTMFCode, int32_t index, int32_t slotId);
+    int32_t StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
 
     /**
-     *  CeaseDTMFRequest
+     *  StopDtmfRequest
      *
+     * @param index
      * @param slotId
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t CeaseDTMFRequest(int32_t index, int32_t slotId);
+    int32_t StopDtmfRequest(int32_t index, int32_t slotId) const;
 
     /**
-     *  TransmitDTMFStringRequest
+     *  SendDtmfStringRequest
      * @param
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t TransmitDTMFStringRequest(const std::string &sDTMFCode, int32_t on, int32_t off, int32_t slotId);
+    int32_t SendDtmfStringRequest(const std::string &sDtmfCode, int32_t on, int32_t off, int32_t slotId);
 
     /**
-     * Set or Update CallReportInfo
-     * @param CallReportInfo
+     * RegisterHandler
      */
-    void SetOrUpdateCallReportInfo(CallReportInfo &callReportInfo);
-
-    /**
-     * Get CallReportInfo
-     * @return CallReportInfo
-     */
-    CallReportInfo GetCallReportInfo();
-
-    /**
-     * SetStatus
-     * @param state
-     */
-    void SetStatus(TelCallState state);
-
-    /**
-     * GetStatus
-     * @return TelCallState
-     */
-    TelCallState GetStatus();
-
-    /**
-     * IsRingingState.
-     *
-     * @return bool IsRingingState
-     */
-    bool IsRingingState();
-
-    /**
-     * Set Flag
-     * @param bool
-     */
-    void SetFlag(bool flag);
-
-    /**
-     * Get Flag
-     * @return bool
-     */
-    bool GetFlag();
-
-    /**
-     * Set Index
-     * @param int
-     */
-    void SetIndex(int index);
-
-    /**
-     * Get Index
-     * @return int
-     */
-    int GetIndex();
-
-    /**
-     * AsynchronousRegister
-     */
-    void AsynchronousRegister();
+    void RegisterHandler();
 
 private:
-    /**
-     * Get Core for core service
-     * @param slotId
-     * @return Core for core service
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId);
-
-private:
-    CallReportInfo callReportInfo_;
-    bool flag_ = false;
-    int index_ = 1;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallConnectionCS"};
 };
 } // namespace Telephony

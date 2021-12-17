@@ -26,10 +26,10 @@ namespace Telephony {
 MMIHandler::MMIHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
 {
     requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &MMIHandler::GetMMIResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_WAIT] = &MMIHandler::GetCallWaitResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_WAIT] = &MMIHandler::SetCallWaitResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_WAIT] = &MMIHandler::GetCallWaitingResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_WAIT] = &MMIHandler::SetCallWaitingResponse;
     requestFuncMap_[ObserverHandler::RADIO_GET_CALL_FORWARD] = &MMIHandler::GetCallTransferResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_FORWARD] = &MMIHandler::SetCallTransferResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_FORWARD] = &MMIHandler::SetCallTransferInfoResponse;
     requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIP] = &MMIHandler::GetClipResponse;
     requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIR] = &MMIHandler::GetClirResponse;
     requestFuncMap_[ObserverHandler::RADIO_SET_CALL_CLIR] = &MMIHandler::SetClirResponse;
@@ -60,38 +60,38 @@ void MMIHandler::GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event)
     }
     std::unique_ptr<MMICodeUtils> mmiCodeUtils = event->GetUniqueObject<MMICodeUtils>();
     if (mmiCodeUtils == nullptr) {
-        TELEPHONY_LOGE("MMIHandler::ProcessEvent, mmiCodeUtils is nullptr");
+        TELEPHONY_LOGE("MMIHandler::GetMMIResponse, mmiCodeUtils is nullptr");
         return;
     }
     mmiCodeUtils->ExecuteMmiCode();
 }
 
-void MMIHandler::GetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void MMIHandler::GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallWaitResponse, event is nullptr");
+        TELEPHONY_LOGE("GetCallWaitingResponse, event is nullptr");
         return;
     }
-    TELEPHONY_LOGD("MMIHandler::GetCallWaitResponse, RADIO_GET_CALL_WAIT");
+    TELEPHONY_LOGI("MMIHandler::GetCallWaitingResponse, RADIO_GET_CALL_WAIT");
     auto callWaitingInfo = event->GetSharedObject<CallWaitResult>();
     if (callWaitingInfo == nullptr) {
-        TELEPHONY_LOGE("MMIHandler::GetCallWaitResponse, callWaitingInfo is nullptr");
+        TELEPHONY_LOGE("MMIHandler::GetCallWaitingResponse, callWaitingInfo is nullptr");
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventInquireCallWait(*callWaitingInfo);
+    supplement.EventGetCallWaiting(*callWaitingInfo);
 }
 
-void MMIHandler::SetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void MMIHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallWaitResponse, event is nullptr");
+        TELEPHONY_LOGE("SetCallWaitingResponse, event is nullptr");
         return;
     }
-    TELEPHONY_LOGD("SetCallWaitResponse, RADIO_SET_CALL_WAIT");
+    TELEPHONY_LOGI("SetCallWaitingResponse, RADIO_SET_CALL_WAIT");
     auto result = event->GetSharedObject<HRilRadioResponseInfo>();
     CellularCallSupplement supplement;
-    supplement.EventSetCallWait(*result);
+    supplement.EventSetCallWaiting(*result);
 }
 
 void MMIHandler::GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -151,22 +151,22 @@ void MMIHandler::GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventInquireCallTransfer(*cFQueryResult);
+    supplement.EventGetCallTransferInfo(*cFQueryResult);
 }
 
-void MMIHandler::SetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void MMIHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferResponse, event is nullptr");
+        TELEPHONY_LOGE("SetCallTransferInfoResponse, event is nullptr");
         return;
     }
     auto result = event->GetSharedObject<HRilRadioResponseInfo>();
     if (result == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferResponse, result is nullptr");
+        TELEPHONY_LOGE("SetCallTransferInfoResponse, result is nullptr");
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventSetCallTransfer(*result);
+    supplement.EventSetCallTransferInfo(*result);
 }
 
 void MMIHandler::GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event)

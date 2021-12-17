@@ -29,7 +29,7 @@ public:
     /**
      * MMICodeUtils constructor
      */
-    MMICodeUtils();
+    MMICodeUtils() = default;
 
     /**
      * ~MMICodeUtils destructor
@@ -53,8 +53,11 @@ public:
      */
     bool ExecuteMmiCode();
 
-public:
-    MMIData mmiData_;
+    /**
+     * GetMMIData
+     * @return MMIData
+     */
+    MMIData GetMMIData();
 
 private:
     /**
@@ -71,6 +74,7 @@ private:
     bool RegexMatchMmi(const std::string &analyseString);
 
 private:
+    MMIData mmiData_;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "MMICodeUtils"};
 };
 } // namespace Telephony

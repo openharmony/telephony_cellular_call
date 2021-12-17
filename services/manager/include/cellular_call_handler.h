@@ -21,6 +21,7 @@
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"
 #include "cs_control.h"
+#include "ims_control.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -52,29 +53,26 @@ public:
     void SetSlotId(int32_t id);
 
     /**
-     * SetCSControl
+     * SetCsControl
      */
-    void SetCSControl(std::shared_ptr<CSControl>);
+    void SetCsControl(std::shared_ptr<CSControl>);
 
     /**
-     * GetCSControl
+     * GetCsControl
      * @return std::shared_ptr<CSControl>
      */
-    std::shared_ptr<CSControl> GetCSControl();
+    std::shared_ptr<CSControl> GetCsControl();
 
     /**
-     * GetCallDataResponse.
-     *
-     * @param code process
+     * SetImsControl
      */
-    void GetCallDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetImsControl(std::shared_ptr<IMSControl>);
 
     /**
-     * DealCallsDataResponse.
-     *
-     * @param code process
+     * GetImsControl
+     * @return std::shared_ptr<IMSControl>
      */
-    void DealCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    std::shared_ptr<IMSControl> GetImsControl();
 
     /**
      * DialResponse.
@@ -84,91 +82,124 @@ public:
     void DialResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * End Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
+     * CommonResultResponse
+     * @param code process
      */
-    void EndResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void CommonResultResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * Reject Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void RejectResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Accept Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void AcceptResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Hold Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void HoldResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Active Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void ActiveResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Swap Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void SwapResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Join Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void JoinResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Split Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void SplitResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Supplement Response.
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void SupplementResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * SendDTMFResponse.
+     * SendDtmfResponse.
      *
      * @param code process
      */
-    void SendDTMFResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * StartDTMFResponse.
+     * StartDtmfResponse.
      *
      * @param code process
      */
-    void StartDTMFResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * StopDTMFResponse.
+     * StopDtmfResponse.
      *
      * @param code process
      */
-    void StopDTMFResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCsCallsDataResponse.
+     *
+     * @param code process
+     */
+    void GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetImsCallsDataResponse.
+     *
+     * @param code process
+     */
+    void GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallStateResponse.
+     *
+     * @param code process
+     */
+    void CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallWaitingResponse.
+     *
+     * @param code process
+     */
+    void CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallConnectResponse.
+     *
+     * @param code process
+     */
+    void CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallEndResponse.
+     *
+     * @param code process
+     */
+    void CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallEndResponse.
+     *
+     * @param code process
+     */
+    void CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallEndResponse.
+     *
+     * @param code process
+     */
+    void CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallPreferenceModeResponse.
+     *
+     * @param code process
+     */
+    void SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallPreferenceModeResponse.
+     *
+     * @param code process
+     */
+    void GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetLteImsSwitchStatusResponse.
+     *
+     * @param code process
+     */
+    void SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetLteImsSwitchStatusResponse.
+     *
+     * @param code process
+     */
+    void GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * Set CallType
+     * @param callType
+     */
+    void SetCallType(CallType callType);
 
 public:
-    const uint32_t ASYNCHRONOUS_REGISTER_ID = 1002;
+    const uint32_t REGISTER_HANDLER_ID = 1002;
 
 private:
     /**
@@ -184,24 +215,45 @@ private:
     int64_t CurrentTimeMillis();
 
     /**
-     * DealCallsDataRequest
+     * GetCsCallData
      */
-    void DealCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetImsCallData
+     */
+    void GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * DealCsCallsDataRequest
+     */
+    void GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetImsCallsDataRequest.
+     *
+     * @param code process
+     */
+    void GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
+
     /**
      * ThreadRegister
      */
-    void AsynchronousRegister(const AppExecFwk::InnerEvent::Pointer &event);
+    void RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event);
 
 private:
     int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
-    std::shared_ptr<CSControl> pCSControl_;
+    std::shared_ptr<CSControl> pCsControl_;
+    std::shared_ptr<IMSControl> pImsControl_;
     int64_t lastTime_ = 0L;
-    int64_t FAST_DELAY_TIME = 250;
+    const int64_t FAST_DELAY_TIME = 250;
     int64_t lastCallsDataFlag_ = 0L;
-    const uint32_t GET_CALL_DATA_ID = 1001;
+    const uint32_t GET_CS_CALL_DATA_ID = 10001;
+    const uint32_t GET_IMS_CALL_DATA_ID = 10002;
     int64_t delayTime_ = 500;
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
+    CallType callType_ = CallType::TYPE_ERR_CALL;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallHandler"};
 };
 } // namespace Telephony

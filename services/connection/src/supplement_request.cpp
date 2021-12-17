@@ -23,179 +23,174 @@ namespace OHOS {
 namespace Telephony {
 int32_t SupplementRequest::InquireClipRequest()
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SupplementRequest::InquireClipRequest return, error type: rilCore is nullptr.\n");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SupplementRequest::InquireClipRequest return, error type: core is nullptr.\n");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_CLIP);
     if (event == nullptr) {
         TELEPHONY_LOGE("SupplementRequest::InquireClipRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->GetClip(event);
+    core->GetClip(event);
     return TELEPHONY_SUCCESS;
 }
 
 int32_t SupplementRequest::SetClirActivateRequest(int32_t action)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SetClirActivateRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SetClirActivateRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_CLIR);
     if (event == nullptr) {
         TELEPHONY_LOGE("SetClirActivateRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->SetClir(action, event);
+    core->SetClir(action, event);
     return TELEPHONY_SUCCESS;
 }
 
 int32_t SupplementRequest::SetClirDeactivateRequest(int32_t action)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SetClirDeactivateRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SetClirDeactivateRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_CLIR);
     if (event == nullptr) {
         TELEPHONY_LOGE("SetClirDeactivateRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->SetClir(action, event);
+    core->SetClir(action, event);
     return TELEPHONY_SUCCESS;
 }
 
 int32_t SupplementRequest::InquireClirRequest()
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("InquireClirRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("InquireClirRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_CLIR);
     if (event == nullptr) {
         TELEPHONY_LOGE("InquireClirRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->GetClir(event);
+    core->GetClir(event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::InquireCallTransferRequest(int type)
+int32_t SupplementRequest::GetCallTransferInfoRequest(int32_t type)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("InquireCallTransferRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("GetCallTransferInfoRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_FORWARD);
     if (event == nullptr) {
-        TELEPHONY_LOGE("InquireCallTransferRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        TELEPHONY_LOGE("GetCallTransferInfoRequest return, error type: event is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->GetCallForward(type, event);
+    core->GetCallTransferInfo(type, event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::SetCallTransferRequest(
+int32_t SupplementRequest::SetCallTransferInfoRequest(
     int32_t action, int32_t cause, const std::string &transferPhone, int32_t serviceInfoB)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SetCallTransferInfoRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_FORWARD);
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        TELEPHONY_LOGE("SetCallTransferInfoRequest return, error type: event is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->SetCallForward(cause, action, transferPhone, serviceInfoB, event);
-    TELEPHONY_LOGD("SetCallTransferRequest end");
+    core->SetCallTransferInfo(cause, action, transferPhone, serviceInfoB, event);
+    TELEPHONY_LOGI("SetCallTransferInfoRequest end");
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::InquireCallRestriction(const std::string &fac)
+int32_t SupplementRequest::GetCallRestrictionRequest(const std::string &fac)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("InquireCallRestriction return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("GetCallRestriction return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_RESTRICTION);
     if (event == nullptr) {
-        TELEPHONY_LOGE("InquireCallRestriction return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        TELEPHONY_LOGE("GetCallRestriction return, error type: event is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->GetCallRestriction(fac, event);
+    core->GetCallRestriction(fac, event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::SetCallRestriction(std::string &fac, int32_t mode, std::string &pw)
+int32_t SupplementRequest::SetCallRestrictionRequest(std::string &fac, int32_t mode, std::string &pw)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SetCallRestriction return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SetCallRestriction return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_RESTRICTION);
     if (event == nullptr) {
         TELEPHONY_LOGE("SetCallRestriction return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->SetCallRestriction(fac, mode, pw, event);
+    core->SetCallRestriction(fac, mode, pw, event);
     return TELEPHONY_SUCCESS;
 }
 
 int32_t SupplementRequest::SetCallWaitingRequest(bool activate)
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("SetCallWaitingRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SetCallWaitingRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_WAIT);
     if (event == nullptr) {
         TELEPHONY_LOGE("SetCallWaitingRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->SetCallWait(activate, event);
+    core->SetCallWaiting(activate, event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::InquireCallWaitingRequest()
+int32_t SupplementRequest::GetCallWaitingRequest()
 {
-    auto rilCore = GetCore(slotId_);
-    if (rilCore == nullptr) {
-        TELEPHONY_LOGE("InquireCallWaitingRequest return, error type: rilCore is nullptr.");
-        return ERR_RESOURCE_UNAVAILABLE;
+    auto core = GetCore(slotId_);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("GetCallWaitingRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_WAIT);
     if (event == nullptr) {
-        TELEPHONY_LOGE("InquireCallWaitingRequest return, error type: event is nullptr.");
-        return ERR_NULL_POINTER;
+        TELEPHONY_LOGE("GetCallWaitingRequest return, error type: event is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     event->SetOwner(GetMMIHandler());
-    rilCore->GetCallWait(event);
+    core->GetCallWaiting(event);
     return TELEPHONY_SUCCESS;
-}
-
-std::shared_ptr<Core> SupplementRequest::GetCore(int32_t slotId)
-{
-    return CoreManager::GetInstance().getCore(slotId);
 }
 
 std::shared_ptr<MMIHandler> SupplementRequest::GetMMIHandler() const
@@ -209,11 +204,11 @@ std::shared_ptr<MMIHandler> SupplementRequest::GetMMIHandler() const
         TELEPHONY_LOGE("GetMMIHandler return, error type: GetHandler() is nullptr.");
         return nullptr;
     }
-    if (callService->GetHandler(slotId_)->GetCSControl() == nullptr) {
-        TELEPHONY_LOGE("GetMMIHandler return, error type: GetCSControl() is nullptr.");
+    if (callService->GetHandler(slotId_)->GetCsControl() == nullptr) {
+        TELEPHONY_LOGE("GetMMIHandler return, error type: GetCsControl() is nullptr.");
         return nullptr;
     }
-    return callService->GetHandler(slotId_)->GetCSControl()->GetMMIHandler();
+    return callService->GetHandler(slotId_)->GetCsControl()->GetMMIHandler();
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -34,6 +34,14 @@ struct DialRequestStruct {
     CLIRMode clirMode;
 };
 
+// GSM Association Non-confidential Official Document IR.92 - IMS Profile for Voice and SMS
+struct ImsDialInfoStruct : public DialRequestStruct {
+    int32_t videoState; // 0: audio 1:video
+    bool bEmergencyCall;
+    bool bImsCallFirst;
+    bool bRoaming;
+};
+
 enum MMIHandlerId {
     EVENT_MMI_Id = 0,
     EVENT_INQUIRE_MMI = 1,
@@ -105,6 +113,7 @@ enum CFServiceCode {
     ALL_DATA_CIRCUIT_ASYNC = 25,
     ALL_GPRS_BEARER_SERVICES = 99,
 };
+
 /**
 * 27007-430_2001 7.11	Call forwarding number and conditions +CCFC
 * 3GPP TS 22.082 [4]
@@ -128,6 +137,169 @@ enum CFInformation {
     DATA_CIRCUIT_ASYNC = 32,
     DEDICATED_PACKET_ACCESS = 64,
     DEDICATED_PAD_ACCESS = 128,
+};
+
+/**
+ * 3GPP TS 27.007 Vh.1.0 (2021-03)  8.74	List of current calls +CLCCS
+ * <neg_status>: integer type as defined in the +CCMMD command.
+ * 0	The parameter <neg_status> has no valid content. Parameter <SDP_md> is set to an empty string ("").
+ * 1	The <SDP_md> parameter describes the active media in the call.
+ * 2	The <SDP_md> parameter describes a proposed but not yet active new set of media for the call.
+ * 3	A proposed new set of media for the call was accepted by the remote party. The <SDP_md> parameter describes
+ * the active media in the call (if any).
+ * 4	A proposed new set of media for the call was rejected by the remote
+ * party. The <SDP_md> parameter describes the active media in the call (if any)
+ */
+enum NegStatus {
+    NEG_INVALID = 0,
+    NEG_ACTIVE = 1,
+    NEG_PROPOSE = 2,
+    NEG_ACCEPT = 3,
+    NEG_REJECT = 4,
+};
+
+/**
+ * 3GPP TS 27.007 Vh.1.0 (2021-03)  8.74	List of current calls +CLCCS
+ * <cs_mode>: integer type (bearer/teleservice)
+0	no relevant information about bearer/teleservice
+1	voice
+2	data
+3	fax
+4	voice followed by data, voice mode
+5	alternating voice/data, voice mode
+6	alternating voice/fax, voice mode
+7	voice followed by data, data mode
+8	alternating voice/data, data mode
+9	alternating voice/fax, fax mode
+255	unknown
+ */
+enum CsMode {
+    NO_INFORMATION = 0,
+    MODE_VOICE = 1,
+    MODE_DATA = 2,
+    MODE_FAX = 3,
+    VOICE_FOLLOWED_DATA = 4,
+    VOICE_DATA_ALTERNATE = 5,
+    VOICE_FAX_ALTERNATE = 6,
+    VOICE_FOLLOWED_DATA_MODE_DATA = 7,
+    VOICE_DATA_ALTERNATE_MODE_DATA = 8,
+    VOICE_FAX_ALTERNATE_MODE_FAX = 9,
+    UNKNOWN = 255,
+};
+
+/**
+ * 3GPP TS 27.007 Vh.1.0 (2021-03)  8.74	List of current calls +CLCCS
+ * <ccstatus>: integer type. Indicating the state of the call.
+1	Idle
+2	Calling (MO); the call setup has been started
+3	Connecting (MO); the call is in progress
+4	Alerting (MO): an alert indication has been received
+5	Alerting (MT); an alert indication has been sent
+6	Active; the connection is established
+7	Released; an outgoing (MO) call is released.
+8	Released; an incoming (MT) call is released
+9	User Busy
+10	User Determined User Busy
+11	Call Waiting (MO)
+12	Call Waiting (MT)
+13	Call Hold (MO)
+14	Call Hold (MT)
+ */
+enum CCstatus {
+    IDLE = 1,
+    DIALING = 2,
+    CONNECTING = 3,
+    MO_ALERTING = 4,
+    MT_ALERTING = 5,
+    ACTIVE = 6,
+    MO_RELEASED = 7,
+    MT_RELEASED = 8,
+    USER_BUSY = 9,
+    USER_DETERMINED_USER_BUSY = 10,
+    MO_CALL_WAITING = 11,
+    MT_CALL_WAITING = 12,
+    MO_CALL_HOLD = 13,
+    MT_CALL_HOLD = 14,
+};
+
+/**
+ * 3GPP TS 27.007 Vh.1.0 (2021-03)  8.74	List of current calls +CLCCS
+ * <dir>: integer type
+0	mobile originated (MO) call
+1	mobile terminated (MT) call
+
+ <neg_status_present>: integer type. Indicates whether parameter <neg_status> has any valid information.
+0	No valid information in parameter <neg_status>. Parameter <neg_status> is set to zero.
+1	Valid information in parameter <neg_status>
+
+ <SDP_md>: string type represented with IRA characters. SDP media description as per the +CDEFMP command. This
+parameter shall not be subject to conventional character conversion as per +CSCS. This parameter will be an empty
+string ("") if the call has no multimedia content
+
+ <mpty>: integer type
+0	call is not one of multiparty (conference) call parties
+1	call is one of multiparty (conference) call parties
+
+ <numbertype>: integer type. Indicating type of information in parameter <number>.
+0	No valid information in parameter <number>
+1	Number in <number> according to URI including the prefix specifying the URI type (see command +CDU). Parameter
+ <ton> has no relevant information and is set to zero. 2	Number in <number> according to one of the formats
+supported by 3GPP TS 24.008 [8] subclause 10.5.4.7)
+
+ <ton>: type of number in integer format (refer 3GPP TS 24.008[8] subclause 10.5.4.7). The parameter is also set to
+zero when it has no meaningful content, e.g. when <numbertype>=1.
+
+ <number>: string type phone number in format specified by <numbertype>. This parameter shall not be subject to
+ conventional character conversion as per +CSCS.
+
+ <priority_present>: integer type. Indicates whether parameter <priority> has any valid information.
+ 0	No valid information in parameter <priority>. Parameter
+<priority> is set to zero.
+ 1	Valid information in parameter <priority>.
+
+ <priority>: integer type parameter
+indicating the eMLPP priority level of the call, values specified in 3GPP TS 22.067 [54].
+
+ <CLI_validity_present>: integer type. Indicates whether parameter <CLI_validity> has any valid information.
+0	No valid information in parameter <CLI_validity>. Parameter <priority> is set to zero.
+1	Valid information in parameter <CLI_validity>
+ */
+struct ImsCallInfoResponse {
+    int32_t index;
+    bool mt;
+    bool negStatusPresent;
+    NegStatus negStatus;
+    char sdpMd[kMaxNumberLen];
+    CsMode csMode;
+    TelCallState state;
+    bool mpty;
+    int32_t numberType;
+    int32_t ton;
+    char number[kMaxNumberLen];
+    bool priorityPresent;
+    int32_t priority;
+    bool cliValidityPresent;
+    CallType callType; // call type: CS、IMS
+    int32_t videoState; // 0: audio 1:video
+};
+
+enum ImsHandleId {
+    IMS_RADIO_CALL_STATE = 2001,
+    IMS_RADIO_AVAIL,
+    IMS_RADIO_NOT_AVAIL,
+    IMS_RADIO_CURRENT_CALLS,
+};
+
+enum CallPreferenceMode {
+    CS_VOICE_ONLY = 1,
+    CS_VOICE_PREFERRED = 2,
+    IMS_PS_VOICE_PREFERRED = 3,
+    IMS_PS_VOICE_ONLY = 4,
+};
+
+enum LteImsSwitchStatus {
+    TURN_OFF = 0,
+    TURN_ON = 1,
 };
 } // namespace Telephony
 } // namespace OHOS

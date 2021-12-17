@@ -15,19 +15,13 @@
 
 #include "emergency_utils.h"
 
-#include <algorithm>
-#include <sstream>
-
 #include "shortnumberinfo.h"
 
 #include "mmi_code_utils.h"
 #include "module_service_utils.h"
-#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
-EmergencyUtils::EmergencyUtils() {}
-
 bool EmergencyUtils::IsEmergencyCall(const std::string &phoneNum, int32_t slotId)
 {
     if (phoneNum.empty()) {
@@ -44,26 +38,29 @@ bool EmergencyUtils::IsEmergencyCall(const std::string &phoneNum, int32_t slotId
         TELEPHONY_LOGI("IsEmergencyCall return, phoneNum is not emergency.");
         return false;
     }
+
     return IsEmergencyCallProcessing(phoneNum, slotId);
 }
 
 bool EmergencyUtils::IsEmergencyCallProcessing(const std::string &formatString, int32_t slotId)
 {
+    TELEPHONY_LOGI("IsEmergencyCallProcessing entry.");
     std::vector<std::string> emergencyNumList = {
-        "110", "120", "119", "122", "12395", "114", "112", "000", "911", "08", "118", "999"
+        "110", "120", "119", "122", "12395", "114", "112", "000", "911", "08", "118", "999",
     };
     if (std::find(emergencyNumList.begin(), emergencyNumList.end(), formatString) != emergencyNumList.end()) {
-        TELEPHONY_LOGD("IsEmergencyCallProcessing, Complies with local configuration data.");
+        TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with local configuration data.");
         return true;
     }
     ModuleServiceUtils dependDataObtain;
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);
     if (!countryIsoCode.empty()) {
-        TELEPHONY_LOGD("IsEmergencyCallProcessing countryIsoCode is not empty");
+        TELEPHONY_LOGI("IsEmergencyCallProcessing countryIsoCode is not empty");
         i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
         transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
         return shortNumberInfo.IsEmergencyNumber(formatString, countryIsoCode);
     }
+    TELEPHONY_LOGI("IsEmergencyCallProcessing, return false.");
     return false;
 }
 } // namespace Telephony

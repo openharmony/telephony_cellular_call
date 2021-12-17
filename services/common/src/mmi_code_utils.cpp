@@ -25,11 +25,6 @@
 
 namespace OHOS {
 namespace Telephony {
-MMICodeUtils::MMICodeUtils()
-{
-    TELEPHONY_LOGD("MMICodeUtils entry.");
-}
-
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
     return StandardizeUtils::HashCompileTime(p);
@@ -138,8 +133,9 @@ bool MMICodeUtils::ExecuteMmiCode()
 
 bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 {
-    std::regex pattern(
-        "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)");
+    std::string symbols =
+        "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)";
+    std::regex pattern(symbols);
     std::smatch results;
     if (regex_match(analyseString, results, pattern)) {
         TELEPHONY_LOGI("MMICodeUtils::RegexMatchMmi, regex_match ture");
@@ -181,6 +177,11 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
         return true;
     }
     return false;
+}
+
+MMIData MMICodeUtils::GetMMIData()
+{
+    return mmiData_;
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -27,12 +27,12 @@ public:
     /**
      *  EmergencyUtils constructor
      */
-    EmergencyUtils();
+    EmergencyUtils() = default;
 
     /**
      *  ~EmergencyUtils destructor
      */
-    virtual ~EmergencyUtils() = default;
+    ~EmergencyUtils() = default;
 
     /**
      * @brief Is it an emergency call

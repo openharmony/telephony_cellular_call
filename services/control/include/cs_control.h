@@ -18,22 +18,19 @@
 
 #include "call_manager_inner_type.h"
 
-#include "singleton.h"
-#include "hril_call_parcel.h"
-#include "event_handler.h"
-#include "core_manager.h"
 #include "cellular_call_connection_cs.h"
-#include "mmi_handler.h"
+#include "control_base.h"
 
 namespace OHOS {
 namespace Telephony {
-class CSControl {
+using CsConnectionMap = std::map<std::string, CellularCallConnectionCS>;
+class CSControl : public ControlBase {
 public:
     /**
      *  new CSControl
      *
      */
-    CSControl();
+    CSControl() = default;
 
     /**
      * ~CSControl destructor
@@ -51,10 +48,10 @@ public:
      * @param CellularCallInfo
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Dial(const CellularCallInfo &callInfo);
+    int32_t Dial(const CellularCallInfo &callInfo) override;
 
     /**
-     * CSControl End
+     * CSControl HangUp
      *
      * 27007-430_2001 7.13 Call related supplementary services +CHLD
      * 3GPP TS 22.030 [19]
@@ -64,7 +61,7 @@ public:
      * @param CellularCallInfo
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t End(const CellularCallInfo &callInfo);
+    int32_t HangUp(const CellularCallInfo &callInfo);
 
     /**
      * CSControl Answer
@@ -76,7 +73,7 @@ public:
      * @param CellularCallInfo
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Answer(const CellularCallInfo &callInfo);
+    int32_t Answer(const CellularCallInfo &callInfo) override;
 
     /**
      * CSControl Reject
@@ -88,10 +85,10 @@ public:
      * @param CellularCallInfo
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Reject(const CellularCallInfo &callInfo);
+    int32_t Reject(const CellularCallInfo &callInfo) override;
 
     /**
-     * CSControl Hold
+     * CSControl HoldCall
      *
      * 22083-400_2001 2 Call hold
      * 3GPP TS 22.030 [3]
@@ -101,10 +98,10 @@ public:
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Hold();
+    int32_t HoldCall() override;
 
     /**
-     * CSControl Active
+     * CSControl UnHoldCall
      *
      * 22083-400_2001 2 Call hold
      * 3GPP TS 22.030 [3]
@@ -113,10 +110,10 @@ public:
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Active();
+    int32_t UnHoldCall() override;
 
     /**
-     * CSControl Swap
+     * CSControl SwitchCall
      *
      * 22083-400_2001 2 Call hold
      * 3GPP TS 22.030 [3]
@@ -125,10 +122,10 @@ public:
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Swap();
+    int32_t SwitchCall() override;
 
     /**
-     * CSControl Join
+     * CSControl CombineConference
      *
      * 22084-400_2001 1.3.8.2	Managing an active multiParty call
      * 3GPP TS 22.030
@@ -136,10 +133,10 @@ public:
      * Add another remote party
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t Join();
+    int32_t CombineConference() override;
 
     /**
-     * CSControl Split
+     * CSControl SeparateConference
      *
      * 22084-400_2001 1.3.8.2	Managing an active multiParty call
      * 3GPP TS 22.030
@@ -149,7 +146,7 @@ public:
      * @param index
      * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t Split(const std::string &splitString, int32_t index);
+    int32_t SeparateConference(const std::string &splitString, int32_t index);
 
     /**
      * CSControl CallSupplement
@@ -163,51 +160,17 @@ public:
     int32_t CallSupplement(CallSupplementType type);
 
     /**
-     * CSControl TransmitDTMF
+     * Send Dtmf String
      *
      * 23014-400_2001 6	Support of DTMF across the air interface
      * 3GPP TS 22.030
      *
-     * @param DTMF Code
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
-     */
-    int32_t TransmitDTMF(char cDTMFCode, const std::string &phoneNum);
-
-    /**
-     * CSControl InitiateDTMF
-     *
-     * 23014-400_2001 6	Support of DTMF across the air interface
-     * 3GPP TS 22.030
-     *
-     * START DTMF : Containing the digit value (0-9,A,B,C,D,*,#)
-     * @param DTMF Code
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
-     */
-    int32_t InitiateDTMF(char cDTMFCode, const std::string &phoneNum);
-
-    /**
-     * CSControl CeaseDTMF
-     *
-     * 23014-400_2001 6	Support of DTMF across the air interface
-     * 3GPP TS 22.030
-     *
-     * STOP DTMF : No further info
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
-     */
-    int32_t CeaseDTMF(const std::string &phoneNum);
-
-    /**
-     * Send DTMF String
-     *
-     * 23014-400_2001 6	Support of DTMF across the air interface
-     * 3GPP TS 22.030
-     *
-     * @param sDTMFCode
+     * @param sDtmfCode
      * @param on the DTMF ON length in milliseconds, or 0 for default
      * @param off the DTMF OFF length in milliseconds, or 0 for default
      * @return Returns true for MMI was successfully executed, otherwise not the MMI process
      */
-    int32_t TransmitDTMFString(const std::string &sDTMFCode, int32_t switchOn, int32_t switchOff);
+    int32_t SendDtmfString(const std::string &sDtmfCode, int32_t switchOn, int32_t switchOff);
 
     /**
      * CSControl ReleaseAllConnection
@@ -215,66 +178,19 @@ public:
     void ReleaseAllConnection();
 
     /**
+     * CSControl GetConnectionMap
+     *
+     * @return CsConnectionMap
+     */
+    CsConnectionMap GetConnectionMap();
+
+    /**
      * CSControl DealCsCallsData.
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int DealCsCallsData(const CallInfoList &callInfoList);
-
-    /**
-     * Set Slot Id
-     * @param id
-     */
-    void SetSlotId(int32_t id);
-
-    /**
-     * GetMMIHandler
-     * @return std::shared_ptr<MMIHandler>
-     */
-    std::shared_ptr<MMIHandler> GetMMIHandler();
+    int32_t ReportCallsData(const CallInfoList &callInfoList) override;
 
 private:
-    /**
-     * Determines if a connection is currently in this state
-     * @param TelCallState
-     * @return Returns true or false
-     */
-    bool IsInState(TelCallState state);
-
-    /**
-     * Determine whether the call can be initiated currently
-     * @return Returns true can to call
-     */
-    bool CanCall();
-
-    /**
-     * CSControl SetConnectionData
-     * @param string phoneNUm
-     * @param CellularCallConnectionCS
-     * @return bool
-     */
-    bool SetConnectionData(const std::string &key, CellularCallConnectionCS &pConnectionCS);
-
-    /**
-     * CSControl GetConnectionData
-     * @param string phoneNUm
-     * @return CellularCallConnectionCS pointer
-     */
-    CellularCallConnectionCS *GetConnectionData(const std::string &key);
-
-    /**
-     * CSControl FindConnectionByState
-     * @param TelCallState
-     * @return CellularCallConnectionCS pointer
-     */
-    CellularCallConnectionCS *FindConnectionByState(TelCallState state);
-
-    /**
-     * CSControl FindConnectionByIndex
-     * @param index
-     * @return CellularCallConnectionCS pointer
-     */
-    CellularCallConnectionCS *FindConnectionByIndex(int32_t index);
-
     /**
      * Calculate International Roaming
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -315,14 +231,6 @@ private:
     void DeleteConnection(CallsReportInfo &callsResponseInfo, const CallInfoList &callInfoList);
 
     /**
-     * Dial MMI Code
-     * @param CellularCallInfo
-     * @param std::string dialString
-     * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t DialMMI(const CellularCallInfo &callInfo, const std::string &dialString);
-
-    /**
      * Dial Cdma
      * @param CellularCallInfo
      * @param std::string dialString
@@ -334,15 +242,9 @@ private:
      *  Dial Gsm
      * @param CellularCallInfo
      * @param std::string phoneNum
-     * @param CLIRMode clirMode
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t DialGsm(const CellularCallInfo &callInfo, const std::string &phoneNum, CLIRMode &clirMode);
-
-    /**
-     * CSControl init
-     */
-    bool Init();
+    int32_t DialGsm(const CellularCallInfo &callInfo, const std::string &phoneNum);
 
     /**
      * Encapsulate Dial Common
@@ -352,20 +254,8 @@ private:
      */
     int32_t EncapsulateDialCommon(const std::string &phoneNum, CLIRMode &clirMode);
 
-    /**
-     * is DTMF Key
-     * 23014-400_2001 6	Support of DTMF across the air interface
-     * 3GPP TS 22.030
-     * @param char
-     * @returns bool
-     */
-    bool IsDTMFKey(char c);
-
 private:
-    std::map<std::string, CellularCallConnectionCS> connectionMap_; // save callConnection map
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
-    std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
-    std::shared_ptr<MMIHandler> handler_;
+    CsConnectionMap connectionMap_; // save callConnection map
     const int32_t VOICE_CALL = 0;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CSControl"};
 };

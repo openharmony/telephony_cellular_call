@@ -52,18 +52,18 @@ private:
     void GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetCallWaitResponse.
+     * GetCallWaitingResponse.
      *
      * @param mmi code process
      */
-    void GetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetCallWaitResponse.
+     * SetCallWaitingResponse.
      *
      * @param mmi code process
      */
-    void SetCallWaitResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * GetClirResponse.
@@ -94,11 +94,11 @@ private:
     void GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetCallTransferResponse.
+     * SetCallTransferInfoResponse.
      *
      * @param mmi code process
      */
-    void SetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * GetCallRestrictionResponse.

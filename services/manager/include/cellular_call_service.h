@@ -48,12 +48,16 @@ public:
     void OnStop() override;
 
     /**
-     * service OnDump
+     * service dump
+     *
+     * @param fd
+     * @param args
+     * @return
      */
-    void OnDump() override;
+    int32_t Dump(std::int32_t fd, const std::vector<std::u16string> &args) override;
 
     /**
-     * Register Handler
+     * RegisterHandler
      */
     void RegisterHandler();
 
@@ -62,6 +66,24 @@ public:
      * @return CellularCallHandler
      */
     std::shared_ptr<CellularCallHandler> GetHandler(int32_t slot);
+
+    /**
+     * Get bindTime_
+     * @return int64_t
+     */
+    std::string GetBindTime();
+
+    /**
+     * Get GetEndTime
+     * @return int64_t
+     */
+    std::string GetEndTime();
+
+    /**
+     * Get GetSpendTime
+     * @return int64_t
+     */
+    std::string GetSpendTime();
 
 private:
     /**
@@ -86,16 +108,18 @@ private:
     void HandlerResetUnRegister();
 
     /**
-     * ThreadRegister
+     * SendEventRegisterHandler
      */
-    void AsynchronousRegister();
+    void SendEventRegisterHandler();
 
 private:
     const uint32_t CONNECT_MAX_TRY_COUNT = 20;
     const uint32_t CONNECT_SERVICE_WAIT_TIME = 2000; // ms
+    int64_t bindTime_ = 0L;
+    int64_t endTime_ = 0L;
+    int64_t spendTime_ = 0L;
     ServiceRunningState state_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
-    std::map<int32_t, std::shared_ptr<CellularCallHandler>> handlerMap_;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallService"};
 };
 } // namespace Telephony

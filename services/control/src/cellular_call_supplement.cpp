@@ -15,12 +15,10 @@
 
 #include "cellular_call_supplement.h"
 
-#include <securec.h>
+#include "securec.h"
 #include "cellular_call_register.h"
 #include "cellular_call_types.h"
-#include "module_service_utils.h"
 #include "standardize_utils.h"
-#include "supplement_request.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -34,8 +32,7 @@ void CellularCallSupplement::GetClip(const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        SupplementRequest supplementRequest;
-        supplementRequest.InquireClipRequest();
+        supplementRequest_.InquireClipRequest();
     }
 }
 
@@ -45,39 +42,31 @@ void CellularCallSupplement::GetClir(const MMIData &mmiData)
     const std::string activate = "*";
     const std::string deactivate = "#";
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGW("GetClir return, actionString is empty!");
+        TELEPHONY_LOGE("GetClir return, actionString is empty!");
         return;
     }
     if (mmiData.actionString == activate) {
-        SupplementRequest supplementRequest;
-        supplementRequest.SetClirActivateRequest(ACTIVATE_ACTION);
+        supplementRequest_.SetClirActivateRequest(ACTIVATE_ACTION);
     } else if (mmiData.actionString == deactivate) {
-        SupplementRequest supplementRequest;
-        supplementRequest.SetClirDeactivateRequest(DEACTIVATE_ACTION);
+        supplementRequest_.SetClirDeactivateRequest(DEACTIVATE_ACTION);
     } else if (mmiData.actionString == interrogate) {
-        SupplementRequest supplementRequest;
-        supplementRequest.InquireClirRequest();
+        supplementRequest_.InquireClirRequest();
     }
 }
 
 void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
-    SupplementRequest supplementRequest;
-    int serviceCode = ObtainServiceCode(mmiData.serviceInfoB);
-    int cause = ObtainCause(mmiData.serviceCode);
+    int32_t serviceCode = ObtainServiceCode(mmiData.serviceInfoB);
+    int32_t cause = ObtainCause(mmiData.serviceCode);
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest.InquireCallTransferRequest(cause);
+        supplementRequest_.GetCallTransferInfoRequest(cause);
         return;
     }
-    const std::string activate = "*";
-    const std::string deactivate = "#";
-    const std::string regis = "**";
-    const std::string erasure = "##";
     std::string phoneNumber = mmiData.serviceInfoA;
-    int callForwardAction;
+    int32_t callForwardAction;
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGW("DealCallTransfer return, actionString is empty!");
+        TELEPHONY_LOGE("DealCallTransfer return, actionString is empty!");
         return;
     }
 
@@ -85,31 +74,37 @@ void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
     // 3GPP TS 24.082 V4.0.0 (2001-03) 2 Call Forwarding on mobile subscriber Busy (CFB)
     // 3GPP TS 24.082 V4.0.0 (2001-03) 3 Call Forwarding on No Reply (CFNRy)
     // 3GPP TS 24.082 V4.0.0 (2001-03) 4 Call Forwarding on mobile subscriber Not Reachable (CFNRc)
-    if (mmiData.actionString == activate) {
-        if (phoneNumber.empty()) {
-            callForwardAction = CallTransferSettingType::ENABLE;
-        } else {
-            callForwardAction = CallTransferSettingType::REGISTRATION;
-        }
-    } else if (mmiData.actionString == deactivate) {
-        callForwardAction = CallTransferSettingType::DISABLE;
-    } else if (mmiData.actionString == regis) {
-        callForwardAction = CallTransferSettingType::REGISTRATION;
-    } else if (mmiData.actionString == erasure) {
-        callForwardAction = CallTransferSettingType::ERASURE;
-    } else {
-        callForwardAction = TELEPHONY_ERROR;
+    switch (StandardizeUtils::Hash_(mmiData.actionString.c_str())) {
+        case "*"_hash:
+            if (phoneNumber.empty()) {
+                callForwardAction = CallTransferSettingType::CALL_TRANSFER_ENABLE;
+            } else {
+                callForwardAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+            }
+            break;
+        case "#"_hash:
+            callForwardAction = CallTransferSettingType::CALL_TRANSFER_DISABLE;
+            break;
+        case "**"_hash:
+            callForwardAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+            break;
+        case "##"_hash:
+            callForwardAction = CallTransferSettingType::CALL_TRANSFER_ERASURE;
+            break;
+        default:
+            callForwardAction = TELEPHONY_ERROR;
+            break;
     }
-    supplementRequest.SetCallTransferRequest(callForwardAction, cause, phoneNumber, serviceCode);
+    supplementRequest_.SetCallTransferInfoRequest(callForwardAction, cause, phoneNumber, serviceCode);
 }
 
-int CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
+int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
 {
     if (serviceInfoB.empty()) {
-        TELEPHONY_LOGW("ObtainServiceCode return, serviceInfoB is empty!");
+        TELEPHONY_LOGE("ObtainServiceCode return, serviceInfoB is empty!");
         return NONE;
     }
-    int intServiceInfoB = atoi(serviceInfoB.c_str());
+    int32_t intServiceInfoB = atoi(serviceInfoB.c_str());
     switch (intServiceInfoB) {
         case ALL_TELE_SERVICES:
             return SHORT_MESSAGE_SERVICE + FAX + VOICE;
@@ -140,10 +135,10 @@ int CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
     }
 }
 
-int CellularCallSupplement::ObtainCause(const std::string &actionStr)
+int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
 {
     if (actionStr.empty()) {
-        TELEPHONY_LOGW("ObtainCause return, actionStr is empty!");
+        TELEPHONY_LOGE("ObtainCause return, actionStr is empty!");
         return TELEPHONY_ERROR;
     }
 
@@ -158,14 +153,15 @@ int CellularCallSupplement::ObtainCause(const std::string &actionStr)
      */
     switch (StandardizeUtils::Hash_(actionStr.c_str())) {
         case "21"_hash:
-            return UNCONDITIONAL;
+            return TRANSFER_TYPE_UNCONDITIONAL;
         case "67"_hash:
-            return MOBILE_BUSY;
+            return TRANSFER_TYPE_BUSY;
         case "62"_hash:
-            return NOT_REACHABLE;
+            return TRANSFER_TYPE_NOT_REACHABLE;
         case "61"_hash:
-            return NO_REPLY;
+            return TRANSFER_TYPE_NO_REPLY;
         default:
+            TELEPHONY_LOGE("ObtainCause return, actionStr out of range!");
             return TELEPHONY_ERROR;
     }
 }
@@ -178,53 +174,65 @@ void CellularCallSupplement::DealCallRestriction(const MMIData &mmiData)
     const std::string activate = "*";
     const std::string deactivate = "#";
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGW("DealCallRestriction return, actionString is empty!");
+        TELEPHONY_LOGE("DealCallRestriction return, actionString is empty!");
         return;
     }
-    SupplementRequest supplementRequest;
     if (mmiData.actionString == interrogate) {
-        supplementRequest.InquireCallRestriction(facType);
+        supplementRequest_.GetCallRestrictionRequest(facType);
     } else if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest.SetCallRestriction(facType, mmiData.actionString == activate, infoA);
+        supplementRequest_.SetCallRestrictionRequest(facType, mmiData.actionString == activate, infoA);
     }
 }
 
 std::string CellularCallSupplement::ObtainBarringInstallation(const std::string &serviceInfoC)
 {
     if (serviceInfoC.empty()) {
-        TELEPHONY_LOGW("ObtainBarringInstallation return, serviceInfoC is empty!");
+        TELEPHONY_LOGE("ObtainBarringInstallation return, serviceInfoC is empty!");
         return std::string();
     }
 
-    // 27007-430_2001 7.4	Facility lock +CLCK
+    /*
+     * 27007-430_2001 7.4	Facility lock +CLCK
+     *  Supplementary	Service Service	Code	SIA	SIB	SIC
+     * 	22.088
+     * 	BAOC	            33	                 PW	BS	-
+     * 	BAOIC	            331	                 PW	BS	-
+     * 	BAOIC exc home	    332	                 PW	BS	-
+     * 	BAIC	            35	                 PW	BS	-
+     * 	BAIC roaming	    351	                 PW	BS	-
+     *  all Barring Serv.   330	                 PW	BS	-
+     *  Outg. Barr. Serv.   333	                 PW	BS
+     *  Inc. Barr. Serv.	353	                 PW	BS
+     */
     switch (StandardizeUtils::Hash_(serviceInfoC.c_str())) {
         case "33"_hash:
             // "AO"	BAOC (Barr All Outgoing Calls) (refer 3GPP TS 22.088 [6] clause 1)
-            return "AO";
+            return BARR_ALL_OUTGOING_CALLS;
         case "331"_hash:
             // "OI"	BOIC (Barr Outgoing International Calls) (refer 3GPP TS 22.088 [6] clause 1)
-            return "OI";
+            return BARR_OUTGOING_INTERNATIONAL_CALLS;
         case "332"_hash:
             // "OX"	BOIC exHC (Barr Outgoing International Calls except to Home Country)
             // (refer 3GPP TS 22.088 [6] clause 1)
-            return "OX";
+            return BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
         case "351"_hash:
             // "IR"	BIC Roam (Barr Incoming Calls when Roaming outside the home country)
             // (refer 3GPP TS 22.088 [6] clause 2)
-            return "IR";
+            return BARR_INCOMING_CALLS_OUTSIDE_HOME;
         case "35"_hash:
             // "AI"	BAIC (Barr All Incoming Calls) (refer 3GPP TS 22.088 [6] clause 2)
-            return "AI";
+            return BARR_ALL_INCOMING_CALLS;
         case "330"_hash:
             // "AB"	All Barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
-            return "AB";
+            return ALL_BARRING_SERVICES;
         case "333"_hash:
             // "AG"	All outGoing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
-            return "AG";
+            return ALL_OUTGOING_BARRING_SERVICES;
         case "353"_hash:
             // "AC"	All inComing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
-            return "AC";
+            return ALL_INCOMING_BARRING_SERVICES;
         default:
+            TELEPHONY_LOGE("ObtainBarringInstallation return, serviceInfoC out of range!");
             return std::string();
     }
 }
@@ -232,26 +240,25 @@ std::string CellularCallSupplement::ObtainBarringInstallation(const std::string 
 void CellularCallSupplement::DealCallWaiting(const MMIData &mmiData)
 {
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGW("DealCallWaiting return, actionString is empty!");
+        TELEPHONY_LOGE("DealCallWaiting return, actionString is empty!");
         return;
     }
     const std::string activate = "*";
     const std::string deactivate = "#";
     const std::string interrogate = "*#";
-    SupplementRequest supplementRequest;
     if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest.SetCallWaitingRequest(mmiData.actionString == activate);
+        supplementRequest_.SetCallWaitingRequest(mmiData.actionString == activate);
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest.InquireCallWaitingRequest();
+        supplementRequest_.GetCallWaitingRequest();
     }
 }
 
-void CellularCallSupplement::EventInquireCallWait(CallWaitResult &waitingInfo)
+void CellularCallSupplement::EventGetCallWaiting(CallWaitResult &waitingInfo)
 {
     CallWaitResponse callWaitResponse;
     callWaitResponse.result = waitingInfo.result;
 
-    /**
+    /*
      * <n> (sets/shows the result code presentation status in the TA):
      * 0	disable
      * 1	enable
@@ -262,10 +269,18 @@ void CellularCallSupplement::EventInquireCallWait(CallWaitResult &waitingInfo)
         TELEPHONY_LOGE("EventInquireCallWait return, GetInstance is nullptr.");
         return;
     }
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if (waitingInfo.result) {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_WAITING_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_WAITING_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetWaitingResult(callWaitResponse);
 }
 
-void CellularCallSupplement::EventSetCallWait(HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSetCallWaiting(HRilRadioResponseInfo &responseInfo)
 {
     CallWaitResponse callWaitResponse;
     callWaitResponse.result = static_cast<int32_t>(responseInfo.error);
@@ -273,13 +288,21 @@ void CellularCallSupplement::EventSetCallWait(HRilRadioResponseInfo &responseInf
         TELEPHONY_LOGE("EventSetCallWait return, GetInstance is nullptr.");
         return;
     }
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if ((int32_t)responseInfo.error) {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_WAITING_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_WAITING_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult(callWaitResponse);
 }
 
-void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &queryResult)
+void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryResult &queryResult)
 {
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventInquireCallTransfer return, GetInstance is nullptr.");
+        TELEPHONY_LOGE("EventGetCallTransferInfo return, GetInstance is nullptr.");
         return;
     }
 
@@ -288,7 +311,7 @@ void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &qu
     callTransferResponse.result = queryResult.result;
 
     /*
-     * <status>:0	not active    1	  active
+     * <status>:0	not active;    1	  active
      * */
     callTransferResponse.status = queryResult.status;
 
@@ -310,15 +333,31 @@ void CellularCallSupplement::EventInquireCallTransfer(CallForwardQueryResult &qu
     // default 145 when dialling string includes international access code character "+", otherwise 129
     callTransferResponse.type = queryResult.type;
 
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if (queryResult.result) {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_TRANSFER_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_TRANSFER_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetTransferResult(callTransferResponse);
 }
 
-void CellularCallSupplement::EventSetCallTransfer(HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo)
 {
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetCallTransfer return, GetInstance is nullptr.");
+        TELEPHONY_LOGE("EventSetCallTransferInfo return, GetInstance is nullptr.");
         return;
     }
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if ((int32_t)responseInfo.error) {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_TRANSFER_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_TRANSFER_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetTransferResult((int32_t)responseInfo.error);
 }
 
@@ -328,15 +367,24 @@ void CellularCallSupplement::EventGetCallRestriction(const CallRestrictionResult
         TELEPHONY_LOGE("EventGetCallRestriction return, GetInstance is nullptr.");
         return;
     }
-    CallRestrictionResponse callRestrictionResponse;
-    callRestrictionResponse.result = result.result;
+    CallRestrictionResponse response;
+    response.result = result.result;
 
     /*
      * <status>:0	not active    1	  active
      */
-    callRestrictionResponse.status = result.status;
-    callRestrictionResponse.classCw = result.classCw;
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetRestrictionResult(callRestrictionResponse);
+    response.status = result.status;
+    response.classCw = result.classCw;
+
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if (result.result) {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_RESTRICTION_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_RESTRICTION_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetRestrictionResult(response);
 }
 
 void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info)
@@ -345,21 +393,29 @@ void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info
         TELEPHONY_LOGE("EventSetCallRestriction return, GetInstance is nullptr.");
         return;
     }
+    CellularCallEventInfo eventInfo;
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    if ((int32_t)info.error) {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_RESTRICTION_FAILED;
+    } else {
+        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_RESTRICTION_SUCCESS;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult((int32_t)info.error);
 }
 
-int32_t CellularCallSupplement::SetCallTransfer(const CallTransferInfo &cfInfo)
+int32_t CellularCallSupplement::SetCallTransferInfo(const CallTransferInfo &cfInfo)
 {
     if (!PhoneTypeGsmOrNot()) {
-        TELEPHONY_LOGE("SetCallTransfer return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        TELEPHONY_LOGE("SetCallTransferInfo return, network type is not supported!");
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
     if (strlen(cfInfo.transferNum) == 0) {
-        TELEPHONY_LOGE("SetCallTransfer return, transferNum is empty!");
-        return ERR_PHONE_NUMBER_EMPTY;
+        TELEPHONY_LOGE("SetCallTransferInfo return, transferNum is empty!");
+        return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
 
-    /**
+    /*
      * <reason>:
      * 0   unconditional
      * 1   mobile busy
@@ -374,67 +430,63 @@ int32_t CellularCallSupplement::SetCallTransfer(const CallTransferInfo &cfInfo)
      * 3   registration
      * 4   erasure
      */
-    if (cfInfo.type > CallTransferType::NOT_REACHABLE || cfInfo.type < CallTransferType::UNCONDITIONAL ||
-        cfInfo.settingType > CallTransferSettingType::ERASURE ||
-        cfInfo.settingType < CallTransferSettingType::REGISTRATION) {
-        TELEPHONY_LOGE("SetCallTransfer return, parameter out of range!");
-        return ERR_PARAMETER_OUT_OF_RANGE;
+    if (cfInfo.type > CallTransferType::TRANSFER_TYPE_NOT_REACHABLE ||
+        cfInfo.type < CallTransferType::TRANSFER_TYPE_UNCONDITIONAL ||
+        cfInfo.settingType > CallTransferSettingType::CALL_TRANSFER_ERASURE ||
+        cfInfo.settingType < CallTransferSettingType::CALL_TRANSFER_DISABLE) {
+        TELEPHONY_LOGE("SetCallTransferInfo return, parameter out of range!");
+        return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
-    SupplementRequest supplementRequest;
+
     std::string dialString(cfInfo.transferNum);
-    return supplementRequest.SetCallTransferRequest(cfInfo.settingType, cfInfo.type, dialString, 1);
+    return supplementRequest_.SetCallTransferInfoRequest(cfInfo.settingType, cfInfo.type, dialString, 1);
 }
 
-int32_t CellularCallSupplement::InquireCallTransfer(CallTransferType type)
+int32_t CellularCallSupplement::GetCallTransferInfo(CallTransferType type)
 {
     if (!PhoneTypeGsmOrNot()) {
-        TELEPHONY_LOGE("InquireCallTransfer return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        TELEPHONY_LOGE("GetCallTransferInfo return, network type is not supported!");
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
 
-    /**
+    /*
      * When querying the status of a network service (<mode>=2) the response line for 'not active' case
      * (<status>=0) should be returned only if service is not active for any <class>
      */
-    SupplementRequest supplementRequest;
-    return supplementRequest.InquireCallTransferRequest(type);
+    return supplementRequest_.GetCallTransferInfoRequest(type);
 }
 
 bool CellularCallSupplement::PhoneTypeGsmOrNot()
 {
-    ModuleServiceUtils moduleServiceUtils;
-    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
-    return moduleServiceUtils.GetNetworkStatus(slot) == RadioTech::RADIO_TECHNOLOGY_GSM;
+    return moduleServiceUtils_.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == RadioTech::RADIO_TECHNOLOGY_GSM;
 }
 
 int32_t CellularCallSupplement::SetCallWaiting(bool activate)
 {
-    /**
+    /*
      * <n> (sets/shows the result code presentation status in the TA):
      * 0	disable
      * 1	enable
      */
     if (!PhoneTypeGsmOrNot()) {
         TELEPHONY_LOGE("SetCallWaiting return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    SupplementRequest supplementRequest;
-    return supplementRequest.SetCallWaitingRequest(activate);
+    return supplementRequest_.SetCallWaitingRequest(activate);
 }
 
-int32_t CellularCallSupplement::InquireCallWaiting()
+int32_t CellularCallSupplement::GetCallWaiting()
 {
     if (!PhoneTypeGsmOrNot()) {
-        TELEPHONY_LOGE("InquireCallWaiting return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        TELEPHONY_LOGE("GetCallWaiting return, network type is not supported!");
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    SupplementRequest supplementRequest;
-    return supplementRequest.InquireCallWaitingRequest();
+    return supplementRequest_.GetCallWaitingRequest();
 }
 
 int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cRInfo)
 {
-    /**
+    /*
      * <fac> values reserved by the present document:
      * "SC"	SIM (lock SIM/UICC card) (SIM/UICC asks password in ME power up and when this lock command issued)
      * "AO"	BAOC (Barr All Outgoing Calls) (refer 3GPP TS 22.088 [6] clause 1)
@@ -448,68 +500,85 @@ int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cR
      */
     if (!PhoneTypeGsmOrNot()) {
         TELEPHONY_LOGE("SetCallRestriction return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
 
     std::string fac;
     switch (cRInfo.fac) {
         case RESTRICTION_TYPE_ALL_OUTGOING:
-            fac = "AO";
+            fac = BARR_ALL_OUTGOING_CALLS;
             break;
         case RESTRICTION_TYPE_INTERNATIONAL:
-            fac = "OI";
+            fac = BARR_OUTGOING_INTERNATIONAL_CALLS;
             break;
         case RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
-            fac = "OX";
+            fac = BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
             break;
         case RESTRICTION_TYPE_ALL_INCOMING:
-            fac = "AI";
+            fac = BARR_ALL_INCOMING_CALLS;
             break;
         case RESTRICTION_TYPE_ROAMING_INCOMING:
-            fac = "IR";
+            fac = BARR_INCOMING_CALLS_OUTSIDE_HOME;
+            break;
+        case RESTRICTION_TYPE_ALL_CALLS:
+            fac = ALL_BARRING_SERVICES;
+            break;
+        case RESTRICTION_TYPE_OUTGOING_SERVICES:
+            fac = ALL_OUTGOING_BARRING_SERVICES;
+            break;
+        case RESTRICTION_TYPE_INCOMING_SERVICES:
+            fac = ALL_INCOMING_BARRING_SERVICES;
             break;
         default:
             TELEPHONY_LOGE("SetCallRestriction return, fac parameter out of range!");
-            return ERR_PARAMETER_OUT_OF_RANGE;
+            return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
     if (cRInfo.mode < CallRestrictionMode::RESTRICTION_MODE_DEACTIVATION ||
         cRInfo.mode > CallRestrictionMode::RESTRICTION_MODE_ACTIVATION) {
         TELEPHONY_LOGE("SetCallRestriction return, mode parameter out of range!");
-        return ERR_PARAMETER_OUT_OF_RANGE;
+        return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
-    SupplementRequest supplementRequest;
     std::string info(cRInfo.password);
-    return supplementRequest.SetCallRestriction(fac, cRInfo.mode, info);
+    return supplementRequest_.SetCallRestrictionRequest(fac, cRInfo.mode, info);
 }
 
-int32_t CellularCallSupplement::InquireCallRestriction(CallRestrictionType facType)
+int32_t CellularCallSupplement::GetCallRestriction(CallRestrictionType facType)
 {
     if (!PhoneTypeGsmOrNot()) {
-        TELEPHONY_LOGE("InquireCallRestriction return, network type is not supported!");
-        return ERR_NETWORK_TYPE;
+        TELEPHONY_LOGE("GetCallRestriction return, network type is not supported!");
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
     std::string fac;
     switch (facType) {
         case RESTRICTION_TYPE_ALL_OUTGOING:
-            fac = "AO";
+            fac = BARR_ALL_OUTGOING_CALLS;
             break;
         case RESTRICTION_TYPE_INTERNATIONAL:
-            fac = "OI";
+            fac = BARR_OUTGOING_INTERNATIONAL_CALLS;
             break;
         case RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
-            fac = "OX";
+            fac = BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
             break;
         case RESTRICTION_TYPE_ALL_INCOMING:
-            fac = "AI";
+            fac = BARR_ALL_INCOMING_CALLS;
             break;
         case RESTRICTION_TYPE_ROAMING_INCOMING:
-            fac = "IR";
+            fac = BARR_INCOMING_CALLS_OUTSIDE_HOME;
+            break;
+        case RESTRICTION_TYPE_ALL_CALLS:
+            fac = ALL_BARRING_SERVICES;
+            break;
+        case RESTRICTION_TYPE_OUTGOING_SERVICES:
+            fac = ALL_OUTGOING_BARRING_SERVICES;
+            break;
+        case RESTRICTION_TYPE_INCOMING_SERVICES:
+            fac = ALL_INCOMING_BARRING_SERVICES;
             break;
         default:
-            return ERR_PARAMETER_OUT_OF_RANGE;
+            TELEPHONY_LOGE("GetCallRestriction return, parameter out of range!");
+            return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
-    SupplementRequest supplementRequest;
-    return supplementRequest.InquireCallRestriction(fac);
+    return supplementRequest_.GetCallRestrictionRequest(fac);
 }
 
 void CellularCallSupplement::EventGetClip(GetClipResult &getClipResult)
