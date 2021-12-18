@@ -13,27 +13,13 @@
  * limitations under the License.
  */
 
-#include "standardize_utils.h"
-#include "telephony_log_wrapper.h"
+#include "base_request.h"
 
 namespace OHOS {
 namespace Telephony {
-std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &phoneString)
+std::shared_ptr<Core> BaseRequest::GetCore(int32_t slotId)
 {
-    std::string newString;
-
-    if (phoneString.empty()) {
-        TELEPHONY_LOGE("RemoveSeparatorsPhoneNumber return, phoneStr is empty.");
-        return newString;
-    }
-
-    for (char c : phoneString) {
-        if ((c >= '0' && c <= '9') || c == '*' || c == '#' || c == '+' || c == 'N' || c == ',' || c == ';') {
-            newString += c;
-        }
-    }
-
-    return newString;
+    return CoreManager::GetInstance().getCore(slotId);
 }
 } // namespace Telephony
 } // namespace OHOS

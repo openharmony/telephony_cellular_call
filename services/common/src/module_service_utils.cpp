@@ -20,19 +20,20 @@
 
 namespace OHOS {
 namespace Telephony {
-int32_t ModuleServiceUtils::GetRadioStatus(int32_t slotId)
+bool ModuleServiceUtils::GetRadioState(int32_t slotId)
 {
     if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioStatus error, return.");
-        return ERR_RESOURCE_UNAVAILABLE;
+        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioState error, return.");
+        return false;
     }
 
-    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
-    if (networkSearchManager_ == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioStatus error.");
-        return ERR_GET_RADIO_STATE;
+    int32_t ret = GetCore(slotId)->GetRadioState();
+    if (ret != static_cast<int32_t>(ModemPowerState::CORE_SERVICE_POWER_ON)) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioState radio off.");
+        return false;
     }
-    return networkSearchManager_->GetRadioState();
+    TELEPHONY_LOGI("ModuleServiceUtils::GetRadioState radio on.");
+    return true;
 }
 
 RadioTech ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
@@ -41,17 +42,6 @@ RadioTech ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
         TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus error, return.");
         return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
     }
-    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
-    if (networkSearchManager_ == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus ERROR");
-        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
-    }
-    if (networkSearchManager_->GetNetworkStatus(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus GetNetworkStatus() is nullptr");
-        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
-    }
-    auto type = static_cast<RadioTech>(networkSearchManager_->GetCsRadioTech(slotId));
-    TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus network type is %{public}d", type);
     return RadioTech::RADIO_TECHNOLOGY_GSM;
 }
 
@@ -61,12 +51,7 @@ std::string ModuleServiceUtils::GetIsoCountryCode(int32_t slotId)
         TELEPHONY_LOGE("ModuleServiceUtils::GetIsoCountryCode error, return.");
         return std::string();
     }
-    auto simFileManager = GetCore(slotId)->GetSimFileManager();
-    if (simFileManager == nullptr) {
-        TELEPHONY_LOGE("simFileManager::GetIsoCountryCode ERROR");
-        return std::string();
-    }
-    return Str16ToStr8(simFileManager->GetIsoCountryCodeForSim(slotId));
+    return Str16ToStr8(GetCore(slotId)->GetISOCountryCodeForSim(slotId));
 }
 
 std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
@@ -75,12 +60,16 @@ std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
         TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkCountryCode error, return.");
         return std::string();
     }
-    auto networkSearchManager_ = GetCore(slotId)->GetNetworkSearchManager();
-    if (networkSearchManager_ == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkCountryCode error");
-        return std::string();
+    return Str16ToStr8(GetCore(slotId)->GetIsoCountryCodeForNetwork(slotId));
+}
+
+bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
+{
+    if (GetCore(slotId) == nullptr) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetImsRegistrationState error, return.");
+        return false;
     }
-    return Str16ToStr8(networkSearchManager_->GetIsoCountryCodeForNetwork(slotId));
+    return GetCore(slotId)->GetImsRegStatus();
 }
 
 std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()

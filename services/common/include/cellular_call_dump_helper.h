@@ -13,27 +13,31 @@
  * limitations under the License.
  */
 
-#include "standardize_utils.h"
+#ifndef TELEPHONY_CELLULAR_CALL_DUMP_HELPER_H
+#define TELEPHONY_CELLULAR_CALL_DUMP_HELPER_H
+
+#include <vector>
+#include <string>
+
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
-std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &phoneString)
-{
-    std::string newString;
+class CellularCallDumpHelper {
+public:
+    explicit CellularCallDumpHelper() = default;
+    ~CellularCallDumpHelper() = default;
+    bool Dump(const std::vector<std::string> &args, std::string &result) const;
 
-    if (phoneString.empty()) {
-        TELEPHONY_LOGE("RemoveSeparatorsPhoneNumber return, phoneStr is empty.");
-        return newString;
-    }
+private:
+    void ShowHelp(std::string &result) const;
 
-    for (char c : phoneString) {
-        if ((c >= '0' && c <= '9') || c == '*' || c == '#' || c == '+' || c == 'N' || c == ',' || c == ';') {
-            newString += c;
-        }
-    }
+    void ShowCellularCallInfo(std::string &result) const;
 
-    return newString;
-}
+private:
+    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallDumpHelper"};
+};
 } // namespace Telephony
 } // namespace OHOS
+
+#endif // TELEPHONY_CELLULAR_CALL_DUMP_HELPER_H

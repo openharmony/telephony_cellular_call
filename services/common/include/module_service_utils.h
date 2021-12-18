@@ -28,9 +28,9 @@ public:
     /**
      * Get Cs Radio state
      * @param slotId
-     * @return Radio state
+     * @return bool
      */
-    int32_t GetRadioStatus(int32_t slotId);
+    bool GetRadioState(int32_t slotId);
 
     /**
      * Get Network State
@@ -49,9 +49,16 @@ public:
     /**
      * Get net work Country Code
      * @param slotId
-     * @return new work Country Code
+     * @return Network Country Code
      */
     std::string GetNetworkCountryCode(int32_t slotId);
+
+    /**
+     * Get IMS Domain Registration State
+     * @param slotId
+     * @return Whether to register
+     */
+    bool GetImsRegistrationState(int32_t slotId);
 
     /**
      * Get slot info

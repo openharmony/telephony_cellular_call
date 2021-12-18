@@ -47,21 +47,21 @@ public:
      *
      * @param CellularCallEventInfo
      */
-    void ReportEventResultInfo(CellularCallEventInfo &info);
+    void ReportEventResultInfo(const CellularCallEventInfo &info);
 
     /**
      * ReportGetWaitingResult.
      *
      * @param CallWaitResponse
      */
-    void ReportGetWaitingResult(CallWaitResponse &callWaitResponse);
+    void ReportGetWaitingResult(const CallWaitResponse &response);
 
     /**
      * ReportSetWaitingResult.
      *
      * @param CallWaitResponse
      */
-    void ReportSetWaitingResult(CallWaitResponse &callWaitResponse);
+    void ReportSetWaitingResult(const CallWaitResponse &response);
 
     /**
      * ReportGetRestrictionResult.
@@ -82,7 +82,7 @@ public:
      *
      * @param CallTransferResponse
      */
-    void ReportGetTransferResult(CallTransferResponse &callTransferResponse);
+    void ReportGetTransferResult(const CallTransferResponse &response);
 
     /**
      * ReportSetTransferResult.
@@ -96,21 +96,35 @@ public:
      *
      * @param ClipResponse
      */
-    void ReportGetClipResult(ClipResponse &clipResponse);
+    void ReportGetClipResult(const ClipResponse &clipResponse);
 
     /**
      * ReportGetClirResult.
      *
      * @param ClirResponse
      */
-    void ReportGetClirResult(ClirResponse &clirResponse);
+    void ReportGetClirResult(const ClirResponse &clirResponse);
 
     /**
      * ReportSetClirResult.
      *
      * @param ClirResponse
      */
-    void ReportSetClirResult(ClirResponse &clirResponses);
+    void ReportSetClirResult(const ClirResponse &clirResponses);
+
+    /**
+     * ReportGetCallPreferenceResult.
+     *
+     * @param CallPreferenceResponse
+     */
+    void ReportGetCallPreferenceResult(const CallPreferenceResponse &callPreference);
+
+    /**
+     * ReportGetLteImsSwitchResult.
+     *
+     * @param active
+     */
+    void ReportGetLteImsSwitchResult(const LteImsSwitchResponse &lteImsSwitch);
 
     /**
      * Register CallManagerCallBack

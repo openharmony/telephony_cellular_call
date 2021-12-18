@@ -15,8 +15,6 @@
 
 #include "cs_test.h"
 
-#include <iostream>
-
 #include "iservice_registry.h"
 #include "securec.h"
 #include "system_ability_definition.h"
@@ -24,7 +22,7 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
-const int CELLULAR_CALL_SUCCESS = 0;
+const int32_t CELLULAR_CALL_SUCCESS = 0;
 void CsTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
@@ -39,26 +37,26 @@ void CsTest::SetUp(void)
 {
     // step 3: input testcase setup step
     requestFuncMap_['A'] = &CsTest::Dial;
-    requestFuncMap_['B'] = &CsTest::End;
+    requestFuncMap_['B'] = &CsTest::HangUp;
     requestFuncMap_['C'] = &CsTest::Answer;
     requestFuncMap_['D'] = &CsTest::Reject;
-    requestFuncMap_['E'] = &CsTest::Hold;
-    requestFuncMap_['F'] = &CsTest::Active;
-    requestFuncMap_['G'] = &CsTest::Swap;
-    requestFuncMap_['H'] = &CsTest::IsUrgentCall;
-    requestFuncMap_['I'] = &CsTest::Join;
-    requestFuncMap_['J'] = &CsTest::Split;
+    requestFuncMap_['E'] = &CsTest::HoldCall;
+    requestFuncMap_['F'] = &CsTest::UnHoldCall;
+    requestFuncMap_['G'] = &CsTest::SwitchCall;
+    requestFuncMap_['H'] = &CsTest::IsEmergencyPhoneNumber;
+    requestFuncMap_['I'] = &CsTest::CombineConference;
+    requestFuncMap_['J'] = &CsTest::SeparateConference;
     requestFuncMap_['K'] = &CsTest::CallSupplement;
-    requestFuncMap_['L'] = &CsTest::InitiateDTMF;
-    requestFuncMap_['M'] = &CsTest::CeaseDTMF;
-    requestFuncMap_['N'] = &CsTest::TransmitDTMF;
-    requestFuncMap_['O'] = &CsTest::TransmitDTMFString;
-    requestFuncMap_['P'] = &CsTest::SetCallTransfer;
-    requestFuncMap_['Q'] = &CsTest::InquireCallTransfer;
+    requestFuncMap_['L'] = &CsTest::StartDtmf;
+    requestFuncMap_['M'] = &CsTest::StopDtmf;
+    requestFuncMap_['N'] = &CsTest::SendDtmf;
+    requestFuncMap_['O'] = &CsTest::SendDtmfString;
+    requestFuncMap_['P'] = &CsTest::SetCallTransferInfo;
+    requestFuncMap_['Q'] = &CsTest::GetCallTransferInfo;
     requestFuncMap_['R'] = &CsTest::SetCallWaiting;
-    requestFuncMap_['S'] = &CsTest::InquireCallWaiting;
+    requestFuncMap_['S'] = &CsTest::GetCallWaiting;
     requestFuncMap_['T'] = &CsTest::SetCallRestriction;
-    requestFuncMap_['U'] = &CsTest::InquireCallRestriction;
+    requestFuncMap_['U'] = &CsTest::GetCallRestriction;
     requestFuncMap_['V'] = &CsTest::RegisterCallBack;
 }
 
@@ -67,76 +65,84 @@ void CsTest::TearDown(void)
     // step 3: input testcase teardown step
 }
 
-int CsTest::Dial(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::Dial(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Dial entry.\n");
+    std::cout << "test Dial entry.\n";
     CellularCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
         printf("CellularCallService return, memset_s failed. \n");
-        return ERR_PARAMETER_INVALID;
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     std::cout << "please enter the phone number:";
     std::cin >> callInfo.phoneNum;
     callInfo.videoState = 1;
-    callInfo.callType = TYPE_CS;
     callInfo.slotId = 0;
     telephonyService->Dial(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::End(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::HangUp(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test End entry.\n");
+    std::cout << "test HangUp entry.\n";
     CellularCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
         printf("CellularCallService return, memset_s failed. \n");
-        return ERR_PARAMETER_INVALID;
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
     std::cout << "please enter the phone number:";
     std::cin >> callInfo.phoneNum;
     callInfo.videoState = 1;
-    callInfo.callType = TYPE_CS;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
     callInfo.slotId = 0;
     std::cout << "please enter the connect index:";
     std::cin >> callInfo.index;
 
-    telephonyService->End(callInfo);
+    telephonyService->HangUp(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::Answer(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::Answer(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Answer entry.\n");
+    std::cout << "test Answer entry.\n";
     CellularCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-        printf("CellularCallService return, memset_s failed. \n");
-        return ERR_PARAMETER_INVALID;
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
     std::cout << "please enter the phone number:";
     std::cin >> callInfo.phoneNum;
     callInfo.videoState = 1;
-    callInfo.callType = TYPE_CS;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
     callInfo.slotId = 0;
 
     telephonyService->Answer(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::Reject(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::Reject(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Reject entry.\n");
+    std::cout << "test Reject entry.\n";
     CellularCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-        printf("CellularCallService return, memset_s failed. \n");
-        return ERR_PARAMETER_INVALID;
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
     std::cout << "please enter the phone number:";
     std::cin >> callInfo.phoneNum;
     callInfo.videoState = 1;
-    callInfo.callType = TYPE_CS;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
     callInfo.slotId = 0;
     std::cout << "please enter the connect index:";
     std::cin >> callInfo.index;
@@ -145,58 +151,126 @@ int CsTest::Reject(const sptr<CellularCallInterface> &telephonyService) const
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::Hold(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::HoldCall(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Hold entry.\n");
-    telephonyService->Hold();
+    std::cout << "test HoldCall entry.\n";
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+
+    std::cout << "please enter the phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    telephonyService->HoldCall(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::Active(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::UnHoldCall(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Active entry.\n");
-    telephonyService->Active();
+    std::cout << "test UnHoldCall entry.\n";
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+
+    std::cout << "please enter the phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    telephonyService->UnHoldCall(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::Swap(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SwitchCall(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test Swap entry.\n");
-    telephonyService->Swap();
+    std::cout << "test SwitchCall entry.\n";
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+
+    std::cout << "please enter the phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    telephonyService->SwitchCall(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::IsUrgentCall(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::IsEmergencyPhoneNumber(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test IsUrgentCall entry.\n");
-    std::string phoneNum = "110";
-    int32_t slotId = 0;
-    int32_t errorCode = 0;
-    telephonyService->IsUrgentCall(phoneNum, slotId, errorCode);
-    return CELLULAR_CALL_SUCCESS;
-}
-
-int CsTest::Join(const sptr<CellularCallInterface> &telephonyService) const
-{
-    std::cout << "test Join entry." << std::endl;
-    telephonyService->Join();
-    return CELLULAR_CALL_SUCCESS;
-}
-
-int CsTest::Split(const sptr<CellularCallInterface> &telephonyService) const
-{
-    std::cout << "test Split entry." << std::endl;
-    std::cout << "please enter the need split phone number:";
+    std::cout << "test IsEmergencyPhoneNumber entry.\n";
     std::string phoneNum;
+    std::cout << "input phoneNum: ";
     std::cin >> phoneNum;
-    std::cout << "please enter the need split index:";
-    int32_t index;
-    std::cin >> index;
-    telephonyService->Split(phoneNum, index);
+    std::cout << "input slotId: ";
+    int32_t slotId = 0;
+    std::cin >> slotId;
+    int32_t errorCode = 0;
+    telephonyService->IsEmergencyPhoneNumber(phoneNum, slotId, errorCode);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::CallSupplement(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::CombineConference(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test CombineConference entry." << std::endl;
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    std::cout << "please enter the phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    telephonyService->CombineConference(callInfo);
+    return CELLULAR_CALL_SUCCESS;
+}
+
+int32_t CsTest::SeparateConference(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SeparateConference entry." << std::endl;
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    std::cout << "please enter the need split phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    std::cout << "please enter the need split index:";
+    std::cin >> callInfo.index;
+    telephonyService->SeparateConference(callInfo);
+    return CELLULAR_CALL_SUCCESS;
+}
+
+int32_t CsTest::CallSupplement(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test CallSupplement entry." << std::endl;
     std::cout << "please enter the type:";
@@ -206,47 +280,83 @@ int CsTest::CallSupplement(const sptr<CellularCallInterface> &telephonyService) 
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::InitiateDTMF(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::StartDtmf(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test InitiateDTMF entry." << std::endl;
-    char cDTMFCode;
-    std::cout << "please enter the DTMF code:";
-    std::cin >> cDTMFCode;
-    std::string phoneNum;
+    std::cout << "test StartDtmf entry." << std::endl;
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
     std::cout << "please enter the phone number:";
-    std::cin >> phoneNum;
-    telephonyService->InitiateDTMF(cDTMFCode, phoneNum);
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    std::cout << "please enter the index:";
+    std::cin >> callInfo.index;
+    char cDtmfCode;
+    std::cout << "please enter the Dtmf code:";
+    std::cin >> cDtmfCode;
+    telephonyService->StartDtmf(cDtmfCode, callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::CeaseDTMF(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::StopDtmf(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test CeaseDTMF entry." << std::endl;
-    std::string phoneNum;
+    std::cout << "test StopDtmf entry." << std::endl;
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
     std::cout << "please enter the phone number:";
-    std::cin >> phoneNum;
-    telephonyService->CeaseDTMF(phoneNum);
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    std::cout << "please enter the index:";
+    std::cin >> callInfo.index;
+    telephonyService->StopDtmf(callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::TransmitDTMF(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SendDtmf(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test TransmitDTMF entry." << std::endl;
-    char cDTMFCode;
-    std::cout << "please enter the DTMF code:";
-    std::cin >> cDTMFCode;
-    std::string phoneNum;
+    std::cout << "test SendDtmf entry." << std::endl;
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
     std::cout << "please enter the phone number:";
-    std::cin >> phoneNum;
-    telephonyService->TransmitDTMF(cDTMFCode, phoneNum);
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    callInfo.slotId = 0;
+    std::cout << "please enter the index:";
+    std::cin >> callInfo.index;
+    char cDtmfCode;
+    std::cout << "please enter the Dtmf code:";
+    std::cin >> cDtmfCode;
+    telephonyService->SendDtmf(cDtmfCode, callInfo);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::TransmitDTMFString(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SendDtmfString(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test TransmitDTMFString entry." << std::endl;
+    std::cout << "test SendDtmfString entry." << std::endl;
     std::string dtmfCodeStr;
-    std::cout << "please enter the DTMF code string:";
+    std::cout << "please enter the Dtmf code string:";
     std::cin >> dtmfCodeStr;
     std::string phoneNum;
     std::cout << "please enter the phone number:";
@@ -257,13 +367,13 @@ int CsTest::TransmitDTMFString(const sptr<CellularCallInterface> &telephonyServi
     int32_t switchOff;
     std::cout << "please enter the switchOff:";
     std::cin >> switchOff;
-    telephonyService->TransmitDTMFString(dtmfCodeStr, phoneNum, switchOn, switchOff);
+    telephonyService->SendDtmfString(dtmfCodeStr, phoneNum, switchOn, switchOff);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::SetCallTransfer(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test SetCallTransfer entry.\n");
+    std::cout << "test SetCallTransferInfoInfo entry.\n";
     int32_t slotId = 0;
     CallTransferInfo callTransferInfo;
     std::cout << "please enter the transfer type(0 - 5):";
@@ -276,41 +386,41 @@ int CsTest::SetCallTransfer(const sptr<CellularCallInterface> &telephonyService)
     callTransferInfo.settingType = static_cast<CallTransferSettingType>(settingType);
     std::cout << "please enter the phone number:";
     std::cin >> callTransferInfo.transferNum;
-    telephonyService->SetCallTransfer(callTransferInfo, slotId);
+    telephonyService->SetCallTransferInfo(callTransferInfo, slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::InquireCallTransfer(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::GetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test InquireCallTransfer entry.\n");
+    std::cout << "test GetCallTransferInfo entry.\n";
     int32_t slotId = 0;
     std::cout << "please enter the transfer type(0 - 5):";
     int32_t type = 0;
     std::cin >> type;
-    telephonyService->InquireCallTransfer(static_cast<CallTransferType>(type), slotId);
+    telephonyService->GetCallTransferInfo(static_cast<CallTransferType>(type), slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test SetCallWaiting entry.\n");
+    std::cout << "test SetCallWaiting entry.\n";
     bool activate = true;
     int32_t slotId = 0;
     telephonyService->SetCallWaiting(activate, slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::InquireCallWaiting(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::GetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test InquireCallWaiting entry.\n");
+    std::cout << "test GetCallWaiting entry.\n";
     int32_t slotId = 0;
-    telephonyService->InquireCallWaiting(slotId);
+    telephonyService->GetCallWaiting(slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test SetCallRestriction entry.\n");
+    std::cout << "test SetCallRestriction entry.\n";
     int32_t slotId = 0;
     CallRestrictionInfo info;
     std::cout << "please enter the fac(0 - 4):";
@@ -327,57 +437,56 @@ int CsTest::SetCallRestriction(const sptr<CellularCallInterface> &telephonyServi
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::InquireCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::GetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test InquireCallRestriction entry.\n");
+    std::cout << "test GetCallRestriction entry.\n";
     int32_t slotId = 0;
     std::cout << "please enter the fac(0 - 4):";
     int32_t facType = 0;
     std::cin >> facType;
-    telephonyService->InquireCallRestriction(static_cast<CallRestrictionType>(facType), slotId);
+    telephonyService->GetCallRestriction(static_cast<CallRestrictionType>(facType), slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const
 {
-    printf("test RegisterCallBack entry.\n");
+    std::cout << "test RegisterCallBack entry.\n";
     return CELLULAR_CALL_SUCCESS;
 }
 
-int CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const
+int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const
 {
     char interfaceNum = '0';
     bool loopFlag = true;
-    int ret = -1;
+    int32_t ret = -1;
     while (loopFlag) {
-        printf(
-            "\n**********Unit Test Start**********\n"
-            "Usage: please input a cmd num:\n"
-            "A:Dial\n"
-            "B:End\n"
-            "C:Answer\n"
-            "D:Reject\n"
-            "E:Hold\n"
-            "F:Active\n"
-            "G:Swap\n"
-            "H:IsUrgentCall\n"
-            "I:Join\n"
-            "J:Split\n"
-            "K:CallSupplement\n"
-            "L:InitiateDTMF\n"
-            "M:CeaseDTMF\n"
-            "N:TransmitDTMF\n"
-            "O:TransmitDTMFString\n"
-            "P:SetCallTransfer\n"
-            "Q:InquireCallTransfer\n"
-            "R:SetCallWaiting\n"
-            "S:InquireCallWaiting\n"
-            "T:SetCallRestriction\n"
-            "U:InquireCallRestriction\n"
-            "V:RegisterCallBack\n"
-            "W:Exit\n"
-            "***********************************\n"
-            "Your choice: ");
+        std::cout << "\n**********Unit Test Start**********\n"
+                     "Usage: please input a cmd num:\n"
+                     "A:Dial\n"
+                     "B:HangUp\n"
+                     "C:Answer\n"
+                     "D:Reject\n"
+                     "E:HoldCall\n"
+                     "F:UnHoldCall\n"
+                     "G:SwitchCall\n"
+                     "H:IsEmergencyPhoneNumber\n"
+                     "I:CombineConference\n"
+                     "J:SeparateConference\n"
+                     "K:CallSupplement\n"
+                     "L:StartDtmf\n"
+                     "M:StopDtmf\n"
+                     "N:SendDtmf\n"
+                     "O:SendDtmfString\n"
+                     "P:SetCallTransferInfo\n"
+                     "Q:GetCallTransferInfo\n"
+                     "R:SetCallWaiting\n"
+                     "S:GetCallWaiting\n"
+                     "T:SetCallRestriction\n"
+                     "U:GetCallRestriction\n"
+                     "V:RegisterCallBack\n"
+                     "W:Exit\n"
+                     "***********************************\n"
+                     "Your choice: ";
         std::cin >> interfaceNum;
         if (interfaceNum == 'W') {
             break;
@@ -398,19 +507,18 @@ int CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephonySer
 
 HWTEST_F(CsTest, cellular_call_interface_001, TestSize.Level1)
 {
-    sptr<ISystemAbilityManager> systemAbilityMgr =
-        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityMgr == nullptr) {
         printf("CellularCallService Get ISystemAbilityManager failed.\n");
         return;
     }
-    sptr<IRemoteObject> remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
     if (remote == nullptr) {
         printf("CellularCallService Remote service not exists.\n");
         return;
     }
     sptr<CellularCallInterface> telephonyService = iface_cast<CellularCallInterface>(remote);
-    printf("HWTEST_F cellular_call_interface_001");
+    std::cout << "HWTEST_F cellular_call_interface_001";
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -27,7 +27,7 @@ public:
     /**
      * StandardizeUtils constructor
      */
-    StandardizeUtils();
+    StandardizeUtils() = default;
 
     /**
      * ~StandardizeUtils destructor

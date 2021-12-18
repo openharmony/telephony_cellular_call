@@ -24,12 +24,12 @@ CellularCallRegister::~CellularCallRegister() = default;
 
 void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInfo)
 {
-    TELEPHONY_LOGD("ReportCallsInfo entry.");
+    TELEPHONY_LOGI("ReportCallsInfo entry.");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCallsInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateCallsReportInfo(callsReportInfo);
+    callManagerCallBack_->UpdateCallsReportInfo(callsReportInfo);
 }
 
 int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback)
@@ -40,14 +40,14 @@ int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatus
 
 void CellularCallRegister::ReportSingleCallInfo(CellularCallConnectionCS &pCs, TelCallState callState)
 {
-    TELEPHONY_LOGD("ReportSingleCallInfo entry");
+    TELEPHONY_LOGI("ReportSingleCallInfo entry");
     CallReportInfo cellularCallReportInfo = pCs.GetCallReportInfo();
     cellularCallReportInfo.state = callState;
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSingleCallInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateCallReportInfo(cellularCallReportInfo);
+    callManagerCallBack_->UpdateCallReportInfo(cellularCallReportInfo);
 }
 
 int32_t CellularCallRegister::UnRegisterCallManagerCallBack()
@@ -56,104 +56,120 @@ int32_t CellularCallRegister::UnRegisterCallManagerCallBack()
     return TELEPHONY_SUCCESS;
 }
 
-void CellularCallRegister::ReportEventResultInfo(CellularCallEventInfo &info)
+void CellularCallRegister::ReportEventResultInfo(const CellularCallEventInfo &info)
 {
-    TELEPHONY_LOGD("ReportEventResultInfo entry");
+    TELEPHONY_LOGI("ReportEventResultInfo entry eventId:%{public}d", info.eventId);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportEventResultInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateEventResultInfo(info);
+    callManagerCallBack_->UpdateEventResultInfo(info);
 }
 
-void CellularCallRegister::ReportGetWaitingResult(CallWaitResponse &callWaitResponse)
+void CellularCallRegister::ReportGetWaitingResult(const CallWaitResponse &response)
 {
-    TELEPHONY_LOGD("ReportGetWaitingResult entry");
+    TELEPHONY_LOGI("ReportGetWaitingResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetWaitingResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetWaitingResult(callWaitResponse);
+    callManagerCallBack_->UpdateGetWaitingResult(response);
 }
 
-void CellularCallRegister::ReportSetWaitingResult(CallWaitResponse &callWaitResponse)
+void CellularCallRegister::ReportSetWaitingResult(const CallWaitResponse &response)
 {
-    TELEPHONY_LOGD("ReportSetWaitingResult entry");
+    TELEPHONY_LOGI("ReportSetWaitingResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetWaitingResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateSetWaitingResult(callWaitResponse.result);
+    callManagerCallBack_->UpdateSetWaitingResult(response.result);
 }
 
 void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionResponse &response)
 {
-    TELEPHONY_LOGD("ReportGetRestrictionResult entry");
+    TELEPHONY_LOGI("ReportGetRestrictionResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetRestrictionResult(response);
+    callManagerCallBack_->UpdateGetRestrictionResult(response);
 }
 
 void CellularCallRegister::ReportSetRestrictionResult(int32_t result)
 {
-    TELEPHONY_LOGD("ReportSetRestrictionResult entry");
+    TELEPHONY_LOGI("ReportSetRestrictionResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateSetRestrictionResult(result);
+    callManagerCallBack_->UpdateSetRestrictionResult(result);
 }
 
-void CellularCallRegister::ReportGetTransferResult(CallTransferResponse &callTransferResponse)
+void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &response)
 {
-    TELEPHONY_LOGD("ReportGetTransferResult entry");
+    TELEPHONY_LOGI("ReportGetTransferResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetTransferResult(callTransferResponse);
+    callManagerCallBack_->UpdateGetTransferResult(response);
 }
 
 void CellularCallRegister::ReportSetTransferResult(int32_t result)
 {
-    TELEPHONY_LOGD("ReportSetTransferResult entry");
+    TELEPHONY_LOGI("ReportSetTransferResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateSetTransferResult(result);
+    callManagerCallBack_->UpdateSetTransferResult(result);
 }
 
-void CellularCallRegister::ReportGetClipResult(ClipResponse &clipResponse)
+void CellularCallRegister::ReportGetClipResult(const ClipResponse &clipResponse)
 {
-    TELEPHONY_LOGD("ReportGetClipResult entry");
+    TELEPHONY_LOGI("ReportGetClipResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetClipResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetCallClipResult(clipResponse);
+    callManagerCallBack_->UpdateGetCallClipResult(clipResponse);
 }
 
-void CellularCallRegister::ReportGetClirResult(ClirResponse &clirResponse)
+void CellularCallRegister::ReportGetClirResult(const ClirResponse &clirResponse)
 {
-    TELEPHONY_LOGD("ReportGetClirResult entry");
+    TELEPHONY_LOGI("ReportGetClirResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateGetCallClirResult(clirResponse);
+    callManagerCallBack_->UpdateGetCallClirResult(clirResponse);
 }
 
-void CellularCallRegister::ReportSetClirResult(ClirResponse &clirResponse)
+void CellularCallRegister::ReportSetClirResult(const ClirResponse &clirResponse)
 {
-    TELEPHONY_LOGD("ReportSetClirResult entry");
+    TELEPHONY_LOGI("ReportSetClirResult entry");
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->OnUpdateSetCallClirResult(clirResponse.result);
+    callManagerCallBack_->UpdateSetCallClirResult(clirResponse.result);
+}
+
+void CellularCallRegister::ReportGetCallPreferenceResult(const CallPreferenceResponse &callPreference)
+{
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportGetCallPreferenceResult return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+}
+
+void CellularCallRegister::ReportGetLteImsSwitchResult(const LteImsSwitchResponse &lteImsSwitch)
+{
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportGetLteImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
 }
 } // namespace Telephony
 } // namespace OHOS

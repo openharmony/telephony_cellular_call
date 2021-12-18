@@ -17,9 +17,12 @@
 #define CELLULAR_CALL_SUPPLEMENT_H
 
 #include <string>
-#include <hril_types.h>
-#include <hril_call_parcel.h>
+
 #include "cellular_call_data_struct.h"
+#include "hril_types.h"
+#include "hril_call_parcel.h"
+#include "module_service_utils.h"
+#include "supplement_request.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -67,7 +70,7 @@ public:
      * @param CallTransferInfo
      * @return Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t SetCallTransfer(const CallTransferInfo &cTInfo);
+    int32_t SetCallTransferInfo(const CallTransferInfo &cTInfo);
 
     /**
      * Inquire Call Transfer
@@ -79,7 +82,7 @@ public:
      * @param CallTransferType
      * @return Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t InquireCallTransfer(CallTransferType type);
+    int32_t GetCallTransferInfo(CallTransferType type);
 
     /**
      * Deal Call Restriction
@@ -117,7 +120,7 @@ public:
      * @param CallRestrictionType
      * @return Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t InquireCallRestriction(CallRestrictionType facType);
+    int32_t GetCallRestriction(CallRestrictionType facType);
 
     /**
      * Deal Call Waiting
@@ -153,7 +156,7 @@ public:
      *
      * @return Returns kTelephonyNoErr on success, others on failure.
      */
-    int32_t InquireCallWaiting();
+    int32_t GetCallWaiting();
 
     /**
      * Event Deal clip Mmi
@@ -204,20 +207,20 @@ public:
      * Call Waiting result
      *
      * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12	Call waiting +CCWA
-     * status: 0	not active  1	active
+     * status: 0	not active;  1	active
      *
      * @param CallWaitResult waitingInfo
      */
-    void EventInquireCallWait(CallWaitResult &waitingInfo);
+    void EventGetCallWaiting(CallWaitResult &waitingInfo);
 
     /**
-     * Event Set CallWait
+     * Event Set CallWaiting
      *
      * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12	Call waiting +CCWA
      *
      * @param HRilRadioResponseInfo
      */
-    void EventSetCallWait(HRilRadioResponseInfo &responseInfo);
+    void EventSetCallWaiting(HRilRadioResponseInfo &responseInfo);
 
     /**
      * Event Inquire Call Transfer
@@ -226,7 +229,7 @@ public:
      *
      * @param CallForwardQueryResult
      */
-    void EventInquireCallTransfer(CallForwardQueryResult &queryResult);
+    void EventGetCallTransferInfo(CallForwardQueryResult &queryResult);
 
     /**
      * Event Set Call Transfer
@@ -235,7 +238,7 @@ public:
      *
      * @param HRilRadioResponseInfo
      */
-    void EventSetCallTransfer(HRilRadioResponseInfo &responseInfo);
+    void EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo);
 
 private:
     /**
@@ -244,7 +247,7 @@ private:
      * @param serviceInfoB
      * @return
      */
-    int ObtainServiceCode(const std::string &serviceInfoB);
+    int32_t ObtainServiceCode(const std::string &serviceInfoB);
 
     /**
      * Obtain Cause
@@ -254,7 +257,7 @@ private:
      * @param basicString
      * @return
      */
-    int ObtainCause(const std::string &serviceInfoC);
+    int32_t ObtainCause(const std::string &serviceInfoC);
 
     /**
      * Obtain Barring Installation
@@ -277,6 +280,16 @@ private:
 private:
     const int32_t ACTIVATE_ACTION = 1;
     const int32_t DEACTIVATE_ACTION = 2;
+    SupplementRequest supplementRequest_;
+    ModuleServiceUtils moduleServiceUtils_;
+    const std::string BARR_ALL_OUTGOING_CALLS = "AO";
+    const std::string BARR_OUTGOING_INTERNATIONAL_CALLS = "OI";
+    const std::string BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME = "OX";
+    const std::string BARR_ALL_INCOMING_CALLS = "AI";
+    const std::string BARR_INCOMING_CALLS_OUTSIDE_HOME = "IR";
+    const std::string ALL_BARRING_SERVICES = "AB";
+    const std::string ALL_OUTGOING_BARRING_SERVICES = "AG";
+    const std::string ALL_INCOMING_BARRING_SERVICES = "AC";
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallSupplement"};
 };
 } // namespace Telephony

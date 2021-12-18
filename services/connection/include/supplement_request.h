@@ -18,10 +18,11 @@
 
 #include "core_manager.h"
 #include "mmi_handler.h"
+#include "base_request.h"
 
 namespace OHOS {
 namespace Telephony {
-class SupplementRequest {
+class SupplementRequest : BaseRequest {
 public:
     /**
      * Inquire Clip Request
@@ -50,7 +51,7 @@ public:
      *
      * @param type
      */
-    int32_t InquireCallTransferRequest(int type);
+    int32_t GetCallTransferInfoRequest(int32_t type);
 
     /**
      * Set Call Transfer Request
@@ -59,13 +60,14 @@ public:
      * @param transferPhone
      * @param serviceInfoB
      */
-    int32_t SetCallTransferRequest(int action, int cause, const std::string &transferPhone, int serviceInfoB);
+    int32_t SetCallTransferInfoRequest(
+        int32_t action, int32_t cause, const std::string &transferPhone, int32_t serviceInfoB);
 
     /**
      * Inquire Call Restriction
      * @param fac
      */
-    int32_t InquireCallRestriction(const std::string &fac);
+    int32_t GetCallRestrictionRequest(const std::string &fac);
 
     /**
      * Set Call Restriction
@@ -73,7 +75,7 @@ public:
      * @param mode
      * @param pw
      */
-    int32_t SetCallRestriction(std::string &fac, int32_t mode, std::string &pw);
+    int32_t SetCallRestrictionRequest(std::string &fac, int32_t mode, std::string &pw);
 
     /**
      * Set CallWaiting Request
@@ -85,16 +87,9 @@ public:
      * Inquire Call Waiting Request
      * @param serviceCode
      */
-    int32_t InquireCallWaitingRequest();
+    int32_t GetCallWaitingRequest();
 
 private:
-    /**
-     * Get Core for core service
-     * @param slotId
-     * @return Core for core service
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId);
-
     /**
      * GetMMIHandler
      *
@@ -103,7 +98,6 @@ private:
     std::shared_ptr<MMIHandler> GetMMIHandler() const;
 
 private:
-    int slotId_ = CoreManager::DEFAULT_SLOT_ID;
     static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "SupplementRequest"};
 };
 } // namespace Telephony

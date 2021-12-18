@@ -30,35 +30,34 @@ public:
     void SetUp();
     void TearDown();
 
-    int Dial(const sptr<CellularCallInterface> &telephonyService) const;
-    int End(const sptr<CellularCallInterface> &telephonyService) const;
-    int Answer(const sptr<CellularCallInterface> &telephonyService) const;
-    int Reject(const sptr<CellularCallInterface> &telephonyService) const;
-    int Hold(const sptr<CellularCallInterface> &telephonyService) const;
-    int Active(const sptr<CellularCallInterface> &telephonyService) const;
-    int Swap(const sptr<CellularCallInterface> &telephonyService) const;
-    int IsUrgentCall(const sptr<CellularCallInterface> &telephonyService) const;
-    int Join(const sptr<CellularCallInterface> &telephonyService) const;
-    int Split(const sptr<CellularCallInterface> &telephonyService) const;
-    int CallSupplement(const sptr<CellularCallInterface> &telephonyService) const;
-    int InitiateDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int CeaseDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int TransmitDTMF(const sptr<CellularCallInterface> &telephonyService) const;
-    int TransmitDTMFString(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallTransfer(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallTransfer(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
-    int SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
-    int InquireCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
-    int RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
-    int InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t Dial(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t HangUp(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t Answer(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t Reject(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t HoldCall(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t UnHoldCall(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SwitchCall(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t IsEmergencyPhoneNumber(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t CombineConference(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SeparateConference(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t CallSupplement(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t StartDtmf(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t StopDtmf(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SendDtmf(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SendDtmfString(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
 
 private:
-    using RequestFuncType = int (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
+    using RequestFuncType = int32_t (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
     std::map<char, RequestFuncType> requestFuncMap_;
 };
 } // namespace Telephony
 } // namespace OHOS
-
 #endif // TELEPHONY_CS_TEST_H

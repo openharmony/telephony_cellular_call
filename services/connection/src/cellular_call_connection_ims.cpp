@@ -13,14 +13,16 @@
  * limitations under the License.
  */
 
-#include "cellular_call_connection_cs.h"
+#include "cellular_call_connection_ims.h"
 
+#include "cellular_call_types.h"
 #include "cellular_call_service.h"
 
 namespace OHOS {
 namespace Telephony {
-int32_t CellularCallConnectionCS::DialRequest(const DialRequestStruct &dialRequest, int32_t slotId)
+int32_t CellularCallConnectionIMS::DialRequest(const ImsDialInfoStruct &dialRequest, int32_t slotId)
 {
+    TELEPHONY_LOGI("DialRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: core is nullptr.");
@@ -37,34 +39,34 @@ int32_t CellularCallConnectionCS::DialRequest(const DialRequestStruct &dialReque
     }
     event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
     core->Dial(dialRequest.phoneNum, dialRequest.clirMode, event);
-
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::HangUpRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::EndRequest(int32_t index, int32_t slotId)
 {
+    TELEPHONY_LOGI("EndRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: core is nullptr.");
+        TELEPHONY_LOGE("EndRequest return, error type: core is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_HANGUP_CONNECT);
     if (event == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: event is nullptr.");
+        TELEPHONY_LOGE("EndRequest return, error type: event is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: GetInstance() is nullptr.");
+        TELEPHONY_LOGE("EndRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    int32_t index = GetIndex();
     core->Hangup(index, event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::AnswerRequest(int32_t videoState, int32_t slotId)
 {
+    TELEPHONY_LOGI("AnswerRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: core is nullptr.");
@@ -84,8 +86,9 @@ int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId)
 {
+    TELEPHONY_LOGI("RejectRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: core is nullptr.");
@@ -105,8 +108,31 @@ int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::SwapRequest(int32_t slotId)
 {
+    TELEPHONY_LOGI("SwapRequest start");
+    auto core = GetCore(slotId);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("SwapRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SWAP_CALL);
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SwapRequest return, error type: event is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("SwapRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
+    core->SwitchCall(event);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConnectionIMS::HoldRequest(int32_t slotId)
+{
+    TELEPHONY_LOGI("HoldRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("HoldRequest return, error type: core is nullptr.");
@@ -126,20 +152,21 @@ int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::ActiveRequest(int32_t slotId)
 {
+    TELEPHONY_LOGI("ActiveRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
-        TELEPHONY_LOGE("UnHoldCallRequest return, error type: core is nullptr.");
+        TELEPHONY_LOGE("ActiveRequest return, error type: core is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_ACTIVE_CALL);
     if (event == nullptr) {
-        TELEPHONY_LOGE("UnHoldCallRequest return, error type: event is nullptr.");
+        TELEPHONY_LOGE("ActiveRequest return, error type: event is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("UnHoldCallRequest return, error type: GetInstance() is nullptr.");
+        TELEPHONY_LOGE("ActiveRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
@@ -147,28 +174,7 @@ int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SwitchCallRequest(int32_t slotId)
-{
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SwitchCallRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SWAP_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SwitchCallRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("SwitchCallRequest return, error type: GetInstance() is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->SwitchCall(event);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32_t voiceCall)
+int32_t CellularCallConnectionIMS::CombineConferenceRequest(int32_t slotId, int32_t voiceCall)
 {
     auto core = GetCore(slotId);
     if (core == nullptr) {
@@ -189,29 +195,9 @@ int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t index, int32_t slotId, int32_t voiceCall)
+int32_t CellularCallConnectionIMS::CallSupplementRequest(CallSupplementType type, int32_t slotId)
 {
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SeparateConferenceRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SPLIT_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SeparateConferenceRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("SeparateConferenceRequest return, error type: GetInstance() is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->SeparateConference(index, voiceCall, event);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallConnectionCS::CallSupplementRequest(CallSupplementType type, int32_t slotId)
-{
+    TELEPHONY_LOGI("CallSupplementRequest start");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("CallSupplementRequest return, error type: core is nullptr.");
@@ -231,12 +217,29 @@ int32_t CellularCallConnectionCS::CallSupplementRequest(CallSupplementType type,
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SendCDMAThreeWayDialRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
+    TELEPHONY_LOGI("CellularCallConnectionIMS::GetImsCallsDataRequest entry.");
+    auto core = GetCore(slotId);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_IMS_CALL_LIST, lastCallsDataFlag);
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: event is null.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
+    core->GetImsCallList(event);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionIMS::SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
 {
     auto core = GetCore(slotId);
     if (core == nullptr) {
@@ -257,7 +260,7 @@ int32_t CellularCallConnectionCS::SendDtmfRequest(char cDtmfCode, int32_t index,
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionIMS::StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
 {
     auto core = GetCore(slotId);
     if (core == nullptr) {
@@ -278,7 +281,7 @@ int32_t CellularCallConnectionCS::StartDtmfRequest(char cDtmfCode, int32_t index
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionIMS::StopDtmfRequest(int32_t index, int32_t slotId) const
 {
     auto core = GetCore(slotId);
     if (core == nullptr) {
@@ -297,58 +300,6 @@ int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t index, int32_t slotId)
     event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
     core->StopDTMF(index, event);
     return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallConnectionCS::SendDtmfStringRequest(
-    const std::string &sDtmfCode, int32_t on, int32_t off, int32_t slotId)
-{
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SEND_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: GetInstance() is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    int32_t index = GetIndex();
-    core->SendDTMF(sDtmfCode, index, on, off, event);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
-{
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("CellularCallHandler::GetCsCallsDataRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_CURRENT_CALLS, lastCallsDataFlag);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCsCallsDataRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("GetCsCallsDataRequest return, error type: GetInstance() is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-
-    // Implementation
-    // Optional. Recommended when +CHLD command is implemented.
-    core->GetCallList(event);
-    return TELEPHONY_SUCCESS;
-}
-
-void CellularCallConnectionCS::RegisterHandler()
-{
-    DelayedSingleton<CellularCallService>::GetInstance()->RegisterHandler();
 }
 } // namespace Telephony
 } // namespace OHOS
