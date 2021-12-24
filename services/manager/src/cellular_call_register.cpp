@@ -38,16 +38,15 @@ int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatus
     return TELEPHONY_SUCCESS;
 }
 
-void CellularCallRegister::ReportSingleCallInfo(CellularCallConnectionCS &pCs, TelCallState callState)
+void CellularCallRegister::ReportSingleCallInfo(CallReportInfo &reportInfo, TelCallState callState)
 {
     TELEPHONY_LOGI("ReportSingleCallInfo entry");
-    CallReportInfo cellularCallReportInfo = pCs.GetCallReportInfo();
-    cellularCallReportInfo.state = callState;
+    reportInfo.state = callState;
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSingleCallInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->UpdateCallReportInfo(cellularCallReportInfo);
+    callManagerCallBack_->UpdateCallReportInfo(reportInfo);
 }
 
 int32_t CellularCallRegister::UnRegisterCallManagerCallBack()

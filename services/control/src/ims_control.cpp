@@ -86,7 +86,6 @@ int32_t IMSControl::EncapsulateDial(const std::string &phoneNum, CLIRMode &clirM
 
     ImsDialInfoStruct dialInfo;
     dialInfo.videoState = videoState;
-
     EmergencyUtils emergencyUtils;
     dialInfo.bEmergencyCall = emergencyUtils.IsEmergencyCall(phoneNum, GetSlotId());
 
