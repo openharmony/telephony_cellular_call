@@ -148,7 +148,6 @@ int32_t CSControl::EncapsulateDialCommon(const std::string &phoneNum, CLIRMode &
     }
 
     DialRequestStruct dialRequest;
-
     /**
      * <idx>: integer type;
      * call identification number as described in 3GPP TS 22.030 [19] subclause 4.5.5.1
@@ -192,8 +191,9 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("CSControl::HangUp, error type: GetInstance() is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+    CallReportInfo reportInfo = pConnection->GetCallReportInfo();
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
-        *pConnection, CALL_STATUS_DISCONNECTING);
+        reportInfo, CALL_STATUS_DISCONNECTING);
 
     /**
      * The "directory number" case shall be handled with dial command D,
@@ -281,8 +281,9 @@ int32_t CSControl::Reject(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("CSControl::Reject, error type: GetInstance() is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+    CallReportInfo reportInfo = pConnection->GetCallReportInfo();
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
-        *pConnection, CALL_STATUS_DISCONNECTING);
+        reportInfo, CALL_STATUS_DISCONNECTING);
     return pConnection->RejectRequest(GetSlotId());
 }
 

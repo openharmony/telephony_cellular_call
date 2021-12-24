@@ -36,11 +36,12 @@ public:
     void ReportCallsInfo(const CallsReportInfo &callsReportInfo);
 
     /**
-     * ReportCallsInfo.
+     * ReportSingleCallInfo.
      *
-     * @param Single CallInfo
+     * @param CallReportInfo
+     * @param TelCallState
      */
-    void ReportSingleCallInfo(CellularCallConnectionCS &pCs, TelCallState callState);
+    void ReportSingleCallInfo(CallReportInfo &reportInfo, TelCallState callState);
 
     /**
      * ReportEventResultInfo.
