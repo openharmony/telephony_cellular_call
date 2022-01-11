@@ -40,7 +40,7 @@ The cellular call module consists of three layers:
 
 ## Constraints<a name="section131mcpsimp"></a>
 
--   Programming language: JavaScript
+-   Programming language: C++
 -   Software constraints: This module must work with the telephony core service \(core\_service\) and Call Manager \(call\_manager\).
 -   Hardware constraints: The accommodating device must be equipped with a speaker or earphone, a headset, and a modem and a SIM card capable of independent cellular communication.
 

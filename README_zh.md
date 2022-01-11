@@ -40,7 +40,7 @@
 
 ## 约束<a name="section131mcpsimp"></a>
 
--   开发语言：Java Script。
+-   开发语言：C++。
 -   软件约束：需要与以下服务配合使用：Telephony核心服务（core\_service）、通话管理（call\_manager）。
 -   硬件约束：需要搭载的设备支持以下硬件：扬声器或听筒、麦克风，可以进行独立蜂窝通信的Modem以及SIM卡。
 

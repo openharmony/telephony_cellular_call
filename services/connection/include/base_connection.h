@@ -38,6 +38,7 @@ public:
 
     /**
      * Get Core for core service
+     *
      * @param slotId
      * @return Core for core service
      */
@@ -45,12 +46,14 @@ public:
 
     /**
      * Set or Update CallReportInfo
+     *
      * @param CallReportInfo
      */
     void SetOrUpdateCallReportInfo(CallReportInfo &callReportInfo);
 
     /**
      * Get CallReportInfo
+     *
      * @return CallReportInfo
      */
     CallReportInfo GetCallReportInfo();
@@ -72,30 +75,34 @@ public:
     /**
      * IsRingingState.
      *
-     * @return bool IsRingingState
+     * @return bool
      */
     bool IsRingingState() const;
 
     /**
      * Set Flag
+     *
      * @param bool
      */
     void SetFlag(bool flag);
 
     /**
      * Get Flag
+     *
      * @return bool
      */
     bool GetFlag() const;
 
     /**
      * Set Index
+     *
      * @param int32_t
      */
     void SetIndex(int32_t index);
 
     /**
      * Get Index
+     *
      * @return int32_t
      */
     int32_t GetIndex() const;

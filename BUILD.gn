@@ -17,6 +17,13 @@ SOURCE_DIR = "//base/telephony/cellular_call"
 
 ohos_shared_library("tel_cellular_call") {
   sources = [
+    "$SOURCE_DIR/framework/call_status_callback_proxy.cpp",
+    "$SOURCE_DIR/framework/cellular_call_callback.cpp",
+    "$SOURCE_DIR/framework/cellular_call_proxy.cpp",
+    "$SOURCE_DIR/framework/ims_callback_stub.cpp",
+    "$SOURCE_DIR/framework/ims_client.cpp",
+    "$SOURCE_DIR/framework/ims_death_recipient.cpp",
+    "$SOURCE_DIR/framework/ims_proxy.cpp",
     "$SOURCE_DIR/services/common/src/cellular_call_dump_helper.cpp",
     "$SOURCE_DIR/services/common/src/emergency_utils.cpp",
     "$SOURCE_DIR/services/common/src/mmi_code_utils.cpp",
@@ -33,12 +40,12 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/control/src/control_base.cpp",
     "$SOURCE_DIR/services/control/src/cs_control.cpp",
     "$SOURCE_DIR/services/control/src/ims_control.cpp",
-    "$SOURCE_DIR/services/control/src/mmi_handler.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_handler.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_register.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_service.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_stub.cpp",
-    "//base/telephony/core_service/interfaces/innerkits/call_manager/call_status_callback_proxy.cpp",
+    "//base/telephony/ril_adapter/frameworks/src/hril_base_parcel.cpp",
+    "//base/telephony/ril_adapter/frameworks/src/hril_call_parcel.cpp",
   ]
 
   include_dirs = [
@@ -46,16 +53,12 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/manager/include",
     "$SOURCE_DIR/services/control/include",
     "$SOURCE_DIR/services/connection/include",
-    "//base/telephony/core_service/interfaces/innerkits/cellular_call",
-    "//base/telephony/core_service/common/cellular_call",
+    "$SOURCE_DIR/interfaces",
     "//base/telephony/ril_adapter/interfaces/innerkits/include",
     "//base/telephony/core_service/interfaces/innerkits/network_search",
     "//base/telephony/core_service/interfaces/innerkits/sim",
     "//base/telephony/core_service/interfaces/innerkits/core",
-    "//base/telephony/core_service/common/call_manager",
-    "//base/telephony/core_service/common/core",
-    "//base/telephony/core_service/common/cellular_data",
-    "//base/telephony/core_service/interfaces/innerkits/call_manager",
+    "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/core_service/utils/log/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",

@@ -22,6 +22,7 @@
 #include "telephony_log_wrapper.h"
 #include "cs_control.h"
 #include "ims_control.h"
+#include "cellular_call_register.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -29,6 +30,7 @@ class CellularCallHandler : public AppExecFwk::EventHandler {
 public:
     /**
      * CellularCallHandler constructor
+     *
      * @param runner
      * @param server
      */
@@ -48,34 +50,13 @@ public:
 
     /**
      * Set Slot Id
+     *
      * @param id
      */
     void SetSlotId(int32_t id);
 
     /**
-     * SetCsControl
-     */
-    void SetCsControl(std::shared_ptr<CSControl>);
-
-    /**
-     * GetCsControl
-     * @return std::shared_ptr<CSControl>
-     */
-    std::shared_ptr<CSControl> GetCsControl();
-
-    /**
-     * SetImsControl
-     */
-    void SetImsControl(std::shared_ptr<IMSControl>);
-
-    /**
-     * GetImsControl
-     * @return std::shared_ptr<IMSControl>
-     */
-    std::shared_ptr<IMSControl> GetImsControl();
-
-    /**
-     * DialResponse.
+     * DialResponse
      *
      * @param code process
      */
@@ -83,123 +64,181 @@ public:
 
     /**
      * CommonResultResponse
+     *
      * @param code process
      */
     void CommonResultResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SendDtmfResponse.
+     * SendDtmfResponse
      *
      * @param code process
      */
     void SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * StartDtmfResponse.
+     * StartDtmfResponse
      *
      * @param code process
      */
     void StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * StopDtmfResponse.
+     * StopDtmfResponse
      *
      * @param code process
      */
     void StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetCsCallsDataResponse.
+     * GetCsCallsDataResponse
      *
      * @param code process
      */
     void GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetImsCallsDataResponse.
+     * GetImsCallsDataResponse
      *
      * @param code process
      */
     void GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallStateResponse.
+     * CallStateResponse
      *
      * @param code process
      */
     void CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallWaitingResponse.
+     * CallWaitingResponse
      *
      * @param code process
      */
     void CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallConnectResponse.
+     * CallConnectResponse
      *
      * @param code process
      */
     void CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallEndResponse.
+     * CallEndResponse
      *
      * @param code process
      */
     void CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallEndResponse.
+     * CallStatusInfoResponse
      *
      * @param code process
      */
     void CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallEndResponse.
+     * CallImsServiceStatusResponse
      *
      * @param code process
      */
     void CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetCallPreferenceModeResponse.
+     * SetCallPreferenceModeResponse
      *
      * @param code process
      */
     void SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetCallPreferenceModeResponse.
+     * GetCallPreferenceModeResponse
      *
      * @param code process
      */
     void GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetLteImsSwitchStatusResponse.
+     * SetLteImsSwitchStatusResponse
      *
      * @param code process
      */
     void SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetLteImsSwitchStatusResponse.
+     * GetLteImsSwitchStatusResponse
      *
      * @param code process
      */
     void GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
+     * UssdNotifyResponse
+     *
+     * @param code process
+     */
+    void UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * CallRingBackVoiceResponse
+     *
+     * @param code process
+     */
+    void CallRingBackVoiceResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetMuteResponse
+     *
+     * @param code process
+     */
+    void SetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetMuteResponse
+     *
+     * @param code process
+     */
+    void GetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetEmergencyCallListResponse
+     *
+     * @param code process
+     */
+    void GetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallFailReasonResponse
+     *
+     * @param code process
+     */
+    void GetCallFailReasonResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
      * Set CallType
+     *
      * @param callType
      */
     void SetCallType(CallType callType);
 
+    /**
+     * Update Srvcc State Report
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SrvccState Completed
+     */
+    void SrvccStateCompleted();
+
 public:
     const uint32_t REGISTER_HANDLER_ID = 1002;
+    const uint32_t REGISTER_IMS_CALLBACK_ID = 1003;
+    int32_t srvccState_ = SrvccState::SRVCC_NONE;
 
 private:
     /**
@@ -237,14 +276,128 @@ private:
     void GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * ThreadRegister
+     * Register Handler
      */
     void RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event);
 
+    /**
+     * Register Ims Callback
+     */
+    void RegisterImsCallback(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetMMIResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallWaitingResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallWaitingResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetClirResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetClirResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetClipResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetClipResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallTransferResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallTransferInfoResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * GetCallRestrictionResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetCallRestrictionResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SendUssdResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * InitBasicFuncMap
+     */
+    void InitBasicFuncMap();
+
+    /**
+     * InitConfigFuncMap
+     */
+    void InitConfigFuncMap();
+
+    /**
+     * InitSupplementFuncMap
+     */
+    void InitSupplementFuncMap();
+
+    /**
+     * InitActiveReportFuncMap
+     */
+    void InitActiveReportFuncMap();
+
+    /**
+     * ReportCsCallsData
+     *
+     * @param CallInfoList
+     */
+    void ReportCsCallsData(const CallInfoList &callInfoList);
+
+    /**
+     * ReportImsCallsData
+     *
+     * @param CallInfoList
+     */
+    void ReportImsCallsData(const CallInfoList &imsCallInfoList);
+
 private:
     int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
-    std::shared_ptr<CSControl> pCsControl_;
-    std::shared_ptr<IMSControl> pImsControl_;
     int64_t lastTime_ = 0L;
     const int64_t FAST_DELAY_TIME = 250;
     int64_t lastCallsDataFlag_ = 0L;
@@ -254,7 +407,7 @@ private:
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     CallType callType_ = CallType::TYPE_ERR_CALL;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallHandler"};
+    std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
 };
 } // namespace Telephony
 } // namespace OHOS

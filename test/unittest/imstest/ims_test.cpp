@@ -37,16 +37,39 @@ void ImsTest::TearDownTestCase(void)
 void ImsTest::SetUp(void)
 {
     // step 3: input testcase setup step
-    requestFuncMap_['A'] = &ImsTest::SetCallPreferenceMode;
-    requestFuncMap_['B'] = &ImsTest::GetCallPreferenceMode;
-    requestFuncMap_['C'] = &ImsTest::SetLteImsSwitchStatus;
-    requestFuncMap_['D'] = &ImsTest::GetLteImsSwitchStatus;
-    requestFuncMap_['E'] = &ImsTest::CtrlCamera;
-    requestFuncMap_['F'] = &ImsTest::SetPreviewWindow;
-    requestFuncMap_['G'] = &ImsTest::SetDisplayWindow;
-    requestFuncMap_['H'] = &ImsTest::SetCameraZoom;
-    requestFuncMap_['I'] = &ImsTest::SetPauseImage;
-    requestFuncMap_['J'] = &ImsTest::SetDeviceDirection;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DOMAIN_PREFERENCE_MODE)] =
+        &ImsTest::SetDomainPreferenceMode;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_DOMAIN_PREFERENCE_MODE)] =
+        &ImsTest::GetDomainPreferenceMode;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_LTE_IMS_SWITCH_STATUS)] =
+        &ImsTest::SetLteImsSwitchStatus;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_LTE_IMS_SWITCH_STATUS)] =
+        &ImsTest::GetLteImsSwitchStatus;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_CONFIG_STRING)] =
+        &ImsTest::SetImsConfigString;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_CONFIG_INT)] =
+        &ImsTest::SetImsConfigInt;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_IMS_CONFIG)] =
+        &ImsTest::GetImsConfig;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_FEATURE)] =
+        &ImsTest::SetImsFeatureValue;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_IMS_FEATURE)] =
+        &ImsTest::GetImsFeatureValue;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_VOLTE_ENHANCE_MODE)] =
+        &ImsTest::SetVolteEnhanceMode;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_VOLTE_ENHANCE_MODE)] =
+        &ImsTest::GetVolteEnhanceMode;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::CTRL_CAMERA)] = &ImsTest::CtrlCamera;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_PREVIEW_WINDOW)] =
+        &ImsTest::SetPreviewWindow;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DISPLAY_WINDOW)] =
+        &ImsTest::SetDisplayWindow;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_CAMERA_ZOOM)] =
+        &ImsTest::SetCameraZoom;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_PAUSE_IMAGE)] =
+        &ImsTest::SetPauseImage;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DEVICE_DIRECTION)] =
+        &ImsTest::SetDeviceDirection;
 }
 
 void ImsTest::TearDown(void)
@@ -54,42 +77,114 @@ void ImsTest::TearDown(void)
     // step 3: input testcase teardown step
 }
 
-int32_t ImsTest::SetCallPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const
+int32_t ImsTest::SetDomainPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test SetCallPreferenceMode entry." << std::endl;
-    int32_t slotId = 0;
+    std::cout << "test SetDomainPreferenceMode entry." << std::endl;
     std::cout << "please enter the need mode:(1 - 4)";
     int32_t mode;
     std::cin >> mode;
-    telephonyService->SetCallPreferenceMode(slotId, mode);
-    return CELLULAR_CALL_SUCCESS;
+    int32_t slotId = 0;
+    return telephonyService->SetDomainPreferenceMode(slotId, mode);
 }
 
-int32_t ImsTest::GetCallPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const
+int32_t ImsTest::GetDomainPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const
 {
-    std::cout << "test GetCallPreferenceMode entry." << std::endl;
+    std::cout << "test GetDomainPreferenceMode entry." << std::endl;
     int32_t slotId = 0;
-    telephonyService->GetCallPreferenceMode(slotId);
-    return CELLULAR_CALL_SUCCESS;
+    return telephonyService->GetDomainPreferenceMode(slotId);
 }
 
 int32_t ImsTest::SetLteImsSwitchStatus(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test SetLteImsSwitchStatus entry." << std::endl;
-    int32_t slotId = 0;
     std::cout << "please enter the switch state:";
     bool active;
     std::cin >> active;
-    telephonyService->SetLteImsSwitchStatus(slotId, active);
-    return CELLULAR_CALL_SUCCESS;
+    int32_t slotId = 0;
+    return telephonyService->SetLteImsSwitchStatus(slotId, active);
 }
 
 int32_t ImsTest::GetLteImsSwitchStatus(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test GetLteImsSwitchStatus entry." << std::endl;
     int32_t slotId = 0;
-    telephonyService->GetLteImsSwitchStatus(slotId);
-    return CELLULAR_CALL_SUCCESS;
+    return telephonyService->GetLteImsSwitchStatus(slotId);
+}
+
+int32_t ImsTest::SetImsConfigString(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SetImsConfigString entry." << std::endl;
+    std::cout << "please enter the item id:";
+    int32_t item = 0;
+    std::cin >> item;
+    std::cout << "please enter the item value:";
+    std::string value;
+    std::cin >> value;
+    int32_t slotId = 0;
+    return telephonyService->SetImsConfig(slotId, static_cast<ImsConfigItem>(item), value);
+}
+
+int32_t ImsTest::SetImsConfigInt(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SetImsConfigInt entry." << std::endl;
+    std::cout << "please enter the item id:";
+    int32_t item = 0;
+    std::cin >> item;
+    std::cout << "please enter the item value:";
+    int32_t value = 0;
+    std::cin >> value;
+    int32_t slotId = 0;
+    return telephonyService->SetImsConfig(slotId, static_cast<ImsConfigItem>(item), value);
+}
+
+int32_t ImsTest::GetImsConfig(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test GetImsConfig entry." << std::endl;
+    std::cout << "please enter the item id:";
+    int32_t item = 0;
+    std::cin >> item;
+    int32_t slotId = 0;
+    return telephonyService->GetImsConfig(slotId, static_cast<ImsConfigItem>(item));
+}
+
+int32_t ImsTest::SetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SetImsFeatureValue entry." << std::endl;
+    std::cout << "please enter the feature type:";
+    int32_t type = 0;
+    std::cin >> type;
+    std::cout << "please enter the feature value:";
+    int32_t value = 0;
+    std::cin >> value;
+    int32_t slotId = 0;
+    return telephonyService->SetImsFeatureValue(slotId, static_cast<FeatureType>(type), value);
+}
+
+int32_t ImsTest::GetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test GetImsFeatureValue entry." << std::endl;
+    std::cout << "please enter the feature type:";
+    int32_t type = 0;
+    std::cin >> type;
+    int32_t slotId = 0;
+    return telephonyService->GetImsFeatureValue(slotId, static_cast<FeatureType>(type));
+}
+
+int32_t ImsTest::SetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SetVolteEnhanceMode entry." << std::endl;
+    std::cout << "please enter the VoLTE enhance mode:";
+    bool mode;
+    std::cin >> mode;
+    int32_t slotId = 0;
+    return telephonyService->SetVolteEnhanceMode(slotId, mode);
+}
+
+int32_t ImsTest::GetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test GetVolteEnhanceMode entry." << std::endl;
+    int32_t slotId = 0;
+    return telephonyService->GetVolteEnhanceMode(slotId);
 }
 
 int32_t ImsTest::CtrlCamera(const sptr<CellularCallInterface> &telephonyService) const
@@ -99,8 +194,7 @@ int32_t ImsTest::CtrlCamera(const sptr<CellularCallInterface> &telephonyService)
     std::u16string callingPackage = u"callingPackage";
     int32_t callingUid = 0;
     int32_t callingPid = 0;
-    telephonyService->CtrlCamera(cameraId, callingPackage, callingUid, callingPid);
-    return 0;
+    return telephonyService->CtrlCamera(cameraId, callingPackage, callingUid, callingPid);
 }
 
 int32_t ImsTest::SetPreviewWindow(const sptr<CellularCallInterface> &telephonyService) const
@@ -111,8 +205,7 @@ int32_t ImsTest::SetPreviewWindow(const sptr<CellularCallInterface> &telephonySe
     int32_t z = 0;
     int32_t width = 0;
     int32_t height = 0;
-    telephonyService->SetPreviewWindow(x, y, z, width, height);
-    return 0;
+    return telephonyService->SetPreviewWindow(x, y, z, width, height);
 }
 
 int32_t ImsTest::SetDisplayWindow(const sptr<CellularCallInterface> &telephonyService) const
@@ -123,60 +216,65 @@ int32_t ImsTest::SetDisplayWindow(const sptr<CellularCallInterface> &telephonySe
     int32_t z = 0;
     int32_t width = 0;
     int32_t height = 0;
-    telephonyService->SetDisplayWindow(x, y, z, width, height);
-    return 0;
+    return telephonyService->SetDisplayWindow(x, y, z, width, height);
 }
 
 int32_t ImsTest::SetCameraZoom(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test SetCameraZoom entry." << std::endl;
     float zoomRatio = 1.0;
-    telephonyService->SetCameraZoom(zoomRatio);
-    return 0;
+    return telephonyService->SetCameraZoom(zoomRatio);
 }
 
 int32_t ImsTest::SetPauseImage(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test SetPauseImage entry." << std::endl;
     std::u16string path = u"path";
-    telephonyService->SetPauseImage(path);
-    return 0;
+    return telephonyService->SetPauseImage(path);
 }
 
 int32_t ImsTest::SetDeviceDirection(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test SetDeviceDirection entry." << std::endl;
     int32_t rotation = 0;
-    telephonyService->SetDeviceDirection(rotation);
-    return 0;
+    return telephonyService->SetDeviceDirection(rotation);
 }
 
 int32_t ImsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const
 {
-    char interfaceNum = '0';
-    bool loopFlag = true;
     int32_t ret = -1;
+    bool loopFlag = true;
+    int32_t InputNum = 0;
+    int32_t returnNum = 1000; // end loop variable value
     while (loopFlag) {
         std::cout << "\n**********Unit Test Start**********\n"
                      "Usage: please input a cmd num:\n"
-                     "A:SetCallPreferenceMode\n"
-                     "B:GetCallPreferenceMode\n"
-                     "C:SetLteImsSwitchStatus\n"
-                     "D:GetLteImsSwitchStatus\n"
-                     "E:CtrlCamera\n"
-                     "F:SetPreviewWindow\n"
-                     "G:SetDisplayWindow\n"
-                     "H:SetCameraZoom\n"
-                     "I:SetPauseImage\n"
-                     "J:SetDeviceDirection\n"
-                     "W:Exit\n"
+                     "300:SetCallPreferenceMode\n"
+                     "301:GetCallPreferenceMode\n"
+                     "302:SetLteImsSwitchStatus\n"
+                     "303:GetLteImsSwitchStatus\n"
+                     "304:SetImsConfigString\n"
+                     "305:SetImsConfigInt\n"
+                     "306:GetImsConfig\n"
+                     "307:SetImsFeatureValue\n"
+                     "308:GetImsFeatureValue\n"
+                     "309:SetVolteEnhanceMode\n"
+                     "310:GetVolteEnhanceMode\n"
+                     "400:CtrlCamera\n"
+                     "401:SetPreviewWindow\n"
+                     "402:SetDisplayWindow\n"
+                     "403:SetCameraZoom\n"
+                     "404:SetPauseImage\n"
+                     "405:SetDeviceDirection\n"
+                     "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> interfaceNum;
-        if (interfaceNum == 'W') {
+        std::cin >> InputNum;
+        if (InputNum == returnNum) {
+            std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestFuncMap_.find(interfaceNum);
+        auto itFunc = requestFuncMap_.find(InputNum);
         if (itFunc != requestFuncMap_.end()) {
             auto requestFunc = itFunc->second;
             if (requestFunc != nullptr) {
@@ -184,10 +282,11 @@ int32_t ImsTest::InputNumForInterface(const sptr<CellularCallInterface> &telepho
             }
         }
         if (ret != CELLULAR_CALL_SUCCESS) {
+            std::cout << "this execution did not return a successful value, please check.\n";
             return ret;
         }
     }
-    return 0;
+    return CELLULAR_CALL_SUCCESS;
 }
 
 HWTEST_F(ImsTest, cellular_call_interface_002, TestSize.Level1)
@@ -202,7 +301,7 @@ HWTEST_F(ImsTest, cellular_call_interface_002, TestSize.Level1)
         std::cout << "CellularCallService Remote service not exists.\n";
         return;
     }
-    sptr<CellularCallInterface> telephonyService = iface_cast<CellularCallInterface>(remote);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
     std::cout << "HWTEST_F cellular_call_interface_002";
 }
 } // namespace Telephony

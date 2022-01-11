@@ -23,7 +23,6 @@
 #include "base_connection.h"
 #include "hril_call_parcel.h"
 #include "mmi_code_utils.h"
-#include "mmi_handler.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -32,7 +31,7 @@ public:
     /**
      * constructor
      */
-    ControlBase();
+    ControlBase() = default;
 
     /**
      * destructor
@@ -54,6 +53,7 @@ public:
 
     /**
      * Answer
+     *
      * 27007-430_2001 6.6 Alternating mode call control method
      * 3GPP TS 22.030 [19]
      *
@@ -66,6 +66,7 @@ public:
 
     /**
      * Reject
+     *
      * 27007-430_2001 6.6 Alternating mode call control method
      * 3GPP TS 22.030 [19]
      *
@@ -120,15 +121,31 @@ public:
      * 3GPP TS 22.030
      *
      * Add another remote party
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t CombineConference() = 0;
 
     /**
-     * ReportCallsData.
+     * HangUpAllConnection
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t HangUpAllConnection() = 0;
+
+    /**
+     * ReportCallsData
+     *
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t ReportCallsData(const CallInfoList &callInfoList) = 0;
+
+    /**
+     * Dial PreJudgment
+     *
+     * @param CellularCallInfo
+     * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t DialPreJudgment(const CellularCallInfo &callInfo);
 
     /**
      * Is Need Execute MMI
@@ -144,6 +161,7 @@ public:
      *
      * 23014-400_2001 6	Support of DTMF across the air interface
      * 3GPP TS 22.030
+     *
      * @param char
      * @returns bool
      */
@@ -264,13 +282,6 @@ public:
     }
 
     /**
-     * Get Base MMI Handler
-     *
-     * @return std::shared_ptr<MMIHandler>
-     */
-    std::shared_ptr<MMIHandler> GetMMIHandler();
-
-    /**
      * Set Slot Id
      *
      * @param id
@@ -294,7 +305,7 @@ public:
      * @param std::map<std::string, BaseConnection>
      * @param Dtmf Code
      * @param CellularCallInfo
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     template<typename T>
     int32_t StartDtmf(T &&t, char cDtmfCode, const CellularCallInfo &callInfo) const
@@ -322,7 +333,7 @@ public:
             TELEPHONY_LOGE("StartDtmf return, error type: cDtmfCode invalid.");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
         }
-        return pConnection->StartDtmfRequest(cDtmfCode, pConnection->GetIndex(), GetSlotId());
+        return pConnection->StartDtmfRequest(GetSlotId(), cDtmfCode, pConnection->GetIndex());
     }
 
     /**
@@ -334,7 +345,7 @@ public:
      * STOP DTMF : No further info
      * @param std::map<std::string, BaseConnection>
      * @param CellularCallInfo
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     template<typename T>
     int32_t StopDtmf(T &&t, const CellularCallInfo &callInfo) const
@@ -358,7 +369,7 @@ public:
             TELEPHONY_LOGE("StopDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
         }
-        return pConnection->StopDtmfRequest(pConnection->GetIndex(), GetSlotId());
+        return pConnection->StopDtmfRequest(GetSlotId(), pConnection->GetIndex());
     }
 
     /**
@@ -370,7 +381,7 @@ public:
      * @param std::map<std::string, BaseConnection>
      * @param Dtmf Code
      * @param CellularCallInfo
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     template<typename T>
     int32_t SendDtmf(T &&t, char cDtmfCode, const CellularCallInfo &callInfo) const
@@ -410,14 +421,26 @@ public:
             TELEPHONY_LOGE("SendDtmf return, error type: cDtmfCode invalid.");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
         }
-        return pConnection->SendDtmfRequest(cDtmfCode, pConnection->GetIndex(), GetSlotId());
+        return pConnection->SendDtmfRequest(GetSlotId(), cDtmfCode, pConnection->GetIndex());
+    }
+
+    /**
+     * GetCallFailReason
+     *
+     * 3GPP TS 24.008 V17.4.0 (2021-09) 10.5.4.11	Cause
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    template<typename T>
+    int32_t GetCallFailReason(T &&t) const
+    {
+        decltype(t.begin()->second) connection;
+        return connection.GetCallFailReasonRequest(GetSlotId());
     }
 
 private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
-    std::shared_ptr<MMIHandler> handler_;
     int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "ControlBase"};
 };
 } // namespace Telephony
 } // namespace OHOS

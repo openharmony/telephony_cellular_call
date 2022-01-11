@@ -21,7 +21,6 @@ namespace OHOS {
 namespace Telephony {
 BaseConnection::BaseConnection()
 {
-    TELEPHONY_LOGI("BaseConnection::BaseConnection");
     (void)memset_s(&callReportInfo_, sizeof(CallReportInfo), 0, sizeof(callReportInfo_));
 }
 
@@ -52,8 +51,9 @@ TelCallState BaseConnection::GetStatus() const
 
 bool BaseConnection::IsRingingState() const
 {
-    return this->GetStatus() == CALL_STATUS_INCOMING || this->GetStatus() == CALL_STATUS_WAITING ||
-        this->GetStatus() == CALL_STATUS_ALERTING;
+    return this->GetStatus() == TelCallState::CALL_STATUS_INCOMING ||
+        this->GetStatus() == TelCallState::CALL_STATUS_WAITING ||
+        this->GetStatus() == TelCallState::CALL_STATUS_ALERTING;
 }
 
 void BaseConnection::SetFlag(bool flag)

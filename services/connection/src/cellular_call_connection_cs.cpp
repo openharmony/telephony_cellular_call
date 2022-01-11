@@ -16,11 +16,13 @@
 #include "cellular_call_connection_cs.h"
 
 #include "cellular_call_service.h"
+#include "observer_handler.h"
 
 namespace OHOS {
 namespace Telephony {
-int32_t CellularCallConnectionCS::DialRequest(const DialRequestStruct &dialRequest, int32_t slotId)
+int32_t CellularCallConnectionCS::DialRequest(int32_t slotId, const DialRequestStruct &dialRequest)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::DialRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: core is nullptr.");
@@ -43,6 +45,7 @@ int32_t CellularCallConnectionCS::DialRequest(const DialRequestStruct &dialReque
 
 int32_t CellularCallConnectionCS::HangUpRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::HangUpRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("HangUpRequest return, error type: core is nullptr.");
@@ -65,6 +68,7 @@ int32_t CellularCallConnectionCS::HangUpRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::AnswerRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: core is nullptr.");
@@ -86,6 +90,7 @@ int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::RejectRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: core is nullptr.");
@@ -107,6 +112,7 @@ int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::HoldRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("HoldRequest return, error type: core is nullptr.");
@@ -128,6 +134,7 @@ int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::UnHoldCallRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("UnHoldCallRequest return, error type: core is nullptr.");
@@ -149,6 +156,7 @@ int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::SwitchCallRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::SwitchCallRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("SwitchCallRequest return, error type: core is nullptr.");
@@ -170,6 +178,7 @@ int32_t CellularCallConnectionCS::SwitchCallRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32_t voiceCall)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::CombineConferenceRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("CombineConferenceRequest return, error type: core is nullptr.");
@@ -189,8 +198,9 @@ int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t index, int32_t slotId, int32_t voiceCall)
+int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t slotId, int32_t index, int32_t voiceCall)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::SeparateConferenceRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("SeparateConferenceRequest return, error type: core is nullptr.");
@@ -210,8 +220,9 @@ int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t index, int32
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::CallSupplementRequest(CallSupplementType type, int32_t slotId)
+int32_t CellularCallConnectionCS::CallSupplementRequest(int32_t slotId, CallSupplementType type)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::CallSupplementRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("CallSupplementRequest return, error type: core is nullptr.");
@@ -233,11 +244,13 @@ int32_t CellularCallConnectionCS::CallSupplementRequest(CallSupplementType type,
 
 int32_t CellularCallConnectionCS::SendCDMAThreeWayDialRequest(int32_t slotId)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::SendCDMAThreeWayDialRequest start.");
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionCS::SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::SendDtmfRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("SendDtmfRequest return, error type: core is nullptr.");
@@ -257,8 +270,9 @@ int32_t CellularCallConnectionCS::SendDtmfRequest(char cDtmfCode, int32_t index,
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionCS::StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::StartDtmfRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("StartDtmfRequest return, error type: core is nullptr.");
@@ -278,8 +292,9 @@ int32_t CellularCallConnectionCS::StartDtmfRequest(char cDtmfCode, int32_t index
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t index, int32_t slotId) const
+int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t slotId, int32_t index) const
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::StopDtmfRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("StopDtmfRequest return, error type: core is nullptr.");
@@ -299,31 +314,9 @@ int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t index, int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionCS::SendDtmfStringRequest(
-    const std::string &sDtmfCode, int32_t on, int32_t off, int32_t slotId)
-{
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SEND_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("SendDtmfStringRequest return, error type: GetInstance() is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    int32_t index = GetIndex();
-    core->SendDTMF(sDtmfCode, index, on, off, event);
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
+    TELEPHONY_LOGE("CellularCallConnectionCS::GetCsCallsDataRequest start.");
     auto core = GetCore(slotId);
     if (core == nullptr) {
         TELEPHONY_LOGE("CellularCallHandler::GetCsCallsDataRequest return, error type: core is nullptr.");
@@ -343,6 +336,28 @@ int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t 
     // Implementation
     // Optional. Recommended when +CHLD command is implemented.
     core->GetCallList(event);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConnectionCS::GetCallFailReasonRequest(int32_t slotId) const
+{
+    TELEPHONY_LOGE("CellularCallConnectionCS::GetCallFailReasonRequest start.");
+    auto core = GetCore(slotId);
+    if (core == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: core is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_FAIL_REASON);
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: event is null.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
+    core->GetCallFailReason(event);
     return TELEPHONY_SUCCESS;
 }
 

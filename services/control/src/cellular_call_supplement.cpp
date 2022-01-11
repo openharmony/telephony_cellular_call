@@ -46,9 +46,9 @@ void CellularCallSupplement::GetClir(const MMIData &mmiData)
         return;
     }
     if (mmiData.actionString == activate) {
-        supplementRequest_.SetClirActivateRequest(ACTIVATE_ACTION);
+        supplementRequest_.SetClirRequest(ACTIVATE_ACTION);
     } else if (mmiData.actionString == deactivate) {
-        supplementRequest_.SetClirDeactivateRequest(DEACTIVATE_ACTION);
+        supplementRequest_.SetClirRequest(DEACTIVATE_ACTION);
     } else if (mmiData.actionString == interrogate) {
         supplementRequest_.InquireClirRequest();
     }
@@ -60,7 +60,7 @@ void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
     int32_t serviceCode = ObtainServiceCode(mmiData.serviceInfoB);
     int32_t cause = ObtainCause(mmiData.serviceCode);
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallTransferInfoRequest(cause);
+        supplementRequest_.GetCallTransferRequest(cause);
         return;
     }
     std::string phoneNumber = mmiData.serviceInfoA;
@@ -77,25 +77,25 @@ void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
     switch (StandardizeUtils::Hash_(mmiData.actionString.c_str())) {
         case "*"_hash:
             if (phoneNumber.empty()) {
-                callForwardAction = CallTransferSettingType::CALL_TRANSFER_ENABLE;
+                callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_ENABLE;
             } else {
-                callForwardAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+                callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
             }
             break;
         case "#"_hash:
-            callForwardAction = CallTransferSettingType::CALL_TRANSFER_DISABLE;
+            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_DISABLE;
             break;
         case "**"_hash:
-            callForwardAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
             break;
         case "##"_hash:
-            callForwardAction = CallTransferSettingType::CALL_TRANSFER_ERASURE;
+            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_ERASURE;
             break;
         default:
-            callForwardAction = TELEPHONY_ERROR;
-            break;
+            TELEPHONY_LOGE("DealCallTransfer return, actionString out of range, please check!");
+            return;
     }
-    supplementRequest_.SetCallTransferInfoRequest(callForwardAction, cause, phoneNumber, serviceCode);
+    supplementRequest_.SetCallTransferRequest(callForwardAction, cause, phoneNumber, serviceCode);
 }
 
 int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
@@ -131,6 +131,7 @@ int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfo
         case ALL_GPRS_BEARER_SERVICES:
             return DEDICATED_PACKET_ACCESS;
         default:
+            TELEPHONY_LOGE("ObtainServiceCode return, serviceInfoB out of range, please check!");
             return NONE;
     }
 }
@@ -153,13 +154,13 @@ int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
      */
     switch (StandardizeUtils::Hash_(actionStr.c_str())) {
         case "21"_hash:
-            return TRANSFER_TYPE_UNCONDITIONAL;
+            return (int32_t)CallTransferType::TRANSFER_TYPE_UNCONDITIONAL;
         case "67"_hash:
-            return TRANSFER_TYPE_BUSY;
+            return (int32_t)CallTransferType::TRANSFER_TYPE_BUSY;
         case "62"_hash:
-            return TRANSFER_TYPE_NOT_REACHABLE;
+            return (int32_t)CallTransferType::TRANSFER_TYPE_NO_REPLY;
         case "61"_hash:
-            return TRANSFER_TYPE_NO_REPLY;
+            return (int32_t)CallTransferType::TRANSFER_TYPE_NOT_REACHABLE;
         default:
             TELEPHONY_LOGE("ObtainCause return, actionStr out of range!");
             return TELEPHONY_ERROR;
@@ -266,17 +267,9 @@ void CellularCallSupplement::EventGetCallWaiting(CallWaitResult &waitingInfo)
     callWaitResponse.status = waitingInfo.status;
     callWaitResponse.classCw = waitingInfo.classCw;
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventInquireCallWait return, GetInstance is nullptr.");
+        TELEPHONY_LOGE("EventGetCallWaiting return, GetInstance is nullptr.");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (waitingInfo.result) {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_WAITING_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_WAITING_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetWaitingResult(callWaitResponse);
 }
 
@@ -285,18 +278,10 @@ void CellularCallSupplement::EventSetCallWaiting(HRilRadioResponseInfo &response
     CallWaitResponse callWaitResponse;
     callWaitResponse.result = static_cast<int32_t>(responseInfo.error);
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetCallWait return, GetInstance is nullptr.");
+        TELEPHONY_LOGE("EventSetCallWaiting return, GetInstance is nullptr.");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if ((int32_t)responseInfo.error) {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_WAITING_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_WAITING_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult(callWaitResponse);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult((int32_t)responseInfo.error);
 }
 
 void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryResult &queryResult)
@@ -307,13 +292,25 @@ void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryResult &qu
     }
 
     // 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
-    CallTransferResponse callTransferResponse;
-    callTransferResponse.result = queryResult.result;
+    CallTransferResponse response;
+    if (memset_s(&response, sizeof(response), 0, sizeof(response)) != EOK) {
+        TELEPHONY_LOGE("EventGetCallTransferInfo return, memset_s fail.");
+        return;
+    }
+
+    // <number>: string type phone number of forwarding address in format specified by <type>
+    size_t cpyLen = strlen(queryResult.number.c_str()) + 1;
+    if (strcpy_s(response.number, cpyLen, queryResult.number.c_str()) != EOK) {
+        TELEPHONY_LOGE("EventGetCallTransferInfo return, strcpy_s fail.");
+        return;
+    }
+
+    response.result = queryResult.result;
 
     /*
      * <status>:0	not active;    1	  active
      * */
-    callTransferResponse.status = queryResult.status;
+    response.status = queryResult.status;
 
     /*
      * <classx> is a sum of integers each representing a class of information (default 7):
@@ -326,22 +323,12 @@ void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryResult &qu
      * 64	dedicated packet access
      * 128	dedicated PAD access
      */
-    callTransferResponse.classx = queryResult.classx;
-    // <number>: string type phone number of forwarding address in format specified by <type>
-    callTransferResponse.number = queryResult.number;
+    response.classx = queryResult.classx;
     // <type>: type of address octet in integer format (refer GSM 04.08 [8] subclause 10.5.4.7);
     // default 145 when dialling string includes international access code character "+", otherwise 129
-    callTransferResponse.type = queryResult.type;
+    response.type = queryResult.type;
 
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (queryResult.result) {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_TRANSFER_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_TRANSFER_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetTransferResult(callTransferResponse);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetTransferResult(response);
 }
 
 void CellularCallSupplement::EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo)
@@ -350,14 +337,6 @@ void CellularCallSupplement::EventSetCallTransferInfo(HRilRadioResponseInfo &res
         TELEPHONY_LOGE("EventSetCallTransferInfo return, GetInstance is nullptr.");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if ((int32_t)responseInfo.error) {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_TRANSFER_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_TRANSFER_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetTransferResult((int32_t)responseInfo.error);
 }
 
@@ -376,14 +355,6 @@ void CellularCallSupplement::EventGetCallRestriction(const CallRestrictionResult
     response.status = result.status;
     response.classCw = result.classCw;
 
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (result.result) {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_RESTRICTION_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CALL_RESTRICTION_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetRestrictionResult(response);
 }
 
@@ -393,14 +364,6 @@ void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info
         TELEPHONY_LOGE("EventSetCallRestriction return, GetInstance is nullptr.");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if ((int32_t)info.error) {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_RESTRICTION_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_RESTRICTION_SUCCESS;
-    }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult((int32_t)info.error);
 }
 
@@ -439,7 +402,7 @@ int32_t CellularCallSupplement::SetCallTransferInfo(const CallTransferInfo &cfIn
     }
 
     std::string dialString(cfInfo.transferNum);
-    return supplementRequest_.SetCallTransferInfoRequest(cfInfo.settingType, cfInfo.type, dialString, 1);
+    return supplementRequest_.SetCallTransferRequest((int32_t)cfInfo.settingType, (int32_t)cfInfo.type, dialString, 1);
 }
 
 int32_t CellularCallSupplement::GetCallTransferInfo(CallTransferType type)
@@ -453,12 +416,12 @@ int32_t CellularCallSupplement::GetCallTransferInfo(CallTransferType type)
      * When querying the status of a network service (<mode>=2) the response line for 'not active' case
      * (<status>=0) should be returned only if service is not active for any <class>
      */
-    return supplementRequest_.GetCallTransferInfoRequest(type);
+    return supplementRequest_.GetCallTransferRequest((int32_t)type);
 }
 
 bool CellularCallSupplement::PhoneTypeGsmOrNot()
 {
-    return moduleServiceUtils_.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == RadioTech::RADIO_TECHNOLOGY_GSM;
+    return moduleServiceUtils_.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == PhoneType::PHONE_TYPE_IS_GSM;
 }
 
 int32_t CellularCallSupplement::SetCallWaiting(bool activate)
@@ -505,28 +468,28 @@ int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cR
 
     std::string fac;
     switch (cRInfo.fac) {
-        case RESTRICTION_TYPE_ALL_OUTGOING:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_OUTGOING:
             fac = BARR_ALL_OUTGOING_CALLS;
             break;
-        case RESTRICTION_TYPE_INTERNATIONAL:
+        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL:
             fac = BARR_OUTGOING_INTERNATIONAL_CALLS;
             break;
-        case RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
+        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
             fac = BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
             break;
-        case RESTRICTION_TYPE_ALL_INCOMING:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING:
             fac = BARR_ALL_INCOMING_CALLS;
             break;
-        case RESTRICTION_TYPE_ROAMING_INCOMING:
+        case CallRestrictionType::RESTRICTION_TYPE_ROAMING_INCOMING:
             fac = BARR_INCOMING_CALLS_OUTSIDE_HOME;
             break;
-        case RESTRICTION_TYPE_ALL_CALLS:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_CALLS:
             fac = ALL_BARRING_SERVICES;
             break;
-        case RESTRICTION_TYPE_OUTGOING_SERVICES:
+        case CallRestrictionType::RESTRICTION_TYPE_OUTGOING_SERVICES:
             fac = ALL_OUTGOING_BARRING_SERVICES;
             break;
-        case RESTRICTION_TYPE_INCOMING_SERVICES:
+        case CallRestrictionType::RESTRICTION_TYPE_INCOMING_SERVICES:
             fac = ALL_INCOMING_BARRING_SERVICES;
             break;
         default:
@@ -539,7 +502,7 @@ int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cR
         return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
     std::string info(cRInfo.password);
-    return supplementRequest_.SetCallRestrictionRequest(fac, cRInfo.mode, info);
+    return supplementRequest_.SetCallRestrictionRequest(fac, (int32_t)cRInfo.mode, info);
 }
 
 int32_t CellularCallSupplement::GetCallRestriction(CallRestrictionType facType)
@@ -550,28 +513,28 @@ int32_t CellularCallSupplement::GetCallRestriction(CallRestrictionType facType)
     }
     std::string fac;
     switch (facType) {
-        case RESTRICTION_TYPE_ALL_OUTGOING:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_OUTGOING:
             fac = BARR_ALL_OUTGOING_CALLS;
             break;
-        case RESTRICTION_TYPE_INTERNATIONAL:
+        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL:
             fac = BARR_OUTGOING_INTERNATIONAL_CALLS;
             break;
-        case RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
+        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
             fac = BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
             break;
-        case RESTRICTION_TYPE_ALL_INCOMING:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING:
             fac = BARR_ALL_INCOMING_CALLS;
             break;
-        case RESTRICTION_TYPE_ROAMING_INCOMING:
+        case CallRestrictionType::RESTRICTION_TYPE_ROAMING_INCOMING:
             fac = BARR_INCOMING_CALLS_OUTSIDE_HOME;
             break;
-        case RESTRICTION_TYPE_ALL_CALLS:
+        case CallRestrictionType::RESTRICTION_TYPE_ALL_CALLS:
             fac = ALL_BARRING_SERVICES;
             break;
-        case RESTRICTION_TYPE_OUTGOING_SERVICES:
+        case CallRestrictionType::RESTRICTION_TYPE_OUTGOING_SERVICES:
             fac = ALL_OUTGOING_BARRING_SERVICES;
             break;
-        case RESTRICTION_TYPE_INCOMING_SERVICES:
+        case CallRestrictionType::RESTRICTION_TYPE_INCOMING_SERVICES:
             fac = ALL_INCOMING_BARRING_SERVICES;
             break;
         default:
@@ -594,29 +557,49 @@ void CellularCallSupplement::EventGetClip(GetClipResult &getClipResult)
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetClipResult(clipResponse);
 }
 
-void CellularCallSupplement::EventGetClir(GetClirResult &getClirResult)
+void CellularCallSupplement::EventGetClir(GetClirResult &result)
 {
-    ClirResponse clirResponse;
+    ClirResponse response;
     // 3GPP TS 27.007 V3.9.0 (2001-06) 7.7	Calling line identification restriction +CLIR
-    clirResponse.result = getClirResult.result;
-    clirResponse.action = getClirResult.action;
-    clirResponse.clirStat = getClirResult.clirStat;
+    response.result = result.result;
+    response.action = result.action;
+    response.clirStat = result.clirStat;
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("EventGetClir return, GetInstance is nullptr.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetClirResult(clirResponse);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetClirResult(response);
 }
 
 void CellularCallSupplement::EventSetClir(HRilRadioResponseInfo &info)
 {
-    ClirResponse clirResponse;
-    clirResponse.result = static_cast<int32_t>(info.error);
+    TELEPHONY_LOGI("CellularCallSupplement::EventSetClir entry");
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("EventSetClir return, GetInstance is nullptr.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetClirResult(clirResponse);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetClirResult(static_cast<int32_t>(info.error));
+}
+
+int32_t CellularCallSupplement::SendUssd(const std::string &msg)
+{
+    TELEPHONY_LOGI("CellularCallSupplement::SendUssd entry");
+    if (!PhoneTypeGsmOrNot()) {
+        TELEPHONY_LOGE("SendUssd return, network type is not supported!");
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
+    }
+    return supplementRequest_.SendUssdRequest(msg);
+}
+
+void CellularCallSupplement::EventSendUssd(HRilRadioResponseInfo &responseInfo)
+{
+    TELEPHONY_LOGI("CellularCallSupplement::EventSendUssd entry");
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("EventSendUssd return, GetInstance is nullptr.");
+        return;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSendUssdResult(
+        static_cast<int32_t>(responseInfo.error));
 }
 } // namespace Telephony
 } // namespace OHOS

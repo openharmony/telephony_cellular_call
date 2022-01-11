@@ -36,23 +36,22 @@ public:
 
     /**
      * @brief Is it an emergency call
-     * @param string &phoneNum
+     *
      * @param slotId
+     * @param phoneNum
      * @return bool
      */
-    bool IsEmergencyCall(const std::string &phoneNum, int32_t slotId);
+    bool IsEmergencyCall(int32_t slotId, const std::string &phoneNum);
 
 private:
     /**
      * determine the handling of urgent calls
-     * @param string &formatString
+     *
      * @param slotId
+     * @param formatString
      * @return bool
      */
-    bool IsEmergencyCallProcessing(const std::string &formatString, int32_t slotId);
-
-private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "EmergencyUtils"};
+    bool IsEmergencyCallProcessing(int32_t slotId, const std::string &formatString);
 };
 } // namespace Telephony
 } // namespace OHOS

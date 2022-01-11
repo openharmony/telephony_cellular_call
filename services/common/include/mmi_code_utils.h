@@ -16,10 +16,7 @@
 #ifndef TELEPHONY_CELLULAR_CALL_MMI_CODE_UTILS_H
 #define TELEPHONY_CELLULAR_CALL_MMI_CODE_UTILS_H
 
-#include <string>
 #include "cellular_call_data_struct.h"
-
-#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -43,18 +40,20 @@ public:
      * TS 24.080 [10]
      *
      * @param analyseString
-     * @return Whether to execute the MMI
+     * @return bool
      */
     bool IsNeedExecuteMmi(const std::string &analyseString);
 
     /**
      * ExecuteMmiCode
+     *
      * @return bool
      */
     bool ExecuteMmiCode();
 
     /**
      * GetMMIData
+     *
      * @return MMIData
      */
     MMIData GetMMIData();
@@ -75,7 +74,6 @@ private:
 
 private:
     MMIData mmiData_;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "MMICodeUtils"};
 };
 } // namespace Telephony
 } // namespace OHOS

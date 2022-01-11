@@ -36,8 +36,9 @@ public:
 
     /**
      * Get Core for core service
+     *
      * @param slotId
-     * @return Core for core service
+     * @return std::shared_ptr<Core>
      */
     std::shared_ptr<Core> GetCore(int32_t slotId);
 

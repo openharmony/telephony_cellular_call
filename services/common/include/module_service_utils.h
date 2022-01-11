@@ -20,13 +20,15 @@
 #include "telephony_log_wrapper.h"
 #include "iservice_registry.h"
 #include "singleton.h"
+#include "ims_interface.h"
 
 namespace OHOS {
 namespace Telephony {
-class ModuleServiceUtils {
+class ModuleServiceUtils : public std::enable_shared_from_this<ModuleServiceUtils> {
 public:
     /**
      * Get Cs Radio state
+     *
      * @param slotId
      * @return bool
      */
@@ -34,13 +36,15 @@ public:
 
     /**
      * Get Network State
+     *
      * @param slotId
      * @return Network State
      */
-    RadioTech GetNetworkStatus(int32_t slotId);
+    PhoneType GetNetworkStatus(int32_t slotId);
 
     /**
      * Get Iso Country Code
+     *
      * @param slotId
      * @return Iso Country Code
      */
@@ -48,6 +52,7 @@ public:
 
     /**
      * Get net work Country Code
+     *
      * @param slotId
      * @return Network Country Code
      */
@@ -55,6 +60,7 @@ public:
 
     /**
      * Get IMS Domain Registration State
+     *
      * @param slotId
      * @return Whether to register
      */
@@ -62,18 +68,51 @@ public:
 
     /**
      * Get slot info
+     *
      * @return slot id
      */
     std::vector<int32_t> GetSlotInfo();
 
     /**
      * Get core
+     *
      * @return slot id
      */
     std::shared_ptr<Core> GetCore(int32_t slotId);
 
+    /**
+     * Need to call ImsService
+     *
+     * @return bool
+     */
+    bool NeedCallImsService() const;
+
+    /**
+     * Get ImsService Remote Object
+     *
+     * @return sptr<ImsInterface>
+     */
+    sptr<ImsInterface> GetImsServiceRemoteObject() const;
+
+    /**
+     * Register ImsCallBack Again
+     */
+    void RegisterImsCallBackAgain() const;
+
+    /**
+     * Connect ImsService
+     *
+     * @return int32_t
+     */
+    int32_t ConnectImsService();
+
+    /**
+     * Notify Death
+     */
+    void NotifyDeath();
+
 private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "ModuleServiceUtils"};
+    const uint32_t CONNECT_MAX_TRY_COUNT = 5;
 };
 } // namespace Telephony
 } // namespace OHOS

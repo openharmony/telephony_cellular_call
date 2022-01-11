@@ -29,10 +29,17 @@ public:
     void SetUp();
     void TearDown();
 
-    int32_t SetCallPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t GetCallPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetDomainPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetDomainPreferenceMode(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetLteImsSwitchStatus(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetLteImsSwitchStatus(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetImsConfigString(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetImsConfigInt(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetImsConfig(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t CtrlCamera(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetPreviewWindow(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetDisplayWindow(const sptr<CellularCallInterface> &telephonyService) const;
@@ -43,7 +50,7 @@ public:
 
 private:
     using RequestFuncType = int32_t (ImsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
-    std::map<char, RequestFuncType> requestFuncMap_;
+    std::map<int32_t, RequestFuncType> requestFuncMap_;
 };
 } // namespace Telephony
 } // namespace OHOS

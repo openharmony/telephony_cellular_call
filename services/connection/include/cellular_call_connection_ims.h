@@ -16,8 +16,9 @@
 #ifndef CELLULAR_CALL_CONNECTION_IMS_H
 #define CELLULAR_CALL_CONNECTION_IMS_H
 
-#include <vector>
 #include "base_connection.h"
+#include "module_service_utils.h"
+#include "ims_interface.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -34,61 +35,71 @@ public:
     ~CellularCallConnectionIMS() = default;
 
     /**
-     *  Dial Request
+     * Dial Request
      *
-     * @param ImsDialInfoStruct
      * @param slotId
+     * @param ImsDialInfoStruct
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t DialRequest(const ImsDialInfoStruct &dialRequest, int32_t slotId);
+    int32_t DialRequest(int32_t slotId, const ImsDialInfoStruct &dialRequest);
 
     /**
-     *  End Request
+     * HangUp Request
      *
-     * @param index
      * @param slotId
+     * @param phoneNum
+     * @param index
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t EndRequest(int32_t index, int32_t slotId);
+    int32_t HangUpRequest(int32_t slotId, const std::string &phoneNum, int32_t index);
 
     /**
      * Answer Request
-     * @param videoState
+     *
      * @param slotId
+     * @param phoneNum
+     * @param videoState
+     * @param index
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t AnswerRequest(int32_t videoState, int32_t slotId);
+    int32_t AnswerRequest(int32_t slotId, const std::string &phoneNum, int32_t videoState, int32_t index);
 
     /**
      * Reject Request
+     *
+     * @param slotId
+     * @param phoneNum
+     * @param index
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t RejectRequest(int32_t slotId, const std::string &phoneNum, int32_t index);
+
+    /**
+     * HoldCall Request
+     *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t RejectRequest(int32_t slotId);
+    int32_t HoldCallRequest(int32_t slotId);
 
     /**
-     * Swap Request
+     * UnHoldCall Request
+     *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwapRequest(int32_t slotId);
+    int32_t UnHoldCallRequest(int32_t slotId);
 
     /**
-     * Hold Request
+     * SwitchCall Request
+     *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HoldRequest(int32_t slotId);
+    int32_t SwitchCallRequest(int32_t slotId);
 
     /**
-     * Active Request
-     * @param slotId
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
-     */
-    int32_t ActiveRequest(int32_t slotId);
-
-    /**
-     * CombineConferenceRequest
+     * CombineConference Request
      *
      * @param slotId
      * @param voiceCall
@@ -97,14 +108,60 @@ public:
     int32_t CombineConferenceRequest(int32_t slotId, int32_t voiceCall);
 
     /**
+     * InviteToConference Request
+     *
+     * @param slotId
+     * @param numberList
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t InviteToConferenceRequest(int32_t slotId, const std::vector<std::string> &numberList);
+
+    /**
+     * KickOutFromConference Request
+     *
+     * @param slotId
+     * @param numberList
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t KickOutFromConferenceRequest(int32_t slotId, const std::vector<std::string> &numberList);
+
+    /**
      * CallSupplement Request
+     *
+     * @param slotId
+     * @param CallSupplementType
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t CallSupplementRequest(int32_t slotId, CallSupplementType type);
+
+    /**
+     * UpdateCallMediaMode Request
+     *
+     * @param CellularCallInfo
+     * @param CallMediaMode
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, CallMediaMode mode);
+
+    /**
+     * StartRtt Request
+     *
+     * @param slotId
+     * @param msg
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t StartRttRequest(int32_t slotId, const std::string &msg);
+
+    /**
+     * StopRtt Request
+     *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t CallSupplementRequest(CallSupplementType type, int32_t slotId);
+    int32_t StopRttRequest(int32_t slotId);
 
     /**
-     * CellularCallConnectionIMS GetImsCallsDataRequest
+     * GetImsCallsData Request
      *
      * @param slotId
      * @param lastCallsDataFlag
@@ -115,34 +172,42 @@ public:
     /**
      * Send Dtmf Request
      *
+     * @param slotId
      * @param char cDtmfCode
      * @param index
-     * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
+    int32_t SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
 
     /**
      * Start Dtmf Request
      *
+     * @param slotId
      * @param char cDtmfCode
      * @param index
-     * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
+    int32_t StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
 
     /**
      * Stop Dtmf Request
      *
-     * @param index
      * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @param index
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StopDtmfRequest(int32_t index, int32_t slotId) const;
+    int32_t StopDtmfRequest(int32_t slotId, int32_t index) const;
+
+    /**
+     * Get Call Fail Reason Request
+     *
+     * @param slotId
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetCallFailReasonRequest(int32_t slotId) const;
 
 private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallConnectionIMS"};
+    ModuleServiceUtils moduleUtils_;
 };
 } // namespace Telephony
 } // namespace OHOS

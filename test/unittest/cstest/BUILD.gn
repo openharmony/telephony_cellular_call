@@ -20,18 +20,19 @@ ohos_unittest("tel_cellular_call_cs_test") {
   module_out_path = part_name + "/" + test_module
 
   sources = [
-    "//base/telephony/core_service/interfaces/innerkits/cellular_call/cellular_call_proxy.cpp",
+    "//base/telephony/cellular_call/framework/cellular_call_client.cpp",
+    "//base/telephony/cellular_call/framework/cellular_call_proxy.cpp",
     "cs_test.cpp",
   ]
 
   include_dirs = [
     "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/core_service/common/cellular_call",
-    "//base/telephony/core_service/interfaces/innerkits/cellular_call",
-    "//base/telephony/core_service/common/call_manager",
-    "//base/telephony/core_service/interfaces/innerkits/call_manager",
-    "//base/telephony/ril_adapter/interfaces/innerkits",
+    "//base/telephony/cellular_call/interfaces",
+    "//base/telephony/call_manager/interfaces/innerkits",
+    "//base/telephony/ril_adapter/interfaces/innerkits/include",
+    "//base/telephony/core_service/interfaces/innerkits/core",
+    "//base/telephony/core_service/utils/log/include",
   ]
 
   deps = [
@@ -40,7 +41,6 @@ ohos_unittest("tel_cellular_call_cs_test") {
   ]
 
   external_deps = [
-    "appexecfwk_standard:libeventhandler",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",

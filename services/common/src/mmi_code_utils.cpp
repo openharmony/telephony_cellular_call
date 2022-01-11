@@ -18,13 +18,13 @@
 #include <regex>
 #include "cellular_call_supplement.h"
 
-#include "securec.h"
-
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
+// 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
+const int32_t JUDGE_USSD_LEN = 2;
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
     return StandardizeUtils::HashCompileTime(p);
@@ -36,11 +36,33 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
         TELEPHONY_LOGE("IsNeedExecuteMmi return, analyseString is empty.");
         return false;
     }
-    return RegexMatchMmi(analyseString);
+    if (RegexMatchMmi(analyseString)) {
+        return true;
+    }
+
+    // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
+    if (analyseString.back() == '#') {
+        TELEPHONY_LOGI("IsNeedExecuteMmi, analyseString is end of #");
+        mmiData_.fullString = analyseString;
+        return true;
+    }
+
+    // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3 Handling of supplementary services    Figure 3.5.3.2
+    if (analyseString.length() <= JUDGE_USSD_LEN) {
+        TELEPHONY_LOGI("IsNeedExecuteMmi, conditions suitable for ussd.");
+        mmiData_.dialString = analyseString;
+        return true;
+    }
+    if (!mmiData_.fullString.empty()) {
+        TELEPHONY_LOGI("IsNeedExecuteMmi, fullString is not empty.");
+        return true;
+    }
+    return false;
 }
 
 bool MMICodeUtils::ExecuteMmiCode()
 {
+    TELEPHONY_LOGI("ExecuteMmiCode entry.");
     CellularCallSupplement supplement;
 
     /**
@@ -124,11 +146,23 @@ bool MMICodeUtils::ExecuteMmiCode()
                 supplement.DealCallWaiting(mmiData_);
                 return true;
             default:
-                TELEPHONY_LOGI("ExecuteMmiCode return, default case, need check serviceCode.");
+                TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
                 break;
         }
     }
-    return true;
+
+    // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3 Handling of supplementary services    Figure 3.5.3.2
+    if (mmiData_.fullString.empty() && !mmiData_.dialString.empty() && mmiData_.dialString.length() <= JUDGE_USSD_LEN) {
+        supplement.SendUssd(mmiData_.dialString);
+        return true;
+    }
+    if (!mmiData_.fullString.empty()) {
+        TELEPHONY_LOGI("ExecuteMmiCode, fullString is not empty.");
+        supplement.SendUssd(mmiData_.fullString);
+        return true;
+    }
+    TELEPHONY_LOGW("ExecuteMmiCode, default case, need check.");
+    return false;
 }
 
 bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
@@ -171,7 +205,7 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
          * The procedure always starts with *, #, **, ## or *# and is finished by #.
          * Each part within the procedure is separated by *.
          */
-        if (!mmiData_.dialString.empty() && mmiData_.dialString.back() == '#' && analyseString.back() == '#') {
+        if (analyseString.back() == '#' && !mmiData_.dialString.empty() && mmiData_.dialString.back() == '#') {
             mmiData_.fullString = analyseString;
         }
         return true;

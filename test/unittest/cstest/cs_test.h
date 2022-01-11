@@ -40,23 +40,31 @@ public:
     int32_t IsEmergencyPhoneNumber(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t CombineConference(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SeparateConference(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t InviteToConference(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t KickOutFromConference(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t CallSupplement(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t HangUpAllConnection(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t UpdateCallMediaMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t UnRegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t StartDtmf(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t StopDtmf(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SendDtmf(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t SendDtmfString(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t StartRtt(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t StopRtt(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetCallTransferInfo(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetMute(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
 
 private:
     using RequestFuncType = int32_t (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
-    std::map<char, RequestFuncType> requestFuncMap_;
+    std::map<int32_t, RequestFuncType> requestFuncMap_;
 };
 } // namespace Telephony
 } // namespace OHOS

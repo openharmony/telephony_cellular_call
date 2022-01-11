@@ -17,12 +17,13 @@
 
 #include "shortnumberinfo.h"
 
+#include "cellular_call_config.h"
 #include "mmi_code_utils.h"
 #include "module_service_utils.h"
 
 namespace OHOS {
 namespace Telephony {
-bool EmergencyUtils::IsEmergencyCall(const std::string &phoneNum, int32_t slotId)
+bool EmergencyUtils::IsEmergencyCall(int32_t slotId, const std::string &phoneNum)
 {
     if (phoneNum.empty()) {
         TELEPHONY_LOGI("IsEmergencyCall return, phoneNum is empty.");
@@ -39,10 +40,10 @@ bool EmergencyUtils::IsEmergencyCall(const std::string &phoneNum, int32_t slotId
         return false;
     }
 
-    return IsEmergencyCallProcessing(phoneNum, slotId);
+    return IsEmergencyCallProcessing(slotId, phoneNum);
 }
 
-bool EmergencyUtils::IsEmergencyCallProcessing(const std::string &formatString, int32_t slotId)
+bool EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::string &formatString)
 {
     TELEPHONY_LOGI("IsEmergencyCallProcessing entry.");
     std::vector<std::string> emergencyNumList = {
@@ -52,15 +53,23 @@ bool EmergencyUtils::IsEmergencyCallProcessing(const std::string &formatString, 
         TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with local configuration data.");
         return true;
     }
+    CellularCallConfig config;
     ModuleServiceUtils dependDataObtain;
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);
+    std::vector<Emergencyinfo> eccCallList = config.GetEccCallList(slotId);
+    for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
+        if (countryIsoCode == it->mcc && formatString == it->eccNum) {
+            TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with sim data.");
+            return true;
+        }
+    }
     if (!countryIsoCode.empty()) {
         TELEPHONY_LOGI("IsEmergencyCallProcessing countryIsoCode is not empty");
         i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
         transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
         return shortNumberInfo.IsEmergencyNumber(formatString, countryIsoCode);
     }
-    TELEPHONY_LOGI("IsEmergencyCallProcessing, return false.");
+    TELEPHONY_LOGI("IsEmergencyCallProcessing, not an emergency number.");
     return false;
 }
 } // namespace Telephony
