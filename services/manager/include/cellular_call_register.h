@@ -21,6 +21,8 @@
 #include "cellular_call_connection_cs.h"
 #include "i_call_status_callback.h"
 #include "singleton.h"
+#include "ims_callback_stub.h"
+#include "ims_interface.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -29,119 +31,256 @@ class CellularCallRegister {
 
 public:
     /**
-     * ReportCallsInfo.
+     * ReportCallsInfo
      *
-     * @param callsReportInfo data list
+     * @param CallsReportInfo
      */
     void ReportCallsInfo(const CallsReportInfo &callsReportInfo);
 
     /**
-     * ReportSingleCallInfo.
+     * ReportSingleCallInfo
      *
      * @param CallReportInfo
      * @param TelCallState
      */
-    void ReportSingleCallInfo(CallReportInfo &reportInfo, TelCallState callState);
+    void ReportSingleCallInfo(const CallReportInfo &info, TelCallState callState);
 
     /**
-     * ReportEventResultInfo.
+     *
+     * ReportEventResultInfo
      *
      * @param CellularCallEventInfo
      */
     void ReportEventResultInfo(const CellularCallEventInfo &info);
 
     /**
-     * ReportGetWaitingResult.
+     * ReportGetWaitingResult
      *
      * @param CallWaitResponse
      */
     void ReportGetWaitingResult(const CallWaitResponse &response);
 
     /**
-     * ReportSetWaitingResult.
+     * ReportSetWaitingResult
      *
-     * @param CallWaitResponse
+     * @param result
      */
-    void ReportSetWaitingResult(const CallWaitResponse &response);
+    void ReportSetWaitingResult(int32_t result);
 
     /**
-     * ReportGetRestrictionResult.
+     * ReportGetRestrictionResult
      *
      * @param CallRestrictionResponse
      */
     void ReportGetRestrictionResult(const CallRestrictionResponse &response);
 
     /**
-     * ReportSetRestrictionResult.
+     * ReportSetRestrictionResult
      *
      * @param result
      */
     void ReportSetRestrictionResult(int32_t result);
 
     /**
-     * ReportGetTransferResult.
+     * ReportGetTransferResult
      *
      * @param CallTransferResponse
      */
     void ReportGetTransferResult(const CallTransferResponse &response);
 
     /**
-     * ReportSetTransferResult.
+     * ReportSetTransferResult
      *
      * @param result
      */
     void ReportSetTransferResult(int32_t result);
 
     /**
-     * ReportGetClipResult.
+     * ReportGetClipResult
      *
      * @param ClipResponse
      */
-    void ReportGetClipResult(const ClipResponse &clipResponse);
+    void ReportGetClipResult(const ClipResponse &response);
 
     /**
-     * ReportGetClirResult.
+     * ReportGetClirResult
      *
      * @param ClirResponse
      */
-    void ReportGetClirResult(const ClirResponse &clirResponse);
+    void ReportGetClirResult(const ClirResponse &response);
 
     /**
-     * ReportSetClirResult.
+     * ReportSetClirResult
      *
-     * @param ClirResponse
+     * @param result
      */
-    void ReportSetClirResult(const ClirResponse &clirResponses);
+    void ReportSetClirResult(int32_t result);
 
     /**
-     * ReportGetCallPreferenceResult.
+     * ReportGetLteImsSwitchResult
      *
-     * @param CallPreferenceResponse
-     */
-    void ReportGetCallPreferenceResult(const CallPreferenceResponse &callPreference);
-
-    /**
-     * ReportGetLteImsSwitchResult.
-     *
-     * @param active
+     * @param LteImsSwitchResponse
      */
     void ReportGetLteImsSwitchResult(const LteImsSwitchResponse &lteImsSwitch);
 
     /**
+     * ReportSetLteImsSwitchResult
+     *
+     * @param int32_t
+     */
+    void ReportSetLteImsSwitchResult(int32_t result);
+
+    /**
+     * ReportGetImsConfigResult
+     *
+     * @param GetImsConfigResponse
+     */
+    void ReportGetImsConfigResult(const GetImsConfigResponse &response);
+
+    /**
+     * ReportSetImsConfigResult
+     *
+     * @param int32_t
+     */
+    void ReportSetImsConfigResult(int32_t result);
+
+    /**
+     * ReportGetImsFeatureResult
+     *
+     * @param GetImsFeatureValueResponse
+     */
+    void ReportGetImsFeatureResult(const GetImsFeatureValueResponse &response);
+
+    /**
+     * ReportSetImsFeatureResult
+     *
+     * @param int32_t
+     */
+    void ReportSetImsFeatureResult(int32_t result);
+
+    /**
+     * ReportGetVolteEnhanceModeResult
+     *
+     * @param GetLteEnhanceModeResponse
+     */
+    void ReportGetVolteEnhanceModeResult(const GetLteEnhanceModeResponse &response);
+
+    /**
+     * ReportSetVolteEnhanceModeResult
+     *
+     * @param int32_t
+     */
+    void ReportSetVolteEnhanceModeResult(int32_t result);
+
+    /**
+     * ReportCallRingBackResult
+     *
+     * @param status
+     */
+    void ReportCallRingBackResult(int32_t status);
+
+    /**
+     * ReportSetMuteResult
+     *
+     * @param MuteControlResponse
+     */
+    void ReportSetMuteResult(const MuteControlResponse &response);
+
+    /**
+     * ReportGetMuteResult
+     *
+     * @param MuteControlResponse
+     */
+    void ReportGetMuteResult(const MuteControlResponse &response);
+
+    /**
+     * ReportCallFailReason
+     *
+     * @param int32_t
+     */
+    void ReportCallFailReason(int32_t reason);
+
+    /**
+     * ReportInviteToConferenceResult
+     *
+     * @param int32_t
+     */
+    void ReportInviteToConferenceResult(int32_t result);
+
+    /**
+     * ReportUpdateCallMediaModeResult
+     *
+     * @param int32_t
+     */
+    void ReportUpdateCallMediaModeResult(int32_t result);
+
+    /**
+     * ReportGetCallDataResult
+     *
+     * @param int32_t
+     */
+    void ReportGetCallDataResult(int32_t result);
+
+    /**
+     * ReportStartDtmfResult
+     *
+     * @param int32_t
+     */
+    void ReportStartDtmfResult(int32_t result);
+
+    /**
+     * ReportStopDtmfResult
+     *
+     * @param int32_t
+     */
+    void ReportStopDtmfResult(int32_t result);
+
+    /**
+     * ReportStartRttResult
+     *
+     * @param int32_t
+     */
+    void ReportStartRttResult(int32_t result);
+
+    /**
+     * ReportStopRttResult
+     *
+     * @param int32_t
+     */
+    void ReportStopRttResult(int32_t result);
+
+    /**
+     * ReportSendUssdResult
+     *
+     * @param int32_t
+     */
+    void ReportSendUssdResult(int32_t result);
+
+    /**
      * Register CallManagerCallBack
+     *
+     * @param sptr<ICallStatusCallback>
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback);
 
     /**
      * UnRegister CallManagerCallBack
+     *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t UnRegisterCallManagerCallBack();
 
+    /**
+     * Register Ims CallBack
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t RegisterImsCallBack();
+
 private:
+    sptr<ImsCallback> imsCallback_;
     sptr<ICallStatusCallback> callManagerCallBack_;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallRegister"};
 };
 } // namespace Telephony
 } // namespace OHOS

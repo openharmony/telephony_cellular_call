@@ -34,21 +34,24 @@ public:
     ~CellularCallConnectionCS() = default;
 
     /**
-     *  DialRequest
+     * DialRequest
+     *
+     * @param slotId
      * @param DialRequestStruct
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t DialRequest(const DialRequestStruct &dialRequest, int32_t slotId);
+    int32_t DialRequest(int32_t slotId, const DialRequestStruct &dialRequest);
 
     /**
-     *  HangUpRequest
+     * HangUpRequest
+     *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t HangUpRequest(int32_t slotId);
 
     /**
-     *  AnswerRequest
+     * AnswerRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -56,7 +59,7 @@ public:
     int32_t AnswerRequest(int32_t slotId);
 
     /**
-     *  RejectRequest
+     * RejectRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -64,7 +67,7 @@ public:
     int32_t RejectRequest(int32_t slotId);
 
     /**
-     *  SwitchCallRequest
+     * SwitchCallRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -72,7 +75,7 @@ public:
     int32_t SwitchCallRequest(int32_t slotId);
 
     /**
-     *  HoldRequest
+     * HoldRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -80,7 +83,7 @@ public:
     int32_t HoldRequest(int32_t slotId);
 
     /**
-     *  UnHoldCallRequest
+     * UnHoldCallRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -88,7 +91,7 @@ public:
     int32_t UnHoldCallRequest(int32_t slotId);
 
     /**
-     *  CombineConferenceRequest
+     * CombineConferenceRequest
      *
      * @param slotId
      * @param voiceCall
@@ -97,14 +100,14 @@ public:
     int32_t CombineConferenceRequest(int32_t slotId, int32_t voiceCall);
 
     /**
-     *  SeparateConferenceRequest
+     * SeparateConferenceRequest
      *
-     * @param index
      * @param slotId
+     * @param index
      * @param voiceCall
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SeparateConferenceRequest(int32_t index, int32_t slotId, int32_t voiceCall);
+    int32_t SeparateConferenceRequest(int32_t slotId, int32_t index, int32_t voiceCall);
 
     /**
      * CallSupplement Request
@@ -112,26 +115,28 @@ public:
      * 22083-400_2001 2 Call hold
      * 3GPP TS 22.030 [3]
      *
-     * @param CallSupplementType
      * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @param CallSupplementType
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CallSupplementRequest(CallSupplementType type, int32_t slotId);
+    int32_t CallSupplementRequest(int32_t slotId, CallSupplementType type);
 
     /**
      * CSControl GetCsCallsDataRequest
+     *
      * 27007-430_2001 7.18 List current calls +CLCC
      * 3GPP TS 22.030 [19]
      *
      * Returns list of current calls of ME.
      *
      * @param slotId
+     * @param lastCallsDataFlag
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag);
 
     /**
-     *  SendCDMAThreeWayDialRequest
+     * SendCDMAThreeWayDialRequest
      *
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -139,48 +144,46 @@ public:
     int32_t SendCDMAThreeWayDialRequest(int32_t slotId);
 
     /**
-     *  SendDtmfRequest
+     * SendDtmfRequest
      *
+     * @param slotId
      * @param char cDtmfCode
      * @param index
-     * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SendDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
+    int32_t SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
 
     /**
-     *  StartDtmfRequest
+     * StartDtmfRequest
      *
+     * @param slotId
      * @param char cDtmfCode
      * @param index
-     * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StartDtmfRequest(char cDtmfCode, int32_t index, int32_t slotId) const;
+    int32_t StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
 
     /**
-     *  StopDtmfRequest
+     * StopDtmfRequest
      *
-     * @param index
      * @param slotId
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @param index
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StopDtmfRequest(int32_t index, int32_t slotId) const;
+    int32_t StopDtmfRequest(int32_t slotId, int32_t index) const;
 
     /**
-     *  SendDtmfStringRequest
-     * @param
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * GetCallFailReasonRequest
+     *
+     * @param slotId
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SendDtmfStringRequest(const std::string &sDtmfCode, int32_t on, int32_t off, int32_t slotId);
+    int32_t GetCallFailReasonRequest(int32_t slotId) const;
 
     /**
      * RegisterHandler
      */
     void RegisterHandler();
-
-private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallConnectionCS"};
 };
 } // namespace Telephony
 } // namespace OHOS

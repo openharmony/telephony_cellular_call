@@ -33,9 +33,6 @@ private:
     void ShowHelp(std::string &result) const;
 
     void ShowCellularCallInfo(std::string &result) const;
-
-private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallDumpHelper"};
 };
 } // namespace Telephony
 } // namespace OHOS

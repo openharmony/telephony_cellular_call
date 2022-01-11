@@ -14,9 +14,13 @@
  */
 
 #include "module_service_utils.h"
-#include "cellular_call_types.h"
+
 #include "ipc_skeleton.h"
 #include "string_ex.h"
+
+#include "cellular_call_register.h"
+#include "ims_callback_stub.h"
+#include "ims_death_recipient.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -27,22 +31,20 @@ bool ModuleServiceUtils::GetRadioState(int32_t slotId)
         return false;
     }
 
-    int32_t ret = GetCore(slotId)->GetRadioState();
-    if (ret != static_cast<int32_t>(ModemPowerState::CORE_SERVICE_POWER_ON)) {
+    if (GetCore(slotId)->GetRadioState() != ModemPowerState::CORE_SERVICE_POWER_ON) {
         TELEPHONY_LOGE("ModuleServiceUtils::GetRadioState radio off.");
         return false;
     }
-    TELEPHONY_LOGI("ModuleServiceUtils::GetRadioState radio on.");
     return true;
 }
 
-RadioTech ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
+PhoneType ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
 {
     if (GetCore(slotId) == nullptr) {
         TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus error, return.");
-        return RadioTech::RADIO_TECHNOLOGY_UNKNOWN;
+        return PhoneType::PHONE_TYPE_IS_NONE;
     }
-    return RadioTech::RADIO_TECHNOLOGY_GSM;
+    return GetCore(slotId)->GetPhoneType();
 }
 
 std::string ModuleServiceUtils::GetIsoCountryCode(int32_t slotId)
@@ -83,6 +85,89 @@ std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()
 std::shared_ptr<Core> ModuleServiceUtils::GetCore(int32_t slotId)
 {
     return CoreManager::GetInstance().getCore(slotId);
+}
+
+bool ModuleServiceUtils::NeedCallImsService() const
+{
+    auto remoteObject = GetImsServiceRemoteObject();
+    if (remoteObject == nullptr) {
+        TELEPHONY_LOGE("NeedCallImsService return, remote service not exists.");
+        return false;
+    }
+    if (!remoteObject->IsCallBackExists()) {
+        TELEPHONY_LOGE("NeedCallImsService return, ims callBack not exists");
+        RegisterImsCallBackAgain();
+        return false;
+    }
+    return true;
+}
+
+sptr<ImsInterface> ModuleServiceUtils::GetImsServiceRemoteObject() const
+{
+    auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (managerPtr == nullptr) {
+        TELEPHONY_LOGE("GetImsServiceRemoteObject return, get system ability manager error.");
+        return nullptr;
+    }
+    auto remoteObjectPtr = managerPtr->CheckSystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID);
+    if (remoteObjectPtr == nullptr) {
+        TELEPHONY_LOGE("GetImsServiceRemoteObject return, remote service not exists.");
+        return nullptr;
+    }
+    return iface_cast<ImsInterface>(remoteObjectPtr);
+}
+
+void ModuleServiceUtils::RegisterImsCallBackAgain() const
+{
+    TELEPHONY_LOGI("RegisterImsCallBackAgain entry, register ims callback again.");
+    DelayedSingleton<CellularCallRegister>::GetInstance()->RegisterImsCallBack();
+}
+
+int32_t ModuleServiceUtils::ConnectImsService()
+{
+    auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (managerPtr == nullptr) {
+        TELEPHONY_LOGE("ConnectImsService return, get system ability manager error.");
+        return TELEPHONY_ERROR;
+    }
+    int32_t imsSaId = TELEPHONY_IMS_SYS_ABILITY_ID;
+    auto iRemoteObjectPtr = managerPtr->GetSystemAbility(imsSaId);
+    if (iRemoteObjectPtr == nullptr) {
+        TELEPHONY_LOGE("ConnectImsService return, remote service not exists.");
+        return TELEPHONY_ERROR;
+    }
+
+    std::weak_ptr<ModuleServiceUtils> weakPtr = shared_from_this();
+    auto deathCallback = [weakPtr](const wptr<IRemoteObject> &object) {
+        auto sharedPtr = weakPtr.lock();
+        if (sharedPtr) {
+            sharedPtr->NotifyDeath();
+        }
+    };
+    sptr<IRemoteObject::DeathRecipient> imsRecipient_ = (std::make_unique<ImsDeathRecipient>(deathCallback)).release();
+    if (imsRecipient_ == nullptr) {
+        TELEPHONY_LOGE("ConnectImsService return, imsRecipient_ is nullptr.");
+        return TELEPHONY_ERROR;
+    }
+    if (!iRemoteObjectPtr->AddDeathRecipient(imsRecipient_)) {
+        TELEPHONY_LOGE("ConnectImsService return, add death recipient fail.");
+        return TELEPHONY_ERROR;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+void ModuleServiceUtils::NotifyDeath()
+{
+    TELEPHONY_LOGI("service is dead, connect again");
+    for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
+        int32_t result = ConnectImsService();
+        if (result != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGI("connect Ims service successful");
+            return;
+        }
+    }
+    TELEPHONY_LOGI("connect cellular call service failed");
 }
 } // namespace Telephony
 } // namespace OHOS

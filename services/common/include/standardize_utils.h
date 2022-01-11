@@ -36,6 +36,7 @@ public:
 
     /**
      * Strips separators from a phone number string
+     *
      * @param string phone number to strip
      * @return phone string stripped of separators.
      */
@@ -62,7 +63,6 @@ public:
 private:
     static constexpr hash_t64 cellular_call_p = 0x100000001B3ull;
     static constexpr hash_t64 cellular_call_b = 0xCBF29CE484222325ull;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "StandardizeUtils"};
 };
 } // namespace Telephony
 } // namespace OHOS

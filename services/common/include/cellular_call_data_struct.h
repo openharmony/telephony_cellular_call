@@ -16,19 +16,10 @@
 #ifndef CELLULAR_CALL_DATA_STRUCT_H
 #define CELLULAR_CALL_DATA_STRUCT_H
 
-#include <list>
-#include <memory>
-
 #include "cellular_call_types.h"
 
 namespace OHOS {
 namespace Telephony {
-enum CLIRMode {
-    DEFAULT = 0,
-    TRANSFER = 1,
-    INHIBITION = 2,
-};
-
 struct DialRequestStruct {
     std::string phoneNum;
     CLIRMode clirMode;
@@ -288,18 +279,6 @@ enum ImsHandleId {
     IMS_RADIO_AVAIL,
     IMS_RADIO_NOT_AVAIL,
     IMS_RADIO_CURRENT_CALLS,
-};
-
-enum CallPreferenceMode {
-    CS_VOICE_ONLY = 1,
-    CS_VOICE_PREFERRED = 2,
-    IMS_PS_VOICE_PREFERRED = 3,
-    IMS_PS_VOICE_ONLY = 4,
-};
-
-enum LteImsSwitchStatus {
-    TURN_OFF = 0,
-    TURN_ON = 1,
 };
 } // namespace Telephony
 } // namespace OHOS

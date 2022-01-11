@@ -17,6 +17,7 @@
 #define CELLULAR_CALL_CONTROL_IMS_H
 
 #include "cellular_call_types.h"
+#include "hril_call_parcel.h"
 #include "cellular_call_data_struct.h"
 #include "cellular_call_connection_ims.h"
 #include "control_base.h"
@@ -91,15 +92,66 @@ public:
     int32_t SwitchCall() override;
 
     /**
-     * CSControl CombineConference
+     * CombineConference
      *
      * 22084-400_2001 1.3.8.2	Managing an active multiParty call
      * 3GPP TS 22.030
      *
      * Add another remote party
-     * @return Error Code: Returns kTelephonyNoErr on success, others on failure.
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t CombineConference() override;
+
+    /**
+     * InviteToConference
+     *
+     * @param numberList
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList);
+
+    /**
+     * KickOutFromConference
+     *
+     * @param numberList
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList);
+
+    /**
+     * HangUpAllConnection
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t HangUpAllConnection() override;
+
+    /**
+     * Update Call Media Mode
+     *
+     * @param CellularCallInfo
+     * @param CallMediaMode
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode);
+
+    /**
+     * Start Rtt
+     *
+     * @param msg
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t StartRtt(int32_t slotId, const std::string &msg);
+
+    /**
+     * Stop Rtt
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t StopRtt(int32_t slotId);
 
     /**
      * Release all Connection
@@ -114,7 +166,7 @@ public:
     ImsConnectionMap GetConnectionMap();
 
     /**
-     * IMSControl DealImsCallsData.
+     * IMSControl ReportCallsData.
      *
      * @param CallInfoList
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
@@ -131,6 +183,7 @@ private:
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
     int32_t DialJudgment(const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState);
+
     /**
      * Encapsulate Dial Common
      *
@@ -143,12 +196,14 @@ private:
 
     /**
      * Report being hung up data
+     *
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
     int32_t ReportHungUpInfo();
 
     /**
      * Report Incoming info
+     *
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
@@ -156,6 +211,7 @@ private:
 
     /**
      * Report update info
+     *
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
@@ -163,6 +219,7 @@ private:
 
     /**
      * Encapsulation CallReportInfo
+     *
      * @param CallInfo
      * @return CallReportInfo
      */
@@ -170,6 +227,7 @@ private:
 
     /**
      * DeleteConnection Connection send
+     *
      * @param CallsReportInfo
      * @param CallInfoList
      */
@@ -177,7 +235,6 @@ private:
 
 private:
     ImsConnectionMap connectionMap_; // save callConnection map
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "IMSControl"};
 };
 } // namespace Telephony
 } // namespace OHOS

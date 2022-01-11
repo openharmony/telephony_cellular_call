@@ -24,62 +24,135 @@ namespace Telephony {
 class CellularCallConfig {
 public:
     /**
-     * Set Call Preference Mode
+     * Set Domain Preference Mode
      *
      * 3GPP TS 27.007 V17.3.0 (2021-09) 10.1.35	UE's voice domain preference E-UTRAN +CEVDP
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.27 /<X>/Voice_Domain_Preference_E_UTRAN
      *
      * @param mode
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallPreferenceMode(int32_t mode);
+    int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode);
 
     /**
-     * Get Call Preference Mode
+     * Get Domain Preference Mode
      *
      * 3GPP TS 27.007 V17.3.0 (2021-09) 10.1.35	UE's voice domain preference E-UTRAN +CEVDP
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.27 /<X>/Voice_Domain_Preference_E_UTRAN
      *
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallPreferenceMode();
+    int32_t GetDomainPreferenceMode();
 
     /**
      * Set Lte Ims Switch Status
+     *
+     * 3GPP TS 24.167 V17.1.0 (2020-12) 5.31 /<X>/Mobility_Management_IMS_Voice_Termination
+     *
      * @param active
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetLteImsSwitchStatus(bool active);
 
     /**
      * Get Lte Ims Switch Status
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     *
+     * 3GPP TS 24.167 V17.1.0 (2020-12) 5.31 /<X>/Mobility_Management_IMS_Voice_Termination
+     *
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetLteImsSwitchStatus();
 
     /**
      * Get Lte Ims Switch Status Response
-     * @param mode.
+     *
+     * @param slotId
+     * @param mode
      */
-    void GetCallPreferenceModeResponse(const std::shared_ptr<int32_t> &mode);
+    void GetCallPreferenceModeResponse(int32_t slotId, const std::shared_ptr<int32_t> &mode);
 
     /**
      * Get Lte Ims Switch Status Response
-     * @param active.
+     *
+     * @param slotId
+     * @param active
      */
-    void GetLteImsSwitchStatusResponse(const std::shared_ptr<int32_t> &active);
+    void GetLteImsSwitchStatusResponse(int32_t slotId, const std::shared_ptr<int32_t> &active);
 
     /**
      * Get Preference Mode
-     * @return mode.
+     *
+     * @param slotId
+     * @return mode
      */
-    int32_t GetPreferenceMode() const;
+    int32_t GetPreferenceMode(int32_t slotId) const;
 
     /**
-     * Get  Switch Status
-     * @return active.
+     * Get Switch Status
+     *
+     * @param slotId
+     * @return active
      */
-    int32_t GetSwitchStatus() const;
+    int32_t GetSwitchStatus(int32_t slotId) const;
+
+    /**
+     * Set Ims Config
+     *
+     * @param ImsConfigItem
+     * @param value
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetImsConfig(ImsConfigItem item, const std::string &value);
+
+    /**
+     * Set Ims Config
+     *
+     * @param ImsConfigItem
+     * @param value
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetImsConfig(ImsConfigItem item, int32_t value);
+
+    /**
+     * Get Ims Config
+     *
+     * @param ImsConfigItem
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetImsConfig(ImsConfigItem item);
+
+    /**
+     * Set Ims Feature Value
+     *
+     * @param FeatureType
+     * @param value
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetImsFeatureValue(FeatureType type, int32_t value);
+
+    /**
+     * Get Ims Feature Value
+     *
+     * @param FeatureType
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetImsFeatureValue(FeatureType type);
+
+    /**
+     * Set Volte Enhance Mode
+     *
+     * @param value
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetVolteEnhanceMode(bool value);
+
+    /**
+     * Get Volte Enhance Mode
+     *
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetVolteEnhanceMode();
 
     /**
      * CtrlCamera
@@ -88,7 +161,7 @@ public:
      * @param callingPackage
      * @param callingUid
      * @param callingPid
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t CtrlCamera(
         const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid);
@@ -101,7 +174,7 @@ public:
      * @param z
      * @param width
      * @param height
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height);
 
@@ -113,7 +186,7 @@ public:
      * @param z
      * @param width
      * @param height
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height);
 
@@ -121,7 +194,7 @@ public:
      * SetCameraZoom
      *
      * @param zoomRatio
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCameraZoom(float zoomRatio);
 
@@ -129,7 +202,7 @@ public:
      * SetPauseImage
      *
      * @param path
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetPauseImage(const std::u16string &path);
 
@@ -137,22 +210,69 @@ public:
      * SetDeviceDirection
      *
      * @param rotation
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetDeviceDirection(int32_t rotation);
 
     /**
+     * SetMute
+     *
+     * @param slotId
+     * @param mute
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetMute(int32_t slotId, int32_t mute);
+
+    /**
+     * GetMute
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetMute(int32_t slotId);
+
+    /**
+     * GetEmergencyCallList
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetEmergencyCallList(int32_t slotId);
+
+    /**
      * SetTempMode
      *
+     * @param slotId
      */
-    void SetTempMode();
+    void SetTempMode(int32_t slotId);
+
+    /**
+     * Init mode and active
+     */
+    void InitModeActive();
+
+    /**
+     * Get Emergency Call List Response
+     *
+     * @param slotId
+     * @param EmergencyInfoList
+     */
+    void GetEmergencyCallListResponse(int32_t slotId, const EmergencyInfoList &eccList);
+
+    /**
+     * Get Ecc Call List
+     *
+     * @param slotId
+     * @return std::vector<Emergencyinfo>
+     */
+    std::vector<Emergencyinfo> GetEccCallList(int32_t slotId);
 
 private:
-    static int32_t modeTemp_;
-    static int32_t mode_;
-    static int32_t active_;
+    static std::map<int32_t, int32_t> modeTempMap_;
+    static std::map<int32_t, int32_t> modeMap_;
+    static std::map<int32_t, int32_t> activeMap_;
+    static std::map<int32_t, std::vector<Emergencyinfo>> eccListMap_;
     ConfigRequest configRequest_;
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallConfig"};
 };
 } // namespace Telephony
 } // namespace OHOS

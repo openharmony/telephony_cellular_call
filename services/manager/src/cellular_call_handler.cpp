@@ -18,12 +18,21 @@
 #include "hril_call_parcel.h"
 
 #include "cellular_call_config.h"
-#include "cellular_call_register.h"
+#include "cellular_call_service.h"
+#include "observer_handler.h"
 
 namespace OHOS {
 namespace Telephony {
 CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
     : AppExecFwk::EventHandler(runner)
+{
+    InitBasicFuncMap();
+    InitConfigFuncMap();
+    InitSupplementFuncMap();
+    InitActiveReportFuncMap();
+}
+
+void CellularCallHandler::InitBasicFuncMap()
 {
     requestFuncMap_[ObserverHandler::RADIO_DIAL] = &CellularCallHandler::DialResponse;
     requestFuncMap_[ObserverHandler::RADIO_HANGUP_CONNECT] = &CellularCallHandler::CommonResultResponse;
@@ -35,6 +44,52 @@ CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::Event
     requestFuncMap_[ObserverHandler::RADIO_JOIN_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[ObserverHandler::RADIO_SPLIT_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[ObserverHandler::RADIO_CALL_SUPPLEMENT] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SEND_DTMF] = &CellularCallHandler::SendDtmfResponse;
+    requestFuncMap_[ObserverHandler::RADIO_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
+    requestFuncMap_[ObserverHandler::RADIO_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
+    requestFuncMap_[ObserverHandler::RADIO_CURRENT_CALLS] = &CellularCallHandler::GetCsCallsDataResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_IMS_CALL_LIST] = &CellularCallHandler::GetImsCallsDataResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
+
+    requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
+    requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
+    requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
+    requestFuncMap_[REGISTER_IMS_CALLBACK_ID] = &CellularCallHandler::RegisterImsCallback;
+    requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &CellularCallHandler::GetMMIResponse;
+}
+
+void CellularCallHandler::InitConfigFuncMap()
+{
+    requestFuncMap_[ObserverHandler::RADIO_SET_CMUT] = &CellularCallHandler::SetMuteResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CMUT] = &CellularCallHandler::GetMuteResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_PREFERENCE_MODE] =
+        &CellularCallHandler::SetCallPreferenceModeResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_PREFERENCE_MODE] =
+        &CellularCallHandler::GetCallPreferenceModeResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_LTE_IMS_SWITCH_STATUS] =
+        &CellularCallHandler::SetLteImsSwitchStatusResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS] =
+        &CellularCallHandler::GetLteImsSwitchStatusResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_EMERGENCY_CALL_LIST] =
+        &CellularCallHandler::GetEmergencyCallListResponse;
+}
+
+void CellularCallHandler::InitSupplementFuncMap()
+{
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_WAIT] = &CellularCallHandler::GetCallWaitingResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_WAIT] = &CellularCallHandler::SetCallWaitingResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_FORWARD] = &CellularCallHandler::GetCallTransferResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_FORWARD] = &CellularCallHandler::SetCallTransferInfoResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIP] = &CellularCallHandler::GetClipResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIR] = &CellularCallHandler::GetClirResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_CLIR] = &CellularCallHandler::SetClirResponse;
+    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_RESTRICTION] = &CellularCallHandler::GetCallRestrictionResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
+    requestFuncMap_[ObserverHandler::RADIO_SET_USSD_CUSD] = &CellularCallHandler::SendUssdResponse;
+}
+
+void CellularCallHandler::InitActiveReportFuncMap()
+{
     requestFuncMap_[ObserverHandler::RADIO_CALL_STATE] = &CellularCallHandler::CallStateResponse;
     requestFuncMap_[ObserverHandler::RADIO_CALL_WAITING] = &CellularCallHandler::CallWaitingResponse;
     requestFuncMap_[ObserverHandler::RADIO_CALL_CONNECT] = &CellularCallHandler::CallConnectResponse;
@@ -44,24 +99,9 @@ CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::Event
         &CellularCallHandler::CallImsServiceStatusResponse;
     requestFuncMap_[ObserverHandler::RADIO_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[ObserverHandler::RADIO_NOT_AVAIL] = &CellularCallHandler::GetCsCallData;
-    requestFuncMap_[ObserverHandler::RADIO_CURRENT_CALLS] = &CellularCallHandler::GetCsCallsDataResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_IMS_CALL_LIST] = &CellularCallHandler::GetImsCallsDataResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SEND_DTMF] = &CellularCallHandler::SendDtmfResponse;
-    requestFuncMap_[ObserverHandler::RADIO_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
-    requestFuncMap_[ObserverHandler::RADIO_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
-    requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
-    requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
-    requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_PREFERENCE_MODE] =
-        &CellularCallHandler::SetCallPreferenceModeResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_PREFERENCE_MODE] =
-        &CellularCallHandler::GetCallPreferenceModeResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_LTE_IMS_SWITCH_STATUS] =
-        &CellularCallHandler::SetLteImsSwitchStatusResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS] =
-        &CellularCallHandler::GetLteImsSwitchStatusResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS] =
-        &CellularCallHandler::GetLteImsSwitchStatusResponse;
+    requestFuncMap_[ObserverHandler::RADIO_CALL_USSD_CUSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
+    requestFuncMap_[ObserverHandler::RADIO_CALL_RINGBACK_VOICE] = &CellularCallHandler::CallRingBackVoiceResponse;
+    requestFuncMap_[ObserverHandler::RADIO_CALL_SRVCC_STATUS] = &CellularCallHandler::UpdateSrvccStateReport;
 }
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
@@ -77,6 +117,7 @@ void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
             return (this->*requestFunc)(event);
         }
     }
+    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent, default case, need check.");
 }
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -99,13 +140,76 @@ void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &
     this->SendEvent(GET_IMS_CALL_DATA_ID, delayTime_, Priority::HIGH);
 }
 
+void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
+{
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ == nullptr) {
+        TELEPHONY_LOGE("ReportCsCallsData return, GetInstance is nullptr");
+        return;
+    }
+    auto csControl = serviceInstance_->GetCsControl(slotId_);
+    if (callInfoList.callSize == 0) {
+        callType_ = CallType::TYPE_ERR_CALL;
+        if (csControl == nullptr) {
+            TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
+            return;
+        }
+        csControl->ReportCallsData(callInfoList);
+        serviceInstance_->CleanControlMap();
+        return;
+    }
+    if (callInfoList.callSize == 1) {
+        if (csControl == nullptr) {
+            csControl = std::make_shared<CSControl>();
+            serviceInstance_->SetCsControl(slotId_, csControl);
+        }
+    }
+    if (csControl == nullptr) {
+        TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
+        return;
+    }
+    csControl->ReportCallsData(callInfoList);
+}
+
+void CellularCallHandler::ReportImsCallsData(const CallInfoList &imsCallInfoList)
+{
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ == nullptr) {
+        TELEPHONY_LOGE("ReportImsCallsData return, serviceInstance_ is nullptr");
+        return;
+    }
+    TELEPHONY_LOGI("ReportImsCallsData, imsCallInfoList.callSize:%{public}d", imsCallInfoList.callSize);
+    auto imsControl = serviceInstance_->GetImsControl(slotId_);
+    if (imsCallInfoList.callSize == 0) {
+        callType_ = CallType::TYPE_ERR_CALL;
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
+            return;
+        }
+        imsControl->ReportCallsData(imsCallInfoList);
+        serviceInstance_->CleanControlMap();
+        return;
+    }
+    if (imsCallInfoList.callSize == 1) {
+        if (imsControl == nullptr) {
+            imsControl = std::make_shared<IMSControl>();
+            TELEPHONY_LOGI("ReportImsCallsData, make control");
+            serviceInstance_->SetImsControl(slotId_, imsControl);
+        }
+    }
+    if (imsControl == nullptr) {
+        TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
+        return;
+    }
+    imsControl->ReportCallsData(imsCallInfoList);
+}
+
 void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
         TELEPHONY_LOGE("GetCsCallsDataResponse return, event is nullptr");
         return;
     }
-
     // Returns list of current calls of ME. If command succeeds but no calls are available,
     // no information response is sent to TE. Refer subclause 9.2 for possible <err> values.
     auto callInfoList = event->GetSharedObject<CallInfoList>();
@@ -124,21 +228,14 @@ void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::P
         CellularCallEventInfo eventInfo;
         eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
         eventInfo.eventId = RequestResultEventId::RESULT_GET_CURRENT_CALLS_FAILED;
-        if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        if (registerInstance_ == nullptr) {
             TELEPHONY_LOGE("GetCsCallsDataResponse return, GetInstance is nullptr");
             return;
         }
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+        registerInstance_->ReportEventResultInfo(eventInfo);
         return;
     }
-    if (pCsControl_ == nullptr) {
-        TELEPHONY_LOGE("GetCsCallsDataResponse return, pCsControl_ is nullptr");
-        return;
-    }
-    if (callInfoList->callSize == 0) {
-        callType_ = CallType::TYPE_ERR_CALL;
-    }
-    pCsControl_->ReportCallsData(*callInfoList);
+    ReportCsCallsData(*callInfoList);
 }
 
 void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -147,6 +244,8 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("GetImsCallsDataResponse return, event is nullptr");
         return;
     }
+    // Returns list of current calls of ME. If command succeeds but no calls are available,
+    // no information response is sent to TE. Refer subclause 9.2 for possible <err> values.
     auto imsCallInfoList = event->GetSharedObject<CallInfoList>();
     if (imsCallInfoList == nullptr) {
         TELEPHONY_LOGE("GetImsCallsDataResponse, Cannot get the imsCallInfoList, need to get rilResponseInfo");
@@ -160,24 +259,14 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
             return;
         }
         TELEPHONY_LOGE("GetImsCallsDataResponse error, report to call_manager");
-        CellularCallEventInfo eventInfo;
-        eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_IMS_CALLS_DATA_FAILED;
-        if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        if (registerInstance_ == nullptr) {
             TELEPHONY_LOGE("GetImsCallsDataResponse return, GetInstance is nullptr");
             return;
         }
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+        registerInstance_->ReportGetCallDataResult(static_cast<int32_t>(rilResponseInfo->error));
         return;
     }
-    if (pImsControl_ == nullptr) {
-        TELEPHONY_LOGE("GetImsCallsDataResponse return, pImsControl_ is nullptr");
-        return;
-    }
-    if (imsCallInfoList->callSize == 0) {
-        callType_ = CallType::TYPE_ERR_CALL;
-    }
-    pImsControl_->ReportCallsData(*imsCallInfoList);
+    ReportImsCallsData(*imsCallInfoList);
 }
 
 void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -206,11 +295,11 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
         } else {
             eventInfo.eventId = RequestResultEventId::RESULT_DIAL_SEND_FAILED;
         }
-        if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        if (registerInstance_ == nullptr) {
             TELEPHONY_LOGE("DialResponse return, GetInstance is nullptr");
             return;
         }
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+        registerInstance_->ReportEventResultInfo(eventInfo);
     }
 }
 
@@ -231,6 +320,9 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
         switch (event->GetInnerEventId()) {
             case ObserverHandler::RADIO_HANGUP_CONNECT:
                 eventInfo.eventId = RequestResultEventId::RESULT_END_SEND_FAILED;
+                break;
+            case ObserverHandler::RADIO_REJECT_CALL:
+                eventInfo.eventId = RequestResultEventId::RESULT_REJECT_SEND_FAILED;
                 break;
             case ObserverHandler::RADIO_ACCEPT_CALL:
                 eventInfo.eventId = RequestResultEventId::RESULT_ACCEPT_SEND_FAILED;
@@ -256,11 +348,12 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
             default:
                 break;
         }
-        if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("CommonResultResponse return, GetInstance is nullptr");
+        if (registerInstance_ == nullptr) {
+            TELEPHONY_LOGE("CommonResultResponse return, registerInstance_ is nullptr");
             return;
         }
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+        registerInstance_->ReportEventResultInfo(eventInfo);
+        return;
     }
 }
 
@@ -278,16 +371,16 @@ void CellularCallHandler::SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer
     CellularCallEventInfo eventInfo;
     eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
     if (result->error != HRilErrType::NONE) {
-        eventInfo.eventId = RequestResultEventId::RESULT_TRANSMIT_DTMF_FAILED;
+        eventInfo.eventId = RequestResultEventId::RESULT_SEND_DTMF_FAILED;
     } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_TRANSMIT_DTMF_SUCCESS;
+        eventInfo.eventId = RequestResultEventId::RESULT_SEND_DTMF_SUCCESS;
     }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("SendDtmfResponse return, GetInstance is nullptr");
         return;
     }
     TELEPHONY_LOGI("SendDtmfResponse: report to call manager");
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    registerInstance_->ReportEventResultInfo(eventInfo);
 }
 
 void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -301,20 +394,13 @@ void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointe
         TELEPHONY_LOGE("StartDtmfResponse return, result is nullptr");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (result->error != HRilErrType::NONE) {
-        eventInfo.eventId = RequestResultEventId::RESULT_INITIATE_DTMF_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_INITIATE_DTMF_SUCCESS;
-    }
 
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("StartDtmfResponse return, GetInstance is nullptr");
         return;
     }
     TELEPHONY_LOGI("StartDtmfResponse: report to call manager");
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    registerInstance_->ReportStartDtmfResult(static_cast<int32_t>(result->error));
 }
 
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -328,44 +414,18 @@ void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer
         TELEPHONY_LOGE("StopDtmfResponse return, result is nullptr");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (result->error != HRilErrType::NONE) {
-        eventInfo.eventId = RequestResultEventId::RESULT_CEASE_DTMF_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_CEASE_DTMF_SUCCESS;
-    }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("StopDtmfResponse return, GetInstance is nullptr");
         return;
     }
     TELEPHONY_LOGI("StopDtmfResponse: report to call manager");
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    registerInstance_->ReportStopDtmfResult(static_cast<int32_t>(result->error));
 }
 
 void CellularCallHandler::SetSlotId(int32_t id)
 {
     slotId_ = id;
-}
-
-void CellularCallHandler::SetCsControl(std::shared_ptr<CSControl> pCsControl)
-{
-    pCsControl_ = std::move(pCsControl);
-}
-
-std::shared_ptr<CSControl> CellularCallHandler::GetCsControl()
-{
-    return pCsControl_;
-}
-
-void CellularCallHandler::SetImsControl(std::shared_ptr<IMSControl> pImsControl)
-{
-    pImsControl_ = std::move(pImsControl);
-}
-
-std::shared_ptr<IMSControl> CellularCallHandler::GetImsControl()
-{
-    return pImsControl_;
 }
 
 int64_t CellularCallHandler::CurrentTimeMillis()
@@ -412,8 +472,19 @@ void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer 
     connectionCs.RegisterHandler();
 }
 
+void CellularCallHandler::RegisterImsCallback(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("RegisterImsCallback entry");
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("RegisterImsCallback return, GetInstance is nullptr");
+        return;
+    }
+    registerInstance_->RegisterImsCallBack();
+}
+
 void CellularCallHandler::SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    TELEPHONY_LOGI("SetCallPreferenceModeResponse entry");
     if (event == nullptr) {
         TELEPHONY_LOGE("SetCallPreferenceModeResponse return, event is nullptr");
         return;
@@ -431,43 +502,29 @@ void CellularCallHandler::SetCallPreferenceModeResponse(const AppExecFwk::InnerE
         eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_PREFERENCE_MODE_SUCCESS;
 
         CellularCallConfig config;
-        config.SetTempMode();
+        config.SetTempMode(slotId_);
     }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("SetCallPreferenceModeResponse return, GetInstance is nullptr");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    registerInstance_->ReportEventResultInfo(eventInfo);
 }
 
 void CellularCallHandler::GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("GetCallPreferenceModeResponse entry");
+    TELEPHONY_LOGE("GetCallPreferenceModeResponse entry");
     if (event == nullptr) {
         TELEPHONY_LOGE("GetCallPreferenceModeResponse return, event is nullptr");
         return;
     }
-    CallPreferenceResponse callPreference;
     auto mode = event->GetSharedObject<int32_t>();
     if (mode == nullptr) {
         TELEPHONY_LOGI("GetCallPreferenceModeResponse return, mode is nullptr");
-        auto info = event->GetSharedObject<HRilRadioResponseInfo>();
-        if (info == nullptr) {
-            TELEPHONY_LOGE("GetCallPreferenceModeResponse return, info is nullptr");
-            return;
-        }
-        callPreference.result = static_cast<int32_t>(info->error);
-    } else {
-        CellularCallConfig config;
-        config.GetCallPreferenceModeResponse(mode);
-        callPreference.result = static_cast<int32_t>(HRilErrType::NONE);
-        callPreference.mode = *mode;
-    }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("GetCallPreferenceModeResponse return, GetInstance is nullptr");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetCallPreferenceResult(callPreference);
+    CellularCallConfig config;
+    config.GetCallPreferenceModeResponse(slotId_, mode);
 }
 
 void CellularCallHandler::SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -482,18 +539,11 @@ void CellularCallHandler::SetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
         TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, info is nullptr");
         return;
     }
-    CellularCallEventInfo eventInfo;
-    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-    if (info->error != HRilErrType::NONE) {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_LTE_IMS_SWITCH_STATUS_FAILED;
-    } else {
-        eventInfo.eventId = RequestResultEventId::RESULT_SET_LTE_IMS_SWITCH_STATUS_SUCCESS;
-    }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, GetInstance is nullptr");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
+    registerInstance_->ReportSetLteImsSwitchResult(static_cast<int32_t>(info->error));
 }
 
 void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -515,71 +565,35 @@ void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
         lteImsSwitch.result = static_cast<int32_t>(info->error);
     } else {
         CellularCallConfig config;
-        config.GetLteImsSwitchStatusResponse(active);
+        config.GetLteImsSwitchStatusResponse(slotId_, active);
         lteImsSwitch.result = static_cast<int32_t>(HRilErrType::NONE);
         lteImsSwitch.active = *active;
     }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+    if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("GetLteImsSwitchStatusResponse return, GetInstance is nullptr");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetLteImsSwitchResult(lteImsSwitch);
+    registerInstance_->ReportGetLteImsSwitchResult(lteImsSwitch);
 }
 
 void CellularCallHandler::CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CallStateResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallStateResponse return, event is nullptr");
-        return;
-    }
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
-    if (result == nullptr) {
-        TELEPHONY_LOGE("CallStateResponse return, result is nullptr");
-        return;
-    }
 }
 
 void CellularCallHandler::CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CallWaitingResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallWaitingResponse return, event is nullptr");
-        return;
-    }
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
-    if (result == nullptr) {
-        TELEPHONY_LOGE("CallWaitingResponse return, result is nullptr");
-        return;
-    }
 }
 
 void CellularCallHandler::CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CallConnectResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallConnectResponse return, event is nullptr");
-        return;
-    }
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
-    if (result == nullptr) {
-        TELEPHONY_LOGE("CallConnectResponse return, result is nullptr");
-        return;
-    }
 }
 
 void CellularCallHandler::CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CallEndResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallEndResponse return, event is nullptr");
-        return;
-    }
-    auto callEndInfo = event->GetSharedObject<CallEndInfo>();
-    if (callEndInfo == nullptr) {
-        TELEPHONY_LOGE("CallEndResponse return, callEndInfo is nullptr");
-        return;
-    }
 }
 
 void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -598,7 +612,7 @@ void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::P
      * 1: IMS domain voice call
      */
     if (callType_ == CallType::TYPE_ERR_CALL) {
-        TELEPHONY_LOGI("CallStatusInfoResponse TYPE_ERR_CALL");
+        TELEPHONY_LOGI("CallStatusInfoResponse, default call type");
         if (info->voiceDomain) {
             GetImsCallData(event);
         } else {
@@ -613,20 +627,329 @@ void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::P
 
 void CellularCallHandler::CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallImsServiceStatusResponse return, event is nullptr");
-        return;
-    }
-    auto status = event->GetSharedObject<CallImsServiceStatus>();
-    if (status == nullptr) {
-        TELEPHONY_LOGE("CallImsServiceStatusResponse return, status is nullptr");
-        return;
-    }
+    TELEPHONY_LOGI("CellularCallHandler::CallImsServiceStatusResponse entry");
 }
 
 void CellularCallHandler::SetCallType(CallType callType)
 {
     callType_ = callType;
+}
+
+void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::UssdNotifyResponse entry");
+}
+
+void CellularCallHandler::SetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::SetMuteResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetMuteResponse return, event is nullptr");
+        return;
+    }
+    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (info == nullptr) {
+        TELEPHONY_LOGE("SetMuteResponse return, info is nullptr");
+        return;
+    }
+    MuteControlResponse response;
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("SetMuteResponse return, registerInstance_ is nullptr");
+        return;
+    }
+    response.result = static_cast<int32_t>(info->error);
+    TELEPHONY_LOGI("SetMuteResponse: report to call manager");
+    registerInstance_->ReportSetMuteResult(response);
+}
+
+void CellularCallHandler::GetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::GetMuteResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetMuteResponse return, event is nullptr");
+        return;
+    }
+    MuteControlResponse response;
+    auto mute = event->GetSharedObject<int32_t>();
+    if (mute == nullptr) {
+        TELEPHONY_LOGI("GetMuteResponse, mute is nullptr");
+        auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+        if (info == nullptr) {
+            TELEPHONY_LOGE("GetMuteResponse return, info is nullptr");
+            return;
+        }
+        response.result = static_cast<int32_t>(info->error);
+    } else {
+        response.result = static_cast<int32_t>(HRilErrType::NONE);
+        response.value = *mute;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("GetMuteResponse return, registerInstance_ is nullptr");
+        return;
+    }
+    TELEPHONY_LOGI("GetMuteResponse: report to call manager");
+    registerInstance_->ReportGetMuteResult(response);
+}
+
+void CellularCallHandler::GetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::GetEmergencyCallListResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetEmergencyCallListResponse return, event is nullptr");
+        return;
+    }
+    auto eccList = event->GetSharedObject<EmergencyInfoList>();
+    if (eccList == nullptr) {
+        TELEPHONY_LOGE("GetEmergencyCallListResponse return, eccList is nullptr");
+        return;
+    }
+    CellularCallConfig config;
+    config.GetEmergencyCallListResponse(slotId_, *eccList);
+}
+
+void CellularCallHandler::CallRingBackVoiceResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::CallRingBackVoiceResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("CallRingBackVoiceResponse return, event is nullptr");
+        return;
+    }
+    auto ringBackVoice = event->GetSharedObject<RingbackVoice>();
+    if (ringBackVoice == nullptr) {
+        TELEPHONY_LOGE("CallRingBackVoiceResponse return, noticeInfo is nullptr");
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("CallRingBackVoiceResponse return, registerInstance_ is nullptr");
+        return;
+    }
+    TELEPHONY_LOGI("CallRingBackVoiceResponse: report to call manager");
+    registerInstance_->ReportCallRingBackResult(ringBackVoice->status);
+}
+
+void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::GetCallFailReasonResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonResponse return, event is nullptr");
+        return;
+    }
+    auto reason = event->GetSharedObject<int32_t>();
+    if (reason == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonResponse return, reason is nullptr");
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonResponse return, registerInstance_ is nullptr");
+        return;
+    }
+    TELEPHONY_LOGI("GetCallFailReasonResponse: %{public}d, report to call manager", *reason);
+    registerInstance_->ReportCallFailReason(*reason);
+}
+
+void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::UpdateSrvccStateReport entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("UpdateSrvccStateReport return, event is nullptr");
+        return;
+    }
+    auto srvccStatus = event->GetSharedObject<HRilCallSrvccStatus>();
+    if (srvccStatus == nullptr) {
+        TELEPHONY_LOGE("UpdateSrvccStateReport return, srvccStatus is nullptr");
+        return;
+    }
+    srvccState_ = srvccStatus->status;
+    if (srvccState_ != SrvccState::COMPLETED) {
+        TELEPHONY_LOGE("UpdateSrvccStateReport return, srvccState_ != SrvccState::COMPLETED");
+        return;
+    }
+    SrvccStateCompleted();
+}
+
+void CellularCallHandler::SrvccStateCompleted()
+{
+    if (srvccState_ != SrvccState::COMPLETED) {
+        TELEPHONY_LOGE("SrvccStateCompleted return, srvccState_ != SrvccState::COMPLETED");
+        return;
+    }
+    auto info = std::shared_ptr<CallStatusInfo>();
+    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_CALL_STATUS_INFO, info);
+    CallStatusInfoResponse(event);
+    srvccState_ = SrvccState::SRVCC_NONE;
+}
+
+void CellularCallHandler::GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetMMIResponse, event is nullptr");
+        return;
+    }
+    std::unique_ptr<MMICodeUtils> mmiCodeUtils = event->GetUniqueObject<MMICodeUtils>();
+    if (mmiCodeUtils == nullptr) {
+        TELEPHONY_LOGE("CellularCallHandler::GetMMIResponse, mmiCodeUtils is nullptr");
+        return;
+    }
+    mmiCodeUtils->ExecuteMmiCode();
+}
+
+void CellularCallHandler::GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::GetCallWaitingResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetCallWaitingResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<CallWaitResult>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("CellularCallHandler::GetCallWaitingResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventGetCallWaiting(*result);
+}
+
+void CellularCallHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("SetCallWaitingResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetCallWaitingResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SetCallWaitingResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSetCallWaiting(*result);
+}
+
+void CellularCallHandler::GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("GetClirResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetClirResponse, event is nullptr");
+        return;
+    }
+    auto getClirResult = event->GetSharedObject<GetClirResult>();
+    if (getClirResult == nullptr) {
+        TELEPHONY_LOGE("GetClirResponse, getClirResult is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventGetClir(*getClirResult);
+}
+
+void CellularCallHandler::SetClirResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("SetClirResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetClirResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SetClirResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSetClir(*result);
+}
+
+void CellularCallHandler::GetClipResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("GetClipResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetClipResponse, event is nullptr");
+        return;
+    }
+    auto getClipResult = event->GetSharedObject<GetClipResult>();
+    if (getClipResult == nullptr) {
+        TELEPHONY_LOGE("GetClipResponse, getClipResult is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventGetClip(*getClipResult);
+}
+
+void CellularCallHandler::GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("GetCallTransferResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetCallTransferResponse, event is nullptr");
+        return;
+    }
+    auto cFQueryResult = event->GetSharedObject<CallForwardQueryResult>();
+    if (cFQueryResult == nullptr) {
+        TELEPHONY_LOGE("GetCallTransferResponse, cFQueryResult is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventGetCallTransferInfo(*cFQueryResult);
+}
+
+void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("SetCallTransferInfoResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetCallTransferInfoResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SetCallTransferInfoResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSetCallTransferInfo(*result);
+}
+
+void CellularCallHandler::GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("GetCallRestrictionResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("GetCallRestrictionResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<CallRestrictionResult>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("GetCallRestrictionResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventGetCallRestriction(*result);
+}
+
+void CellularCallHandler::SetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("SetCallRestrictionResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetCallRestrictionResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SetCallRestrictionResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSetCallRestriction(*result);
+}
+
+void CellularCallHandler::SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SendUssdResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SendUssdResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSendUssd(*result);
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -68,7 +68,7 @@ public:
      * Control of the call forwarding supplementary service
      *
      * @param CallTransferInfo
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCallTransferInfo(const CallTransferInfo &cTInfo);
 
@@ -80,7 +80,7 @@ public:
      * Control of the call forwarding supplementary service
      *
      * @param CallTransferType
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCallTransferInfo(CallTransferType type);
 
@@ -104,7 +104,7 @@ public:
      * Control of the call barring supplementary service
      *
      * @param CallRestrictionInfo
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCallRestriction(const CallRestrictionInfo &cRInfo);
 
@@ -118,7 +118,7 @@ public:
      * Control of the call barring supplementary service
      *
      * @param CallRestrictionType
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCallRestriction(CallRestrictionType facType);
 
@@ -142,7 +142,7 @@ public:
      * Control of the Call Waiting supplementary service
      *
      * @param activate
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCallWaiting(bool activate);
 
@@ -154,9 +154,22 @@ public:
      *
      * Control of the Call Waiting supplementary service
      *
-     * @return Returns kTelephonyNoErr on success, others on failure.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCallWaiting();
+
+    /**
+     * Send Ussd msg
+     *
+     * 22.090 Unstructured Supplementary Service Data (USSD); Stage 1
+     * 23.090 Unstructured Supplementary Service Data (USSD); Stage 2
+     * 24.090 Unstructured Supplementary Service Data (USSD); Stage 3
+     *
+     * Control of the Ussd supplementary service
+     *
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SendUssd(const std::string &msg);
 
     /**
      * Event Deal clip Mmi
@@ -174,7 +187,7 @@ public:
      *
      * @param GetClirResult
      */
-    void EventGetClir(GetClirResult &getClirResult);
+    void EventGetClir(GetClirResult &result);
 
     /**
      * Event set Clir Mmi
@@ -240,12 +253,21 @@ public:
      */
     void EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo);
 
+    /**
+     * Event Send Ussd
+     *
+     * 3GPP TS 3GPP TS 22.030 V16.0.0 (2020-07) 6.5	Supplementary Services Control
+     *
+     * @param HRilRadioResponseInfo
+     */
+    void EventSendUssd(HRilRadioResponseInfo &responseInfo);
+
 private:
     /**
      * Obtain ServiceCode
      *
      * @param serviceInfoB
-     * @return
+     * @return CFInformation
      */
     int32_t ObtainServiceCode(const std::string &serviceInfoB);
 
@@ -255,7 +277,7 @@ private:
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative): Codes for defined Supplementary Services
      *
      * @param basicString
-     * @return
+     * @return CallTransferType
      */
     int32_t ObtainCause(const std::string &serviceInfoC);
 
@@ -267,12 +289,13 @@ private:
      * 3GPP TS 22.088 [6] 2	Barring of incoming calls
      *
      * @param serviceInfoC
-     * @return Installation
+     * @return Barring type
      */
     std::string ObtainBarringInstallation(const std::string &serviceInfoC);
 
     /**
      * Is Phone Gsm Type
+     *
      * @return bool
      */
     bool PhoneTypeGsmOrNot();
@@ -290,7 +313,6 @@ private:
     const std::string ALL_BARRING_SERVICES = "AB";
     const std::string ALL_OUTGOING_BARRING_SERVICES = "AG";
     const std::string ALL_INCOMING_BARRING_SERVICES = "AC";
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "CellularCallSupplement"};
 };
 } // namespace Telephony
 } // namespace OHOS

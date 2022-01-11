@@ -16,8 +16,9 @@
 #ifndef CELLULAR_CALL_SUPPLEMENT_REQUEST_H
 #define CELLULAR_CALL_SUPPLEMENT_REQUEST_H
 
+#include "cellular_call_handler.h"
+
 #include "core_manager.h"
-#include "mmi_handler.h"
 #include "base_request.h"
 
 namespace OHOS {
@@ -26,68 +27,85 @@ class SupplementRequest : BaseRequest {
 public:
     /**
      * Inquire Clip Request
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t InquireClipRequest();
 
     /**
-     * Clir Activate Request
+     * set Clir Request
+     *
      * @param action
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetClirActivateRequest(int32_t action);
-
-    /**
-     * Set Clir Deactivate Request
-     * @param action
-     */
-    int32_t SetClirDeactivateRequest(int32_t action);
+    int32_t SetClirRequest(int32_t action);
 
     /**
      * Inquire Clir Request
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t InquireClirRequest();
 
     /**
-     * Inquire Call Transfer
+     * Inquire Call Transfer Request
      *
-     * @param type
+     * @param reason
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallTransferInfoRequest(int32_t type);
+    int32_t GetCallTransferRequest(int32_t reason);
 
     /**
      * Set Call Transfer Request
+     *
      * @param action
-     * @param cause
-     * @param transferPhone
-     * @param serviceInfoB
+     * @param reason
+     * @param transferNum
+     * @param classType
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallTransferInfoRequest(
-        int32_t action, int32_t cause, const std::string &transferPhone, int32_t serviceInfoB);
+    int32_t SetCallTransferRequest(int32_t action, int32_t reason, const std::string &transferNum, int32_t classType);
 
     /**
-     * Inquire Call Restriction
+     * Get Call Restriction
+     *
      * @param fac
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCallRestrictionRequest(const std::string &fac);
 
     /**
      * Set Call Restriction
+     *
      * @param fac
      * @param mode
      * @param pw
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCallRestrictionRequest(std::string &fac, int32_t mode, std::string &pw);
 
     /**
      * Set CallWaiting Request
-     * @param is activate
+     *
+     * @param bool
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetCallWaitingRequest(bool activate);
 
     /**
-     * Inquire Call Waiting Request
-     * @param serviceCode
+     * Get Call Waiting Request
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetCallWaitingRequest();
+
+    /**
+     * Send ussd Request
+     *
+     * @param msg
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SendUssdRequest(const std::string &msg);
 
 private:
     /**
@@ -95,10 +113,10 @@ private:
      *
      * @return std::shared_ptr<MMIHandler>
      */
-    std::shared_ptr<MMIHandler> GetMMIHandler() const;
+    std::shared_ptr<CellularCallHandler> GetMMIHandler() const;
 
 private:
-    static constexpr HiviewDFX::HiLogLabel LOG_LABEL = {LOG_CORE, LOG_DOMAIN, "SupplementRequest"};
+    ModuleServiceUtils moduleUtils_;
 };
 } // namespace Telephony
 } // namespace OHOS

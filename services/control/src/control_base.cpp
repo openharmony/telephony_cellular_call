@@ -16,20 +16,25 @@
 #include "control_base.h"
 
 #include "standardize_utils.h"
+#include "module_service_utils.h"
+#include "cellular_call_service.h"
 
 namespace OHOS {
 namespace Telephony {
-ControlBase::ControlBase()
+int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo)
 {
-    TELEPHONY_LOGI("ControlBase::ControlBase");
-    eventLoop_ = AppExecFwk::EventRunner::Create("ControlBase");
-    if (eventLoop_ == nullptr) {
-        TELEPHONY_LOGE("failed to create EventRunner");
+    std::string dialString(callInfo.phoneNum);
+    if (dialString.empty()) {
+        TELEPHONY_LOGE("DialPreJudgment return, dialString is empty.");
+        return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
-    handler_ = std::make_shared<MMIHandler>(eventLoop_);
-    if (handler_ == nullptr) {
-        TELEPHONY_LOGE("failed to make_shared handler_");
+
+    ModuleServiceUtils moduleServiceUtils;
+    if (!moduleServiceUtils.GetRadioState(GetSlotId())) {
+        TELEPHONY_LOGE("DialPreJudgment return, radio state error.");
+        return CALL_ERR_GET_RADIO_STATE_FAILED;
     }
+    return TELEPHONY_SUCCESS;
 }
 
 bool ControlBase::IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode)
@@ -46,7 +51,7 @@ bool ControlBase::IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode)
         return false;
     }
     if (!mmiCodeUtils->IsNeedExecuteMmi(phoneString)) {
-        TELEPHONY_LOGI("IsNeedExecuteMMI return, dial DEFAULT number");
+        TELEPHONY_LOGI("IsNeedExecuteMMI return, isn't need to execute mmi");
         return false;
     }
     if (mmiCodeUtils->GetMMIData().serviceCode == "30" && !mmiCodeUtils->GetMMIData().dialString.empty()) {
@@ -61,12 +66,16 @@ bool ControlBase::IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode)
             return false;
         }
     }
-    if (handler_ == nullptr) {
-        TELEPHONY_LOGE("IsNeedExecuteMMI return, handler_ is nullptr.");
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGI("IsNeedExecuteMMI return, GetInstance is nullptr");
         return false;
     }
-    handler_->SendEvent(MMIHandlerId::EVENT_MMI_Id, mmiCodeUtils);
-    return true;
+    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_) == nullptr) {
+        TELEPHONY_LOGI("IsNeedExecuteMMI return, GetHandler is nullptr");
+        return false;
+    }
+    return DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_)->SendEvent(
+        MMIHandlerId::EVENT_MMI_Id, mmiCodeUtils);
 }
 
 bool ControlBase::IsDtmfKey(char c) const
@@ -76,11 +85,6 @@ bool ControlBase::IsDtmfKey(char c) const
      * whose duration is set by the +VTD command. NOTE 2:	In GSM this operates only in voice mode.
      */
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'D') || c == '*' || c == '#';
-}
-
-std::shared_ptr<MMIHandler> ControlBase::GetMMIHandler()
-{
-    return handler_;
 }
 
 void ControlBase::SetSlotId(int32_t id)

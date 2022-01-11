@@ -30,30 +30,25 @@ CSControl::~CSControl()
 
 int32_t CSControl::Dial(const CellularCallInfo &callInfo)
 {
-    std::string dialString(callInfo.phoneNum);
-    if (dialString.empty()) {
-        TELEPHONY_LOGE("Dial return, dialString is empty.");
-        return CALL_ERR_PHONE_NUMBER_EMPTY;
+    TELEPHONY_LOGI("Dial start");
+    int32_t ret = DialPreJudgment(callInfo);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
     }
 
     ModuleServiceUtils moduleServiceUtils;
-    if (!moduleServiceUtils.GetRadioState(GetSlotId())) {
-        TELEPHONY_LOGE("Dial return, radio error.");
-        return CALL_ERR_GET_RADIO_STATE_FAILED;
+    PhoneType netType = moduleServiceUtils.GetNetworkStatus(GetSlotId());
+    if (netType == PhoneType::PHONE_TYPE_IS_GSM) {
+        return DialGsm(callInfo);
     }
-
-    RadioTech netType = moduleServiceUtils.GetNetworkStatus(GetSlotId());
-    if (netType == RadioTech::RADIO_TECHNOLOGY_GSM) {
-        return DialGsm(callInfo, dialString);
-    }
-    if (netType == RadioTech::RADIO_TECHNOLOGY_WCDMA) {
-        return DialCdma(callInfo, dialString);
+    if (netType == PhoneType::PHONE_TYPE_IS_CDMA) {
+        return DialCdma(callInfo);
     }
     TELEPHONY_LOGE("Dial return, net type error.");
     return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
 }
 
-int32_t CSControl::DialCdma(const CellularCallInfo &callInfo, const std::string &dialString)
+int32_t CSControl::DialCdma(const CellularCallInfo &callInfo)
 {
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("CSControl::DialCdma return, error type: call state error.");
@@ -62,42 +57,23 @@ int32_t CSControl::DialCdma(const CellularCallInfo &callInfo, const std::string 
 
     StandardizeUtils standardizeUtils;
     // Remove the phone number separator
-    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(dialString);
+    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
 
-    if (IsInState(connectionMap_, CALL_STATUS_ACTIVE)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         TELEPHONY_LOGI("DialCdma, CDMA is have connection in active state.");
-        CallReportInfo reportInfo;
-        if (memset_s(&reportInfo, sizeof(reportInfo), 0, sizeof(reportInfo)) != EOK) {
-            TELEPHONY_LOGE("DialCdma return, memset_s fail.");
-            return TELEPHONY_ERR_MEMSET_FAIL;
-        }
-        if (strcpy_s(reportInfo.accountNum, strlen(callInfo.phoneNum) + 1, callInfo.phoneNum) != EOK) {
-            TELEPHONY_LOGE("DialCdma return, strcpy_s fail.");
-            return TELEPHONY_ERR_STRCPY_FAIL;
-        }
-
-        reportInfo.state = CALL_STATUS_DIALING;
-        reportInfo.callType = CallType::TYPE_CS;
-        reportInfo.callMode = VideoStateType::TYPE_VOICE;
         CellularCallConnectionCS csConnection;
-        csConnection.SetOrUpdateCallReportInfo(reportInfo);
-
-        if (!SetConnectionData(connectionMap_, callInfo.phoneNum, csConnection)) {
-            TELEPHONY_LOGE("DialCdma cdma return, SetConnectionData fail.");
-            return CALL_ERR_CALL_ALREADY_EXISTS;
-        }
         return csConnection.SendCDMAThreeWayDialRequest(GetSlotId());
     }
     CLIRMode clirMode = CLIRMode::DEFAULT;
     return EncapsulateDialCommon(newPhoneNum, clirMode);
 }
 
-int32_t CSControl::DialGsm(const CellularCallInfo &callInfo, const std::string &phoneNum)
+int32_t CSControl::DialGsm(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("DialGsm entry.");
     StandardizeUtils standardizeUtils;
     // Remove the phone number separator
-    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(phoneNum);
+    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
 
     CLIRMode clirMode = CLIRMode::DEFAULT;
     if (IsNeedExecuteMMI(newPhoneNum, clirMode)) {
@@ -112,7 +88,7 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo, const std::string &
 
     // Calls can be put on hold, recovered, released, added to conversation,
     // and transferred similarly as defined in 3GPP TS 22.030 [19].
-    if (IsInState(connectionMap_, CALL_STATUS_ACTIVE)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         // New calls must be active, so other calls need to be hold
         TELEPHONY_LOGI("DialGsm, GSM is have connection in active state.");
         CellularCallConnectionCS pConnection;
@@ -122,31 +98,11 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo, const std::string &
         // - a call can be temporarily disconnected from the ME but the connection is retained by the network
         pConnection.SwitchCallRequest(GetSlotId());
     }
-    return EncapsulateDialCommon(phoneNum, clirMode);
+    return EncapsulateDialCommon(newPhoneNum, clirMode);
 }
 
 int32_t CSControl::EncapsulateDialCommon(const std::string &phoneNum, CLIRMode &clirMode)
 {
-    CallReportInfo reportInfo;
-    if (memset_s(&reportInfo, sizeof(reportInfo), 0, sizeof(reportInfo)) != EOK) {
-        TELEPHONY_LOGE("EncapsulateDialCommon return, memset_s fail.");
-        return TELEPHONY_ERR_MEMSET_FAIL;
-    }
-    if (strcpy_s(reportInfo.accountNum, strlen(phoneNum.c_str()) + 1, phoneNum.c_str()) != EOK) {
-        TELEPHONY_LOGE("EncapsulateDialCommon return, strcpy_s fail.");
-        return TELEPHONY_ERR_STRCPY_FAIL;
-    }
-    reportInfo.state = CALL_STATUS_DIALING;
-    reportInfo.callType = CallType::TYPE_CS;
-    reportInfo.callMode = VideoStateType::TYPE_VOICE;
-    CellularCallConnectionCS csConnection;
-    csConnection.SetOrUpdateCallReportInfo(reportInfo);
-
-    if (!SetConnectionData(connectionMap_, phoneNum, csConnection)) {
-        TELEPHONY_LOGE("EncapsulateDialCommon return, SetConnectionData fail.");
-        return CALL_ERR_CALL_ALREADY_EXISTS;
-    }
-
     DialRequestStruct dialRequest;
     /**
      * <idx>: integer type;
@@ -169,7 +125,8 @@ int32_t CSControl::EncapsulateDialCommon(const std::string &phoneNum, CLIRMode &
      * ATD*17*753#500; (originate voice group call with the priority level 3)
      * OK (voice group call setup was successful)
      */
-    return csConnection.DialRequest(dialRequest, GetSlotId());
+    CellularCallConnectionCS csConnection;
+    return csConnection.DialRequest(GetSlotId(), dialRequest);
 }
 
 int32_t CSControl::HangUp(const CellularCallInfo &callInfo)
@@ -191,9 +148,8 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("CSControl::HangUp, error type: GetInstance() is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    CallReportInfo reportInfo = pConnection->GetCallReportInfo();
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
-        reportInfo, CALL_STATUS_DISCONNECTING);
+        pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
 
     /**
      * The "directory number" case shall be handled with dial command D,
@@ -228,10 +184,11 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
      * 5 waiting (MT call)
      */
     // There is an active call when you call, or third party call waiting
-    if (IsInState(connectionMap_, CALL_STATUS_ACTIVE) || pConnection->GetStatus() == CALL_STATUS_WAITING) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE) ||
+        pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
-        auto con =
-            FindConnectionByState<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, CALL_STATUS_ACTIVE);
+        auto con = FindConnectionByState<CsConnectionMap &, CellularCallConnectionCS *>(
+            connectionMap_, TelCallState::CALL_STATUS_ACTIVE);
         if (con != nullptr) {
             /**
              * shows commands to start the call, to switch from voice to data (In Call Modification) and to hang up
@@ -245,8 +202,9 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
         }
     }
 
-    if (pConnection->GetStatus() == CALL_STATUS_INCOMING || pConnection->GetStatus() == CALL_STATUS_ALERTING ||
-        pConnection->GetStatus() == CALL_STATUS_WAITING) {
+    if (pConnection->GetStatus() == TelCallState::CALL_STATUS_INCOMING ||
+        pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
+        pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         return pConnection->AnswerRequest(GetSlotId());
     }
 
@@ -281,9 +239,8 @@ int32_t CSControl::Reject(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("CSControl::Reject, error type: GetInstance() is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    CallReportInfo reportInfo = pConnection->GetCallReportInfo();
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
-        reportInfo, CALL_STATUS_DISCONNECTING);
+        pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
     return pConnection->RejectRequest(GetSlotId());
 }
 
@@ -294,7 +251,7 @@ int32_t CSControl::HoldCall()
      * channel is released from the existing call. The traffic channel is reserved for the served mobile subscriber
      * invoking the call hold service. The served mobile subscriber can only have one call on hold at a time.
      */
-    if (IsInState(connectionMap_, CALL_STATUS_INCOMING)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("HoldCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
     }
@@ -305,7 +262,7 @@ int32_t CSControl::HoldCall()
 int32_t CSControl::UnHoldCall()
 {
     // A notification shall be send towards the previously held party that the call has been retrieved.
-    if (IsInState(connectionMap_, CALL_STATUS_INCOMING)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("UnHoldCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
     }
@@ -322,7 +279,7 @@ int32_t CSControl::SwitchCall()
      * 3) Disconnect the held call.
      * 4) Disconnect both calls.
      */
-    if (IsInState(connectionMap_, CALL_STATUS_INCOMING)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("SwitchCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
     }
@@ -344,12 +301,12 @@ int32_t CSControl::SeparateConference(const std::string &splitString, int32_t in
 
     auto pConnection = GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, splitString);
     if (pConnection != nullptr) {
-        return pConnection->SeparateConferenceRequest(pConnection->GetIndex(), GetSlotId(), VOICE_CALL);
+        return pConnection->SeparateConferenceRequest(GetSlotId(), pConnection->GetIndex(), VOICE_CALL);
     }
 
     TELEPHONY_LOGI("SeparateConference: connection cannot be matched, use index directly");
     CellularCallConnectionCS connection;
-    return connection.SeparateConferenceRequest(index, GetSlotId(), VOICE_CALL);
+    return connection.SeparateConferenceRequest(GetSlotId(), index, VOICE_CALL);
 }
 
 /**
@@ -372,7 +329,7 @@ int32_t CSControl::CallSupplement(CallSupplementType type)
         // release the second (active) call and recover the first (held) call
         case CallSupplementType::TYPE_HANG_UP_ACTIVE: {
             CellularCallConnectionCS connection;
-            return connection.CallSupplementRequest(type, GetSlotId());
+            return connection.CallSupplementRequest(GetSlotId(), type);
         }
         case CallSupplementType::TYPE_HANG_UP_ALL: {
             TELEPHONY_LOGI("CallSupplement, hang up all call");
@@ -386,41 +343,10 @@ int32_t CSControl::CallSupplement(CallSupplementType type)
     }
 }
 
-int32_t CSControl::SendDtmfString(const std::string &sDtmfCode, int32_t switchOn, int32_t switchOff)
+int32_t CSControl::HangUpAllConnection()
 {
-    /**
-     * 3gpp 27007-430_2001
-     *
-     * C.2.11	DTMF and tone generation +VTS
-     *
-     * This command allows the transmission of DTMF tones and arbitrary tones (see note).
-     * These tones may be used (for example) when announcing the start of a recording period.
-     * The command is write only.
-     * In this profile of commands, this command does not operate in data or fax modes of operation (+FCLASS=0,1,2
-     7).
-     * NOTE 1:	D is used only for dialling.
-
-     * The string parameter of the command consists of combinations of the following separated by commas:
-     * 1. <DTMF>. A single ASCII character in the set 0 9, #,*,A D.
-     * This is interpreted as a single ACSII character whose duration is set by the +VTD command.
-     *   NOTE 2:	In GSM this operates only in voice mode.
-     * 2. [<tone1>,<tone2>,<duration>].
-     * This is interpreted as a dual tone of frequencies <tone1> and <tone2>, lasting for a time <duration> (in 10
-     ms multiples).
-     *   NOTE 3:	This does not operate in GSM.
-     * 3. {<DTMF>,<duration>}. This is interpreted as a DTMF tone of different duration from that mandated by the
-     +VTD command.
-     *   NOTE 4:	In GSM this operates only in voice mode.
-     */
-    // In GSM this operates only in voice mode.
-    CellularCallConnectionCS connection;
-    for (char i : sDtmfCode) {
-        // A single ASCII character in the set 0 9, #,*,A D.
-        if (!IsDtmfKey(i)) {
-            return CALL_ERR_PARAMETER_OUT_OF_RANGE;
-        }
-    }
-    return connection.SendDtmfStringRequest(sDtmfCode, switchOn, switchOff, GetSlotId());
+    TELEPHONY_LOGI("HangUpAllConnection entry");
+    return CallSupplement(CallSupplementType::TYPE_HANG_UP_ALL);
 }
 
 bool CSControl::CalculateInternationalRoaming() const
@@ -454,6 +380,7 @@ int32_t CSControl::ReportCallsData(const CallInfoList &callInfoList)
 
 int32_t CSControl::ReportUpdateInfo(const CallInfoList &callInfoList)
 {
+    TELEPHONY_LOGI("ReportUpdateInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(callInfoList.calls[i]);
@@ -490,9 +417,10 @@ void CSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const CallInf
     while (it != connectionMap_.end()) {
         CallReportInfo callReportInfo = it->second.GetCallReportInfo();
         if (!it->second.GetFlag()) {
-            callReportInfo.state = CALL_STATUS_DISCONNECTED;
+            callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
             callsReportInfo.callVec.push_back(callReportInfo);
             connectionMap_.erase(it++);
+            GetCallFailReason(connectionMap_);
         } else {
             it->second.SetFlag(false);
             ++it;
@@ -540,6 +468,7 @@ CallReportInfo CSControl::EncapsulationCallReportInfo(const CallInfo &callInfo)
 
 int32_t CSControl::ReportIncomingInfo(const CallInfoList &callInfoList)
 {
+    TELEPHONY_LOGI("ReportIncomingInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo cellularCallReportInfo = EncapsulationCallReportInfo(callInfoList.calls[i]);
@@ -563,12 +492,14 @@ int32_t CSControl::ReportIncomingInfo(const CallInfoList &callInfoList)
 
 int32_t CSControl::ReportHungUpInfo()
 {
+    TELEPHONY_LOGI("ReportHungUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo callReportInfo = it.second.GetCallReportInfo();
-        callReportInfo.state = CALL_STATUS_DISCONNECTED;
+        callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
         callReportInfo.accountId = GetSlotId();
         callsReportInfo.callVec.push_back(callReportInfo);
+        GetCallFailReason(connectionMap_);
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("ReportHungUpInfo return, GetInstance() is nullptr.");
