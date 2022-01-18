@@ -36,9 +36,10 @@ public:
      * The CLIP Supplementary Service is defined in GSM 02.81[12]
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
      *
+     * @param slotId
      * @param MMIData
      */
-    void GetClip(const MMIData &mmiData);
+    void GetClip(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Deal Clir
@@ -46,9 +47,10 @@ public:
      * 3GPP TS 22.081 V4.0.0 (2001-03) 2 Calling Line Identification Restriction (CLIR)
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
      *
+     * @param slotId
      * @param MMIData
      */
-    void GetClir(const MMIData &mmiData);
+    void GetClir(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Deal Call Transfer
@@ -56,9 +58,10 @@ public:
      * 3GPP TS 22.030 V4.0.0 (2001-03)
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
      *
+     * @param slotId
      * @param MMIData
      */
-    void DealCallTransfer(const MMIData &mmiData);
+    void DealCallTransfer(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Transfer
@@ -67,10 +70,11 @@ public:
      * 3GPP TS 22.082 [4]
      * Control of the call forwarding supplementary service
      *
+     * @param slotId
      * @param CallTransferInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallTransferInfo(const CallTransferInfo &cTInfo);
+    int32_t SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cTInfo);
 
     /**
      * Inquire Call Transfer
@@ -79,10 +83,11 @@ public:
      * 3GPP TS 22.082 [4]
      * Control of the call forwarding supplementary service
      *
+     * @param slotId
      * @param CallTransferType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallTransferInfo(CallTransferType type);
+    int32_t GetCallTransferInfo(int32_t slotId, CallTransferType type);
 
     /**
      * Deal Call Restriction
@@ -90,9 +95,10 @@ public:
      * 3GPP TS 22.088 [6] 1	Barring of outgoing calls
      * 3GPP TS 22.088 [6] 2	Barring of incoming calls
      *
+     * @param slotId
      * @param MMIData
      */
-    void DealCallRestriction(const MMIData &mmiData);
+    void DealCallRestriction(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Restriction
@@ -103,10 +109,11 @@ public:
      *
      * Control of the call barring supplementary service
      *
+     * @param slotId
      * @param CallRestrictionInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallRestriction(const CallRestrictionInfo &cRInfo);
+    int32_t SetCallRestriction(int32_t slotId, const CallRestrictionInfo &cRInfo);
 
     /**
      * Inquire Call Restriction
@@ -117,10 +124,11 @@ public:
      *
      * Control of the call barring supplementary service
      *
+     * @param slotId
      * @param CallRestrictionType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallRestriction(CallRestrictionType facType);
+    int32_t GetCallRestriction(int32_t slotId, CallRestrictionType facType);
 
     /**
      * Deal Call Waiting
@@ -128,10 +136,11 @@ public:
      * 27007-430_2001 7.12	Call waiting +CCWA
      * 3GPP TS 22.083 [5] 1	Call waiting (CW)
      *
+     * @param slotId
      * Deal Call Waiting
      * @param MMIData
      */
-    void DealCallWaiting(const MMIData &mmiData);
+    void DealCallWaiting(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Waiting
@@ -141,10 +150,11 @@ public:
      *
      * Control of the Call Waiting supplementary service
      *
+     * @param slotId
      * @param activate
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallWaiting(bool activate);
+    int32_t SetCallWaiting(int32_t slotId, bool activate);
 
     /**
      * Inquire Call Waiting
@@ -154,9 +164,10 @@ public:
      *
      * Control of the Call Waiting supplementary service
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallWaiting();
+    int32_t GetCallWaiting(int32_t slotId);
 
     /**
      * Send Ussd msg
@@ -167,9 +178,10 @@ public:
      *
      * Control of the Ussd supplementary service
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SendUssd(const std::string &msg);
+    int32_t SendUssd(int32_t slotId, const std::string &msg);
 
     /**
      * Event Deal clip Mmi
@@ -296,9 +308,10 @@ private:
     /**
      * Is Phone Gsm Type
      *
+     * @param slotId
      * @return bool
      */
-    bool PhoneTypeGsmOrNot();
+    bool PhoneTypeGsmOrNot(int32_t slotId);
 
 private:
     const int32_t ACTIVATE_ACTION = 1;

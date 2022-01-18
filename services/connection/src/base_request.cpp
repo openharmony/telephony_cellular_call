@@ -16,10 +16,5 @@
 #include "base_request.h"
 
 namespace OHOS {
-namespace Telephony {
-std::shared_ptr<Core> BaseRequest::GetCore(int32_t slotId)
-{
-    return CoreManager::GetInstance().getCore(slotId);
-}
-} // namespace Telephony
+namespace Telephony {} // namespace Telephony
 } // namespace OHOS

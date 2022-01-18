@@ -121,13 +121,13 @@ public:
     int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
 
     /**
-     * IMS proxy UpdateCallMediaMode interface
+     * IMS proxy UpdateImsCallMode interface
      *
      * @param ImsCallInfo
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallMediaMode(const ImsCallInfo &callInfo, CallMediaMode mode) override;
+    int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
 
     /**
      * IMS proxy IsEmergencyPhoneNumber interface
@@ -204,32 +204,36 @@ public:
     /**
      * IMS proxy SetDomainPreferenceMode interface
      *
+     * @param slotId
      * @param mode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetDomainPreferenceMode(int32_t mode) override;
+    int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) override;
 
     /**
      * IMS proxy GetDomainPreferenceMode interface
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetDomainPreferenceMode() override;
+    int32_t GetDomainPreferenceMode(int32_t slotId) override;
 
     /**
      * IMS proxy SetLteImsSwitchStatus interface
      *
+     * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatus(bool active) override;
+    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active) override;
 
     /**
      * IMS proxy GetLteImsSwitchStatus interface
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatus() override;
+    int32_t GetLteImsSwitchStatus(int32_t slotId) override;
 
     /**
      * IMS proxy SetImsConfig interface
@@ -275,31 +279,29 @@ public:
     int32_t GetImsFeatureValue(FeatureType type) override;
 
     /**
-     * IMS proxy SetVolteEnhanceMode interface
+     * IMS proxy SetImsSwitchEnhanceMode interface
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetVolteEnhanceMode(bool value) override;
+    int32_t SetImsSwitchEnhanceMode(bool value) override;
 
     /**
-     * IMS proxy GetVolteEnhanceMode interface
+     * IMS proxy GetImsSwitchEnhanceMode interface
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetVolteEnhanceMode() override;
+    int32_t GetImsSwitchEnhanceMode() override;
 
     /**
      * IMS proxy CtrlCamera interface
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCamera(const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid,
-        int32_t callingPid) override;
+    int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) override;
 
     /**
      * IMS proxy SetPreviewWindow interface

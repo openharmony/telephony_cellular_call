@@ -38,8 +38,8 @@ public:
     int32_t GetImsConfig(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t SetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t GetVolteEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetImsSwitchEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t GetImsSwitchEnhanceMode(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t CtrlCamera(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetPreviewWindow(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetDisplayWindow(const sptr<CellularCallInterface> &telephonyService) const;

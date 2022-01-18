@@ -60,9 +60,10 @@ public:
      * release the active call
      *
      * @param CellularCallInfo
+     * @param CallSupplementType
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HangUp(const CellularCallInfo &callInfo);
+    int32_t HangUp(const CellularCallInfo &callInfo, CallSupplementType type) override;
 
     /**
      * CSControl Answer
@@ -99,9 +100,10 @@ public:
      *
      * The call hold service allows a served mobile subscriber
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HoldCall() override;
+    int32_t HoldCall(int32_t slotId) override;
 
     /**
      * CSControl UnHoldCall
@@ -111,9 +113,10 @@ public:
      *
      * Retrieve the held call.
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UnHoldCall() override;
+    int32_t UnHoldCall(int32_t slotId) override;
 
     /**
      * CSControl SwitchCall
@@ -123,9 +126,10 @@ public:
      *
      * Alternate from one call to the other
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SwitchCall() override;
+    int32_t SwitchCall(int32_t slotId) override;
 
     /**
      * CSControl CombineConference
@@ -134,9 +138,10 @@ public:
      * 3GPP TS 22.030
      *
      * Add another remote party
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CombineConference() override;
+    int32_t CombineConference(int32_t slotId) override;
 
     /**
      * CSControl SeparateConference
@@ -145,29 +150,20 @@ public:
      * 3GPP TS 22.030
      *
      * Separate a remote party
+     * @param slotId
      * @param std::string splitString
      * @param index
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SeparateConference(const std::string &splitString, int32_t index);
-
-    /**
-     * CSControl CallSupplement
-     *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) Call related supplementary services +CHLD
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.22	Informative examples
-     *
-     * @param CallSupplementType
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t CallSupplement(CallSupplementType type);
+    int32_t SeparateConference(int32_t slotId, const std::string &splitString, int32_t index);
 
     /**
      * HangUpAllConnection
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HangUpAllConnection() override;
+    int32_t HangUpAllConnection(int32_t slotId) override;
 
     /**
      * CSControl ReleaseAllConnection
@@ -186,22 +182,23 @@ public:
      *
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ReportCallsData(const CallInfoList &callInfoList) override;
+    int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) override;
 
 private:
     /**
      * Calculate International Roaming
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    bool CalculateInternationalRoaming() const;
+    bool CalculateInternationalRoaming(int32_t slotId) const;
 
     /**
      * Report being hung up data
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ReportHungUpInfo();
+    int32_t ReportHungUpInfo(int32_t slotId);
 
     /**
      * Report Incoming info
@@ -209,7 +206,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ReportIncomingInfo(const CallInfoList &list);
+    int32_t ReportIncomingInfo(int32_t slotId, const CallInfoList &list);
 
     /**
      * Report update info
@@ -217,7 +214,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ReportUpdateInfo(const CallInfoList &list);
+    int32_t ReportUpdateInfo(int32_t slotId, const CallInfoList &list);
 
     /**
      * Encapsulation CallReportInfo
@@ -225,7 +222,7 @@ private:
      * @param callInfo
      * @return CallReportInfo
      */
-    CallReportInfo EncapsulationCallReportInfo(const CallInfo &callInfo);
+    CallReportInfo EncapsulationCallReportInfo(int32_t slotId, const CallInfo &callInfo);
 
     /**
      * DeleteConnection Connection send
@@ -258,7 +255,7 @@ private:
      * @param CLIRMode clirMode
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t EncapsulateDialCommon(const std::string &phoneNum, CLIRMode &clirMode);
+    int32_t EncapsulateDialCommon(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode);
 
 private:
     CsConnectionMap connectionMap_; // save callConnection map

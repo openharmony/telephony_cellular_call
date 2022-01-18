@@ -17,99 +17,77 @@
 
 #include "call_manager_errors.h"
 #include "cellular_call_service.h"
-#include "observer_handler.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
-int32_t ConfigRequest::SetDomainPreferenceModeRequest(int32_t mode)
+int32_t ConfigRequest::SetDomainPreferenceModeRequest(int32_t slotId, int32_t mode)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("SetDomainPreferenceModeRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->SetDomainPreferenceMode(mode);
+        return moduleUtils_.GetImsServiceRemoteObject()->SetDomainPreferenceMode(slotId, mode);
     }
 
     TELEPHONY_LOGI("SetDomainPreferenceModeRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetDomainPreferenceModeRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetDomainPreferenceModeRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_PREFERENCE_MODE);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetDomainPreferenceModeRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->SetCallPreferenceMode(mode, event);
+    CoreManagerInner::GetInstance().SetCallPreferenceMode(
+        slotId, RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE, mode, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::GetDomainPreferenceModeRequest()
+int32_t ConfigRequest::GetDomainPreferenceModeRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("GetDomainPreferenceModeRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->GetDomainPreferenceMode();
+        return moduleUtils_.GetImsServiceRemoteObject()->GetDomainPreferenceMode(slotId);
     }
 
     TELEPHONY_LOGI("GetDomainPreferenceModeRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetDomainPreferenceModeRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetDomainPreferenceModeRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_PREFERENCE_MODE);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetDomainPreferenceModeRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->GetCallPreferenceMode(event);
+    CoreManagerInner::GetInstance().GetCallPreferenceMode(slotId, RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::SetLteImsSwitchStatusRequest(bool active)
+int32_t ConfigRequest::SetLteImsSwitchStatusRequest(int32_t slotId, bool active)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("SetLteImsSwitchStatusRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->SetLteImsSwitchStatus(active);
+        return moduleUtils_.GetImsServiceRemoteObject()->SetLteImsSwitchStatus(slotId, active);
     }
 
     TELEPHONY_LOGI("SetLteImsSwitchStatusRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetLteImsSwitchStatusRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_LTE_IMS_SWITCH_STATUS);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetLteImsSwitchStatusRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->SetLteImsSwitchStatus(active, event);
+    CoreManagerInner::GetInstance().SetLteImsSwitchStatus(
+        slotId, RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS, active, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::GetLteImsSwitchStatusRequest()
+int32_t ConfigRequest::GetLteImsSwitchStatusRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("GetLteImsSwitchStatusRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->GetLteImsSwitchStatus();
+        return moduleUtils_.GetImsServiceRemoteObject()->GetLteImsSwitchStatus(slotId);
     }
 
     TELEPHONY_LOGI("GetLteImsSwitchStatusRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetLteImsSwitchStatusRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetLteImsSwitchStatusRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->GetLteImsSwitchStatus(event);
+    CoreManagerInner::GetInstance().GetLteImsSwitchStatus(slotId, RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -163,32 +141,31 @@ int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::SetVolteEnhanceModeRequest(bool value)
+int32_t ConfigRequest::SetImsSwitchEnhanceModeRequest(bool value)
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetVolteEnhanceModeRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->SetVolteEnhanceMode(value);
+        TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest, call ims service");
+        return moduleUtils_.GetImsServiceRemoteObject()->SetImsSwitchEnhanceMode(value);
     }
-    TELEPHONY_LOGI("SetVolteEnhanceModeRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::GetVolteEnhanceModeRequest()
+int32_t ConfigRequest::GetImsSwitchEnhanceModeRequest()
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetVolteEnhanceModeRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->GetVolteEnhanceMode();
+        TELEPHONY_LOGI("GetImsSwitchEnhanceModeRequest, call ims service");
+        return moduleUtils_.GetImsServiceRemoteObject()->GetImsSwitchEnhanceMode();
     }
-    TELEPHONY_LOGI("GetVolteEnhanceModeRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGI("GetImsSwitchEnhanceModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::CtrlCameraRequest(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t ConfigRequest::CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("CtrlCameraRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->CtrlCamera(cameraId, callingPackage, callingUid, callingPid);
+        return moduleUtils_.GetImsServiceRemoteObject()->CtrlCamera(cameraId, callingUid, callingPid);
     }
     TELEPHONY_LOGI("CtrlCameraRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -252,18 +229,12 @@ int32_t ConfigRequest::SetMuteRequest(int32_t slotId, int32_t mute)
     }
 
     TELEPHONY_LOGI("SetMuteRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetMuteRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetMuteRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CMUT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::SetMuteRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->SetMute(mute, event);
+    CoreManagerInner::GetInstance().SetMute(slotId, RadioEvent::RADIO_SET_CMUT, mute, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -275,18 +246,12 @@ int32_t ConfigRequest::GetMuteRequest(int32_t slotId)
     }
 
     TELEPHONY_LOGI("GetMuteRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetMuteRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetMuteRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CMUT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetMuteRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->GetMute(event);
+    CoreManagerInner::GetInstance().GetMute(slotId, RadioEvent::RADIO_GET_CMUT, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -298,18 +263,12 @@ int32_t ConfigRequest::GetEmergencyCallListRequest(int32_t slotId)
     }
 
     TELEPHONY_LOGI("GetEmergencyCallListRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetEmergencyCallListRequest return, error type: core is nullptr.");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: handle is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_EMERGENCY_CALL_LIST);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ConfigRequest::GetEmergencyCallListRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_));
-    core->GetEmergencyCallList(event);
+    CoreManagerInner::GetInstance().GetEmergencyCallList(slotId, RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST, handle);
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

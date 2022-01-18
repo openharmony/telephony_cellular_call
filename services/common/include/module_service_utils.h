@@ -16,11 +16,11 @@
 #ifndef CELLULAR_CALL_MODULE_SERVICE_UTILS_H
 #define CELLULAR_CALL_MODULE_SERVICE_UTILS_H
 
-#include "core_manager.h"
-#include "telephony_log_wrapper.h"
 #include "iservice_registry.h"
 #include "singleton.h"
+
 #include "ims_interface.h"
+#include "network_state.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -72,13 +72,6 @@ public:
      * @return slot id
      */
     std::vector<int32_t> GetSlotInfo();
-
-    /**
-     * Get core
-     *
-     * @return slot id
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId);
 
     /**
      * Need to call ImsService

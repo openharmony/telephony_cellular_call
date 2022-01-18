@@ -329,28 +329,28 @@ public:
     virtual int32_t UpdateGetImsFeatureValueResponse(const ImsResponseInfo &info) = 0;
 
     /**
-     * UpdateSetVolteEnhanceModeResponse
+     * UpdateSetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateGetVolteEnhanceModeResponse(int32_t value) = 0;
+    virtual int32_t UpdateGetImsSwitchEnhanceModeResponse(int32_t value) = 0;
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateCtrlCameraResponse
@@ -571,8 +571,8 @@ public:
         UPDATE_GET_CONFIG,
         UPDATE_SET_FEATURE,
         UPDATE_GET_FEATURE,
-        UPDATE_SET_VOLTE_ENHANCE,
-        UPDATE_GET_VOLTE_ENHANCE,
+        UPDATE_SET_IMS_SWITCH_ENHANCE,
+        UPDATE_GET_IMS_SWITCH_ENHANCE,
         UPDATE_SET_MUTE,
         UPDATE_GET_MUTE,
         UPDATE_GET_EMERGENCY_CALL_LIST,

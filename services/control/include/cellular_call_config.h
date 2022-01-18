@@ -41,28 +41,31 @@ public:
      * 3GPP TS 27.007 V17.3.0 (2021-09) 10.1.35	UE's voice domain preference E-UTRAN +CEVDP
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.27 /<X>/Voice_Domain_Preference_E_UTRAN
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetDomainPreferenceMode();
+    int32_t GetDomainPreferenceMode(int32_t slotId);
 
     /**
      * Set Lte Ims Switch Status
      *
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.31 /<X>/Mobility_Management_IMS_Voice_Termination
      *
+     * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatus(bool active);
+    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active);
 
     /**
      * Get Lte Ims Switch Status
      *
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.31 /<X>/Mobility_Management_IMS_Voice_Termination
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatus();
+    int32_t GetLteImsSwitchStatus(int32_t slotId);
 
     /**
      * Get Lte Ims Switch Status Response
@@ -140,31 +143,29 @@ public:
     int32_t GetImsFeatureValue(FeatureType type);
 
     /**
-     * Set Volte Enhance Mode
+     * Set Ims Switch Enhance Mode
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetVolteEnhanceMode(bool value);
+    int32_t SetImsSwitchEnhanceMode(bool value);
 
     /**
-     * Get Volte Enhance Mode
+     * Get Ims Switch Enhance Mode
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetVolteEnhanceMode();
+    int32_t GetImsSwitchEnhanceMode();
 
     /**
      * CtrlCamera
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCamera(
-        const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid);
+    int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid);
 
     /**
      * SetPreviewWindow
@@ -263,15 +264,15 @@ public:
      * Get Ecc Call List
      *
      * @param slotId
-     * @return std::vector<Emergencyinfo>
+     * @return std::vector<EmergencyInfo>
      */
-    std::vector<Emergencyinfo> GetEccCallList(int32_t slotId);
+    std::vector<EmergencyInfo> GetEccCallList(int32_t slotId);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
     static std::map<int32_t, int32_t> activeMap_;
-    static std::map<int32_t, std::vector<Emergencyinfo>> eccListMap_;
+    static std::map<int32_t, std::vector<EmergencyInfo>> eccListMap_;
     ConfigRequest configRequest_;
 };
 } // namespace Telephony

@@ -16,14 +16,16 @@
 #include "ims_ril_request.h"
 
 #include "call_manager_errors.h"
+#include "core_manager_inner.h"
 #include "ims_service.h"
-#include "observer_handler.h"
+#include "radio_event.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
 // This is the logic of piling. Variables are temporarily stored.
 // These temporary variables can be removed during subsequent development by the manufacturer.
-bool ImsRilRequest::voLteEnhanceModeTemp_ = false;
+bool ImsRilRequest::imsSwitchEnhanceModeTemp_ = false;
 int32_t ImsRilRequest::itemVideoQualityTemp_ = 0;
 int32_t ImsRilRequest::itemImsSwitchStatusTemp_ = 0;
 int32_t ImsRilRequest::voiceOverLteTemp_ = 0;
@@ -39,22 +41,16 @@ int32_t ImsRilRequest::DialRequest(const ImsCallInfo &callInfo, CLIRMode mode) c
     TELEPHONY_LOGI("DialRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(callInfo.slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("DialRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_DIAL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("DialRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(callInfo.slotId));
-    core->Dial(callInfo.phoneNum, mode, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(callInfo.slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("DialRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Dial(callInfo.slotId, RadioEvent::RADIO_DIAL, callInfo.phoneNum, mode, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -63,22 +59,16 @@ int32_t ImsRilRequest::HangUpRequest(int32_t slotId, int32_t index) const
     TELEPHONY_LOGI("HangUpRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_HANGUP_CONNECT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HangUpRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->Hangup(index, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("HangUpRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Hangup(slotId, RadioEvent::RADIO_HANGUP_CONNECT, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -87,22 +77,16 @@ int32_t ImsRilRequest::AnswerRequest(int32_t slotId, int32_t videoState) const
     TELEPHONY_LOGI("AnswerRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("AnswerRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_ACCEPT_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("AnswerRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->Answer(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("AnswerRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Answer(slotId, RadioEvent::RADIO_ACCEPT_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -111,22 +95,16 @@ int32_t ImsRilRequest::RejectRequest(int32_t slotId) const
     TELEPHONY_LOGI("RejectRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("RejectRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_REJECT_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("RejectRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->Reject(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("RejectRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Reject(slotId, RadioEvent::RADIO_REJECT_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -135,22 +113,16 @@ int32_t ImsRilRequest::HoldRequest(int32_t slotId) const
     TELEPHONY_LOGI("HoldRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("HoldRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_HOLD_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("HoldRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HoldRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->HoldCall(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("HoldRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().HoldCall(slotId, RadioEvent::RADIO_HOLD_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -159,22 +131,16 @@ int32_t ImsRilRequest::UnHoldCallRequest(int32_t slotId) const
     TELEPHONY_LOGI("ActiveRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ActiveRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_ACTIVE_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ActiveRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UnHoldCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->UnHoldCall(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("UnHoldCallRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().UnHoldCall(slotId, RadioEvent::RADIO_ACTIVE_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -183,22 +149,16 @@ int32_t ImsRilRequest::SwitchCallRequest(int32_t slotId) const
     TELEPHONY_LOGI("SwapRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SwapRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SWAP_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SwapRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SwitchCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->SwitchCall(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SwitchCallRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SwitchCall(slotId, RadioEvent::RADIO_SWAP_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -207,22 +167,16 @@ int32_t ImsRilRequest::CombineConferenceRequest(int32_t slotId, int32_t voiceCal
     TELEPHONY_LOGI("CombineConferenceRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("CombineConferenceRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_JOIN_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CombineConferenceRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CombineConferenceRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->CombineConference(voiceCall, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("CombineConferenceRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().CombineConference(slotId, RadioEvent::RADIO_JOIN_CALL, voiceCall, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -258,7 +212,7 @@ int32_t ImsRilRequest::KickOutFromConferenceRequest(int32_t slotId, const std::v
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::UpdateCallMediaModeRequest(int32_t slotId, CallMediaMode mode) const
+int32_t ImsRilRequest::UpdateCallMediaModeRequest(int32_t slotId, ImsCallMode mode) const
 {
     TELEPHONY_LOGI("UpdateCallMediaModeRequest start");
 
@@ -295,22 +249,16 @@ int32_t ImsRilRequest::SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t i
     TELEPHONY_LOGI("SendDtmfRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SendDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SEND_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SendDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SendDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->SendDTMF(cDtmfCode, index, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SendDTMF(slotId, RadioEvent::RADIO_SEND_DTMF, cDtmfCode, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -319,22 +267,16 @@ int32_t ImsRilRequest::StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t 
     TELEPHONY_LOGI("StartDtmfRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("StartDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_START_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("StartDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StartDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->StartDTMF(cDtmfCode, index, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StartDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StartDTMF(slotId, RadioEvent::RADIO_START_DTMF, cDtmfCode, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -343,22 +285,16 @@ int32_t ImsRilRequest::StopDtmfRequest(int32_t slotId, int32_t index) const
     TELEPHONY_LOGI("StopDtmfRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("StopDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_STOP_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("StopDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StopDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->StopDTMF(index, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StopDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StopDTMF(slotId, RadioEvent::RADIO_STOP_DTMF, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -399,118 +335,90 @@ int32_t ImsRilRequest::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsD
     TELEPHONY_LOGI("GetImsCallsDataRequest entry.");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_IMS_CALL_LIST, lastCallsDataFlag);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId));
-    core->GetImsCallList(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetImsCallList(slotId, RadioEvent::RADIO_GET_IMS_CALL_LIST, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::SetDomainPreferenceModeRequest(int32_t mode) const
+int32_t ImsRilRequest::SetDomainPreferenceModeRequest(int32_t slotId, int32_t mode) const
 {
     TELEPHONY_LOGI("SetDomainPreferenceModeRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::SetDomainPreferenceModeRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_PREFERENCE_MODE);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::SetDomainPreferenceModeRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetDomainPreferenceModeRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetCallPreferenceMode(mode, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetDomainPreferenceModeRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetCallPreferenceMode(
+        slotId, RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE, mode, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::GetDomainPreferenceModeRequest() const
+int32_t ImsRilRequest::GetDomainPreferenceModeRequest(int32_t slotId) const
 {
     TELEPHONY_LOGI("GetDomainPreferenceModeRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::GetDomainPreferenceModeRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_PREFERENCE_MODE);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::GetDomainPreferenceModeRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetDomainPreferenceModeRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetCallPreferenceMode(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetDomainPreferenceModeRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetCallPreferenceMode(slotId, RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::SetLteImsSwitchStatusRequest(int32_t active) const
+int32_t ImsRilRequest::SetLteImsSwitchStatusRequest(int32_t slotId, int32_t active) const
 {
     TELEPHONY_LOGI("SetLteImsSwitchStatusRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::SetLteImsSwitchStatusRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_LTE_IMS_SWITCH_STATUS);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::SetLteImsSwitchStatusRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetLteImsSwitchStatusRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetLteImsSwitchStatus(active, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetLteImsSwitchStatus(
+        slotId, RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS, active, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::GetLteImsSwitchStatusRequest() const
+int32_t ImsRilRequest::GetLteImsSwitchStatusRequest(int32_t slotId) const
 {
     TELEPHONY_LOGI("GetLteImsSwitchStatusRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::GetLteImsSwitchStatusRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("ImsRilRequest::GetLteImsSwitchStatusRequest return, error type: event is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetLteImsSwitchStatusRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetLteImsSwitchStatus(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetLteImsSwitchStatus(slotId, RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -640,40 +548,39 @@ int32_t ImsRilRequest::GetImsFeatureValueRequest(FeatureType type) const
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::SetVolteEnhanceModeRequest(bool value) const
+int32_t ImsRilRequest::SetImsSwitchEnhanceModeRequest(bool value) const
 {
-    TELEPHONY_LOGI("SetVolteEnhanceModeRequest start");
+    TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest start");
 
     // This is the logic of piling. The result is temporarily returned to the caller, and the temporary logic
     // can be removed during subsequent development by the manufacturer.
-    TELEPHONY_LOGI("SetVolteEnhanceModeRequest value: %{public}d", value);
-    voLteEnhanceModeTemp_ = value;
+    TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest value: %{public}d", value);
+    imsSwitchEnhanceModeTemp_ = value;
     ImsResponseInfo responseInfo {};
     responseInfo.error = ImsErrType::IMS_SUCCESS;
     if (imsRegisterInstance_ == nullptr) {
-        TELEPHONY_LOGE("SetVolteEnhanceModeRequest return, error type: instance is nullptr.");
+        TELEPHONY_LOGE("SetImsSwitchEnhanceModeRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    imsRegisterInstance_->UpdateSetVolteEnhanceModeResponse(responseInfo);
+    imsRegisterInstance_->UpdateSetImsSwitchEnhanceModeResponse(responseInfo);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::GetVolteEnhanceModeRequest() const
+int32_t ImsRilRequest::GetImsSwitchEnhanceModeRequest() const
 {
-    TELEPHONY_LOGI("GetVolteEnhanceModeRequest start");
+    TELEPHONY_LOGI("GetImsSwitchEnhanceModeRequest start");
 
     // This is the logic of piling. The result is temporarily returned to the caller, and the temporary logic
     // can be removed during subsequent development by the manufacturer.
     if (imsRegisterInstance_ == nullptr) {
-        TELEPHONY_LOGE("GetVolteEnhanceModeRequest return, error type: instance is nullptr.");
+        TELEPHONY_LOGE("GetImsSwitchEnhanceModeRequest return, error type: instance is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    imsRegisterInstance_->UpdateGetVolteEnhanceModeResponse(voLteEnhanceModeTemp_);
+    imsRegisterInstance_->UpdateGetImsSwitchEnhanceModeResponse(imsSwitchEnhanceModeTemp_);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilRequest::CtrlCameraRequest(const std::u16string &cameraId, const std::u16string &callingPackage,
-    int32_t callingUid, int32_t callingPid) const
+int32_t ImsRilRequest::CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) const
 {
     TELEPHONY_LOGI("CtrlCameraRequest start");
 
@@ -769,11 +676,6 @@ int32_t ImsRilRequest::SetDeviceDirectionRequest(int32_t rotation) const
     return TELEPHONY_SUCCESS;
 }
 
-std::shared_ptr<Core> ImsRilRequest::GetCore(int32_t slotId) const
-{
-    return CoreManager::GetInstance().getCore(slotId);
-}
-
 void ImsRilRequest::AsynchronousRegister()
 {
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
@@ -788,22 +690,16 @@ int32_t ImsRilRequest::SetMuteRequest(int32_t slotId, int32_t mute) const
     TELEPHONY_LOGI("SetMuteRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SetMuteRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CMUT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SetMuteRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetMuteRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetMute(mute, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetMuteRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetMute(slotId, RadioEvent::RADIO_SET_CMUT, mute, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -812,22 +708,16 @@ int32_t ImsRilRequest::GetMuteRequest(int32_t slotId) const
     TELEPHONY_LOGI("GetMuteRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetMuteRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CMUT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetMuteRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetMuteRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetMute(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetMuteRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetMute(slotId, RadioEvent::RADIO_GET_CMUT, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -836,22 +726,16 @@ int32_t ImsRilRequest::GetEmergencyCallListRequest(int32_t slotId) const
     TELEPHONY_LOGI("GetEmergencyCallListRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_EMERGENCY_CALL_LIST);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetEmergencyCallList(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetEmergencyCallList(slotId, RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -860,22 +744,16 @@ int32_t ImsRilRequest::GetCallFailReasonRequest(int32_t slotId) const
     TELEPHONY_LOGI("GetCallFailReasonRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_FAIL_REASON);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetCallFailReason(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetCallFailReason(slotId, RadioEvent::RADIO_GET_CALL_FAIL_REASON, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -884,22 +762,16 @@ int32_t ImsRilRequest::InquireClipRequest(int32_t slotId) const
     TELEPHONY_LOGI("InquireClipRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("InquireClipRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_CLIP);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("InquireClipRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("InquireClipRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetClip(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("InquireClipRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetClip(slotId, RadioEvent::RADIO_GET_CALL_CLIP, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -908,22 +780,16 @@ int32_t ImsRilRequest::SetClirRequest(int32_t slotId, int32_t action) const
     TELEPHONY_LOGI("SetClirRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SetClirRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_CLIR);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SetClirRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetClirRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetClir(action, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetClirRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetClir(slotId, RadioEvent::RADIO_SET_CALL_CLIR, action, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -932,22 +798,16 @@ int32_t ImsRilRequest::InquireClirRequest(int32_t slotId) const
     TELEPHONY_LOGI("InquireClirRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("InquireClirRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_CLIR);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("InquireClirRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("InquireClirRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetClir(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("InquireClirRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetClir(slotId, RadioEvent::RADIO_GET_CALL_CLIR, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -957,22 +817,23 @@ int32_t ImsRilRequest::SetCallTransferRequest(
     TELEPHONY_LOGI("SetCallTransferRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_FORWARD);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallTransferRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
+    CallTransferParam callTransferParam;
+    callTransferParam.mode = mode;
+    callTransferParam.classx = classType;
+    callTransferParam.number = transferNum;
+    callTransferParam.reason = reason;
+
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetCallTransferRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetCallTransferInfo(reason, mode, transferNum, classType, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetCallTransferRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetCallTransferInfo(
+        slotId, RadioEvent::RADIO_SET_CALL_FORWARD, callTransferParam, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -981,22 +842,16 @@ int32_t ImsRilRequest::GetCallTransferRequest(int32_t slotId, int32_t reason) co
     TELEPHONY_LOGI("GetCallTransferRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetCallTransferRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_FORWARD);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallTransferRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallTransferRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetCallTransferInfo(reason, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetCallTransferRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetCallTransferInfo(slotId, RadioEvent::RADIO_GET_CALL_FORWARD, reason, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1006,24 +861,24 @@ int32_t ImsRilRequest::SetCallRestrictionRequest(
     TELEPHONY_LOGI("SetCallRestrictionRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SetCallRestrictionRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_RESTRICTION);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallRestrictionRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
+    CallRestrictionParam callRestrictionParam;
+    callRestrictionParam.mode = mode;
+    callRestrictionParam.password = pw;
+    callRestrictionParam.fac = fac;
+
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetCallRestrictionRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetCallRestrictionRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
     std::string facTemp = fac;
     std::string facPw = pw;
-    core->SetCallRestriction(facTemp, mode, facPw, event);
+    CoreManagerInner::GetInstance().SetCallRestriction(
+        slotId, RadioEvent::RADIO_SET_CALL_RESTRICTION, callRestrictionParam, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1032,23 +887,18 @@ int32_t ImsRilRequest::GetCallRestrictionRequest(int32_t slotId, const std::stri
     TELEPHONY_LOGI("GetCallRestrictionRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetCallRestrictionRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_RESTRICTION);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallRestrictionRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallRestrictionRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetCallRestrictionRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
     std::string facTemp = fac;
-    core->GetCallRestriction(facTemp, event);
+    CoreManagerInner::GetInstance().GetCallRestriction(
+        slotId, RadioEvent::RADIO_GET_CALL_RESTRICTION, facTemp, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1057,22 +907,16 @@ int32_t ImsRilRequest::SetCallWaitingRequest(int32_t slotId, bool activate) cons
     TELEPHONY_LOGI("SetCallWaitingRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SetCallWaitingRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SET_CALL_WAIT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallWaitingRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SetCallWaitingRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->SetCallWaiting(activate, event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetCallWaitingRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SetCallWaiting(slotId, RadioEvent::RADIO_SET_CALL_WAIT, activate, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1081,22 +925,16 @@ int32_t ImsRilRequest::GetCallWaitingRequest(int32_t slotId) const
     TELEPHONY_LOGI("GetCallWaitingRequest start");
 
     // This is a sample call, the manufacturer can use this method when developing, or you can customize the call.
-    auto core = GetCore(slotId_);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetCallWaitingRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_WAIT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallWaitingRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<ImsService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallWaitingRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId_));
-    core->GetCallWaiting(event);
+    auto handle = DelayedSingleton<ImsService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetCallWaitingRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetCallWaiting(slotId, RadioEvent::RADIO_GET_CALL_WAIT, handle);
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

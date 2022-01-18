@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
 SOURCE_DIR = "//base/telephony/cellular_call"
@@ -44,8 +45,6 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/manager/src/cellular_call_register.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_service.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_stub.cpp",
-    "//base/telephony/ril_adapter/frameworks/src/hril_base_parcel.cpp",
-    "//base/telephony/ril_adapter/frameworks/src/hril_call_parcel.cpp",
   ]
 
   include_dirs = [
@@ -54,24 +53,19 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/control/include",
     "$SOURCE_DIR/services/connection/include",
     "$SOURCE_DIR/interfaces",
-    "//base/telephony/ril_adapter/interfaces/innerkits/include",
-    "//base/telephony/core_service/interfaces/innerkits/network_search",
-    "//base/telephony/core_service/interfaces/innerkits/sim",
-    "//base/telephony/core_service/interfaces/innerkits/core",
     "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/core_service/utils/log/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
-  defines = [
+  defines += [
     "TELEPHONY_LOG_TAG = \"CellularCall\"",
     "LOG_DOMAIN = 0xD002B01",
   ]
 
   deps = [
-    "//base/telephony/core_service:tel_core_service",
-    "//base/telephony/core_service/utils:libtelephony_common",
+    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
+    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
     "//utils/native/base:utils",
   ]
@@ -79,6 +73,7 @@ ohos_shared_library("tel_cellular_call") {
   external_deps = [
     "appexecfwk_standard:libeventhandler",
     "ipc:ipc_core",
+    "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]

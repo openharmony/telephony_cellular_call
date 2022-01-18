@@ -39,7 +39,7 @@ public:
     int32_t CombineConference(const sptr<ImsInterface> &telephonyService) const;
     int32_t InviteToConference(const sptr<ImsInterface> &telephonyService) const;
     int32_t KickOutFromConference(const sptr<ImsInterface> &telephonyService) const;
-    int32_t UpdateCallMediaMode(const sptr<ImsInterface> &telephonyService) const;
+    int32_t UpdateImsCallMode(const sptr<ImsInterface> &telephonyService) const;
     int32_t IsEmergencyPhoneNumber(const sptr<ImsInterface> &telephonyService) const;
     int32_t GetCallFailReason(const sptr<ImsInterface> &telephonyService) const;
     int32_t StartDtmf(const sptr<ImsInterface> &telephonyService) const;
@@ -56,8 +56,8 @@ public:
     int32_t GetImsConfig(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetImsFeatureValue(const sptr<ImsInterface> &telephonyService) const;
     int32_t GetImsFeatureValue(const sptr<ImsInterface> &telephonyService) const;
-    int32_t SetVolteEnhanceMode(const sptr<ImsInterface> &telephonyService) const;
-    int32_t GetVolteEnhanceMode(const sptr<ImsInterface> &telephonyService) const;
+    int32_t SetImsSwitchEnhanceMode(const sptr<ImsInterface> &telephonyService) const;
+    int32_t GetImsSwitchEnhanceMode(const sptr<ImsInterface> &telephonyService) const;
     int32_t CtrlCamera(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetPreviewWindow(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetDisplayWindow(const sptr<ImsInterface> &telephonyService) const;

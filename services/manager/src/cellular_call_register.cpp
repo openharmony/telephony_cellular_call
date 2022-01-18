@@ -237,20 +237,20 @@ void CellularCallRegister::ReportGetImsFeatureResult(const GetImsFeatureValueRes
     callManagerCallBack_->GetImsFeatureValueResult(response);
 }
 
-void CellularCallRegister::ReportSetVolteEnhanceModeResult(int32_t result)
+void CellularCallRegister::ReportSetImsSwitchEnhanceModeResult(int32_t result)
 {
     if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportSetVolteEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("ReportSetImsSwitchEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
     callManagerCallBack_->SetLteEnhanceModeResult(result);
 }
 
-void CellularCallRegister::ReportGetVolteEnhanceModeResult(const GetLteEnhanceModeResponse &response)
+void CellularCallRegister::ReportGetImsSwitchEnhanceModeResult(const GetLteEnhanceModeResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetVolteEnhanceModeResult entry, value:%{public}d", response.value);
+    TELEPHONY_LOGI("ReportGetImsSwitchEnhanceModeResult entry, value:%{public}d", response.value);
     if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportGetVolteEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("ReportGetImsSwitchEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
     callManagerCallBack_->GetLteEnhanceModeResult(response);

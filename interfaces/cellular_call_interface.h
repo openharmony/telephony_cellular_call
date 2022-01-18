@@ -38,7 +38,6 @@ public:
         SEPARATE_CONFERENCE,
         INVITE_TO_CONFERENCE,
         KICK_OUT_CONFERENCE,
-        CALL_SUPPLEMENT,
         HANG_UP_ALL_CONNECTION,
         UPDATE_CALL_MEDIA_MODE,
         REGISTER_CALLBACK,
@@ -69,8 +68,8 @@ public:
         GET_IMS_CONFIG,
         SET_IMS_FEATURE,
         GET_IMS_FEATURE,
-        SET_VOLTE_ENHANCE_MODE,
-        GET_VOLTE_ENHANCE_MODE,
+        SET_IMS_SWITCH_ENHANCE_MODE,
+        GET_IMS_SWITCH_ENHANCE_MODE,
         SET_MUTE,
         GET_MUTE,
 
@@ -95,9 +94,10 @@ public:
      * HangUp.
      *
      * @param CellularCallInfo, HangUp param.
+     * @param CallSupplementType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HangUp(const CellularCallInfo &callInfo) = 0;
+    virtual int32_t HangUp(const CellularCallInfo &callInfo, CallSupplementType type) = 0;
 
     /**
      * Answer.
@@ -184,14 +184,6 @@ public:
     virtual int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) = 0;
 
     /**
-     * Call Supplement.
-     *
-     * @param CallSupplementType
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t CallSupplement(CallSupplementType type) = 0;
-
-    /**
      * Hang Up All Connection.
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -202,10 +194,10 @@ public:
      * IMS Update Call Media Mode
      *
      * @param CellularCallInfo
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode) = 0;
+    virtual int32_t UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode) = 0;
 
     /**
      * Start Dtmf.
@@ -401,32 +393,30 @@ public:
     virtual int32_t GetImsFeatureValue(int32_t slotId, FeatureType type) = 0;
 
     /**
-     * Set Volte Enhance Mode
+     * Set Ims Switch Enhance Mode
      *
      * @param value
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetVolteEnhanceMode(int32_t slotId, bool value) = 0;
+    virtual int32_t SetImsSwitchEnhanceMode(int32_t slotId, bool value) = 0;
 
     /**
-     * Get Volte Enhance Mode
+     * Get Ims Switch Enhance Mode
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetVolteEnhanceMode(int32_t slotId) = 0;
+    virtual int32_t GetImsSwitchEnhanceMode(int32_t slotId) = 0;
 
     /**
      * CtrlCamera
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CtrlCamera(const std::u16string &cameraId, const std::u16string &callingPackage,
-        int32_t callingUid, int32_t callingPid) = 0;
+    virtual int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) = 0;
 
     /**
      * SetPreviewWindow

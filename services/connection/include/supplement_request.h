@@ -18,7 +18,6 @@
 
 #include "cellular_call_handler.h"
 
-#include "core_manager.h"
 #include "base_request.h"
 
 namespace OHOS {
@@ -30,7 +29,7 @@ public:
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t InquireClipRequest();
+    int32_t InquireClipRequest(int32_t slotId);
 
     /**
      * set Clir Request
@@ -38,14 +37,14 @@ public:
      * @param action
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetClirRequest(int32_t action);
+    int32_t SetClirRequest(int32_t slotId, int32_t action);
 
     /**
      * Inquire Clir Request
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t InquireClirRequest();
+    int32_t InquireClirRequest(int32_t slotId);
 
     /**
      * Inquire Call Transfer Request
@@ -53,7 +52,7 @@ public:
      * @param reason
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallTransferRequest(int32_t reason);
+    int32_t GetCallTransferRequest(int32_t slotId, int32_t reason);
 
     /**
      * Set Call Transfer Request
@@ -64,7 +63,8 @@ public:
      * @param classType
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallTransferRequest(int32_t action, int32_t reason, const std::string &transferNum, int32_t classType);
+    int32_t SetCallTransferRequest(
+        int32_t slotId, int32_t action, int32_t reason, const std::string &transferNum, int32_t classType);
 
     /**
      * Get Call Restriction
@@ -72,7 +72,7 @@ public:
      * @param fac
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallRestrictionRequest(const std::string &fac);
+    int32_t GetCallRestrictionRequest(int32_t slotId, const std::string &fac);
 
     /**
      * Set Call Restriction
@@ -82,7 +82,7 @@ public:
      * @param pw
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallRestrictionRequest(std::string &fac, int32_t mode, std::string &pw);
+    int32_t SetCallRestrictionRequest(int32_t slotId, std::string &fac, int32_t mode, std::string &pw);
 
     /**
      * Set CallWaiting Request
@@ -90,14 +90,14 @@ public:
      * @param bool
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallWaitingRequest(bool activate);
+    int32_t SetCallWaitingRequest(int32_t slotId, bool activate);
 
     /**
      * Get Call Waiting Request
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetCallWaitingRequest();
+    int32_t GetCallWaitingRequest(int32_t slotId);
 
     /**
      * Send ussd Request
@@ -105,7 +105,7 @@ public:
      * @param msg
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SendUssdRequest(const std::string &msg);
+    int32_t SendUssdRequest(int32_t slotId, const std::string &msg);
 
 private:
     /**
@@ -113,7 +113,7 @@ private:
      *
      * @return std::shared_ptr<MMIHandler>
      */
-    std::shared_ptr<CellularCallHandler> GetMMIHandler() const;
+    std::shared_ptr<CellularCallHandler> GetMMIHandler(int32_t slotId) const;
 
 private:
     ModuleServiceUtils moduleUtils_;

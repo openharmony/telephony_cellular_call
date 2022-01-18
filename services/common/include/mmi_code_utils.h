@@ -16,6 +16,7 @@
 #ifndef TELEPHONY_CELLULAR_CALL_MMI_CODE_UTILS_H
 #define TELEPHONY_CELLULAR_CALL_MMI_CODE_UTILS_H
 
+#include <string>
 #include "cellular_call_data_struct.h"
 
 namespace OHOS {
@@ -47,9 +48,12 @@ public:
     /**
      * ExecuteMmiCode
      *
+     * 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3 Handling of supplementary services    Figure 3.5.3.2
+     *
+     * @param slotId
      * @return bool
      */
-    bool ExecuteMmiCode();
+    bool ExecuteMmiCode(int32_t slotId);
 
     /**
      * GetMMIData
