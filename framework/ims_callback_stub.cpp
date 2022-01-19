@@ -17,7 +17,7 @@
 
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
-#include "observer_handler.h"
+#include "radio_event.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_errors.h"
 
@@ -67,8 +67,8 @@ void ImsCallbackStub::InitSupportCallFuncMap()
     requestFuncMap_[UPDATE_GET_CONFIG] = &ImsCallbackStub::OnUpdateGetImsConfigResponseInner;
     requestFuncMap_[UPDATE_SET_FEATURE] = &ImsCallbackStub::OnUpdateSetImsFeatureResponseInner;
     requestFuncMap_[UPDATE_GET_FEATURE] = &ImsCallbackStub::OnUpdateGetImsFeatureResponseInner;
-    requestFuncMap_[UPDATE_SET_VOLTE_ENHANCE] = &ImsCallbackStub::OnUpdateSetVolteEnhanceModeResponseInner;
-    requestFuncMap_[UPDATE_GET_VOLTE_ENHANCE] = &ImsCallbackStub::OnUpdateGetVolteEnhanceModeResponseInner;
+    requestFuncMap_[UPDATE_SET_IMS_SWITCH_ENHANCE] = &ImsCallbackStub::OnUpdateSetImsSwitchEnhanceModeResponseInner;
+    requestFuncMap_[UPDATE_GET_IMS_SWITCH_ENHANCE] = &ImsCallbackStub::OnUpdateGetImsSwitchEnhanceModeResponseInner;
     requestFuncMap_[UPDATE_CONTROL_CAMERA] = &ImsCallbackStub::OnUpdateCtrlCameraResponseInner;
     requestFuncMap_[UPDATE_SET_PREVIEW_WINDOW] = &ImsCallbackStub::OnUpdateSetPreviewWindowResponseInner;
     requestFuncMap_[UPDATE_SET_DISPLAY_WINDOW] = &ImsCallbackStub::OnUpdateSetDisplayWindowResponseInner;
@@ -512,29 +512,29 @@ int32_t ImsCallbackStub::OnUpdateGetImsFeatureResponseInner(MessageParcel &data,
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::OnUpdateSetVolteEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallbackStub::OnUpdateSetImsSwitchEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateSetVolteEnhanceModeResponseInner entry");
+    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateSetImsSwitchEnhanceModeResponseInner entry");
     auto info = (ImsResponseInfo *)data.ReadRawData(sizeof(ImsResponseInfo));
     if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateSetVolteEnhanceModeResponseInner return, info is nullptr.");
+        TELEPHONY_LOGE("OnUpdateSetImsSwitchEnhanceModeResponseInner return, info is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    reply.WriteInt32(UpdateSetVolteEnhanceModeResponse(*info));
+    reply.WriteInt32(UpdateSetImsSwitchEnhanceModeResponse(*info));
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::OnUpdateGetVolteEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallbackStub::OnUpdateGetImsSwitchEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateGetVolteEnhanceModeResponseInner entry");
+    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateGetImsSwitchEnhanceModeResponseInner entry");
     auto info = (ImsResponseInfo *)data.ReadRawData(sizeof(ImsResponseInfo));
     if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateGetVolteEnhanceModeResponseInner, info is nullptr.");
+        TELEPHONY_LOGE("OnUpdateGetImsSwitchEnhanceModeResponseInner, info is nullptr.");
         int32_t value = data.ReadInt32();
-        reply.WriteInt32(UpdateGetVolteEnhanceModeResponse(value));
+        reply.WriteInt32(UpdateGetImsSwitchEnhanceModeResponse(value));
         return TELEPHONY_SUCCESS;
     }
-    reply.WriteInt32(UpdateGetVolteEnhanceModeResponse(*info));
+    reply.WriteInt32(UpdateGetImsSwitchEnhanceModeResponse(*info));
     return TELEPHONY_SUCCESS;
 }
 
@@ -1165,7 +1165,7 @@ int32_t ImsCallbackStub::UpdateImsCallsDataResponse(int32_t slotId, const CallIn
         TELEPHONY_LOGE("ImsCallbackStub::UpdateImsCallsDataResponse, callInfoList == nullptr !!!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_IMS_CALL_LIST, callInfoList);
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_IMS_CALL_LIST, callInfoList);
     if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
         TELEPHONY_LOGE("UpdateImsCallsDataResponse return, GetHandler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -1260,45 +1260,45 @@ int32_t ImsCallbackStub::UpdateGetImsFeatureValueResponse(const ImsResponseInfo 
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackStub::UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateSetVolteEnhanceModeResponse entry");
+    TELEPHONY_LOGI("ImsCallbackStub::UpdateSetImsSwitchEnhanceModeResponse entry");
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("UpdateSetVolteEnhanceModeResponse return, GetInstance is nullptr");
+        TELEPHONY_LOGE("UpdateSetImsSwitchEnhanceModeResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetVolteEnhanceModeResult(info.error);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchEnhanceModeResult(info.error);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::UpdateGetVolteEnhanceModeResponse(int32_t value)
+int32_t ImsCallbackStub::UpdateGetImsSwitchEnhanceModeResponse(int32_t value)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateGetVolteEnhanceModeResponse entry");
+    TELEPHONY_LOGI("ImsCallbackStub::UpdateGetImsSwitchEnhanceModeResponse entry");
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("UpdateGetVolteEnhanceModeResponse return, GetInstance is nullptr");
+        TELEPHONY_LOGE("UpdateGetImsSwitchEnhanceModeResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     GetLteEnhanceModeResponse response;
     response.result = TELEPHONY_SUCCESS;
     response.value = value;
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetVolteEnhanceModeResult(response);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchEnhanceModeResult(response);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackStub::UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateGetVolteEnhanceModeResponse entry");
+    TELEPHONY_LOGI("ImsCallbackStub::UpdateGetImsSwitchEnhanceModeResponse entry");
     if (info.error != ImsErrType::IMS_SUCCESS) {
         if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("UpdateGetVolteEnhanceModeResponse return, GetInstance is nullptr");
+            TELEPHONY_LOGE("UpdateGetImsSwitchEnhanceModeResponse return, GetInstance is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         GetLteEnhanceModeResponse response;
         response.result = IMS_FAILED;
-        TELEPHONY_LOGI("UpdateGetVolteEnhanceModeResponse, return error, report to call_manager");
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetVolteEnhanceModeResult(response);
+        TELEPHONY_LOGI("UpdateGetImsSwitchEnhanceModeResponse, return error, report to call_manager");
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchEnhanceModeResult(response);
     } else {
-        TELEPHONY_LOGI("UpdateGetVolteEnhanceModeResponse, result error");
+        TELEPHONY_LOGI("UpdateGetImsSwitchEnhanceModeResponse, result error");
     }
     return TELEPHONY_SUCCESS;
 }

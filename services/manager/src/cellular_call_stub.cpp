@@ -56,7 +56,6 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::SEPARATE_CONFERENCE] = &CellularCallStub::OnSeparateConferenceInner;
     requestFuncMap_[OperationType::INVITE_TO_CONFERENCE] = &CellularCallStub::OnInviteToConferenceInner;
     requestFuncMap_[OperationType::KICK_OUT_CONFERENCE] = &CellularCallStub::OnKickOutFromConferenceInner;
-    requestFuncMap_[OperationType::CALL_SUPPLEMENT] = &CellularCallStub::OnCallSupplementInner;
     requestFuncMap_[OperationType::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
     requestFuncMap_[OperationType::UPDATE_CALL_MEDIA_MODE] = &CellularCallStub::OnUpdateCallMediaModeInner;
     requestFuncMap_[OperationType::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
@@ -81,8 +80,8 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::GET_IMS_CONFIG] = &CellularCallStub::OnGetImsConfigInner;
     requestFuncMap_[OperationType::SET_IMS_FEATURE] = &CellularCallStub::OnSetImsFeatureValueInner;
     requestFuncMap_[OperationType::GET_IMS_FEATURE] = &CellularCallStub::OnGetImsFeatureValueInner;
-    requestFuncMap_[OperationType::SET_VOLTE_ENHANCE_MODE] = &CellularCallStub::OnSetVolteEnhanceModeInner;
-    requestFuncMap_[OperationType::GET_VOLTE_ENHANCE_MODE] = &CellularCallStub::OnGetVolteEnhanceModeInner;
+    requestFuncMap_[OperationType::SET_IMS_SWITCH_ENHANCE_MODE] = &CellularCallStub::OnSetImsSwitchEnhanceModeInner;
+    requestFuncMap_[OperationType::GET_IMS_SWITCH_ENHANCE_MODE] = &CellularCallStub::OnGetImsSwitchEnhanceModeInner;
     requestFuncMap_[OperationType::CTRL_CAMERA] = &CellularCallStub::OnCtrlCameraInner;
     requestFuncMap_[OperationType::SET_PREVIEW_WINDOW] = &CellularCallStub::OnSetPreviewWindowInner;
     requestFuncMap_[OperationType::SET_DISPLAY_WINDOW] = &CellularCallStub::OnSetDisplayWindowInner;
@@ -132,8 +131,9 @@ int32_t CellularCallStub::OnHangUpInner(MessageParcel &data, MessageParcel &repl
         TELEPHONY_LOGE("OnHangUpInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
+    auto type = static_cast<CallSupplementType>(data.ReadInt32());
 
-    reply.WriteInt32(HangUp(*pCallInfo));
+    reply.WriteInt32(HangUp(*pCallInfo, type));
     return TELEPHONY_SUCCESS;
 }
 
@@ -369,21 +369,6 @@ int32_t CellularCallStub::OnKickOutFromConferenceInner(MessageParcel &data, Mess
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnCallSupplementInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("CellularCallStub::OnCallSupplementInner entry");
-    int32_t size = data.ReadInt32();
-    size = ((size > MAX_SIZE) ? 0 : size);
-    if (size <= 0) {
-        TELEPHONY_LOGE("OnCallSupplementInner data size error");
-        return TELEPHONY_ERR_FAIL;
-    }
-    auto type = static_cast<CallSupplementType>(data.ReadInt32());
-
-    reply.WriteInt32(CallSupplement(type));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t CellularCallStub::OnHangUpAllConnectionInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("CellularCallStub::OnHangUpAllConnectionInner entry");
@@ -412,9 +397,9 @@ int32_t CellularCallStub::OnUpdateCallMediaModeInner(MessageParcel &data, Messag
         TELEPHONY_LOGE("OnUpdateCallMediaModeInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    auto mode = static_cast<CallMediaMode>(data.ReadInt32());
+    auto mode = static_cast<ImsCallMode>(data.ReadInt32());
 
-    reply.WriteInt32(UpdateCallMediaMode(*pCallInfo, mode));
+    reply.WriteInt32(UpdateImsCallMode(*pCallInfo, mode));
     return TELEPHONY_SUCCESS;
 }
 
@@ -767,34 +752,34 @@ int32_t CellularCallStub::OnGetImsFeatureValueInner(MessageParcel &data, Message
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnSetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnSetVolteEnhanceModeInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnSetImsSwitchEnhanceModeInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnSetVolteEnhanceModeInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnSetImsSwitchEnhanceModeInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
     int32_t slotId = data.ReadInt32();
     bool value = data.ReadBool();
 
-    reply.WriteInt32(SetVolteEnhanceMode(slotId, value));
+    reply.WriteInt32(SetImsSwitchEnhanceMode(slotId, value));
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnGetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnGetVolteEnhanceModeInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnGetImsSwitchEnhanceModeInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnGetVolteEnhanceModeInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnGetImsSwitchEnhanceModeInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
     int32_t slotId = data.ReadInt32();
 
-    reply.WriteInt32(GetVolteEnhanceMode(slotId));
+    reply.WriteInt32(GetImsSwitchEnhanceMode(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -808,11 +793,10 @@ int32_t CellularCallStub::OnCtrlCameraInner(MessageParcel &data, MessageParcel &
         return TELEPHONY_ERR_FAIL;
     }
     std::u16string cameraId = data.ReadString16();
-    std::u16string callingPackage = data.ReadString16();
     int32_t callingUid = data.ReadInt32();
     int32_t callingPid = data.ReadInt32();
 
-    reply.WriteInt32(CtrlCamera(cameraId, callingPackage, callingUid, callingPid));
+    reply.WriteInt32(CtrlCamera(cameraId, callingUid, callingPid));
     return TELEPHONY_SUCCESS;
 }
 

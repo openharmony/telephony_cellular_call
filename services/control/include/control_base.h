@@ -17,7 +17,6 @@
 #define CELLULAR_CALL_CONTROL_BASE_H
 
 #include "event_handler.h"
-#include "core_manager.h"
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"
 #include "base_connection.h"
@@ -50,6 +49,21 @@ public:
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t Dial(const CellularCallInfo &callInfo) = 0;
+
+    /**
+     * HangUp
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) Call related supplementary services +CHLD
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.22	Informative examples
+     * 3GPP TS 22.030 [19]
+     *
+     * release call
+     *
+     * @param CellularCallInfo
+     * @param CallSupplementType
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t HangUp(const CellularCallInfo &callInfo, CallSupplementType type) = 0;
 
     /**
      * Answer
@@ -86,9 +100,10 @@ public:
      *
      * The call hold service allows a served mobile subscriber
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HoldCall() = 0;
+    virtual int32_t HoldCall(int32_t slotId) = 0;
 
     /**
      * UnHoldCall
@@ -98,9 +113,10 @@ public:
      *
      * Retrieve the held call.
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UnHoldCall() = 0;
+    virtual int32_t UnHoldCall(int32_t slotId) = 0;
 
     /**
      * SwitchCall
@@ -110,9 +126,10 @@ public:
      *
      * Alternate from one call to the other
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SwitchCall() = 0;
+    virtual int32_t SwitchCall(int32_t slotId) = 0;
 
     /**
      * CombineConference
@@ -121,23 +138,27 @@ public:
      * 3GPP TS 22.030
      *
      * Add another remote party
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CombineConference() = 0;
+    virtual int32_t CombineConference(int32_t slotId) = 0;
 
     /**
      * HangUpAllConnection
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HangUpAllConnection() = 0;
+    virtual int32_t HangUpAllConnection(int32_t slotId) = 0;
 
     /**
      * ReportCallsData
      *
+     * @param slotId
+     * @param CallInfoList
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t ReportCallsData(const CallInfoList &callInfoList) = 0;
+    virtual int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) = 0;
 
     /**
      * Dial PreJudgment
@@ -150,11 +171,12 @@ public:
     /**
      * Is Need Execute MMI
      *
+     * @param slotId
      * @param std::string phoneString
      * @param CLIRMode
      * @returns bool
      */
-    bool IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode);
+    bool IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode);
 
     /**
      * Is Dtmf Key
@@ -282,20 +304,6 @@ public:
     }
 
     /**
-     * Set Slot Id
-     *
-     * @param id
-     */
-    void SetSlotId(int32_t id);
-
-    /**
-     * Get Slot Id
-     *
-     * @return id
-     */
-    int32_t GetSlotId() const;
-
-    /**
      * StartDtmf
      *
      * 23014-400_2001 6	Support of DTMF across the air interface
@@ -333,7 +341,7 @@ public:
             TELEPHONY_LOGE("StartDtmf return, error type: cDtmfCode invalid.");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
         }
-        return pConnection->StartDtmfRequest(GetSlotId(), cDtmfCode, pConnection->GetIndex());
+        return pConnection->StartDtmfRequest(callInfo.slotId, cDtmfCode, pConnection->GetIndex());
     }
 
     /**
@@ -369,7 +377,7 @@ public:
             TELEPHONY_LOGE("StopDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
         }
-        return pConnection->StopDtmfRequest(GetSlotId(), pConnection->GetIndex());
+        return pConnection->StopDtmfRequest(callInfo.slotId, pConnection->GetIndex());
     }
 
     /**
@@ -421,7 +429,7 @@ public:
             TELEPHONY_LOGE("SendDtmf return, error type: cDtmfCode invalid.");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
         }
-        return pConnection->SendDtmfRequest(GetSlotId(), cDtmfCode, pConnection->GetIndex());
+        return pConnection->SendDtmfRequest(callInfo.slotId, cDtmfCode, pConnection->GetIndex());
     }
 
     /**
@@ -432,15 +440,14 @@ public:
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     template<typename T>
-    int32_t GetCallFailReason(T &&t) const
+    int32_t GetCallFailReason(int32_t slotId, T &&t) const
     {
         decltype(t.begin()->second) connection;
-        return connection.GetCallFailReasonRequest(GetSlotId());
+        return connection.GetCallFailReasonRequest(slotId);
     }
 
 private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
 };
 } // namespace Telephony
 } // namespace OHOS

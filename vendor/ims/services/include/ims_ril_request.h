@@ -16,8 +16,6 @@
 #ifndef IMS_RIL_REQUEST_H
 #define IMS_RIL_REQUEST_H
 
-#include "core.h"
-#include "core_manager.h"
 #include "cellular_call_types.h"
 #include "ims_types.h"
 #include "ims_register.h"
@@ -123,13 +121,13 @@ public:
     int32_t KickOutFromConferenceRequest(int32_t slotId, const std::vector<std::string> &numberList) const;
 
     /**
-     * UpdateCallMediaMode Request
+     * UpdateImsCallMode Request
      *
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallMediaModeRequest(int32_t slotId, CallMediaMode mode) const;
+    int32_t UpdateCallMediaModeRequest(int32_t slotId, ImsCallMode mode) const;
 
     /**
      * IsEmergencyPhoneNumber Request
@@ -198,32 +196,36 @@ public:
     /**
      * Set Domain Preference Mode Request
      *
+     * @param slotId
      * @param mode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetDomainPreferenceModeRequest(int32_t mode) const;
+    int32_t SetDomainPreferenceModeRequest(int32_t slotId, int32_t mode) const;
 
     /**
      * Get Domain Preference Mode Request
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetDomainPreferenceModeRequest() const;
+    int32_t GetDomainPreferenceModeRequest(int32_t slotId) const;
 
     /**
      * Set Lte Ims Switch Status Request
      *
+     * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatusRequest(int32_t active) const;
+    int32_t SetLteImsSwitchStatusRequest(int32_t slotId, int32_t active) const;
 
     /**
      * Get Lte Ims Switch Status Request
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatusRequest() const;
+    int32_t GetLteImsSwitchStatusRequest(int32_t slotId) const;
 
     /**
      * SetImsConfig Request
@@ -269,31 +271,29 @@ public:
     int32_t GetImsFeatureValueRequest(FeatureType type) const;
 
     /**
-     * SetVolteEnhanceMode Request
+     * SetImsSwitchEnhanceMode Request
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetVolteEnhanceModeRequest(bool value) const;
+    int32_t SetImsSwitchEnhanceModeRequest(bool value) const;
 
     /**
-     * GetVolteEnhanceMode Request
+     * GetImsSwitchEnhanceMode Request
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetVolteEnhanceModeRequest() const;
+    int32_t GetImsSwitchEnhanceModeRequest() const;
 
     /**
      * CtrlCamera Request
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCameraRequest(const std::u16string &cameraId, const std::u16string &callingPackage,
-        int32_t callingUid, int32_t callingPid) const;
+    int32_t CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) const;
 
     /**
      * SetPreviewWindow Request
@@ -466,21 +466,11 @@ public:
      */
     void AsynchronousRegister();
 
-    /**
-     * Get Core
-     *
-     * @param slotId
-     * @return std::shared_ptr<Core>
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId) const;
-
 private:
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
-
     // This is the logic of piling. Variables are temporarily stored.
     // These temporary variables can be removed during subsequent development by the manufacturer.
     std::shared_ptr<ImsRegister> imsRegisterInstance_;
-    static bool voLteEnhanceModeTemp_;
+    static bool imsSwitchEnhanceModeTemp_;
     static int32_t itemVideoQualityTemp_;
     static int32_t itemImsSwitchStatusTemp_;
     static int32_t voiceOverLteTemp_;

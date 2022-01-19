@@ -24,11 +24,6 @@ BaseConnection::BaseConnection()
     (void)memset_s(&callReportInfo_, sizeof(CallReportInfo), 0, sizeof(callReportInfo_));
 }
 
-std::shared_ptr<Core> BaseConnection::GetCore(int32_t slotId) const
-{
-    return CoreManager::GetInstance().getCore(slotId);
-}
-
 void BaseConnection::SetOrUpdateCallReportInfo(CallReportInfo &callReportInfo)
 {
     callReportInfo_ = callReportInfo;

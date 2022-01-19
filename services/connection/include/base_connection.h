@@ -18,7 +18,7 @@
 
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
-#include "core_manager.h"
+#include "core_manager_inner.h"
 #include "call_manager_inner_type.h"
 #include "cellular_call_data_struct.h"
 
@@ -35,14 +35,6 @@ public:
      * Destructor
      */
     virtual ~BaseConnection() = default;
-
-    /**
-     * Get Core for core service
-     *
-     * @param slotId
-     * @return Core for core service
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId) const;
 
     /**
      * Set or Update CallReportInfo

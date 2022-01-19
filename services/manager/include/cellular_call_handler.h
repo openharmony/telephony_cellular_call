@@ -56,6 +56,12 @@ public:
     void SetSlotId(int32_t id);
 
     /**
+     * Get Slot Id
+     * @return id
+     */
+    int32_t GetSlotId();
+
+    /**
      * DialResponse
      *
      * @param code process
@@ -397,7 +403,7 @@ private:
     void ReportImsCallsData(const CallInfoList &imsCallInfoList);
 
 private:
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
     int64_t lastTime_ = 0L;
     const int64_t FAST_DELAY_TIME = 250;
     int64_t lastCallsDataFlag_ = 0L;

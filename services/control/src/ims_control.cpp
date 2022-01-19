@@ -46,14 +46,14 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo)
     }
 
     CLIRMode clirMode = CLIRMode::DEFAULT;
-    if (IsNeedExecuteMMI(newPhoneNum, clirMode)) {
+    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode)) {
         TELEPHONY_LOGI("Dial return, mmi code type.");
         return RETURN_TYPE_MMI;
     }
-    return DialJudgment(newPhoneNum, clirMode, callInfo.videoState);
+    return DialJudgment(callInfo.slotId, newPhoneNum, clirMode, callInfo.videoState);
 }
 
-int32_t IMSControl::DialJudgment(const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState)
+int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState)
 {
     TELEPHONY_LOGI("DialJudgment entry.");
     if (!CanCall(connectionMap_)) {
@@ -68,19 +68,20 @@ int32_t IMSControl::DialJudgment(const std::string &phoneNum, CLIRMode &clirMode
         TELEPHONY_LOGI("DialJudgment, have connection in active state.");
         CellularCallConnectionIMS connection;
         // - a call can be temporarily disconnected from the ME but the connection is retained by the network
-        connection.HoldCallRequest(GetSlotId());
+        connection.HoldCallRequest(slotId);
     }
-    return EncapsulateDial(phoneNum, clirMode, videoState);
+    return EncapsulateDial(slotId, phoneNum, clirMode, videoState);
 }
 
-int32_t IMSControl::EncapsulateDial(const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const
+int32_t IMSControl::EncapsulateDial(
+    int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const
 {
     TELEPHONY_LOGI("EncapsulateDial start");
 
     ImsDialInfoStruct dialInfo;
     dialInfo.videoState = videoState;
     EmergencyUtils emergencyUtils;
-    dialInfo.bEmergencyCall = emergencyUtils.IsEmergencyCall(GetSlotId(), phoneNum);
+    dialInfo.bEmergencyCall = emergencyUtils.IsEmergencyCall(slotId, phoneNum);
 
     /**
      * <idx>: integer type;
@@ -103,10 +104,10 @@ int32_t IMSControl::EncapsulateDial(const std::string &phoneNum, CLIRMode &clirM
      */
 
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.DialRequest(GetSlotId(), dialInfo);
+    return cellularCallConnectionIms.DialRequest(slotId, dialInfo);
 }
 
-int32_t IMSControl::HangUp(CallSupplementType type, const CellularCallInfo &callInfo)
+int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     TELEPHONY_LOGI("HangUp start");
     switch (type) {
@@ -122,18 +123,25 @@ int32_t IMSControl::HangUp(CallSupplementType type, const CellularCallInfo &call
                 TELEPHONY_LOGE("HangUp return, error type: connection is null");
                 return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
             }
-            return pConnection->HangUpRequest(GetSlotId(), callInfo.phoneNum, callInfo.index);
+
+            if (DelayedSingleton<CellularCallRegister>::GetInstance() != nullptr) {
+                DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
+                    pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
+            }
+            return pConnection->HangUpRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
         }
         case CallSupplementType::TYPE_HANG_UP_HOLD_WAIT:
             // release the second (active) call and recover the first (held) call
         case CallSupplementType::TYPE_HANG_UP_ACTIVE: {
             CellularCallConnectionIMS connection;
-            return connection.CallSupplementRequest(GetSlotId(), type);
+            return connection.CallSupplementRequest(callInfo.slotId, type);
         }
         case CallSupplementType::TYPE_HANG_UP_ALL: {
             TELEPHONY_LOGI("HangUp, hang up all call");
             CellularCallConnectionIMS connection;
-            return connection.RejectRequest(GetSlotId(), callInfo.phoneNum, callInfo.index);
+            // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
+            // so the reject interface is reused.
+            return connection.RejectRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
         }
         default: {
             TELEPHONY_LOGE("HangUp warring, type is invalid");
@@ -160,12 +168,12 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("Answer return, error type: con is null, there are no active calls");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
         }
-        return con->SwitchCallRequest(GetSlotId());
+        return con->SwitchCallRequest(callInfo.slotId);
     }
     if (pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_INCOMING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
-        return pConnection->AnswerRequest(GetSlotId(), callInfo.phoneNum, callInfo.videoState, callInfo.index);
+        return pConnection->AnswerRequest(callInfo.slotId, callInfo.phoneNum, callInfo.videoState, callInfo.index);
     }
     TELEPHONY_LOGE("IMSControl::Answer return, error type: call state error, phone not ringing.");
     return CALL_ERR_CALL_STATE;
@@ -189,16 +197,14 @@ int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("IMSControl::Reject return, error type: call state error, phone not ringing.");
         return CALL_ERR_CALL_STATE;
     }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("IMSControl::Reject, error type: GetInstance() is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() != nullptr) {
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
+            pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
-        pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
-    return pConnection->RejectRequest(GetSlotId(), callInfo.phoneNum, callInfo.index);
+    return pConnection->RejectRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
 }
 
-int32_t IMSControl::HoldCall()
+int32_t IMSControl::HoldCall(int32_t slotId)
 {
     TELEPHONY_LOGI("HoldCall start");
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
@@ -206,21 +212,21 @@ int32_t IMSControl::HoldCall()
         return CALL_ERR_CALL_STATE;
     }
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.HoldCallRequest(GetSlotId());
+    return cellularCallConnectionIms.HoldCallRequest(slotId);
 }
 
-int32_t IMSControl::UnHoldCall()
+int32_t IMSControl::UnHoldCall(int32_t slotId)
 {
     TELEPHONY_LOGI("UnHoldCall start");
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.UnHoldCallRequest(GetSlotId());
+    return cellularCallConnectionIms.UnHoldCallRequest(slotId);
 }
 
-int32_t IMSControl::SwitchCall()
+int32_t IMSControl::SwitchCall(int32_t slotId)
 {
     TELEPHONY_LOGI("SwitchCall start");
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.SwitchCallRequest(GetSlotId());
+    return cellularCallConnectionIms.SwitchCallRequest(slotId);
 }
 
 /**
@@ -228,20 +234,22 @@ int32_t IMSControl::SwitchCall()
  * the same procedures as in Section 1.3.8.1, if the number of remote parties does not then
  * exceed the maximum number allowed, which results in an active multiParty call.
  */
-int32_t IMSControl::CombineConference()
+int32_t IMSControl::CombineConference(int32_t slotId)
 {
     TELEPHONY_LOGI("CombineConference entry");
     CellularCallConnectionIMS connection;
     int32_t voiceCall = 0;
-    return connection.CombineConferenceRequest(GetSlotId(), voiceCall);
+    return connection.CombineConferenceRequest(slotId, voiceCall);
 }
 
-int32_t IMSControl::HangUpAllConnection()
+int32_t IMSControl::HangUpAllConnection(int32_t slotId)
 {
     TELEPHONY_LOGI("HangUpAllConnection entry");
     CellularCallConnectionIMS connection;
     int32_t index = connectionMap_.begin()->second.GetIndex();
-    return connection.RejectRequest(GetSlotId(), connectionMap_.begin()->first, index);
+    // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
+    // so the reject interface is reused.
+    return connection.RejectRequest(slotId, connectionMap_.begin()->first, index);
 }
 
 int32_t IMSControl::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
@@ -258,24 +266,24 @@ int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::vector<std:
     return connection.KickOutFromConferenceRequest(slotId, numberList);
 }
 
-int32_t IMSControl::UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode)
+int32_t IMSControl::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
-    TELEPHONY_LOGI("UpdateCallMediaMode entry");
+    TELEPHONY_LOGI("UpdateImsCallMode entry");
     auto pConnection =
         GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.phoneNum);
     if (pConnection == nullptr) {
-        TELEPHONY_LOGI("UpdateCallMediaMode: connection cannot be matched, use index directly");
+        TELEPHONY_LOGI("UpdateImsCallMode: connection cannot be matched, use index directly");
         pConnection =
             FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
     }
     if (pConnection == nullptr) {
-        TELEPHONY_LOGE("IMSControl::UpdateCallMediaMode, error type: connection is null");
+        TELEPHONY_LOGE("IMSControl::UpdateImsCallMode, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
     bool bContinue = pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_ACTIVE;
     if (!bContinue) {
-        TELEPHONY_LOGE("IMSControl::UpdateCallMediaMode return, error type: call state error.");
+        TELEPHONY_LOGE("IMSControl::UpdateImsCallMode return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
     }
     return pConnection->UpdateCallMediaModeRequest(callInfo, mode);
@@ -305,45 +313,45 @@ ImsConnectionMap IMSControl::GetConnectionMap()
     return connectionMap_;
 }
 
-int32_t IMSControl::ReportCallsData(const CallInfoList &callInfoList)
+int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfoList)
 {
     if (callInfoList.callSize <= 0 && !connectionMap_.empty()) {
-        return ReportHungUpInfo();
+        return ReportHungUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
-        return ReportIncomingInfo(callInfoList);
+        return ReportIncomingInfo(slotId, callInfoList);
     } else if (callInfoList.callSize > 0 && !connectionMap_.empty()) {
-        return ReportUpdateInfo(callInfoList);
+        return ReportUpdateInfo(slotId, callInfoList);
     }
     return TELEPHONY_ERROR;
 }
 
-int32_t IMSControl::ReportHungUpInfo()
+int32_t IMSControl::ReportHungUpInfo(int32_t slotId)
 {
     TELEPHONY_LOGI("ReportHungUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo reportInfo = it.second.GetCallReportInfo();
         reportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
-        reportInfo.accountId = GetSlotId();
+        reportInfo.accountId = slotId;
         callsReportInfo.callVec.push_back(reportInfo);
-        GetCallFailReason(connectionMap_);
+        GetCallFailReason(slotId, connectionMap_);
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("ReportHungUpInfo return, GetInstance() is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    callsReportInfo.slotId = GetSlotId();
+    callsReportInfo.slotId = slotId;
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     ReleaseAllConnection();
     return TELEPHONY_SUCCESS;
 }
 
-int32_t IMSControl::ReportIncomingInfo(const CallInfoList &callInfoList)
+int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callInfoList)
 {
     TELEPHONY_LOGI("ReportIncomingInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
-        CallReportInfo reportInfo = EncapsulationCallReportInfo(callInfoList.calls[i]);
+        CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
 
         CellularCallConnectionIMS connection;
         connection.SetStatus(static_cast<TelCallState>(callInfoList.calls[i].state));
@@ -357,17 +365,17 @@ int32_t IMSControl::ReportIncomingInfo(const CallInfoList &callInfoList)
         TELEPHONY_LOGE("ReportIncomingInfo return, GetInstance() is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    callsReportInfo.slotId = GetSlotId();
+    callsReportInfo.slotId = slotId;
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t IMSControl::ReportUpdateInfo(const CallInfoList &callInfoList)
+int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfoList)
 {
     TELEPHONY_LOGI("ReportUpdateInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
-        CallReportInfo reportInfo = EncapsulationCallReportInfo(callInfoList.calls[i]);
+        CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
 
         auto pConnection = GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(
             connectionMap_, callInfoList.calls[i].number);
@@ -384,18 +392,17 @@ int32_t IMSControl::ReportUpdateInfo(const CallInfoList &callInfoList)
         }
         callsReportInfo.callVec.push_back(reportInfo);
     }
-
+    callsReportInfo.slotId = slotId;
     DeleteConnection(callsReportInfo, callInfoList);
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("ReportUpdateInfo return, GetInstance() is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    callsReportInfo.slotId = GetSlotId();
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     return TELEPHONY_SUCCESS;
 }
 
-CallReportInfo IMSControl::EncapsulationCallReportInfo(const CallInfo &callInfo)
+CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const CallInfo &callInfo)
 {
     TELEPHONY_LOGI("EncapsulationCallReportInfo entry");
     CallReportInfo callReportInfo;
@@ -410,7 +417,7 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(const CallInfo &callInfo)
         return callReportInfo;
     }
     callReportInfo.index = callInfo.index;
-    callReportInfo.accountId = GetSlotId();
+    callReportInfo.accountId = slotId;
     callReportInfo.state = static_cast<TelCallState>(callInfo.state);
     callReportInfo.voiceDomain = callInfo.voiceDomain;
     callReportInfo.callType = CallType::TYPE_IMS;
@@ -428,7 +435,7 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const CallIn
             callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
             callsReportInfo.callVec.push_back(callReportInfo);
             connectionMap_.erase(it++);
-            GetCallFailReason(connectionMap_);
+            GetCallFailReason(callsReportInfo.slotId, connectionMap_);
         } else {
             it->second.SetFlag(false);
             ++it;

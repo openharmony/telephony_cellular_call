@@ -15,9 +15,10 @@
 
 #include "ims_service.h"
 
-#include "core_manager.h"
-#include "observer_handler.h"
 #include "system_ability_definition.h"
+
+#include "core_manager_inner.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -83,9 +84,15 @@ void ImsService::OnStop()
 
 void ImsService::CreateHandler()
 {
-    int32_t slotId = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slotId = DEFAULT_SIM_SLOT_ID;
     auto handler = std::make_shared<ImsHandler>(eventLoop_);
     handlerMap_.insert(std::make_pair(slotId, handler));
+    const int32_t slotDouble = 2;
+    if (SIM_SLOT_COUNT == slotDouble) {
+        int32_t slotId1 = SIM_SLOT_1;
+        auto handler1 = std::make_shared<ImsHandler>(eventLoop_);
+        handlerMap_.insert(std::make_pair(slotId1, handler1));
+    }
 }
 
 void ImsService::RegisterHandler()
@@ -93,8 +100,7 @@ void ImsService::RegisterHandler()
     TELEPHONY_LOGI("connect core service RegisterHandler start  ");
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
-        auto core = CoreManager::GetInstance().getCore(CoreManager::DEFAULT_SLOT_ID);
-        if (core != nullptr && core->IsInitCore()) {
+        if (CoreManagerInner::GetInstance().IsInitFinished()) {
             RegisterCoreServiceHandler();
             break;
         }
@@ -106,24 +112,10 @@ void ImsService::RegisterHandler()
 void ImsService::HandlerResetUnRegister()
 {
     for (const auto &it : handlerMap_) {
-        int32_t slot = it.first;
         auto handler = it.second;
         if (handler != nullptr) {
             handler.reset();
         }
-        auto core = CoreManager::GetInstance().getCore(slot);
-        if (core == nullptr) {
-            TELEPHONY_LOGE("ImsService::HandlerResetUnRegister, core is nullptr");
-            return;
-        }
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_AVAIL);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_NOT_AVAIL);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_WAITING);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_CONNECT);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_END);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATUS_INFO);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_IMS_SERVICE_STATUS);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_RINGBACK_VOICE);
     }
 }
 
@@ -131,21 +123,8 @@ void ImsService::RegisterCoreServiceHandler()
 {
     for (const auto &it : handlerMap_) {
         auto handler = it.second;
-        auto core = CoreManager::GetInstance().getCore(it.first);
-        if (core == nullptr) {
-            TELEPHONY_LOGE("RegisterCoreServiceHandler, core is nullptr");
-            continue;
-        }
         if (handler != nullptr) {
             TELEPHONY_LOGI("RegisterCoreServiceHandler, RegisterCoreNotify handler");
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_AVAIL, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_NOT_AVAIL, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_WAITING, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_CONNECT, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_END, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATUS_INFO, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_RINGBACK_VOICE, nullptr);
         }
     }
 }
@@ -154,7 +133,7 @@ void ImsService::AsynchronousRegister()
 {
     TELEPHONY_LOGI("ImsService::AsynchronousRegister entry");
     int64_t delayTime_ = 1000;
-    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slot = DEFAULT_SIM_SLOT_ID;
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("AsynchronousRegister return, handler is nullptr");
@@ -229,9 +208,9 @@ int32_t ImsService::KickOutFromConference(int32_t slotId, const std::vector<std:
     return request_.KickOutFromConferenceRequest(slotId, numberList);
 }
 
-int32_t ImsService::UpdateCallMediaMode(const ImsCallInfo &callInfo, CallMediaMode mode)
+int32_t ImsService::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
 {
-    TELEPHONY_LOGI("ImsService::UpdateCallMediaMode entry");
+    TELEPHONY_LOGI("ImsService::UpdateImsCallMode entry");
     return request_.UpdateCallMediaModeRequest(callInfo.slotId, mode);
 }
 
@@ -271,28 +250,28 @@ int32_t ImsService::StopRtt(int32_t slotId)
     return request_.StopRttRequest(slotId);
 }
 
-int32_t ImsService::SetDomainPreferenceMode(int32_t mode)
+int32_t ImsService::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
     TELEPHONY_LOGI("ImsService::SetDomainPreferenceMode entry");
-    return request_.SetDomainPreferenceModeRequest(mode);
+    return request_.SetDomainPreferenceModeRequest(slotId, mode);
 }
 
-int32_t ImsService::GetDomainPreferenceMode()
+int32_t ImsService::GetDomainPreferenceMode(int32_t slotId)
 {
     TELEPHONY_LOGI("ImsService::GetDomainPreferenceMode entry");
-    return request_.GetDomainPreferenceModeRequest();
+    return request_.GetDomainPreferenceModeRequest(slotId);
 }
 
-int32_t ImsService::SetLteImsSwitchStatus(bool active)
+int32_t ImsService::SetLteImsSwitchStatus(int32_t slotId, bool active)
 {
     TELEPHONY_LOGI("ImsService::SetLteImsSwitchStatus entry");
-    return request_.SetLteImsSwitchStatusRequest(active);
+    return request_.SetLteImsSwitchStatusRequest(slotId, active);
 }
 
-int32_t ImsService::GetLteImsSwitchStatus()
+int32_t ImsService::GetLteImsSwitchStatus(int32_t slotId)
 {
     TELEPHONY_LOGI("ImsService::GetLteImsSwitchStatus entry");
-    return request_.GetLteImsSwitchStatusRequest();
+    return request_.GetLteImsSwitchStatusRequest(slotId);
 }
 
 int32_t ImsService::SetImsConfig(ImsConfigItem item, const std::string &value)
@@ -325,23 +304,22 @@ int32_t ImsService::GetImsFeatureValue(FeatureType type)
     return request_.GetImsFeatureValueRequest(type);
 }
 
-int32_t ImsService::SetVolteEnhanceMode(bool value)
+int32_t ImsService::SetImsSwitchEnhanceMode(bool value)
 {
-    TELEPHONY_LOGI("ImsService::SetVolteEnhanceMode entry");
-    return request_.SetVolteEnhanceModeRequest(value);
+    TELEPHONY_LOGI("ImsService::SetImsSwitchEnhanceMode entry");
+    return request_.SetImsSwitchEnhanceModeRequest(value);
 }
 
-int32_t ImsService::GetVolteEnhanceMode()
+int32_t ImsService::GetImsSwitchEnhanceMode()
 {
-    TELEPHONY_LOGI("ImsService::GetVolteEnhanceMode entry");
-    return request_.GetVolteEnhanceModeRequest();
+    TELEPHONY_LOGI("ImsService::GetImsSwitchEnhanceMode entry");
+    return request_.GetImsSwitchEnhanceModeRequest();
 }
 
-int32_t ImsService::CtrlCamera(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t ImsService::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
     TELEPHONY_LOGI("ImsService::CtrlCamera entry");
-    return request_.CtrlCameraRequest(cameraId, callingPackage, callingUid, callingPid);
+    return request_.CtrlCameraRequest(cameraId, callingUid, callingPid);
 }
 
 int32_t ImsService::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)

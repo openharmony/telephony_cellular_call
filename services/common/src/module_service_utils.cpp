@@ -21,17 +21,15 @@
 #include "cellular_call_register.h"
 #include "ims_callback_stub.h"
 #include "ims_death_recipient.h"
+#include "telephony_log_wrapper.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
 bool ModuleServiceUtils::GetRadioState(int32_t slotId)
 {
-    if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetRadioState error, return.");
-        return false;
-    }
-
-    if (GetCore(slotId)->GetRadioState() != ModemPowerState::CORE_SERVICE_POWER_ON) {
+    int32_t ret = CoreManagerInner::GetInstance().GetRadioState(slotId);
+    if (ret != ModemPowerState::CORE_SERVICE_POWER_ON) {
         TELEPHONY_LOGE("ModuleServiceUtils::GetRadioState radio off.");
         return false;
     }
@@ -40,51 +38,36 @@ bool ModuleServiceUtils::GetRadioState(int32_t slotId)
 
 PhoneType ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
 {
-    if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkStatus error, return.");
-        return PhoneType::PHONE_TYPE_IS_NONE;
-    }
-    return GetCore(slotId)->GetPhoneType();
+    return CoreManagerInner::GetInstance().GetPhoneType(slotId);
 }
 
 std::string ModuleServiceUtils::GetIsoCountryCode(int32_t slotId)
 {
-    if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetIsoCountryCode error, return.");
-        return std::string();
-    }
-    return Str16ToStr8(GetCore(slotId)->GetISOCountryCodeForSim(slotId));
+    return Str16ToStr8(CoreManagerInner::GetInstance().GetISOCountryCodeForSim(slotId));
 }
 
 std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
 {
-    if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetNetworkCountryCode error, return.");
-        return std::string();
-    }
-    return Str16ToStr8(GetCore(slotId)->GetIsoCountryCodeForNetwork(slotId));
+    return Str16ToStr8(CoreManagerInner::GetInstance().GetIsoCountryCodeForNetwork(slotId));
 }
 
 bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
 {
-    if (GetCore(slotId) == nullptr) {
-        TELEPHONY_LOGE("ModuleServiceUtils::GetImsRegistrationState error, return.");
-        return false;
-    }
-    return GetCore(slotId)->GetImsRegStatus();
+    return CoreManagerInner::GetInstance().GetImsRegStatus(slotId);
 }
 
 std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()
 {
+    const int32_t slotSingle = 1;
+    const int32_t slotDouble = 2;
     std::vector<int32_t> slotVector;
-    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
-    slotVector.push_back(slot);
+    if (SIM_SLOT_COUNT == slotSingle) {
+        slotVector.push_back(DEFAULT_SIM_SLOT_ID);
+    } else if (SIM_SLOT_COUNT == slotDouble) {
+        slotVector.push_back(SIM_SLOT_0);
+        slotVector.push_back(SIM_SLOT_1);
+    }
     return slotVector;
-}
-
-std::shared_ptr<Core> ModuleServiceUtils::GetCore(int32_t slotId)
-{
-    return CoreManager::GetInstance().getCore(slotId);
 }
 
 bool ModuleServiceUtils::NeedCallImsService() const

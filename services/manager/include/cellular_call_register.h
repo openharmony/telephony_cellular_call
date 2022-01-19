@@ -159,18 +159,18 @@ public:
     void ReportSetImsFeatureResult(int32_t result);
 
     /**
-     * ReportGetVolteEnhanceModeResult
+     * ReportGetImsSwitchEnhanceModeResult
      *
      * @param GetLteEnhanceModeResponse
      */
-    void ReportGetVolteEnhanceModeResult(const GetLteEnhanceModeResponse &response);
+    void ReportGetImsSwitchEnhanceModeResult(const GetLteEnhanceModeResponse &response);
 
     /**
-     * ReportSetVolteEnhanceModeResult
+     * ReportSetImsSwitchEnhanceModeResult
      *
      * @param int32_t
      */
-    void ReportSetVolteEnhanceModeResult(int32_t result);
+    void ReportSetImsSwitchEnhanceModeResult(int32_t result);
 
     /**
      * ReportCallRingBackResult

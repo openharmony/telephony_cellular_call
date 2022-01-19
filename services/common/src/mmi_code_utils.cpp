@@ -16,15 +16,14 @@
 #include "mmi_code_utils.h"
 
 #include <regex>
-#include "cellular_call_supplement.h"
 
+#include "cellular_call_supplement.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
 // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
-const int32_t JUDGE_USSD_LEN = 2;
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
     return StandardizeUtils::HashCompileTime(p);
@@ -47,20 +46,10 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
         return true;
     }
 
-    // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3 Handling of supplementary services    Figure 3.5.3.2
-    if (analyseString.length() <= JUDGE_USSD_LEN) {
-        TELEPHONY_LOGI("IsNeedExecuteMmi, conditions suitable for ussd.");
-        mmiData_.dialString = analyseString;
-        return true;
-    }
-    if (!mmiData_.fullString.empty()) {
-        TELEPHONY_LOGI("IsNeedExecuteMmi, fullString is not empty.");
-        return true;
-    }
     return false;
 }
 
-bool MMICodeUtils::ExecuteMmiCode()
+bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 {
     TELEPHONY_LOGI("ExecuteMmiCode entry.");
     CellularCallSupplement supplement;
@@ -89,13 +78,13 @@ bool MMICodeUtils::ExecuteMmiCode()
             // 3GPP TS 22.030 V4.0.0 (2001-03) 6.5.6.2  Calling Line Identification Presentation (CLIP)
             // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
             case "30"_hash:
-                supplement.GetClip(mmiData_);
+                supplement.GetClip(slotId, mmiData_);
                 return true;
 
             // 3GPP TS 22.081 V4.0.0 (2001-03) 2 Calling Line Identification Restriction (CLIR)
             // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
             case "31"_hash:
-                supplement.GetClir(mmiData_);
+                supplement.GetClir(slotId, mmiData_);
                 return true;
 
             // 3GPP TS 22.081 V4.0.0 (2001-03)
@@ -110,7 +99,7 @@ bool MMICodeUtils::ExecuteMmiCode()
             case "67"_hash:
             case "002"_hash:
             case "004"_hash:
-                supplement.DealCallTransfer(mmiData_);
+                supplement.DealCallTransfer(slotId, mmiData_);
                 return true;
 
             // 27007-430_2001 7.4	Facility lock +CLCK
@@ -132,7 +121,7 @@ bool MMICodeUtils::ExecuteMmiCode()
             case "332"_hash:
             case "35"_hash:
             case "351"_hash:
-                supplement.DealCallRestriction(mmiData_);
+                supplement.DealCallRestriction(slotId, mmiData_);
                 return true;
 
             // 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.4 Registration of new password
@@ -143,7 +132,7 @@ bool MMICodeUtils::ExecuteMmiCode()
             // 3GPP TS 22.083 [5] 1	Call waiting (CW)
             // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
             case "43"_hash:
-                supplement.DealCallWaiting(mmiData_);
+                supplement.DealCallWaiting(slotId, mmiData_);
                 return true;
             default:
                 TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
@@ -151,16 +140,12 @@ bool MMICodeUtils::ExecuteMmiCode()
         }
     }
 
-    // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3 Handling of supplementary services    Figure 3.5.3.2
-    if (mmiData_.fullString.empty() && !mmiData_.dialString.empty() && mmiData_.dialString.length() <= JUDGE_USSD_LEN) {
-        supplement.SendUssd(mmiData_.dialString);
-        return true;
-    }
     if (!mmiData_.fullString.empty()) {
         TELEPHONY_LOGI("ExecuteMmiCode, fullString is not empty.");
-        supplement.SendUssd(mmiData_.fullString);
+        supplement.SendUssd(slotId, mmiData_.fullString);
         return true;
     }
+
     TELEPHONY_LOGW("ExecuteMmiCode, default case, need check.");
     return false;
 }

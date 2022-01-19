@@ -30,17 +30,16 @@ ohos_unittest("tel_cellular_call_cs_test") {
     "//base/telephony/cellular_call/services/common/include",
     "//base/telephony/cellular_call/interfaces",
     "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/ril_adapter/interfaces/innerkits/include",
-    "//base/telephony/core_service/interfaces/innerkits/core",
-    "//base/telephony/core_service/utils/log/include",
   ]
 
   deps = [
+    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "core_service:tel_core_service_api",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
