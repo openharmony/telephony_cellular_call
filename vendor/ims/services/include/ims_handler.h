@@ -22,7 +22,6 @@
 #include "event_handler.h"
 
 #include "telephony_log_wrapper.h"
-#include "core_manager.h"
 #include "ims_callback.h"
 
 namespace OHOS {
@@ -266,18 +265,18 @@ public:
     void GetImsFeatureValueResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetVolteEnhanceModeResponse
+     * SetImsSwitchEnhanceModeResponse
      *
      * @param AppExecFwk::InnerEvent::Pointer
      */
-    void SetVolteEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetImsSwitchEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetVolteEnhanceModeResponse
+     * GetImsSwitchEnhanceModeResponse
      *
      * @param AppExecFwk::InnerEvent::Pointer
      */
-    void GetVolteEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetImsSwitchEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * CtrlCameraResponse
@@ -429,7 +428,7 @@ private:
     void AsynchronousRegister(const AppExecFwk::InnerEvent::Pointer &event);
 
 private:
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
     using RequestFuncType = void (ImsHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };

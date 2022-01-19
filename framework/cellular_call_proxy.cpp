@@ -38,7 +38,7 @@ int32_t CellularCallProxy::Dial(const CellularCallInfo &callInfo)
     return error;
 }
 
-int32_t CellularCallProxy::HangUp(const CellularCallInfo &callInfo)
+int32_t CellularCallProxy::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     MessageOption option;
     MessageParcel in;
@@ -50,6 +50,9 @@ int32_t CellularCallProxy::HangUp(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(CellularCallInfo))) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32((int32_t)type)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -327,27 +330,6 @@ int32_t CellularCallProxy::KickOutFromConference(int32_t slotId, const std::vect
     return error;
 }
 
-int32_t CellularCallProxy::CallSupplement(CallSupplementType type)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(CellularCallProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteInt32(MAX_SIZE)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteInt32((int32_t)type)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(static_cast<uint32_t>(OperationType::CALL_SUPPLEMENT), in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
 int32_t CellularCallProxy::HangUpAllConnection()
 {
     MessageOption option;
@@ -367,7 +349,7 @@ int32_t CellularCallProxy::HangUpAllConnection()
     return error;
 }
 
-int32_t CellularCallProxy::UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode)
+int32_t CellularCallProxy::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
     MessageOption option;
     MessageParcel in;
@@ -871,7 +853,7 @@ int32_t CellularCallProxy::GetImsFeatureValue(int32_t slotId, FeatureType type)
     return error;
 }
 
-int32_t CellularCallProxy::SetVolteEnhanceMode(int32_t slotId, bool value)
+int32_t CellularCallProxy::SetImsSwitchEnhanceMode(int32_t slotId, bool value)
 {
     MessageOption option;
     MessageParcel in;
@@ -889,14 +871,14 @@ int32_t CellularCallProxy::SetVolteEnhanceMode(int32_t slotId, bool value)
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error =
-        Remote()->SendRequest(static_cast<uint32_t>(OperationType::SET_VOLTE_ENHANCE_MODE), in, out, option);
+        Remote()->SendRequest(static_cast<uint32_t>(OperationType::SET_IMS_SWITCH_ENHANCE_MODE), in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t CellularCallProxy::GetVolteEnhanceMode(int32_t slotId)
+int32_t CellularCallProxy::GetImsSwitchEnhanceMode(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
@@ -911,15 +893,14 @@ int32_t CellularCallProxy::GetVolteEnhanceMode(int32_t slotId)
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error =
-        Remote()->SendRequest(static_cast<uint32_t>(OperationType::GET_VOLTE_ENHANCE_MODE), in, out, option);
+        Remote()->SendRequest(static_cast<uint32_t>(OperationType::GET_IMS_SWITCH_ENHANCE_MODE), in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t CellularCallProxy::CtrlCamera(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t CellularCallProxy::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
     MessageOption option;
     MessageParcel in;
@@ -931,9 +912,6 @@ int32_t CellularCallProxy::CtrlCamera(
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteString16(cameraId)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteString16(callingPackage)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(callingUid)) {

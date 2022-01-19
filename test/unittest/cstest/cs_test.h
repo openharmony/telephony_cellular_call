@@ -42,9 +42,8 @@ public:
     int32_t SeparateConference(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InviteToConference(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t KickOutFromConference(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t CallSupplement(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t HangUpAllConnection(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t UpdateCallMediaMode(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t UpdateImsCallMode(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t UnRegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t StartDtmf(const sptr<CellularCallInterface> &telephonyService) const;

@@ -284,22 +284,22 @@ private:
     int32_t OnGetImsFeatureValueInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On SetVolteEnhanceModeInner Inner
+     * On SetImsSwitchEnhanceModeInner Inner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnSetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On GetVolteEnhanceModeInner Inner
+     * On GetImsSwitchEnhanceModeInner Inner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnGetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On CtrlCameraInner Inner

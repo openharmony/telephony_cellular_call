@@ -28,15 +28,15 @@ constexpr unsigned long long operator"" _hash(char const *p, size_t s)
     return StandardizeUtils::HashCompileTime(p);
 }
 
-void CellularCallSupplement::GetClip(const MMIData &mmiData)
+void CellularCallSupplement::GetClip(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.InquireClipRequest();
+        supplementRequest_.InquireClipRequest(slotId);
     }
 }
 
-void CellularCallSupplement::GetClir(const MMIData &mmiData)
+void CellularCallSupplement::GetClir(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     const std::string activate = "*";
@@ -46,21 +46,21 @@ void CellularCallSupplement::GetClir(const MMIData &mmiData)
         return;
     }
     if (mmiData.actionString == activate) {
-        supplementRequest_.SetClirRequest(ACTIVATE_ACTION);
+        supplementRequest_.SetClirRequest(slotId, ACTIVATE_ACTION);
     } else if (mmiData.actionString == deactivate) {
-        supplementRequest_.SetClirRequest(DEACTIVATE_ACTION);
+        supplementRequest_.SetClirRequest(slotId, DEACTIVATE_ACTION);
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest_.InquireClirRequest();
+        supplementRequest_.InquireClirRequest(slotId);
     }
 }
 
-void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
+void CellularCallSupplement::DealCallTransfer(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     int32_t serviceCode = ObtainServiceCode(mmiData.serviceInfoB);
     int32_t cause = ObtainCause(mmiData.serviceCode);
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallTransferRequest(cause);
+        supplementRequest_.GetCallTransferRequest(slotId, cause);
         return;
     }
     std::string phoneNumber = mmiData.serviceInfoA;
@@ -95,7 +95,7 @@ void CellularCallSupplement::DealCallTransfer(const MMIData &mmiData)
             TELEPHONY_LOGE("DealCallTransfer return, actionString out of range, please check!");
             return;
     }
-    supplementRequest_.SetCallTransferRequest(callForwardAction, cause, phoneNumber, serviceCode);
+    supplementRequest_.SetCallTransferRequest(slotId, callForwardAction, cause, phoneNumber, serviceCode);
 }
 
 int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
@@ -167,7 +167,7 @@ int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
     }
 }
 
-void CellularCallSupplement::DealCallRestriction(const MMIData &mmiData)
+void CellularCallSupplement::DealCallRestriction(int32_t slotId, const MMIData &mmiData)
 {
     std::string infoA = mmiData.serviceInfoA;
     std::string facType = ObtainBarringInstallation(mmiData.serviceInfoC);
@@ -179,9 +179,9 @@ void CellularCallSupplement::DealCallRestriction(const MMIData &mmiData)
         return;
     }
     if (mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallRestrictionRequest(facType);
+        supplementRequest_.GetCallRestrictionRequest(slotId, facType);
     } else if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest_.SetCallRestrictionRequest(facType, mmiData.actionString == activate, infoA);
+        supplementRequest_.SetCallRestrictionRequest(slotId, facType, mmiData.actionString == activate, infoA);
     }
 }
 
@@ -238,7 +238,7 @@ std::string CellularCallSupplement::ObtainBarringInstallation(const std::string 
     }
 }
 
-void CellularCallSupplement::DealCallWaiting(const MMIData &mmiData)
+void CellularCallSupplement::DealCallWaiting(int32_t slotId, const MMIData &mmiData)
 {
     if (mmiData.actionString.empty()) {
         TELEPHONY_LOGE("DealCallWaiting return, actionString is empty!");
@@ -248,9 +248,9 @@ void CellularCallSupplement::DealCallWaiting(const MMIData &mmiData)
     const std::string deactivate = "#";
     const std::string interrogate = "*#";
     if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest_.SetCallWaitingRequest(mmiData.actionString == activate);
+        supplementRequest_.SetCallWaitingRequest(slotId, mmiData.actionString == activate);
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallWaitingRequest();
+        supplementRequest_.GetCallWaitingRequest(slotId);
     }
 }
 
@@ -367,9 +367,9 @@ void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult((int32_t)info.error);
 }
 
-int32_t CellularCallSupplement::SetCallTransferInfo(const CallTransferInfo &cfInfo)
+int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cfInfo)
 {
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("SetCallTransferInfo return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
@@ -402,12 +402,13 @@ int32_t CellularCallSupplement::SetCallTransferInfo(const CallTransferInfo &cfIn
     }
 
     std::string dialString(cfInfo.transferNum);
-    return supplementRequest_.SetCallTransferRequest((int32_t)cfInfo.settingType, (int32_t)cfInfo.type, dialString, 1);
+    return supplementRequest_.SetCallTransferRequest(
+        slotId, (int32_t)cfInfo.settingType, (int32_t)cfInfo.type, dialString, 1);
 }
 
-int32_t CellularCallSupplement::GetCallTransferInfo(CallTransferType type)
+int32_t CellularCallSupplement::GetCallTransferInfo(int32_t slotId, CallTransferType type)
 {
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("GetCallTransferInfo return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
@@ -416,38 +417,38 @@ int32_t CellularCallSupplement::GetCallTransferInfo(CallTransferType type)
      * When querying the status of a network service (<mode>=2) the response line for 'not active' case
      * (<status>=0) should be returned only if service is not active for any <class>
      */
-    return supplementRequest_.GetCallTransferRequest((int32_t)type);
+    return supplementRequest_.GetCallTransferRequest(slotId, (int32_t)type);
 }
 
-bool CellularCallSupplement::PhoneTypeGsmOrNot()
+bool CellularCallSupplement::PhoneTypeGsmOrNot(int32_t slotId)
 {
-    return moduleServiceUtils_.GetNetworkStatus(CoreManager::DEFAULT_SLOT_ID) == PhoneType::PHONE_TYPE_IS_GSM;
+    return moduleServiceUtils_.GetNetworkStatus(slotId) == PhoneType::PHONE_TYPE_IS_GSM;
 }
 
-int32_t CellularCallSupplement::SetCallWaiting(bool activate)
+int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
 {
     /*
      * <n> (sets/shows the result code presentation status in the TA):
      * 0	disable
      * 1	enable
      */
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("SetCallWaiting return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.SetCallWaitingRequest(activate);
+    return supplementRequest_.SetCallWaitingRequest(slotId, activate);
 }
 
-int32_t CellularCallSupplement::GetCallWaiting()
+int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)
 {
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("GetCallWaiting return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.GetCallWaitingRequest();
+    return supplementRequest_.GetCallWaitingRequest(slotId);
 }
 
-int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cRInfo)
+int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &cRInfo)
 {
     /*
      * <fac> values reserved by the present document:
@@ -461,7 +462,7 @@ int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cR
      * "AG"	All outGoing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
      * "AC"	All inComing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
      */
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("SetCallRestriction return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
@@ -502,12 +503,12 @@ int32_t CellularCallSupplement::SetCallRestriction(const CallRestrictionInfo &cR
         return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
     std::string info(cRInfo.password);
-    return supplementRequest_.SetCallRestrictionRequest(fac, (int32_t)cRInfo.mode, info);
+    return supplementRequest_.SetCallRestrictionRequest(slotId, fac, (int32_t)cRInfo.mode, info);
 }
 
-int32_t CellularCallSupplement::GetCallRestriction(CallRestrictionType facType)
+int32_t CellularCallSupplement::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
 {
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("GetCallRestriction return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
@@ -541,7 +542,7 @@ int32_t CellularCallSupplement::GetCallRestriction(CallRestrictionType facType)
             TELEPHONY_LOGE("GetCallRestriction return, parameter out of range!");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
-    return supplementRequest_.GetCallRestrictionRequest(fac);
+    return supplementRequest_.GetCallRestrictionRequest(slotId, fac);
 }
 
 void CellularCallSupplement::EventGetClip(GetClipResult &getClipResult)
@@ -581,14 +582,14 @@ void CellularCallSupplement::EventSetClir(HRilRadioResponseInfo &info)
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetClirResult(static_cast<int32_t>(info.error));
 }
 
-int32_t CellularCallSupplement::SendUssd(const std::string &msg)
+int32_t CellularCallSupplement::SendUssd(int32_t slotId, const std::string &msg)
 {
     TELEPHONY_LOGI("CellularCallSupplement::SendUssd entry");
-    if (!PhoneTypeGsmOrNot()) {
+    if (!PhoneTypeGsmOrNot(slotId)) {
         TELEPHONY_LOGE("SendUssd return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.SendUssdRequest(msg);
+    return supplementRequest_.SendUssdRequest(slotId, msg);
 }
 
 void CellularCallSupplement::EventSendUssd(HRilRadioResponseInfo &responseInfo)

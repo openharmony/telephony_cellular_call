@@ -157,15 +157,6 @@ private:
     int32_t OnKickOutFromConferenceInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On CallSupplement Inner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnCallSupplementInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
      * On HangUpAllConnection Inner
      *
      * @param data send data
@@ -175,7 +166,7 @@ private:
     int32_t OnHangUpAllConnectionInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On UpdateCallMediaMode Inner
+     * On UpdateImsCallMode Inner
      *
      * @param data send data
      * @param reply Received data
@@ -382,22 +373,22 @@ private:
     int32_t OnGetImsFeatureValueInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On SetVolteEnhanceModeInner
+     * On SetImsSwitchEnhanceModeInner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnSetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On GetVolteEnhanceModeInner
+     * On GetImsSwitchEnhanceModeInner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnGetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On Ctrl Camera Inner

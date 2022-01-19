@@ -16,9 +16,10 @@
 #include "cellular_call_connection_ims.h"
 
 #include "securec.h"
+
 #include "cellular_call_types.h"
 #include "cellular_call_service.h"
-#include "observer_handler.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -42,22 +43,17 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
     }
 
     TELEPHONY_LOGI("DialRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("DialRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_DIAL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("DialRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->Dial(dialRequest.phoneNum, dialRequest.clirMode, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("DialRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Dial(
+        slotId, RadioEvent::RADIO_DIAL, dialRequest.phoneNum, dialRequest.clirMode, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -80,22 +76,16 @@ int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::stri
     }
 
     TELEPHONY_LOGI("HangUpRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_HANGUP_CONNECT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("HangUpRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HangUpRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->Hangup(index, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("HangUpRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Hangup(slotId, RadioEvent::RADIO_HANGUP_CONNECT, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -120,22 +110,16 @@ int32_t CellularCallConnectionIMS::AnswerRequest(
     }
 
     TELEPHONY_LOGI("AnswerRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("AnswerRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_ACCEPT_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("AnswerRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->Answer(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("AnswerRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Answer(slotId, RadioEvent::RADIO_ACCEPT_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -158,22 +142,16 @@ int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId, const std::stri
     }
 
     TELEPHONY_LOGI("RejectRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("RejectRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_REJECT_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("RejectRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->Reject(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("RejectRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().Reject(slotId, RadioEvent::RADIO_REJECT_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -185,22 +163,16 @@ int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId)
     }
 
     TELEPHONY_LOGI("HoldCallRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("HoldCallRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_HOLD_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("HoldCallRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HoldCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->HoldCall(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("HoldCallRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().HoldCall(slotId, RadioEvent::RADIO_HOLD_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -212,22 +184,16 @@ int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
     }
 
     TELEPHONY_LOGI("UnHoldCallRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("UnHoldCallRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_ACTIVE_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("UnHoldCallRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UnHoldCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->UnHoldCall(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("UnHoldCallRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().UnHoldCall(slotId, RadioEvent::RADIO_ACTIVE_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -239,22 +205,16 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
     }
 
     TELEPHONY_LOGI("SwitchCallRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SwitchCallRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SWAP_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SwitchCallRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SwitchCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->SwitchCall(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SwitchCallRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SwitchCall(slotId, RadioEvent::RADIO_SWAP_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -266,22 +226,16 @@ int32_t CellularCallConnectionIMS::CombineConferenceRequest(int32_t slotId, int3
     }
 
     TELEPHONY_LOGI("CombineConferenceRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("CombineConferenceRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_JOIN_CALL);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CombineConferenceRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CombineConferenceRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->CombineConference(voiceCall, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("CombineConferenceRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().CombineConference(slotId, RadioEvent::RADIO_JOIN_CALL, voiceCall, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -310,26 +264,20 @@ int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(
 int32_t CellularCallConnectionIMS::CallSupplementRequest(int32_t slotId, CallSupplementType type)
 {
     TELEPHONY_LOGI("CallSupplementRequest start");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("CallSupplementRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_CALL_SUPPLEMENT);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallSupplementRequest return, error type: event is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CallSupplementRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->CallSupplement(type, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("CallSupplementRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().CallSupplement(slotId, RadioEvent::RADIO_CALL_SUPPLEMENT, type, handle);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, CallMediaMode mode)
+int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("UpdateCallMediaModeRequest, call ims service");
@@ -344,7 +292,7 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
         }
         callInfo.slotId = callInfo.slotId;
         callInfo.index = callInfo.index;
-        return moduleUtils_.GetImsServiceRemoteObject()->UpdateCallMediaMode(callInfo, mode);
+        return moduleUtils_.GetImsServiceRemoteObject()->UpdateImsCallMode(callInfo, mode);
     }
     TELEPHONY_LOGI("UpdateCallMediaModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -353,22 +301,16 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
 int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
     TELEPHONY_LOGI("CellularCallConnectionIMS::GetImsCallsDataRequest entry.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_IMS_CALL_LIST, lastCallsDataFlag);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->GetImsCallList(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetImsCallList(slotId, RadioEvent::RADIO_GET_IMS_CALL_LIST, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -380,22 +322,16 @@ int32_t CellularCallConnectionIMS::SendDtmfRequest(int32_t slotId, char cDtmfCod
     }
 
     TELEPHONY_LOGI("SendDtmfRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("SendDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_SEND_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("SendDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SendDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->SendDTMF(cDtmfCode, index, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SendDTMF(slotId, RadioEvent::RADIO_SEND_DTMF, cDtmfCode, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -407,22 +343,16 @@ int32_t CellularCallConnectionIMS::StartDtmfRequest(int32_t slotId, char cDtmfCo
     }
 
     TELEPHONY_LOGI("StartDtmfRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("StartDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_START_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("StartDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StartDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->StartDTMF(cDtmfCode, index, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StartDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StartDTMF(slotId, RadioEvent::RADIO_START_DTMF, cDtmfCode, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -434,22 +364,16 @@ int32_t CellularCallConnectionIMS::StopDtmfRequest(int32_t slotId, int32_t index
     }
 
     TELEPHONY_LOGI("StopDtmfRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("StopDtmfRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_STOP_DTMF);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("StopDtmfRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StopDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->StopDTMF(index, event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StopDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StopDTMF(slotId, RadioEvent::RADIO_STOP_DTMF, index, handle);
     return TELEPHONY_SUCCESS;
 }
 
@@ -481,22 +405,16 @@ int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) cons
     }
 
     TELEPHONY_LOGI("GetCallFailReasonRequest, ims vendor service does not exist.");
-    auto core = GetCore(slotId);
-    if (core == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: core is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    auto event = AppExecFwk::InnerEvent::Get(ObserverHandler::RADIO_GET_CALL_FAIL_REASON);
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: event is null.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    event->SetOwner(DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId));
-    core->GetCallFailReason(event);
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().GetCallFailReason(slotId, RadioEvent::RADIO_GET_CALL_FAIL_REASON, handle);
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

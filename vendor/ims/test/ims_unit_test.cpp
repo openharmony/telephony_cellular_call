@@ -48,7 +48,7 @@ void ImsUnitTest::SetUp(void)
     requestFuncMap_[ImsInterface::IMS_COMBINE_CONFERENCE] = &ImsUnitTest::CombineConference;
     requestFuncMap_[ImsInterface::IMS_INVITE_TO_CONFERENCE] = &ImsUnitTest::InviteToConference;
     requestFuncMap_[ImsInterface::IMS_KICK_OUT_CONFERENCE] = &ImsUnitTest::KickOutFromConference;
-    requestFuncMap_[ImsInterface::IMS_UPDATE_CALL_MEDIA_MODE] = &ImsUnitTest::UpdateCallMediaMode;
+    requestFuncMap_[ImsInterface::IMS_UPDATE_CALL_MEDIA_MODE] = &ImsUnitTest::UpdateImsCallMode;
     requestFuncMap_[ImsInterface::IMS_EMERGENCY_CALL] = &ImsUnitTest::IsEmergencyPhoneNumber;
     requestFuncMap_[ImsInterface::GET_CALL_FAIL_REASON] = &ImsUnitTest::GetCallFailReason;
     requestFuncMap_[ImsInterface::IMS_START_DTMF] = &ImsUnitTest::StartDtmf;
@@ -65,8 +65,8 @@ void ImsUnitTest::SetUp(void)
     requestFuncMap_[ImsInterface::IMS_GET_IMS_CONFIG] = &ImsUnitTest::GetImsConfig;
     requestFuncMap_[ImsInterface::IMS_SET_IMS_FEATURE] = &ImsUnitTest::SetImsFeatureValue;
     requestFuncMap_[ImsInterface::IMS_GET_IMS_FEATURE] = &ImsUnitTest::GetImsFeatureValue;
-    requestFuncMap_[ImsInterface::IMS_SET_VOLTE_ENHANCE_MODE] = &ImsUnitTest::SetVolteEnhanceMode;
-    requestFuncMap_[ImsInterface::IMS_GET_VOLTE_ENHANCE_MODE] = &ImsUnitTest::GetVolteEnhanceMode;
+    requestFuncMap_[ImsInterface::IMS_SET_IMS_SWITCH_ENHANCE_MODE] = &ImsUnitTest::SetImsSwitchEnhanceMode;
+    requestFuncMap_[ImsInterface::IMS_GET_IMS_SWITCH_ENHANCE_MODE] = &ImsUnitTest::GetImsSwitchEnhanceMode;
     requestFuncMap_[ImsInterface::IMS_CTRL_CAMERA] = &ImsUnitTest::CtrlCamera;
     requestFuncMap_[ImsInterface::IMS_SET_PREVIEW_WINDOW] = &ImsUnitTest::SetPreviewWindow;
     requestFuncMap_[ImsInterface::IMS_SET_DISPLAY_WINDOW] = &ImsUnitTest::SetDisplayWindow;
@@ -228,12 +228,12 @@ int32_t ImsUnitTest::KickOutFromConference(const sptr<ImsInterface> &telephonySe
     return CELLULAR_CALL_SUCCESS;
 }
 
-int32_t ImsUnitTest::UpdateCallMediaMode(const sptr<ImsInterface> &telephonyService) const
+int32_t ImsUnitTest::UpdateImsCallMode(const sptr<ImsInterface> &telephonyService) const
 {
-    std::cout << "test UpdateCallMediaMode entry." << std::endl;
+    std::cout << "test UpdateImsCallMode entry." << std::endl;
     ImsCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-        std::cout << "UpdateCallMediaMode return, memset_s failed." << std::endl;
+        std::cout << "UpdateImsCallMode return, memset_s failed." << std::endl;
         return CELLULAR_CALL_ERROR;
     }
     std::cout << "please enter the phone number:";
@@ -245,7 +245,7 @@ int32_t ImsUnitTest::UpdateCallMediaMode(const sptr<ImsInterface> &telephonyServ
     std::cout << "please enter the update call mode():";
     int32_t mode = 0;
     std::cin >> mode;
-    telephonyService->UpdateCallMediaMode(callInfo, static_cast<CallMediaMode>(mode));
+    telephonyService->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -346,14 +346,20 @@ int32_t ImsUnitTest::SetDomainPreferenceMode(const sptr<ImsInterface> &telephony
     std::cout << "please enter the need mode:(1 - 4)";
     int32_t mode;
     std::cin >> mode;
-    telephonyService->SetDomainPreferenceMode(mode);
+    std::cout << "please enter the slot id:";
+    int32_t slotId = 0;
+    std::cin >> slotId;
+    telephonyService->SetDomainPreferenceMode(slotId, mode);
     return CELLULAR_CALL_SUCCESS;
 }
 
 int32_t ImsUnitTest::GetDomainPreferenceMode(const sptr<ImsInterface> &telephonyService) const
 {
     std::cout << "test GetDomainPreferenceMode entry." << std::endl;
-    telephonyService->GetDomainPreferenceMode();
+    std::cout << "please enter the slot id:";
+    int32_t slotId = 0;
+    std::cin >> slotId;
+    telephonyService->GetDomainPreferenceMode(slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -363,14 +369,20 @@ int32_t ImsUnitTest::SetLteImsSwitchStatus(const sptr<ImsInterface> &telephonySe
     std::cout << "please enter the switch state:";
     bool active;
     std::cin >> active;
-    telephonyService->SetLteImsSwitchStatus(active);
+    std::cout << "please enter the slot id:";
+    int32_t slotId = 0;
+    std::cin >> slotId;
+    telephonyService->SetLteImsSwitchStatus(slotId, active);
     return CELLULAR_CALL_SUCCESS;
 }
 
 int32_t ImsUnitTest::GetLteImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const
 {
     std::cout << "test GetLteImsSwitchStatus entry." << std::endl;
-    telephonyService->GetLteImsSwitchStatus();
+    std::cout << "please enter the slot id:";
+    int32_t slotId = 0;
+    std::cin >> slotId;
+    telephonyService->GetLteImsSwitchStatus(slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -433,20 +445,20 @@ int32_t ImsUnitTest::GetImsFeatureValue(const sptr<ImsInterface> &telephonyServi
     return CELLULAR_CALL_SUCCESS;
 }
 
-int32_t ImsUnitTest::SetVolteEnhanceMode(const sptr<ImsInterface> &telephonyService) const
+int32_t ImsUnitTest::SetImsSwitchEnhanceMode(const sptr<ImsInterface> &telephonyService) const
 {
-    std::cout << "test SetVolteEnhanceMode entry." << std::endl;
-    std::cout << "please enter the VoLTE enhance mode:";
+    std::cout << "test SetImsSwitchEnhanceMode entry." << std::endl;
+    std::cout << "please enter the ImsSwitch enhance mode:";
     bool mode;
     std::cin >> mode;
-    telephonyService->SetVolteEnhanceMode(mode);
+    telephonyService->SetImsSwitchEnhanceMode(mode);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int32_t ImsUnitTest::GetVolteEnhanceMode(const sptr<ImsInterface> &telephonyService) const
+int32_t ImsUnitTest::GetImsSwitchEnhanceMode(const sptr<ImsInterface> &telephonyService) const
 {
-    std::cout << "test GetVolteEnhanceMode entry." << std::endl;
-    telephonyService->GetVolteEnhanceMode();
+    std::cout << "test GetImsSwitchEnhanceMode entry." << std::endl;
+    telephonyService->GetImsSwitchEnhanceMode();
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -454,10 +466,9 @@ int32_t ImsUnitTest::CtrlCamera(const sptr<ImsInterface> &telephonyService) cons
 {
     std::cout << "test CtrlCamera entry." << std::endl;
     std::u16string cameraId = u"cameraId";
-    std::u16string callingPackage = u"callingPackage";
     int32_t callingUid = 0;
     int32_t callingPid = 0;
-    telephonyService->CtrlCamera(cameraId, callingPackage, callingUid, callingPid);
+    telephonyService->CtrlCamera(cameraId, callingUid, callingPid);
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -616,12 +627,12 @@ int32_t ImsUnitTest::InputNumForInterface(const sptr<ImsInterface> &telephonySer
         std::cout << "\n**********Unit Test Start**********\n"
                      "Usage: please input a cmd num:\n"
                      "1:Dial\n2:HangUp\n3:Reject\n4:Answer\n5:HoldCall\n6:UnHoldCall\n7:SwitchCall\n"
-                     "8:CombineConference\n9:InviteToConference\n10:KickOutFromConference\n11:UpdateCallMediaMode\n"
+                     "8:CombineConference\n9:InviteToConference\n10:KickOutFromConference\n11:UpdateImsCallMode\n"
                      "12:IsEmergencyPhoneNumber\n13:GetCallFailReason\n100:StartDtmf\n101:SendDtmf\n102:StopDtmf\n"
                      "103:StartRtt\n104:StopRtt\n200:SetCallPreferenceMode\n201:GetCallPreferenceMode\n202:"
                      "SetLteImsSwitchStatus\n203:GetLteImsSwitchStatus\n204:SetImsConfigString\n205:SetImsConfigInt\n"
-                     "206:GetImsConfig\n207:SetImsFeatureValue\n208:GetImsFeatureValue\n209:SetVolteEnhanceMode\n"
-                     "210:GetVolteEnhanceMode\n211:SetMUte\n212:GetMute\n300:CtrlCamera\n301:SetPreviewWindow\n"
+                     "206:GetImsConfig\n207:SetImsFeatureValue\n208:GetImsFeatureValue\n209:SetImsSwitchEnhanceMode\n"
+                     "210:GetImsSwitchEnhanceMode\n211:SetMUte\n212:GetMute\n300:CtrlCamera\n301:SetPreviewWindow\n"
                      "302:SetDisplayWindow\n303:SetCameraZoom\n304:SetPauseImage\n305:SetDeviceDirection\n"
                      "403:SetCallTransfer\n404:GetCallTransfer\n405:SetCallRestriction\n406:GetCallRestriction\n"
                      "407:SetCallWaiting\n408:GetCallWaiting\n"
@@ -649,7 +660,7 @@ int32_t ImsUnitTest::InputNumForInterface(const sptr<ImsInterface> &telephonySer
     return CELLULAR_CALL_SUCCESS;
 }
 
-HWTEST_F(ImsUnitTest, ims_interface_001, TestSize.Level1)
+HWTEST_F(ImsUnitTest, ims_vendor_test_001, TestSize.Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityMgr == nullptr) {
@@ -662,7 +673,23 @@ HWTEST_F(ImsUnitTest, ims_interface_001, TestSize.Level1)
         return;
     }
     auto telephonyService = iface_cast<ImsInterface>(remote);
-    std::cout << "ImsUnitTest HWTEST_F ims_interface_001";
+    std::cout << "ImsUnitTest HWTEST_F ims_vendor_test_001";
+}
+
+HWTEST_F(ImsUnitTest, ims_vendor_test_002, TestSize.Level1)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        std::cout << "ImsUnitTest return, Get ISystemAbilityManager failed!\n";
+        return;
+    }
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID);
+    if (remote == nullptr) {
+        std::cout << "ImsUnitTest return, Remote service not exists!\n";
+        return;
+    }
+    auto telephonyService = iface_cast<ImsInterface>(remote);
+    std::cout << "ImsUnitTest HWTEST_F ims_vendor_test_002";
 }
 } // namespace Telephony
 } // namespace OHOS

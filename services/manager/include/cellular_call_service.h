@@ -97,9 +97,10 @@ public:
      * HangUp
      *
      * @param CellularCallInfo, HangUp param.
+     * @param CallSupplementType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HangUp(const CellularCallInfo &callInfo) override;
+    int32_t HangUp(const CellularCallInfo &callInfo, CallSupplementType type) override;
 
     /**
      * Reject
@@ -186,14 +187,6 @@ public:
     int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
 
     /**
-     * CallSupplement
-     *
-     * @param CallSupplementType
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t CallSupplement(CallSupplementType type) override;
-
-    /**
      * Hang Up All Connection
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
@@ -204,10 +197,10 @@ public:
      * IMS Update Call Media Mode
      *
      * @param CellularCallInfo
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode) override;
+    int32_t UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode) override;
 
     /**
      * Register CallManager CallBack
@@ -402,33 +395,31 @@ public:
     int32_t GetImsFeatureValue(int32_t slotId, FeatureType type) override;
 
     /**
-     * Set Volte Enhance Mode
+     * Set Ims Switch Enhance Mode
      *
      * @param slotId
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetVolteEnhanceMode(int32_t slotId, bool value) override;
+    int32_t SetImsSwitchEnhanceMode(int32_t slotId, bool value) override;
 
     /**
-     * Get Volte Enhance Mode
+     * Get Ims Switch Enhance Mode
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetVolteEnhanceMode(int32_t slotId) override;
+    int32_t GetImsSwitchEnhanceMode(int32_t slotId) override;
 
     /**
      * CtrlCamera
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCamera(const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid,
-        int32_t callingPid) override;
+    int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) override;
 
     /**
      * SetPreviewWindow
@@ -498,9 +489,10 @@ public:
     /**
      * Is need choose IMS for execute
      *
+     * @param slotId
      * @return bool
      */
-    bool IsNeedIms() const;
+    bool IsNeedIms(int32_t slotId) const;
 
     /**
      * Get CSControl
@@ -600,7 +592,6 @@ private:
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
 };
 } // namespace Telephony

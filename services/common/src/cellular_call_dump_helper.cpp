@@ -40,7 +40,7 @@ void CellularCallDumpHelper::ShowHelp(std::string &result) const
 
 void CellularCallDumpHelper::ShowCellularCallInfo(std::string &result) const
 {
-    int32_t slotId = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slotId = DEFAULT_SIM_SLOT_ID;
     result.append("\n*******************CellularCallInfo*********************\n");
     result.append("SlotId                       : ").append(std::to_string(slotId)).append("\n");
     result.append("CellularCallBindTime         : ")

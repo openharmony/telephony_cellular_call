@@ -18,6 +18,7 @@
     <systemability>
         <name>4006</name>
         <libpath>libtel_cellular_call.z.so</libpath>
+        <depend>4010</depend>
         <run-on-create>true</run-on-create>
         <distributed>false</distributed>
         <dump-level>1</dump-level>

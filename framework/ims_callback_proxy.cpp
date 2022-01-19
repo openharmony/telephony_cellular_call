@@ -709,7 +709,7 @@ int32_t ImsCallbackProxy::UpdateGetImsFeatureValueResponse(const ImsResponseInfo
     return error;
 }
 
-int32_t ImsCallbackProxy::UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackProxy::UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -720,14 +720,14 @@ int32_t ImsCallbackProxy::UpdateSetVolteEnhanceModeResponse(const ImsResponseInf
     if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(UPDATE_SET_VOLTE_ENHANCE, in, out, option);
+    int32_t error = Remote()->SendRequest(UPDATE_SET_IMS_SWITCH_ENHANCE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsCallbackProxy::UpdateGetVolteEnhanceModeResponse(int32_t value)
+int32_t ImsCallbackProxy::UpdateGetImsSwitchEnhanceModeResponse(int32_t value)
 {
     MessageOption option;
     MessageParcel in;
@@ -738,14 +738,14 @@ int32_t ImsCallbackProxy::UpdateGetVolteEnhanceModeResponse(int32_t value)
     if (!in.WriteInt32(value)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(UPDATE_GET_VOLTE_ENHANCE, in, out, option);
+    int32_t error = Remote()->SendRequest(UPDATE_GET_IMS_SWITCH_ENHANCE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsCallbackProxy::UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackProxy::UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -756,7 +756,7 @@ int32_t ImsCallbackProxy::UpdateGetVolteEnhanceModeResponse(const ImsResponseInf
     if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(UPDATE_GET_VOLTE_ENHANCE, in, out, option);
+    int32_t error = Remote()->SendRequest(UPDATE_GET_IMS_SWITCH_ENHANCE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }

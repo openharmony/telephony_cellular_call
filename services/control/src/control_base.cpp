@@ -30,14 +30,14 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo)
     }
 
     ModuleServiceUtils moduleServiceUtils;
-    if (!moduleServiceUtils.GetRadioState(GetSlotId())) {
+    if (!moduleServiceUtils.GetRadioState(callInfo.slotId)) {
         TELEPHONY_LOGE("DialPreJudgment return, radio state error.");
         return CALL_ERR_GET_RADIO_STATE_FAILED;
     }
     return TELEPHONY_SUCCESS;
 }
 
-bool ControlBase::IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode)
+bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode)
 {
     TELEPHONY_LOGI("IsNeedExecuteMMI start");
     // Also supplementary services may be controlled using dial command according to 3GPP TS 22.030 [19].
@@ -70,11 +70,11 @@ bool ControlBase::IsNeedExecuteMMI(std::string &phoneString, CLIRMode &clirMode)
         TELEPHONY_LOGI("IsNeedExecuteMMI return, GetInstance is nullptr");
         return false;
     }
-    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_) == nullptr) {
+    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
         TELEPHONY_LOGI("IsNeedExecuteMMI return, GetHandler is nullptr");
         return false;
     }
-    return DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId_)->SendEvent(
+    return DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->SendEvent(
         MMIHandlerId::EVENT_MMI_Id, mmiCodeUtils);
 }
 
@@ -85,16 +85,6 @@ bool ControlBase::IsDtmfKey(char c) const
      * whose duration is set by the +VTD command. NOTE 2:	In GSM this operates only in voice mode.
      */
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'D') || c == '*' || c == '#';
-}
-
-void ControlBase::SetSlotId(int32_t id)
-{
-    slotId_ = id;
-}
-
-int32_t ControlBase::GetSlotId() const
-{
-    return slotId_;
 }
 } // namespace Telephony
 } // namespace OHOS

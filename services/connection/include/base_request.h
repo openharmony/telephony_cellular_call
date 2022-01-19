@@ -18,8 +18,6 @@
 
 #include <memory>
 
-#include <core_manager.h>
-
 namespace OHOS {
 namespace Telephony {
 class BaseRequest {
@@ -33,17 +31,6 @@ public:
      * Destructor
      */
     virtual ~BaseRequest() = default;
-
-    /**
-     * Get Core for core service
-     *
-     * @param slotId
-     * @return std::shared_ptr<Core>
-     */
-    std::shared_ptr<Core> GetCore(int32_t slotId);
-
-public:
-    int32_t slotId_ = CoreManager::DEFAULT_SLOT_ID;
 };
 } // namespace Telephony
 } // namespace OHOS

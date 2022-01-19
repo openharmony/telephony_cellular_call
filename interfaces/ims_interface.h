@@ -59,8 +59,8 @@ public:
         IMS_GET_IMS_CONFIG,
         IMS_SET_IMS_FEATURE,
         IMS_GET_IMS_FEATURE,
-        IMS_SET_VOLTE_ENHANCE_MODE,
-        IMS_GET_VOLTE_ENHANCE_MODE,
+        IMS_SET_IMS_SWITCH_ENHANCE_MODE,
+        IMS_GET_IMS_SWITCH_ENHANCE_MODE,
         IMS_SET_MUTE,
         IMS_GET_MUTE,
         IMS_GET_EMERGENCY_CALL_LIST,
@@ -173,13 +173,13 @@ public:
     virtual int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) = 0;
 
     /**
-     * IMS UpdateCallMediaMode interface
+     * IMS UpdateImsCallMode interface
      *
      * @param ImsCallInfo
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateCallMediaMode(const ImsCallInfo &callInfo, CallMediaMode mode) = 0;
+    virtual int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) = 0;
 
     /**
      * IMS IsEmergencyPhoneNumber interface
@@ -256,32 +256,36 @@ public:
     /**
      * IMS SetDomainPreferenceMode interface
      *
+     * @param slotId
      * @param mode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetDomainPreferenceMode(int32_t mode) = 0;
+    virtual int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) = 0;
 
     /**
      * IMS GetDomainPreferenceMode interface
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetDomainPreferenceMode() = 0;
+    virtual int32_t GetDomainPreferenceMode(int32_t slotId) = 0;
 
     /**
      * IMS SetLteImsSwitchStatus interface
      *
+     * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetLteImsSwitchStatus(bool active) = 0;
+    virtual int32_t SetLteImsSwitchStatus(int32_t slotId, bool active) = 0;
 
     /**
      * IMS GetLteImsSwitchStatus interface
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetLteImsSwitchStatus() = 0;
+    virtual int32_t GetLteImsSwitchStatus(int32_t slotId) = 0;
 
     /**
      * IMS SetImsConfig interface
@@ -327,31 +331,29 @@ public:
     virtual int32_t GetImsFeatureValue(FeatureType type) = 0;
 
     /**
-     * IMS SetVolteEnhanceMode interface
+     * IMS SetImsSwitchEnhanceMode interface
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetVolteEnhanceMode(bool value) = 0;
+    virtual int32_t SetImsSwitchEnhanceMode(bool value) = 0;
 
     /**
-     * IMS GetVolteEnhanceMode interface
+     * IMS GetImsSwitchEnhanceMode interface
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetVolteEnhanceMode() = 0;
+    virtual int32_t GetImsSwitchEnhanceMode() = 0;
 
     /**
      * IMS CtrlCamera interface
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CtrlCamera(const std::u16string &cameraId, const std::u16string &callingPackage,
-        int32_t callingUid, int32_t callingPid) = 0;
+    virtual int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) = 0;
 
     /**
      * IMS SetPreviewWindow interface
