@@ -22,7 +22,7 @@ namespace Telephony {
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
 std::map<int32_t, int32_t> CellularCallConfig::activeMap_;
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
-std::map<int32_t, std::vector<Emergencyinfo>> CellularCallConfig::eccListMap_;
+std::map<int32_t, std::vector<EmergencyInfo>> CellularCallConfig::eccListMap_;
 
 int32_t CellularCallConfig::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
@@ -31,30 +31,15 @@ int32_t CellularCallConfig::SetDomainPreferenceMode(int32_t slotId, int32_t mode
         return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
     modeTempMap_[slotId] = mode;
-    return configRequest_.SetDomainPreferenceModeRequest(mode);
+    return configRequest_.SetDomainPreferenceModeRequest(slotId, mode);
 }
 
-int32_t CellularCallConfig::GetDomainPreferenceMode()
+int32_t CellularCallConfig::GetDomainPreferenceMode(int32_t slotId)
 {
-    return configRequest_.GetDomainPreferenceModeRequest();
+    return configRequest_.GetDomainPreferenceModeRequest(slotId);
 }
 
-int32_t CellularCallConfig::SetLteImsSwitchStatus(bool active)
-{
-    /*
-     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
-     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
-     * terminating access domain selection by the network.
-     * -	Format: bool
-     * -	Access Types: Get, Replace
-     * -	Values: 0, 1
-     *      0 – Mobility Management for IMS Voice Termination disabled.
-     *      1 – Mobility Management for IMS Voice Termination enabled.
-     */
-    return configRequest_.SetLteImsSwitchStatusRequest(active);
-}
-
-int32_t CellularCallConfig::GetLteImsSwitchStatus()
+int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
 {
     /*
      * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
@@ -66,7 +51,22 @@ int32_t CellularCallConfig::GetLteImsSwitchStatus()
      *      0 – Mobility Management for IMS Voice Termination disabled.
      *      1 – Mobility Management for IMS Voice Termination enabled.
      */
-    return configRequest_.GetLteImsSwitchStatusRequest();
+    return configRequest_.SetLteImsSwitchStatusRequest(slotId, active);
+}
+
+int32_t CellularCallConfig::GetLteImsSwitchStatus(int32_t slotId)
+{
+    /*
+     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
+     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
+     * terminating access domain selection by the network.
+     * -	Format: bool
+     * -	Access Types: Get, Replace
+     * -	Values: 0, 1
+     *      0 – Mobility Management for IMS Voice Termination disabled.
+     *      1 – Mobility Management for IMS Voice Termination enabled.
+     */
+    return configRequest_.GetLteImsSwitchStatusRequest(slotId);
 }
 
 void CellularCallConfig::GetCallPreferenceModeResponse(int32_t slotId, const std::shared_ptr<int32_t> &mode)
@@ -122,20 +122,19 @@ int32_t CellularCallConfig::GetImsFeatureValue(FeatureType type)
     return configRequest_.GetImsFeatureValueRequest(type);
 }
 
-int32_t CellularCallConfig::SetVolteEnhanceMode(bool value)
+int32_t CellularCallConfig::SetImsSwitchEnhanceMode(bool value)
 {
-    return configRequest_.SetVolteEnhanceModeRequest(value);
+    return configRequest_.SetImsSwitchEnhanceModeRequest(value);
 }
 
-int32_t CellularCallConfig::GetVolteEnhanceMode()
+int32_t CellularCallConfig::GetImsSwitchEnhanceMode()
 {
-    return configRequest_.GetVolteEnhanceModeRequest();
+    return configRequest_.GetImsSwitchEnhanceModeRequest();
 }
 
-int32_t CellularCallConfig::CtrlCamera(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t CellularCallConfig::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
-    return configRequest_.CtrlCameraRequest(cameraId, callingPackage, callingUid, callingPid);
+    return configRequest_.CtrlCameraRequest(cameraId, callingUid, callingPid);
 }
 
 int32_t CellularCallConfig::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
@@ -170,7 +169,7 @@ void CellularCallConfig::SetTempMode(int32_t slotId)
 
 void CellularCallConfig::InitModeActive()
 {
-    int32_t slotId = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slotId = DEFAULT_SIM_SLOT_ID;
     modeMap_[slotId] = DomainPreferenceMode::IMS_PS_VOICE_PREFERRED;
     activeMap_[slotId] = true;
     eccListMap_.clear();
@@ -196,7 +195,7 @@ void CellularCallConfig::GetEmergencyCallListResponse(int32_t slotId, const Emer
     eccListMap_[slotId] = eccList.calls;
 }
 
-std::vector<Emergencyinfo> CellularCallConfig::GetEccCallList(int32_t slotId)
+std::vector<EmergencyInfo> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
     return eccListMap_[slotId];
 }

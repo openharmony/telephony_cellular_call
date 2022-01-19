@@ -20,47 +20,47 @@
 #include "hril_types.h"
 #include "ims_ril_request.h"
 #include "ims_register.h"
-#include "observer_handler.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
 ImsHandler::ImsHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
 {
     requestFuncMap_[ASYNCHRONOUS_REGISTER_ID] = &ImsHandler::AsynchronousRegister;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_WAITING] = &ImsHandler::CallWaitingResponse;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_CONNECT] = &ImsHandler::CallConnectResponse;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_END] = &ImsHandler::CallEndResponse;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_STATUS_INFO] = &ImsHandler::CallStatusInfoResponse;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_IMS_SERVICE_STATUS] = &ImsHandler::CallImsServiceStatusResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_PREFERENCE_MODE] = &ImsHandler::SetCallPreferenceModeResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_PREFERENCE_MODE] = &ImsHandler::GetCallPreferenceModeResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_LTE_IMS_SWITCH_STATUS] = &ImsHandler::SetLteImsSwitchStatusResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_LTE_IMS_SWITCH_STATUS] = &ImsHandler::GetLteImsSwitchStatusResponse;
-    requestFuncMap_[ObserverHandler::RADIO_DIAL] = &ImsHandler::DialResponse;
-    requestFuncMap_[ObserverHandler::RADIO_HANGUP_CONNECT] = &ImsHandler::HangUpResponse;
-    requestFuncMap_[ObserverHandler::RADIO_REJECT_CALL] = &ImsHandler::RejectResponse;
-    requestFuncMap_[ObserverHandler::RADIO_ACCEPT_CALL] = &ImsHandler::AnswerResponse;
-    requestFuncMap_[ObserverHandler::RADIO_HOLD_CALL] = &ImsHandler::HoldCallResponse;
-    requestFuncMap_[ObserverHandler::RADIO_ACTIVE_CALL] = &ImsHandler::UnHoldCallResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SWAP_CALL] = &ImsHandler::SwitchCallResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SEND_DTMF] = &ImsHandler::SendDtmfResponse;
-    requestFuncMap_[ObserverHandler::RADIO_START_DTMF] = &ImsHandler::StartDtmfResponse;
-    requestFuncMap_[ObserverHandler::RADIO_STOP_DTMF] = &ImsHandler::StopDtmfResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_IMS_CALL_LIST] = &ImsHandler::GetImsCallsDataResponse;
-    requestFuncMap_[ObserverHandler::RADIO_CALL_RINGBACK_VOICE] = &ImsHandler::CallRingBackVoiceResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CMUT] = &ImsHandler::SetMuteResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CMUT] = &ImsHandler::GetMuteResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_EMERGENCY_CALL_LIST] = &ImsHandler::GetEmergencyCallListResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_FAIL_REASON] = &ImsHandler::GetCallFailReasonResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIP] = &ImsHandler::GetClipResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_CLIR] = &ImsHandler::GetClirResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_CLIR] = &ImsHandler::SetClirResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_FORWARD] = &ImsHandler::GetCallTransferResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_FORWARD] = &ImsHandler::SetCallTransferResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_RESTRICTION] = &ImsHandler::GetCallRestrictionResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_RESTRICTION] = &ImsHandler::SetCallRestrictionResponse;
-    requestFuncMap_[ObserverHandler::RADIO_GET_CALL_WAIT] = &ImsHandler::GetCallWaitingResponse;
-    requestFuncMap_[ObserverHandler::RADIO_SET_CALL_WAIT] = &ImsHandler::SetCallWaitingResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_WAITING] = &ImsHandler::CallWaitingResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_CONNECT] = &ImsHandler::CallConnectResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_END] = &ImsHandler::CallEndResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &ImsHandler::CallStatusInfoResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS] = &ImsHandler::CallImsServiceStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &ImsHandler::SetCallPreferenceModeResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &ImsHandler::GetCallPreferenceModeResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS] = &ImsHandler::SetLteImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS] = &ImsHandler::GetLteImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_DIAL] = &ImsHandler::DialResponse;
+    requestFuncMap_[RadioEvent::RADIO_HANGUP_CONNECT] = &ImsHandler::HangUpResponse;
+    requestFuncMap_[RadioEvent::RADIO_REJECT_CALL] = &ImsHandler::RejectResponse;
+    requestFuncMap_[RadioEvent::RADIO_ACCEPT_CALL] = &ImsHandler::AnswerResponse;
+    requestFuncMap_[RadioEvent::RADIO_HOLD_CALL] = &ImsHandler::HoldCallResponse;
+    requestFuncMap_[RadioEvent::RADIO_ACTIVE_CALL] = &ImsHandler::UnHoldCallResponse;
+    requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] = &ImsHandler::SwitchCallResponse;
+    requestFuncMap_[RadioEvent::RADIO_SEND_DTMF] = &ImsHandler::SendDtmfResponse;
+    requestFuncMap_[RadioEvent::RADIO_START_DTMF] = &ImsHandler::StartDtmfResponse;
+    requestFuncMap_[RadioEvent::RADIO_STOP_DTMF] = &ImsHandler::StopDtmfResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_IMS_CALL_LIST] = &ImsHandler::GetImsCallsDataResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] = &ImsHandler::CallRingBackVoiceResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CMUT] = &ImsHandler::SetMuteResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CMUT] = &ImsHandler::GetMuteResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &ImsHandler::GetEmergencyCallListResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FAIL_REASON] = &ImsHandler::GetCallFailReasonResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIP] = &ImsHandler::GetClipResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIR] = &ImsHandler::GetClirResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIR] = &ImsHandler::SetClirResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FORWARD] = &ImsHandler::GetCallTransferResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_FORWARD] = &ImsHandler::SetCallTransferResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] = &ImsHandler::GetCallRestrictionResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &ImsHandler::SetCallRestrictionResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_WAIT] = &ImsHandler::GetCallWaitingResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_WAIT] = &ImsHandler::SetCallWaitingResponse;
 }
 
 void ImsHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
@@ -776,52 +776,52 @@ void ImsHandler::GetImsFeatureValueResponse(const AppExecFwk::InnerEvent::Pointe
     DelayedSingleton<ImsRegister>::GetInstance()->UpdateGetImsFeatureValueResponse(*value);
 }
 
-void ImsHandler::SetVolteEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void ImsHandler::SetImsSwitchEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetVolteEnhanceModeResponse return, event is nullptr");
+        TELEPHONY_LOGE("SetImsSwitchEnhanceModeResponse return, event is nullptr");
         return;
     }
     auto responseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
     if (responseInfo == nullptr) {
-        TELEPHONY_LOGE("SetVolteEnhanceModeResponse return, responseInfo is nullptr");
+        TELEPHONY_LOGE("SetImsSwitchEnhanceModeResponse return, responseInfo is nullptr");
         return;
     }
     if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("SetVolteEnhanceModeResponse return, GetInstance() is nullptr, report fail!");
+        TELEPHONY_LOGE("SetImsSwitchEnhanceModeResponse return, GetInstance() is nullptr, report fail!");
         return;
     }
     ImsResponseInfo imsResponseInfo;
     imsResponseInfo.slotId = slotId_;
     imsResponseInfo.error = static_cast<ImsErrType>(responseInfo->error);
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateSetVolteEnhanceModeResponse(imsResponseInfo);
+    DelayedSingleton<ImsRegister>::GetInstance()->UpdateSetImsSwitchEnhanceModeResponse(imsResponseInfo);
 }
 
-void ImsHandler::GetVolteEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void ImsHandler::GetImsSwitchEnhanceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("GetVolteEnhanceModeResponse return, event is nullptr");
+        TELEPHONY_LOGE("GetImsSwitchEnhanceModeResponse return, event is nullptr");
         return;
     }
     if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("GetVolteEnhanceModeResponse return, GetInstance() is nullptr, report fail!");
+        TELEPHONY_LOGE("GetImsSwitchEnhanceModeResponse return, GetInstance() is nullptr, report fail!");
         return;
     }
     auto mode = event->GetSharedObject<int32_t>();
     if (mode == nullptr) {
-        TELEPHONY_LOGE("GetVolteEnhanceModeResponse, Cannot get the mode, need to get imsResponseInfo");
+        TELEPHONY_LOGE("GetImsSwitchEnhanceModeResponse, Cannot get the mode, need to get imsResponseInfo");
         auto imsResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
         if (imsResponseInfo == nullptr) {
-            TELEPHONY_LOGE("GetVolteEnhanceModeResponse return, mode and imsResponseInfo is nullptr");
+            TELEPHONY_LOGE("GetImsSwitchEnhanceModeResponse return, mode and imsResponseInfo is nullptr");
             return;
         }
         ImsResponseInfo responseInfo;
         responseInfo.slotId = slotId_;
         responseInfo.error = static_cast<ImsErrType>(imsResponseInfo->error);
-        DelayedSingleton<ImsRegister>::GetInstance()->UpdateGetVolteEnhanceModeResponse(responseInfo);
+        DelayedSingleton<ImsRegister>::GetInstance()->UpdateGetImsSwitchEnhanceModeResponse(responseInfo);
         return;
     }
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateGetVolteEnhanceModeResponse(*mode);
+    DelayedSingleton<ImsRegister>::GetInstance()->UpdateGetImsSwitchEnhanceModeResponse(*mode);
 }
 
 void ImsHandler::CtrlCameraResponse(const AppExecFwk::InnerEvent::Pointer &event)

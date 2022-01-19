@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_service.h"
+
 #include <sstream>
 
 #include "string_ex.h"
@@ -23,7 +24,7 @@
 #include "cellular_call_callback.h"
 #include "emergency_utils.h"
 #include "module_service_utils.h"
-#include "observer_handler.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -101,10 +102,10 @@ void CellularCallService::RegisterHandler()
     networkSearchCallBack_ = (std::make_unique<CellularCallCallback>()).release();
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
-        auto core = CoreManager::GetInstance().getCore(CoreManager::DEFAULT_SLOT_ID);
-        if (core != nullptr && core->IsInitCore()) {
+        if (CoreManagerInner::GetInstance().IsInitFinishedForTelRil()) {
+            TELEPHONY_LOGI("connect core service Register Handler start");
             RegisterCoreServiceHandler();
-            core->RegisterCellularCallObject(networkSearchCallBack_);
+            CoreManagerInner::GetInstance().RegisterCellularCallObject(networkSearchCallBack_);
             break;
         }
         TELEPHONY_LOGW("connect core service Register Handler null or not init");
@@ -131,24 +132,17 @@ void CellularCallService::HandlerResetUnRegister()
         if (handler != nullptr) {
             handler.reset();
         }
-        auto core = CoreManager::GetInstance().getCore(slot);
-        if (core == nullptr) {
-            TELEPHONY_LOGE("CellularCallService::HandlerResetUnRegister, core is nullptr");
-            return;
-        }
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATE);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_AVAIL);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_NOT_AVAIL);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_WAITING);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_CONNECT);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_END);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATUS_INFO);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_IMS_SERVICE_STATUS);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_USSD_CUSD_NOTICE);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_RINGBACK_VOICE);
-        core->UnRegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_SRVCC_STATUS);
 
-        core->UnRegisterCellularCallObject(networkSearchCallBack_);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATE);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_WAITING);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_CONNECT);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_END);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_CUSD_NOTICE);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
 
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
@@ -163,32 +157,31 @@ void CellularCallService::HandlerResetUnRegister()
 void CellularCallService::RegisterCoreServiceHandler()
 {
     for (const auto &it : handlerMap_) {
+        int32_t slot = it.first;
         auto handler = it.second;
-        auto core = CoreManager::GetInstance().getCore(it.first);
-        if (core == nullptr) {
-            TELEPHONY_LOGE("RegisterCoreServiceHandler, core is nullptr");
-            return;
-        }
         if (handler != nullptr) {
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATE, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_AVAIL, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_NOT_AVAIL, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_WAITING, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_CONNECT, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_END, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_STATUS_INFO, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_USSD_CUSD_NOTICE, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_RINGBACK_VOICE, nullptr);
-            core->RegisterCoreNotify(handler, ObserverHandler::RADIO_CALL_SRVCC_STATUS, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_WAITING, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_CONNECT, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_END, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_USSD_CUSD_NOTICE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
         }
 
         CellularCallConfig config;
         config.InitModeActive();
-        if (config.GetDomainPreferenceMode() != TELEPHONY_SUCCESS) {
+        if (config.GetDomainPreferenceMode(slot) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetDomainPreferenceMode request fail");
         }
-        if (config.GetLteImsSwitchStatus() != TELEPHONY_SUCCESS) {
+        if (config.GetLteImsSwitchStatus(slot) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetLteImsSwitchStatus request fail");
         }
         if (config.GetEmergencyCallList(it.first) != TELEPHONY_SUCCESS) {
@@ -200,7 +193,7 @@ void CellularCallService::RegisterCoreServiceHandler()
 void CellularCallService::SendEventRegisterHandler()
 {
     int64_t delayTime_ = 1000;
-    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    int32_t slot = DEFAULT_SIM_SLOT_ID;
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("SendEventRegisterHandler return, handler is nullptr");
@@ -212,14 +205,14 @@ void CellularCallService::SendEventRegisterHandler()
 void CellularCallService::SendEventRegisterImsCallback()
 {
     TELEPHONY_LOGI("CellularCallService::SendEventRegisterImsCallback entry");
-    int64_t delayTime_ = 2000;
-    int32_t slot = CoreManager::DEFAULT_SLOT_ID;
+    int64_t delayTime = 2000;
+    int32_t slot = DEFAULT_SIM_SLOT_ID;
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("SendEventRegisterImsCallback return, handler is nullptr");
         return;
     }
-    handler->SendEvent(handler->REGISTER_IMS_CALLBACK_ID, delayTime_, CellularCallHandler::Priority::HIGH);
+    handler->SendEvent(handler->REGISTER_IMS_CALLBACK_ID, delayTime, CellularCallHandler::Priority::HIGH);
 }
 
 int32_t CellularCallService::Dump(std::int32_t fd, const std::vector<std::u16string> &args)
@@ -274,7 +267,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("CellularCallService::Dial return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
-    auto handler = GetHandler(slotId_);
+    auto handler = GetHandler(callInfo.slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("CellularCallService::Dial return, handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -282,9 +275,9 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
     if (srvccState_ == SrvccState::STARTED) {
         return TELEPHONY_ERR_FAIL;
     }
-    if (IsNeedIms()) {
+    if (IsNeedIms(callInfo.slotId)) {
         handler->SetCallType(CallType::TYPE_IMS);
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Dial ims dial");
             imsControl = std::make_shared<IMSControl>();
@@ -292,25 +285,25 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
                 TELEPHONY_LOGE("CellularCallService::Dial return, imsControl create fail");
                 return TELEPHONY_ERR_LOCAL_PTR_NULL;
             }
-            SetImsControl(slotId_, imsControl);
+            SetImsControl(callInfo.slotId, imsControl);
         }
         return imsControl->Dial(callInfo);
     }
 
     handler->SetCallType(CallType::TYPE_CS);
-    auto csControl = GetCsControl(slotId_);
+    auto csControl = GetCsControl(callInfo.slotId);
     if (csControl == nullptr) {
         csControl = std::make_shared<CSControl>();
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Dial return, csControl create fail");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        SetCsControl(slotId_, csControl);
+        SetCsControl(callInfo.slotId, csControl);
     }
     return csControl->Dial(callInfo);
 }
 
-int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo)
+int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::HangUp return, invalid slot id");
@@ -320,20 +313,19 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HangUp return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->HangUp(callInfo);
+        return csControl->HangUp(callInfo, type);
     } else if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HangUp return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        CallSupplementType type = CallSupplementType::TYPE_DEFAULT;
-        return imsControl->HangUp(type, callInfo);
+        return imsControl->HangUp(callInfo, type);
     }
     TELEPHONY_LOGE("CellularCallService::HangUp return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -349,14 +341,14 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Reject return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Reject(callInfo);
     } else if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Reject return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -377,14 +369,14 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Answer return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Answer(callInfo);
     } else if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Answer return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -423,19 +415,19 @@ int32_t CellularCallService::HoldCall(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HoldCall return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return imsControl->HoldCall();
+        return imsControl->HoldCall(callInfo.slotId);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HoldCall return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->HoldCall();
+        return csControl->HoldCall(callInfo.slotId);
     }
     TELEPHONY_LOGE("CellularCallService::HoldCall return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -451,19 +443,19 @@ int32_t CellularCallService::UnHoldCall(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::UnHoldCall return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return imsControl->UnHoldCall();
+        return imsControl->UnHoldCall(callInfo.slotId);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::UnHoldCall return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->UnHoldCall();
+        return csControl->UnHoldCall(callInfo.slotId);
     }
     TELEPHONY_LOGE("CellularCallService::UnHoldCall return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -479,19 +471,19 @@ int32_t CellularCallService::SwitchCall(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SwitchCall return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return imsControl->SwitchCall();
+        return imsControl->SwitchCall(callInfo.slotId);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SwitchCall return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->SwitchCall();
+        return csControl->SwitchCall(callInfo.slotId);
     }
     TELEPHONY_LOGE("CellularCallService::SwitchCall return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -507,19 +499,19 @@ int32_t CellularCallService::CombineConference(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::CombineConference return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return imsControl->CombineConference();
+        return imsControl->CombineConference(callInfo.slotId);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::CombineConference return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->CombineConference();
+        return csControl->CombineConference(callInfo.slotId);
     }
     TELEPHONY_LOGE("CellularCallService::CombineConference return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -532,7 +524,7 @@ int32_t CellularCallService::SeparateConference(const CellularCallInfo &callInfo
         return CALL_ERR_INVALID_SLOT_ID;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SeparateConference return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -541,12 +533,12 @@ int32_t CellularCallService::SeparateConference(const CellularCallInfo &callInfo
         numberList.emplace_back(callInfo.phoneNum);
         return imsControl->KickOutFromConference(callInfo.slotId, numberList);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SeparateConference return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        return csControl->SeparateConference(callInfo.phoneNum, callInfo.index);
+        return csControl->SeparateConference(callInfo.slotId, callInfo.phoneNum, callInfo.index);
     }
     TELEPHONY_LOGE("CellularCallService::SeparateConference return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -554,7 +546,7 @@ int32_t CellularCallService::SeparateConference(const CellularCallInfo &callInfo
 
 int32_t CellularCallService::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
-    auto control = GetImsControl(slotId_);
+    auto control = GetImsControl(slotId);
     if (control == nullptr) {
         TELEPHONY_LOGE("CellularCallService::InviteToConference return, control is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -564,22 +556,12 @@ int32_t CellularCallService::InviteToConference(int32_t slotId, const std::vecto
 
 int32_t CellularCallService::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
-    auto control = GetImsControl(slotId_);
+    auto control = GetImsControl(slotId);
     if (control == nullptr) {
         TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, control is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     return control->KickOutFromConference(slotId, numberList);
-}
-
-int32_t CellularCallService::CallSupplement(CallSupplementType type)
-{
-    auto csControl = GetCsControl(slotId_);
-    if (csControl == nullptr) {
-        TELEPHONY_LOGE("CallSupplement return, csControl is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    return csControl->CallSupplement(type);
 }
 
 int32_t CellularCallService::HangUpAllConnection()
@@ -588,23 +570,23 @@ int32_t CellularCallService::HangUpAllConnection()
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     for (const auto &it : slotVector) {
         if (GetCsControl(it)) {
-            GetCsControl(it)->HangUpAllConnection();
+            GetCsControl(it)->HangUpAllConnection(it);
         }
         if (GetImsControl(it)) {
-            GetImsControl(it)->HangUpAllConnection();
+            GetImsControl(it)->HangUpAllConnection(it);
         }
     }
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallService::UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode)
+int32_t CellularCallService::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
-    auto control = GetImsControl(slotId_);
+    auto control = GetImsControl(callInfo.slotId);
     if (control == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::UpdateCallMediaMode return, control is nullptr");
+        TELEPHONY_LOGE("CellularCallService::UpdateImsCallMode return, control is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    return control->UpdateCallMediaMode(callInfo, mode);
+    return control->UpdateImsCallMode(callInfo, mode);
 }
 
 int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &callInfo)
@@ -617,14 +599,14 @@ int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &c
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::StartDtmf return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->StartDtmf(imsControl->GetConnectionMap(), cDtmfCode, callInfo);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::StartDtmf return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -645,14 +627,14 @@ int32_t CellularCallService::StopDtmf(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::StopDtmf return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->StopDtmf(imsControl->GetConnectionMap(), callInfo);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::StopDtmf return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -673,14 +655,14 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(slotId_);
+        auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SendDtmf return, imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->SendDtmf(imsControl->GetConnectionMap(), cDtmfCode, callInfo);
     } else if (CallType::TYPE_CS == callInfo.callType) {
-        auto csControl = GetCsControl(slotId_);
+        auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SendDtmf return, csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -693,7 +675,7 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
 
 int32_t CellularCallService::StartRtt(int32_t slotId, const std::string &msg)
 {
-    auto control = GetImsControl(slotId_);
+    auto control = GetImsControl(slotId);
     if (control == nullptr) {
         TELEPHONY_LOGE("CellularCallService::StartRtt return, control is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -703,7 +685,7 @@ int32_t CellularCallService::StartRtt(int32_t slotId, const std::string &msg)
 
 int32_t CellularCallService::StopRtt(int32_t slotId)
 {
-    auto control = GetImsControl(slotId_);
+    auto control = GetImsControl(slotId);
     if (control == nullptr) {
         TELEPHONY_LOGE("CellularCallService::StopRtt return, control is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -719,7 +701,7 @@ int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTrans
     }
 
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.SetCallTransferInfo(cTInfo);
+    return cellularCallSupplement.SetCallTransferInfo(slotId, cTInfo);
 }
 
 int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferType type)
@@ -730,7 +712,7 @@ int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferTyp
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.GetCallTransferInfo(type);
+    return cellularCallSupplement.GetCallTransferInfo(slotId, type);
 }
 
 std::shared_ptr<CSControl> CellularCallService::GetCsControl(int32_t slotId)
@@ -766,7 +748,7 @@ int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.SetCallWaiting(activate);
+    return cellularCallSupplement.SetCallWaiting(slotId, activate);
 }
 
 int32_t CellularCallService::GetCallWaiting(int32_t slotId)
@@ -777,7 +759,7 @@ int32_t CellularCallService::GetCallWaiting(int32_t slotId)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.GetCallWaiting();
+    return cellularCallSupplement.GetCallWaiting(slotId);
 }
 
 int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &crInfo)
@@ -788,7 +770,7 @@ int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestri
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.SetCallRestriction(crInfo);
+    return cellularCallSupplement.SetCallRestriction(slotId, crInfo);
 }
 
 int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
@@ -799,7 +781,7 @@ int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionT
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
-    return cellularCallSupplement.GetCallRestriction(facType);
+    return cellularCallSupplement.GetCallRestriction(slotId, facType);
 }
 
 int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum, int32_t &errorCode)
@@ -831,7 +813,7 @@ int32_t CellularCallService::GetDomainPreferenceMode(int32_t slotId)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.GetDomainPreferenceMode();
+    return config.GetDomainPreferenceMode(slotId);
 }
 
 int32_t CellularCallService::SetLteImsSwitchStatus(int32_t slotId, bool active)
@@ -841,7 +823,7 @@ int32_t CellularCallService::SetLteImsSwitchStatus(int32_t slotId, bool active)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.SetLteImsSwitchStatus(active);
+    return config.SetLteImsSwitchStatus(slotId, active);
 }
 
 int32_t CellularCallService::GetLteImsSwitchStatus(int32_t slotId)
@@ -851,7 +833,7 @@ int32_t CellularCallService::GetLteImsSwitchStatus(int32_t slotId)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.GetLteImsSwitchStatus();
+    return config.GetLteImsSwitchStatus(slotId);
 }
 
 int32_t CellularCallService::SetImsConfig(int32_t slotId, ImsConfigItem item, const std::string &value)
@@ -904,40 +886,47 @@ int32_t CellularCallService::GetImsFeatureValue(int32_t slotId, FeatureType type
     return config.GetImsFeatureValue(type);
 }
 
-int32_t CellularCallService::SetVolteEnhanceMode(int32_t slotId, bool value)
+int32_t CellularCallService::SetImsSwitchEnhanceMode(int32_t slotId, bool value)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetVolteEnhanceMode return, invalid slot id");
+        TELEPHONY_LOGE("CellularCallService::SetImsSwitchEnhanceMode return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.SetVolteEnhanceMode(value);
+    return config.SetImsSwitchEnhanceMode(value);
 }
 
-int32_t CellularCallService::GetVolteEnhanceMode(int32_t slotId)
+int32_t CellularCallService::GetImsSwitchEnhanceMode(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::GetVolteEnhanceMode return, invalid slot id");
+        TELEPHONY_LOGE("CellularCallService::GetImsSwitchEnhanceMode return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.GetVolteEnhanceMode();
+    return config.GetImsSwitchEnhanceMode();
 }
 
 bool CellularCallService::IsValidSlotId(int32_t slotId) const
 {
-    return slotId == CoreManager::DEFAULT_SLOT_ID;
+    const int32_t slotSingle = 1;
+    const int32_t slotDouble = 2;
+    if (SIM_SLOT_COUNT == slotSingle) {
+        return slotId == DEFAULT_SIM_SLOT_ID;
+    } else if (SIM_SLOT_COUNT == slotDouble) {
+        return slotId == SIM_SLOT_0 || slotId == SIM_SLOT_1;
+    }
 }
 
-bool CellularCallService::IsNeedIms() const
+bool CellularCallService::IsNeedIms(int32_t slotId) const
 {
     ModuleServiceUtils moduleUtils;
     CellularCallConfig config;
-    bool imsRegState = moduleUtils.GetImsRegistrationState(slotId_);
-    int32_t preferenceMode = config.GetPreferenceMode(slotId_);
-    bool imsSwitchStatus = config.GetSwitchStatus(slotId_);
+    bool imsRegState = moduleUtils.GetImsRegistrationState(slotId);
+    int32_t preferenceMode = config.GetPreferenceMode(slotId);
+    bool imsSwitchStatus = config.GetSwitchStatus(slotId);
+    TELEPHONY_LOGI("IsNeedIms state:%{public}d, mode:%{public}d, status:%{public}d", imsRegState, preferenceMode,
+        imsSwitchStatus);
     if (imsRegState && preferenceMode != DomainPreferenceMode::CS_VOICE_ONLY && imsSwitchStatus) {
-        TELEPHONY_LOGI("CellularCallService::IsNeedIms return true.");
         return true;
     }
     return false;
@@ -948,11 +937,10 @@ std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler(int32_t slo
     return handlerMap_[slotId];
 }
 
-int32_t CellularCallService::CtrlCamera(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t CellularCallService::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
     CellularCallConfig config;
-    return config.CtrlCamera(cameraId, callingPackage, callingUid, callingPid);
+    return config.CtrlCamera(cameraId, callingUid, callingPid);
 }
 
 int32_t CellularCallService::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)

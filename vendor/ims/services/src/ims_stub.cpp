@@ -59,8 +59,8 @@ void ImsStub::InitSupportCallFuncMap()
     requestFuncMap_[IMS_GET_IMS_CONFIG] = &ImsStub::OnGetImsConfigInner;
     requestFuncMap_[IMS_SET_IMS_FEATURE] = &ImsStub::OnSetImsFeatureValueInner;
     requestFuncMap_[IMS_GET_IMS_FEATURE] = &ImsStub::OnGetImsFeatureValueInner;
-    requestFuncMap_[IMS_SET_VOLTE_ENHANCE_MODE] = &ImsStub::OnSetVolteEnhanceModeInner;
-    requestFuncMap_[IMS_GET_VOLTE_ENHANCE_MODE] = &ImsStub::OnGetVolteEnhanceModeInner;
+    requestFuncMap_[IMS_SET_IMS_SWITCH_ENHANCE_MODE] = &ImsStub::OnSetImsSwitchEnhanceModeInner;
+    requestFuncMap_[IMS_GET_IMS_SWITCH_ENHANCE_MODE] = &ImsStub::OnGetImsSwitchEnhanceModeInner;
     requestFuncMap_[IMS_CTRL_CAMERA] = &ImsStub::OnCtrlCameraInner;
     requestFuncMap_[IMS_SET_PREVIEW_WINDOW] = &ImsStub::OnSetPreviewWindowInner;
     requestFuncMap_[IMS_SET_DISPLAY_WINDOW] = &ImsStub::OnSetDisplayWindowInner;
@@ -227,8 +227,8 @@ int32_t ImsStub::OnUpdateCallMediaModeInner(MessageParcel &data, MessageParcel &
         TELEPHONY_LOGE("OnUpdateCallMediaModeInner return, callInfo is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    auto mode = static_cast<CallMediaMode>(data.ReadInt32());
-    reply.WriteInt32(UpdateCallMediaMode(*callInfo, mode));
+    auto mode = static_cast<ImsCallMode>(data.ReadInt32());
+    reply.WriteInt32(UpdateImsCallMode(*callInfo, mode));
     return TELEPHONY_SUCCESS;
 }
 
@@ -298,30 +298,34 @@ int32_t ImsStub::OnStopRttInner(MessageParcel &data, MessageParcel &reply)
 int32_t ImsStub::OnSetDomainPreferenceModeInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsStub::OnSetDomainPreferenceModeInner entry");
+    int32_t slotId = data.ReadInt32();
     int32_t mode = data.ReadInt32();
-    reply.WriteInt32(SetDomainPreferenceMode(mode));
+    reply.WriteInt32(SetDomainPreferenceMode(slotId, mode));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsStub::OnGetDomainPreferenceModeInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsStub::OnGetDomainPreferenceModeInner entry");
-    reply.WriteInt32(GetDomainPreferenceMode());
+    int32_t slotId = data.ReadInt32();
+    reply.WriteInt32(GetDomainPreferenceMode(slotId));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsStub::OnSetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsStub::OnSetLteImsSwitchStatusInner entry");
+    int32_t slotId = data.ReadInt32();
     bool active = data.ReadBool();
-    reply.WriteInt32(SetLteImsSwitchStatus(active));
+    reply.WriteInt32(SetLteImsSwitchStatus(slotId, active));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsStub::OnGetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsStub::OnGetLteImsSwitchStatusInner entry");
-    reply.WriteInt32(GetLteImsSwitchStatus());
+    int32_t slotId = data.ReadInt32();
+    reply.WriteInt32(GetLteImsSwitchStatus(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -368,18 +372,18 @@ int32_t ImsStub::OnGetImsFeatureValueInner(MessageParcel &data, MessageParcel &r
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsStub::OnSetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsStub::OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsStub::OnSetVolteEnhanceModeInner entry");
+    TELEPHONY_LOGI("ImsStub::OnSetImsSwitchEnhanceModeInner entry");
     bool value = data.ReadBool();
-    reply.WriteInt32(SetVolteEnhanceMode(value));
+    reply.WriteInt32(SetImsSwitchEnhanceMode(value));
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsStub::OnGetVolteEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsStub::OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsStub::OnGetVolteEnhanceModeInner entry");
-    reply.WriteInt32(GetVolteEnhanceMode());
+    TELEPHONY_LOGI("ImsStub::OnGetImsSwitchEnhanceModeInner entry");
+    reply.WriteInt32(GetImsSwitchEnhanceMode());
     return TELEPHONY_SUCCESS;
 }
 
@@ -387,10 +391,9 @@ int32_t ImsStub::OnCtrlCameraInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsStub::OnCtrlCameraInner entry");
     std::u16string cameraId = data.ReadString16();
-    std::u16string callingPackage = data.ReadString16();
     int32_t callingUid = data.ReadInt32();
     int32_t callingPid = data.ReadInt32();
-    reply.WriteInt32(CtrlCamera(cameraId, callingPackage, callingUid, callingPid));
+    reply.WriteInt32(CtrlCamera(cameraId, callingUid, callingPid));
     return TELEPHONY_SUCCESS;
 }
 

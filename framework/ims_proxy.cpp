@@ -231,21 +231,21 @@ int32_t ImsProxy::KickOutFromConference(int32_t slotId, const std::vector<std::s
     return error;
 }
 
-int32_t ImsProxy::UpdateCallMediaMode(const ImsCallInfo &callInfo, CallMediaMode mode)
+int32_t ImsProxy::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
 {
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsProxy::UpdateCallMediaMode return, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsProxy::UpdateImsCallMode return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
-        TELEPHONY_LOGE("ImsProxy::UpdateCallMediaMode return, write data fail!");
+        TELEPHONY_LOGE("ImsProxy::UpdateImsCallMode return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(mode)) {
-        TELEPHONY_LOGE("ImsProxy::UpdateCallMediaMode return, write data fail!");
+        TELEPHONY_LOGE("ImsProxy::UpdateImsCallMode return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_UPDATE_CALL_MEDIA_MODE, in, out, option);
@@ -449,7 +449,7 @@ int32_t ImsProxy::StopRtt(int32_t slotId)
     return error;
 }
 
-int32_t ImsProxy::SetDomainPreferenceMode(int32_t mode)
+int32_t ImsProxy::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
     MessageOption option;
     MessageParcel in;
@@ -457,6 +457,10 @@ int32_t ImsProxy::SetDomainPreferenceMode(int32_t mode)
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsProxy::SetDomainPreferenceMode return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("ImsProxy::SetDomainPreferenceMode return, write data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(mode)) {
         TELEPHONY_LOGE("ImsProxy::SetDomainPreferenceMode return, write data fail!");
@@ -469,7 +473,7 @@ int32_t ImsProxy::SetDomainPreferenceMode(int32_t mode)
     return error;
 }
 
-int32_t ImsProxy::GetDomainPreferenceMode()
+int32_t ImsProxy::GetDomainPreferenceMode(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
@@ -478,6 +482,10 @@ int32_t ImsProxy::GetDomainPreferenceMode()
         TELEPHONY_LOGE("ImsProxy::GetDomainPreferenceMode return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("ImsProxy::GetDomainPreferenceMode return, write data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
     int32_t error = Remote()->SendRequest(IMS_GET_DOMAIN_PREFERENCE_MODE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
@@ -485,7 +493,7 @@ int32_t ImsProxy::GetDomainPreferenceMode()
     return error;
 }
 
-int32_t ImsProxy::SetLteImsSwitchStatus(bool active)
+int32_t ImsProxy::SetLteImsSwitchStatus(int32_t slotId, bool active)
 {
     MessageOption option;
     MessageParcel in;
@@ -493,6 +501,10 @@ int32_t ImsProxy::SetLteImsSwitchStatus(bool active)
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsProxy::SetLteImsSwitchStatus return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("ImsProxy::SetLteImsSwitchStatus return, write data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteBool(active)) {
         TELEPHONY_LOGE("ImsProxy::SetLteImsSwitchStatus return, write data fail!");
@@ -505,7 +517,7 @@ int32_t ImsProxy::SetLteImsSwitchStatus(bool active)
     return error;
 }
 
-int32_t ImsProxy::GetLteImsSwitchStatus()
+int32_t ImsProxy::GetLteImsSwitchStatus(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
@@ -513,6 +525,10 @@ int32_t ImsProxy::GetLteImsSwitchStatus()
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsProxy::GetLteImsSwitchStatus return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("ImsProxy::GetLteImsSwitchStatus return, write data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_LTE_IMS_SWITCH_STATUS, in, out, option);
     if (error == ERR_NONE) {
@@ -633,44 +649,43 @@ int32_t ImsProxy::GetImsFeatureValue(FeatureType type)
     return error;
 }
 
-int32_t ImsProxy::SetVolteEnhanceMode(bool value)
+int32_t ImsProxy::SetImsSwitchEnhanceMode(bool value)
 {
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsProxy::SetVolteEnhanceMode return, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsProxy::SetImsSwitchEnhanceMode return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteBool(value)) {
-        TELEPHONY_LOGE("ImsProxy::SetVolteEnhanceMode return, write data fail!");
+        TELEPHONY_LOGE("ImsProxy::SetImsSwitchEnhanceMode return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(IMS_SET_VOLTE_ENHANCE_MODE, in, out, option);
+    int32_t error = Remote()->SendRequest(IMS_SET_IMS_SWITCH_ENHANCE_MODE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsProxy::GetVolteEnhanceMode()
+int32_t ImsProxy::GetImsSwitchEnhanceMode()
 {
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsProxy::GetVolteEnhanceMode return, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsProxy::GetImsSwitchEnhanceMode return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    int32_t error = Remote()->SendRequest(IMS_GET_VOLTE_ENHANCE_MODE, in, out, option);
+    int32_t error = Remote()->SendRequest(IMS_GET_IMS_SWITCH_ENHANCE_MODE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsProxy::CtrlCamera(
-    const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid)
+int32_t ImsProxy::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
     MessageOption option;
     MessageParcel in;
@@ -680,10 +695,6 @@ int32_t ImsProxy::CtrlCamera(
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteString16(cameraId)) {
-        TELEPHONY_LOGE("ImsProxy::CtrlCamera return, write data fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteString16(callingPackage)) {
         TELEPHONY_LOGE("ImsProxy::CtrlCamera return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }

@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
 SOURCE_DIR = "//base/telephony/cellular_call/vendor/ims"
@@ -26,29 +27,26 @@ ohos_shared_library("tel_ims") {
   ]
 
   include_dirs = [
-    "//base/telephony/core_service/interfaces/innerkits/network_search",
-    "//base/telephony/core_service/interfaces/innerkits/sim",
-    "//base/telephony/core_service/interfaces/innerkits/core",
     "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/ril_adapter/interfaces/innerkits/include",
     "//base/telephony/cellular_call/interfaces",
     "$SOURCE_DIR/services/include",
   ]
 
-  defines = [
+  defines += [
     "TELEPHONY_LOG_TAG = \"ims\"",
     "LOG_DOMAIN = 0xD002B01",
   ]
 
   deps = [
-    "//base/telephony/core_service:tel_core_service",
-    "//base/telephony/core_service/utils:libtelephony_common",
+    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
+    "//base/telephony/core_service/utils:libtel_common",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
     "appexecfwk_standard:libeventhandler",
     "ipc:ipc_core",
+    "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]

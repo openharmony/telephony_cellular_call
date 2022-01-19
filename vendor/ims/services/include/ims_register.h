@@ -329,28 +329,28 @@ public:
     int32_t UpdateGetImsFeatureValueResponse(const ImsResponseInfo &info);
 
     /**
-     * UpdateSetVolteEnhanceModeResponse
+     * UpdateSetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info);
+    int32_t UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info);
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetVolteEnhanceModeResponse(int32_t value);
+    int32_t UpdateGetImsSwitchEnhanceModeResponse(int32_t value);
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info);
+    int32_t UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info);
 
     /**
      * UpdateCtrlCameraResponse

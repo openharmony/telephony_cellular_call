@@ -16,7 +16,6 @@
 #ifndef CELLULAR_CALL_CONFIG_REQUEST_H
 #define CELLULAR_CALL_CONFIG_REQUEST_H
 
-#include "core_manager.h"
 #include "telephony_log_wrapper.h"
 #include "module_service_utils.h"
 #include "base_request.h"
@@ -28,32 +27,36 @@ public:
     /**
      * Set Domain Preference Mode Request
      *
+     * @param slotId
      * @param mode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetDomainPreferenceModeRequest(int32_t mode);
+    int32_t SetDomainPreferenceModeRequest(int32_t slotId, int32_t mode);
 
     /**
      * Get Domain Preference Mode Request
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetDomainPreferenceModeRequest();
+    int32_t GetDomainPreferenceModeRequest(int32_t slotId);
 
     /**
      * Set Lte Ims Switch Status Request
      *
+     * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatusRequest(bool active);
+    int32_t SetLteImsSwitchStatusRequest(int32_t slotId, bool active);
 
     /**
      * Get Lte Ims Switch Status Request
      *
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatusRequest();
+    int32_t GetLteImsSwitchStatusRequest(int32_t slotId);
 
     /**
      * Set Ims Config Request
@@ -99,31 +102,29 @@ public:
     int32_t GetImsFeatureValueRequest(FeatureType type);
 
     /**
-     * Set Volte Enhance Mode Request
+     * Set Ims Switch Enhance Mode Request
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetVolteEnhanceModeRequest(bool value);
+    int32_t SetImsSwitchEnhanceModeRequest(bool value);
 
     /**
-     * Get Volte Enhance Mode Request
+     * Get Ims Switch Enhance Mode Request
      *
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetVolteEnhanceModeRequest();
+    int32_t GetImsSwitchEnhanceModeRequest();
 
     /**
      * Ctrl Camera Request
      *
      * @param cameraId
-     * @param callingPackage
      * @param callingUid
      * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCameraRequest(
-        const std::u16string &cameraId, const std::u16string &callingPackage, int32_t callingUid, int32_t callingPid);
+    int32_t CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid);
 
     /**
      * Set Preview Window Request

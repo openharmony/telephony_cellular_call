@@ -334,28 +334,28 @@ public:
     int32_t UpdateGetImsFeatureValueResponse(const ImsResponseInfo &info) override;
 
     /**
-     * UpdateSetVolteEnhanceModeResponse
+     * UpdateSetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info) override;
+    int32_t UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) override;
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetVolteEnhanceModeResponse(int32_t value) override;
+    int32_t UpdateGetImsSwitchEnhanceModeResponse(int32_t value) override;
 
     /**
-     * UpdateGetVolteEnhanceModeResponse
+     * UpdateGetImsSwitchEnhanceModeResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info) override;
+    int32_t UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) override;
 
     /**
      * UpdateCtrlCameraResponse
@@ -816,22 +816,22 @@ private:
     int32_t OnUpdateGetImsFeatureResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * OnUpdateSetVolteEnhanceModeResponseInner
+     * OnUpdateSetImsSwitchEnhanceModeResponseInner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnUpdateSetVolteEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnUpdateSetImsSwitchEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * OnUpdateGetVolteEnhanceModeResponseInner
+     * OnUpdateGetImsSwitchEnhanceModeResponseInner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnUpdateGetVolteEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnUpdateGetImsSwitchEnhanceModeResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * OnUpdateCtrlCameraResponseInner

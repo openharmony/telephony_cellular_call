@@ -438,36 +438,36 @@ int32_t ImsRegister::UpdateGetImsFeatureValueResponse(const ImsResponseInfo &inf
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRegister::UpdateSetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsRegister::UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
-    TELEPHONY_LOGI("UpdateSetVolteEnhanceModeResponse entry");
+    TELEPHONY_LOGI("UpdateSetImsSwitchEnhanceModeResponse entry");
     if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateSetVolteEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("UpdateSetImsSwitchEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    cellularCallBack_->UpdateSetVolteEnhanceModeResponse(info);
+    cellularCallBack_->UpdateSetImsSwitchEnhanceModeResponse(info);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRegister::UpdateGetVolteEnhanceModeResponse(int32_t value)
+int32_t ImsRegister::UpdateGetImsSwitchEnhanceModeResponse(int32_t value)
 {
-    TELEPHONY_LOGI("UpdateGetVolteEnhanceModeResponse int entry");
+    TELEPHONY_LOGI("UpdateGetImsSwitchEnhanceModeResponse int entry");
     if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateGetVolteEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("UpdateGetImsSwitchEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    cellularCallBack_->UpdateGetVolteEnhanceModeResponse(value);
+    cellularCallBack_->UpdateGetImsSwitchEnhanceModeResponse(value);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRegister::UpdateGetVolteEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsRegister::UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
 {
-    TELEPHONY_LOGI("UpdateGetVolteEnhanceModeResponse entry");
+    TELEPHONY_LOGI("UpdateGetImsSwitchEnhanceModeResponse entry");
     if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateGetVolteEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("UpdateGetImsSwitchEnhanceModeResponse return, cellularCallBack_ is nullptr, report fail!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    cellularCallBack_->UpdateGetVolteEnhanceModeResponse(info);
+    cellularCallBack_->UpdateGetImsSwitchEnhanceModeResponse(info);
     return TELEPHONY_SUCCESS;
 }
 

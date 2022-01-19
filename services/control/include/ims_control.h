@@ -48,11 +48,11 @@ public:
     /**
      * HangUp
      *
-     * @param CallSupplementType
      * @param CellularCallInfo
+     * @param CallSupplementType
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HangUp(CallSupplementType type, const CellularCallInfo &callInfo);
+    int32_t HangUp(const CellularCallInfo &callInfo, CallSupplementType type) override;
 
     /**
      * Answer
@@ -73,23 +73,26 @@ public:
     /**
      * HoldCall
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HoldCall() override;
+    int32_t HoldCall(int32_t slotId) override;
 
     /**
      * UnHoldCall
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t UnHoldCall() override;
+    int32_t UnHoldCall(int32_t slotId) override;
 
     /**
      * SwitchCall
      *
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwitchCall() override;
+    int32_t SwitchCall(int32_t slotId) override;
 
     /**
      * CombineConference
@@ -98,15 +101,16 @@ public:
      * 3GPP TS 22.030
      *
      * Add another remote party
+     * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CombineConference() override;
+    int32_t CombineConference(int32_t slotId) override;
 
     /**
      * InviteToConference
      *
-     * @param numberList
      * @param slotId
+     * @param numberList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList);
@@ -114,8 +118,8 @@ public:
     /**
      * KickOutFromConference
      *
-     * @param numberList
      * @param slotId
+     * @param numberList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList);
@@ -125,16 +129,16 @@ public:
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HangUpAllConnection() override;
+    int32_t HangUpAllConnection(int32_t slotId) override;
 
     /**
      * Update Call Media Mode
      *
      * @param CellularCallInfo
-     * @param CallMediaMode
+     * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallMediaMode(const CellularCallInfo &callInfo, CallMediaMode mode);
+    int32_t UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode);
 
     /**
      * Start Rtt
@@ -168,21 +172,23 @@ public:
     /**
      * IMSControl ReportCallsData.
      *
+     * @param slotId
      * @param CallInfoList
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportCallsData(const CallInfoList &callInfoList) override;
+    int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) override;
 
 private:
     /**
      * handle dial judgment
      *
+     * @param slotId
      * @param std::string phoneNum
      * @param CLIRMode clirMode
      * @param videoState  0: audio 1:video
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t DialJudgment(const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState);
+    int32_t DialJudgment(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState);
 
     /**
      * Encapsulate Dial Common
@@ -192,14 +198,14 @@ private:
      * @param videoState  0: audio 1:video
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t EncapsulateDial(const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const;
+    int32_t EncapsulateDial(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const;
 
     /**
      * Report being hung up data
      *
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportHungUpInfo();
+    int32_t ReportHungUpInfo(int32_t slotId);
 
     /**
      * Report Incoming info
@@ -207,7 +213,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportIncomingInfo(const CallInfoList &callInfoList);
+    int32_t ReportIncomingInfo(int32_t slotId, const CallInfoList &callInfoList);
 
     /**
      * Report update info
@@ -215,7 +221,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportUpdateInfo(const CallInfoList &callInfoList);
+    int32_t ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfoList);
 
     /**
      * Encapsulation CallReportInfo
@@ -223,7 +229,7 @@ private:
      * @param CallInfo
      * @return CallReportInfo
      */
-    CallReportInfo EncapsulationCallReportInfo(const CallInfo &callInfo);
+    CallReportInfo EncapsulationCallReportInfo(int32_t slotId, const CallInfo &callInfo);
 
     /**
      * DeleteConnection Connection send
