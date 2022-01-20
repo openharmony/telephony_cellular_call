@@ -67,7 +67,6 @@ ohos_shared_library("tel_cellular_call") {
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
     "//base/telephony/core_service/utils:libtel_common",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
@@ -76,6 +75,7 @@ ohos_shared_library("tel_cellular_call") {
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
 
   if (is_standard_system) {
