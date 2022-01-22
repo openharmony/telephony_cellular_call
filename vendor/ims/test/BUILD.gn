@@ -27,18 +27,19 @@ ohos_unittest("tel_vendor_ims_test") {
   include_dirs = [
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/cellular_call/interfaces",
-    "//base/telephony/core_service/interfaces/innerkits/include",
-    "//base/telephony/ril_adapter/interfaces/innerkits/include",
   ]
 
+  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
+
   deps = [
-    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "core_service:tel_core_service_api",
     "ipc:ipc_core",
+    "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]

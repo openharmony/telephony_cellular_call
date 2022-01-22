@@ -447,13 +447,16 @@ int32_t ImsCallbackProxy::UpdateServiceStatusResponse(int32_t slotId, const Call
     return error;
 }
 
-int32_t ImsCallbackProxy::UpdateSetPreModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackProxy::UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;

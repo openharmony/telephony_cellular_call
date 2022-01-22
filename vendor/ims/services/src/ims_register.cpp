@@ -284,14 +284,14 @@ int32_t ImsRegister::UpdateServiceStatusResponse(int32_t slotId, const CallImsSe
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRegister::UpdateSetPreModeResponse(const ImsResponseInfo &info)
+int32_t ImsRegister::UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info)
 {
     TELEPHONY_LOGI("UpdateSetPreModeResponse entry");
     if (cellularCallBack_ == nullptr) {
         TELEPHONY_LOGE("UpdateSetPreModeResponse return, cellularCallBack_ is nullptr, report fail!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    cellularCallBack_->UpdateSetPreModeResponse(info);
+    cellularCallBack_->UpdateSetPreModeResponse(slotId, info);
     return TELEPHONY_SUCCESS;
 }
 

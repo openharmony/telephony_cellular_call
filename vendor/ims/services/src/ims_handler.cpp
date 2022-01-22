@@ -209,7 +209,7 @@ void ImsHandler::SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Poi
     ImsResponseInfo responseInfo;
     responseInfo.slotId = slotId_;
     responseInfo.error = static_cast<ImsErrType>(info->error);
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateSetPreModeResponse(responseInfo);
+    DelayedSingleton<ImsRegister>::GetInstance()->UpdateSetPreModeResponse(slotId_, responseInfo);
 }
 
 void ImsHandler::GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)

@@ -390,12 +390,13 @@ int32_t ImsCallbackStub::OnUpdateServiceStatusResponseInner(MessageParcel &data,
 int32_t ImsCallbackStub::OnUpdateSetPreModeResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsCallbackStub::OnUpdateSetPreModeResponseInner entry");
+    int32_t slotId = data.ReadInt32();
     auto info = (ImsResponseInfo *)data.ReadRawData(sizeof(ImsResponseInfo));
     if (info == nullptr) {
         TELEPHONY_LOGE("OnUpdateSetPreModeResponseInner return, info is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    reply.WriteInt32(UpdateGetPreModeResponse(*info));
+    reply.WriteInt32(UpdateSetPreModeResponse(slotId, *info));
     return TELEPHONY_SUCCESS;
 }
 
@@ -456,7 +457,7 @@ int32_t ImsCallbackStub::OnUpdateImsCallsDataResponseInner(MessageParcel &data, 
         reply.WriteInt32(UpdateImsCallsDataResponse(slotId, *callList));
         return TELEPHONY_SUCCESS;
     }
-    reply.WriteInt32(UpdateGetImsSwitchResponse(*info));
+    reply.WriteInt32(UpdateImsCallsDataResponse(*info));
     return TELEPHONY_SUCCESS;
 }
 
@@ -1065,19 +1066,33 @@ int32_t ImsCallbackStub::UpdateServiceStatusResponse(int32_t slotId, const CallI
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::UpdateSetPreModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackStub::UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info)
 {
     TELEPHONY_LOGI("ImsCallbackStub::UpdateSetPreModeResponse entry");
+
+    auto responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    if (responseInfo == nullptr) {
+        TELEPHONY_LOGE("ImsCallbackStub::UpdateSetPreModeResponse, UpdateSetPreModeResponse == nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    responseInfo->error = static_cast<HRilErrType>(info.error);
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("UpdateSetPreModeResponse return, GetInstance is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
+        TELEPHONY_LOGE("UpdateSetPreModeResponse return, GetHandler is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE, responseInfo);
+    DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->SetDomainPreferenceModeResponse(event);
+
     CellularCallEventInfo eventInfo;
     eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
     if (info.error != ImsErrType::IMS_SUCCESS) {
         eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_PREFERENCE_MODE_FAILED;
     } else {
         eventInfo.eventId = RequestResultEventId::RESULT_SET_CALL_PREFERENCE_MODE_SUCCESS;
-    }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("UpdateSetPreModeResponse return, GetInstance is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportEventResultInfo(eventInfo);
     return TELEPHONY_SUCCESS;
@@ -1086,12 +1101,28 @@ int32_t ImsCallbackStub::UpdateSetPreModeResponse(const ImsResponseInfo &info)
 int32_t ImsCallbackStub::UpdateGetPreModeResponse(const ImsResponseInfo &info)
 {
     TELEPHONY_LOGI("ImsCallbackStub::UpdateGetPreModeResponse entry");
+    TELEPHONY_LOGI("UpdateGetPreModeResponse return ImsResponseInfo");
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallbackStub::UpdateGetPreModeResponse(int32_t slotId, int32_t mode)
 {
     TELEPHONY_LOGI("ImsCallbackStub::UpdateGetPreModeResponse entry mode:%{public}d", mode);
+    std::shared_ptr<int32_t> preferenceMode = std::make_shared<int32_t>(mode);
+    if (preferenceMode == nullptr) {
+        TELEPHONY_LOGE("ImsCallbackStub::UpdateGetPreModeResponse, preferenceMode == nullptr !!!");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("UpdateGetPreModeResponse return, GetInstance is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
+        TELEPHONY_LOGE("UpdateGetPreModeResponse return, GetHandler is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE, preferenceMode);
+    DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->GetDomainPreferenceModeResponse(event);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1126,6 +1157,19 @@ int32_t ImsCallbackStub::UpdateGetImsSwitchResponse(const ImsResponseInfo &info)
 int32_t ImsCallbackStub::UpdateGetImsSwitchResponse(int32_t slotId, int32_t active)
 {
     TELEPHONY_LOGI("ImsCallbackStub::UpdateGetImsSwitchResponse entry active:%{public}d", active);
+    // report to cellular call
+    std::shared_ptr<int32_t> imsSwitch = std::make_shared<int32_t>(active);
+    if (imsSwitch == nullptr) {
+        TELEPHONY_LOGE("ImsCallbackStub::UpdateGetImsSwitchResponse, imsSwitch == nullptr !!!");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
+        TELEPHONY_LOGE("UpdateGetImsSwitchResponse return, GetHandler is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS, imsSwitch);
+    DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->GetLteImsSwitchStatusResponse(event);
+
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UpdateGetImsSwitchResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -1156,16 +1200,16 @@ int32_t ImsCallbackStub::UpdateImsCallsDataResponse(const ImsResponseInfo &info)
 int32_t ImsCallbackStub::UpdateImsCallsDataResponse(int32_t slotId, const CallInfoList &callList)
 {
     TELEPHONY_LOGI("ImsCallbackStub::UpdateImsCallsDataResponse entry");
-    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("UpdateImsCallsDataResponse return, GetInstance is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     std::shared_ptr<CallInfoList> callInfoList = std::make_shared<CallInfoList>(callList);
     if (callInfoList == nullptr) {
         TELEPHONY_LOGE("ImsCallbackStub::UpdateImsCallsDataResponse, callInfoList == nullptr !!!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_IMS_CALL_LIST, callInfoList);
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("UpdateImsCallsDataResponse return, GetInstance is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
     if (DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId) == nullptr) {
         TELEPHONY_LOGE("UpdateImsCallsDataResponse return, GetHandler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
