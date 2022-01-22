@@ -69,22 +69,14 @@ int32_t CellularCallConfig::GetLteImsSwitchStatus(int32_t slotId)
     return configRequest_.GetLteImsSwitchStatusRequest(slotId);
 }
 
-void CellularCallConfig::GetCallPreferenceModeResponse(int32_t slotId, const std::shared_ptr<int32_t> &mode)
+void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode)
 {
-    if (mode == nullptr) {
-        TELEPHONY_LOGE("GetCallPreferenceModeResponse return, mode is nullptr");
-        return;
-    }
-    modeMap_[slotId] = *mode;
+    modeMap_[slotId] = mode;
 }
 
-void CellularCallConfig::GetLteImsSwitchStatusResponse(int32_t slotId, const std::shared_ptr<int32_t> &active)
+void CellularCallConfig::GetLteImsSwitchStatusResponse(int32_t slotId, int32_t active)
 {
-    if (active == nullptr) {
-        TELEPHONY_LOGE("GetCallPreferenceModeResponse return, active is nullptr");
-        return;
-    }
-    activeMap_[slotId] = *active;
+    activeMap_[slotId] = active;
 }
 
 int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const

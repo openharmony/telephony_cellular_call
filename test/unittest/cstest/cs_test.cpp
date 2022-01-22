@@ -398,7 +398,10 @@ int32_t CsTest::StartDtmf(const sptr<CellularCallInterface> &telephonyService) c
     int32_t callType = 0;
     std::cin >> callType;
     callInfo.callType = static_cast<CallType>(callType);
-    callInfo.slotId = 0;
+    int32_t slotId = 0;
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    callInfo.slotId = slotId;
     std::cout << "please enter the index:";
     std::cin >> callInfo.index;
     char cDtmfCode;
@@ -422,7 +425,10 @@ int32_t CsTest::StopDtmf(const sptr<CellularCallInterface> &telephonyService) co
     int32_t callType = 0;
     std::cin >> callType;
     callInfo.callType = static_cast<CallType>(callType);
-    callInfo.slotId = 0;
+    int32_t slotId = 0;
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    callInfo.slotId = slotId;
     std::cout << "please enter the index:";
     std::cin >> callInfo.index;
     return telephonyService->StopDtmf(callInfo);
@@ -443,7 +449,10 @@ int32_t CsTest::SendDtmf(const sptr<CellularCallInterface> &telephonyService) co
     int32_t callType = 0;
     std::cin >> callType;
     callInfo.callType = static_cast<CallType>(callType);
-    callInfo.slotId = 0;
+    int32_t slotId = 0;
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    callInfo.slotId = slotId;
     std::cout << "please enter the index:";
     std::cin >> callInfo.index;
     char cDtmfCode;

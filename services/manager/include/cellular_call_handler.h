@@ -153,18 +153,18 @@ public:
     void CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetCallPreferenceModeResponse
+     * SetDomainPreferenceModeResponse
      *
      * @param code process
      */
-    void SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetCallPreferenceModeResponse
+     * GetDomainPreferenceModeResponse
      *
      * @param code process
      */
-    void GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * SetLteImsSwitchStatusResponse

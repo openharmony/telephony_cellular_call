@@ -68,12 +68,12 @@ public:
     int32_t GetLteImsSwitchStatus(int32_t slotId);
 
     /**
-     * Get Lte Ims Switch Status Response
+     * Get Domain Preference Mode Response
      *
      * @param slotId
      * @param mode
      */
-    void GetCallPreferenceModeResponse(int32_t slotId, const std::shared_ptr<int32_t> &mode);
+    void GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode);
 
     /**
      * Get Lte Ims Switch Status Response
@@ -81,7 +81,7 @@ public:
      * @param slotId
      * @param active
      */
-    void GetLteImsSwitchStatusResponse(int32_t slotId, const std::shared_ptr<int32_t> &active);
+    void GetLteImsSwitchStatusResponse(int32_t slotId, int32_t active);
 
     /**
      * Get Preference Mode

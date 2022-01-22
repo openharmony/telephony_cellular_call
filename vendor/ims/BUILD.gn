@@ -37,9 +37,10 @@ ohos_shared_library("tel_ims") {
     "LOG_DOMAIN = 0xD002B01",
   ]
 
+  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
+
   deps = [
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
-    "//base/telephony/core_service/utils:libtel_common",
     "//utils/native/base:utils",
   ]
 

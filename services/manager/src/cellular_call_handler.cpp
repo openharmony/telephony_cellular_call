@@ -62,8 +62,8 @@ void CellularCallHandler::InitConfigFuncMap()
 {
     requestFuncMap_[RadioEvent::RADIO_SET_CMUT] = &CellularCallHandler::SetMuteResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CMUT] = &CellularCallHandler::GetMuteResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &CellularCallHandler::SetCallPreferenceModeResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetCallPreferenceModeResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &CellularCallHandler::SetDomainPreferenceModeResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetDomainPreferenceModeResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::SetLteImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::GetLteImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
@@ -481,16 +481,16 @@ void CellularCallHandler::RegisterImsCallback(const AppExecFwk::InnerEvent::Poin
     registerInstance_->RegisterImsCallBack();
 }
 
-void CellularCallHandler::SetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::SetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("SetCallPreferenceModeResponse entry");
+    TELEPHONY_LOGI("SetDomainPreferenceModeResponse entry");
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetCallPreferenceModeResponse return, event is nullptr");
+        TELEPHONY_LOGE("SetDomainPreferenceModeResponse return, event is nullptr");
         return;
     }
     auto info = event->GetSharedObject<HRilRadioResponseInfo>();
     if (info == nullptr) {
-        TELEPHONY_LOGE("SetCallPreferenceModeResponse return, info is nullptr");
+        TELEPHONY_LOGE("SetDomainPreferenceModeResponse return, info is nullptr");
         return;
     }
     CellularCallEventInfo eventInfo;
@@ -504,26 +504,26 @@ void CellularCallHandler::SetCallPreferenceModeResponse(const AppExecFwk::InnerE
         config.SetTempMode(slotId_);
     }
     if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("SetCallPreferenceModeResponse return, GetInstance is nullptr");
+        TELEPHONY_LOGE("SetDomainPreferenceModeResponse return, GetInstance is nullptr");
         return;
     }
     registerInstance_->ReportEventResultInfo(eventInfo);
 }
 
-void CellularCallHandler::GetCallPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::GetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGE("GetCallPreferenceModeResponse entry");
+    TELEPHONY_LOGE("GetDomainPreferenceModeResponse entry");
     if (event == nullptr) {
-        TELEPHONY_LOGE("GetCallPreferenceModeResponse return, event is nullptr");
+        TELEPHONY_LOGE("GetDomainPreferenceModeResponse return, event is nullptr");
         return;
     }
     auto mode = event->GetSharedObject<int32_t>();
     if (mode == nullptr) {
-        TELEPHONY_LOGI("GetCallPreferenceModeResponse return, mode is nullptr");
+        TELEPHONY_LOGI("GetDomainPreferenceModeResponse return, mode is nullptr");
         return;
     }
     CellularCallConfig config;
-    config.GetCallPreferenceModeResponse(slotId_, mode);
+    config.GetDomainPreferenceModeResponse(slotId_, *mode);
 }
 
 void CellularCallHandler::SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -564,7 +564,7 @@ void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
         lteImsSwitch.result = static_cast<int32_t>(info->error);
     } else {
         CellularCallConfig config;
-        config.GetLteImsSwitchStatusResponse(slotId_, active);
+        config.GetLteImsSwitchStatusResponse(slotId_, *active);
         lteImsSwitch.result = static_cast<int32_t>(HRilErrType::NONE);
         lteImsSwitch.active = *active;
     }
@@ -715,7 +715,7 @@ void CellularCallHandler::CallRingBackVoiceResponse(const AppExecFwk::InnerEvent
     }
     auto ringBackVoice = event->GetSharedObject<RingbackVoice>();
     if (ringBackVoice == nullptr) {
-        TELEPHONY_LOGE("CallRingBackVoiceResponse return, noticeInfo is nullptr");
+        TELEPHONY_LOGE("CallRingBackVoiceResponse return, ringBackVoice is nullptr");
         return;
     }
     if (registerInstance_ == nullptr) {

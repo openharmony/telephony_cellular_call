@@ -216,10 +216,11 @@ public:
     /**
      * UpdateSetPreModeResponse
      *
+     * @param slotId
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetPreModeResponse(const ImsResponseInfo &info);
+    int32_t UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info);
 
     /**
      * UpdateGetPreModeResponse
