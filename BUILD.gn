@@ -72,7 +72,7 @@ ohos_shared_library("tel_cellular_call") {
   ]
 
   external_deps = [
-    "appexecfwk_standard:libeventhandler",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
