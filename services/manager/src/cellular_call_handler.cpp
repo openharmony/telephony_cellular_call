@@ -577,7 +577,27 @@ void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
 
 void CellularCallHandler::CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("CallStateResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("CallStateResponse return, event is nullptr");
+        return;
+    }
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ == nullptr) {
+        TELEPHONY_LOGE("CallStateResponse return, cellular call service instance  is nullptr");
+        return;
+    }
+    if (callType_ == CallType::TYPE_ERR_CALL) {
+        TELEPHONY_LOGI("CallStateResponse, default call type");
+        if (serviceInstance_->IsNeedIms(slotId_)) {
+            GetImsCallData(event);
+        } else {
+            GetCsCallData(event);
+        }
+    } else if (callType_ == CallType::TYPE_CS) {
+        GetCsCallData(event);
+    } else if (callType_ == CallType::TYPE_IMS) {
+        GetImsCallData(event);
+    }
 }
 
 void CellularCallHandler::CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
