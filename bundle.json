@@ -26,8 +26,8 @@
         "adapted_system_type": [
             "standard"
         ],
-        "rom": "",
-        "ram": "",
+        "rom": "1MB",
+        "ram": "650KB",
         "deps": {
             "components": [
                 "appexecfwk_standard",
