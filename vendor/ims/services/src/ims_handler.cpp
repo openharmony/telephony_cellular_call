@@ -27,9 +27,6 @@ namespace Telephony {
 ImsHandler::ImsHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner) : AppExecFwk::EventHandler(runner)
 {
     requestFuncMap_[ASYNCHRONOUS_REGISTER_ID] = &ImsHandler::AsynchronousRegister;
-    requestFuncMap_[RadioEvent::RADIO_CALL_WAITING] = &ImsHandler::CallWaitingResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_CONNECT] = &ImsHandler::CallConnectResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_END] = &ImsHandler::CallEndResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &ImsHandler::CallStatusInfoResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS] = &ImsHandler::CallImsServiceStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &ImsHandler::SetCallPreferenceModeResponse;
@@ -86,66 +83,6 @@ void ImsHandler::AsynchronousRegister(const AppExecFwk::InnerEvent::Pointer &eve
     request.AsynchronousRegister();
 }
 
-void ImsHandler::CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallWaitingResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallWaitingResponse return, event is nullptr");
-        return;
-    }
-    auto result = event->GetSharedObject<ImsResponseInfo>();
-    if (result == nullptr) {
-        TELEPHONY_LOGE("CallWaitingResponse return, result is nullptr");
-        return;
-    }
-    if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("CallWaitingResponse return, GetInstance() is nullptr, report fail!");
-        return;
-    }
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateCallWaitingResponse(*result);
-}
-
-void ImsHandler::CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallConnectResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallConnectResponse return, event is nullptr");
-        return;
-    }
-    auto result = event->GetSharedObject<ImsResponseInfo>();
-    if (result == nullptr) {
-        TELEPHONY_LOGE("CallConnectResponse return, result is nullptr");
-        return;
-    }
-    if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("CallConnectResponse return, GetInstance() is nullptr, report fail!");
-        return;
-    }
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateCallConnectResponse(*result);
-}
-
-void ImsHandler::CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallEndResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallEndResponse return, event is nullptr");
-        return;
-    }
-    auto callEndInfo = event->GetSharedObject<CallEndInfo>();
-    if (callEndInfo == nullptr) {
-        TELEPHONY_LOGE("CallEndResponse return, callEndInfo is nullptr");
-        return;
-    }
-    if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("CallEndResponse return, GetInstance() is nullptr, report fail!");
-        return;
-    }
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateCallEndResponse(slotId_, *callEndInfo);
-
-    ImsRilRequest rilRequest;
-    rilRequest.GetCallFailReasonRequest(slotId_);
-}
-
 void ImsHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CallStatusInfoResponse entry");
@@ -153,16 +90,11 @@ void ImsHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &e
         TELEPHONY_LOGE("CallStatusInfoResponse return, event is nullptr");
         return;
     }
-    auto info = event->GetSharedObject<CallStatusInfo>();
-    if (info == nullptr) {
-        TELEPHONY_LOGE("CallStatusInfoResponse return, info is nullptr");
-        return;
-    }
     if (DelayedSingleton<ImsRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CallStatusInfoResponse return, GetInstance() is nullptr, report fail!");
         return;
     }
-    DelayedSingleton<ImsRegister>::GetInstance()->UpdateCallStatusResponse(slotId_, *info);
+    DelayedSingleton<ImsRegister>::GetInstance()->UpdateCallStatusResponse(slotId_);
 
     int64_t time =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())

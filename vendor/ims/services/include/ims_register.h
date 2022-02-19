@@ -171,38 +171,12 @@ public:
     int32_t UpdateStopRttResponse(const ImsResponseInfo &info);
 
     /**
-     * UpdateCallWaitingResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallWaitingResponse(const ImsResponseInfo &info);
-
-    /**
-     * UpdateCallConnectResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallConnectResponse(const ImsResponseInfo &info);
-
-    /**
-     * UpdateCallEndResponse
-     *
-     * @param slotId
-     * @param CallEndInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo);
-
-    /**
      * UpdateCallStatusResponse
      *
      * @param slotId
-     * @param CallStatusInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo);
+    int32_t UpdateCallStatusResponse(int32_t slotId);
 
     /**
      * UpdateServiceStatusResponse

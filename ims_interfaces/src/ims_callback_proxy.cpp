@@ -18,8 +18,6 @@
 #include "message_option.h"
 #include "message_parcel.h"
 
-#include "cellular_call_types.h"
-
 namespace OHOS {
 namespace Telephony {
 ImsCallbackProxy::ImsCallbackProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ImsCallback>(impl) {}
@@ -348,43 +346,7 @@ int32_t ImsCallbackProxy::UpdateStopRttResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallbackProxy::UpdateCallWaitingResponse(const ImsResponseInfo &info)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(UPDATE_IMS_CALL_WAITING, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallbackProxy::UpdateCallConnectResponse(const ImsResponseInfo &info)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(UPDATE_IMS_CALL_CONNECT, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallbackProxy::UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo)
+int32_t ImsCallbackProxy::UpdateCallStatusResponse(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
@@ -393,30 +355,6 @@ int32_t ImsCallbackProxy::UpdateCallEndResponse(int32_t slotId, const CallEndInf
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(slotId)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&callEndInfo, sizeof(CallEndInfo))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(UPDATE_IMS_CALL_END, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallbackProxy::UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteInt32(slotId)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&callStatusInfo, sizeof(CallStatusInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(UPDATE_IMS_CALL_STATUS, in, out, option);

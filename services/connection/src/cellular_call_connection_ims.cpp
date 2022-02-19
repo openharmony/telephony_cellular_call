@@ -17,7 +17,6 @@
 
 #include "securec.h"
 
-#include "cellular_call_types.h"
 #include "cellular_call_service.h"
 #include "radio_event.h"
 

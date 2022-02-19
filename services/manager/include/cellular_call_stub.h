@@ -16,6 +16,7 @@
 #ifndef CELLULAR_CALL_STUB_H
 #define CELLULAR_CALL_STUB_H
 
+#include <map>
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
 #include "telephony_log_wrapper.h"

@@ -19,7 +19,8 @@
 #include "iremote_broker.h"
 #include "ims_types.h"
 #include "ims_callback.h"
-#include "cellular_call_types.h"
+#include "cellular_call_data_struct.h"
+#include "call_manager_inner_type.h"
 
 namespace OHOS {
 namespace Telephony {

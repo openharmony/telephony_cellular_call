@@ -20,13 +20,14 @@ ohos_unittest("tel_vendor_ims_test") {
   module_out_path = part_name + "/" + test_module
 
   sources = [
-    "//base/telephony/cellular_call/framework/ims_proxy.cpp",
+    "//base/telephony/cellular_call/ims_interfaces/src/ims_proxy.cpp",
     "ims_unit_test.cpp",
   ]
 
   include_dirs = [
     "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/cellular_call/interfaces",
+    "//base/telephony/cellular_call/ims_interfaces/include",
+    "//base/telephony/cellular_call/services/common/include",
   ]
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]

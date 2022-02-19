@@ -111,34 +111,6 @@ public:
     void GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallStateResponse
-     *
-     * @param code process
-     */
-    void CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallWaitingResponse
-     *
-     * @param code process
-     */
-    void CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallConnectResponse
-     *
-     * @param code process
-     */
-    void CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallEndResponse
-     *
-     * @param code process
-     */
-    void CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
      * CallStatusInfoResponse
      *
      * @param code process

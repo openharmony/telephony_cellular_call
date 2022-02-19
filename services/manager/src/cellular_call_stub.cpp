@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_stub.h"
+#include "call_manager_errors.h"
 
 #include "emergency_utils.h"
 #include "i_call_status_callback.h"

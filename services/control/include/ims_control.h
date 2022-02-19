@@ -16,7 +16,6 @@
 #ifndef CELLULAR_CALL_CONTROL_IMS_H
 #define CELLULAR_CALL_CONTROL_IMS_H
 
-#include "cellular_call_types.h"
 #include "hril_call_parcel.h"
 #include "cellular_call_data_struct.h"
 #include "cellular_call_connection_ims.h"

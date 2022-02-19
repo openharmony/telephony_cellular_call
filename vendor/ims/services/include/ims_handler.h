@@ -21,6 +21,7 @@
 
 #include "event_handler.h"
 
+#include "telephony_types.h"
 #include "telephony_log_wrapper.h"
 #include "ims_callback.h"
 
@@ -46,27 +47,6 @@ public:
      * @param AppExecFwk::InnerEvent::Pointer
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallWaitingResponse
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallConnectResponse
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * CallEndResponse
-     *
-     * @param AppExecFwk::InnerEvent::Pointer
-     */
-    void CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * CallStatusInfoResponse

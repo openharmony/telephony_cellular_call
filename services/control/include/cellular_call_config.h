@@ -16,6 +16,7 @@
 #ifndef CELLULAR_CALL_CONFIG_H
 #define CELLULAR_CALL_CONFIG_H
 
+#include <map>
 #include "config_request.h"
 #include "telephony_log_wrapper.h"
 

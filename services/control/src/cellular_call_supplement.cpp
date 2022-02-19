@@ -17,7 +17,6 @@
 
 #include "securec.h"
 #include "cellular_call_register.h"
-#include "cellular_call_types.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 

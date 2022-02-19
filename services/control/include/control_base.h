@@ -16,6 +16,7 @@
 #ifndef CELLULAR_CALL_CONTROL_BASE_H
 #define CELLULAR_CALL_CONTROL_BASE_H
 
+#include "call_manager_errors.h"
 #include "event_handler.h"
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"

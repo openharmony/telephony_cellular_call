@@ -132,14 +132,14 @@ void ImsService::RegisterCoreServiceHandler()
 void ImsService::AsynchronousRegister()
 {
     TELEPHONY_LOGI("ImsService::AsynchronousRegister entry");
-    int64_t delayTime_ = 1000;
+    int64_t delayTime = 1000;
     int32_t slot = DEFAULT_SIM_SLOT_ID;
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("AsynchronousRegister return, handler is nullptr");
         return;
     }
-    handler->SendEvent(handler->ASYNCHRONOUS_REGISTER_ID, delayTime_, ImsHandler::Priority::HIGH);
+    handler->SendEvent(handler->ASYNCHRONOUS_REGISTER_ID, delayTime, ImsHandler::Priority::HIGH);
 }
 
 std::shared_ptr<ImsHandler> ImsService::GetHandler(int32_t slot)

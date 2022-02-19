@@ -21,7 +21,6 @@
 #include "iremote_stub.h"
 
 #include "ims_callback.h"
-#include "cellular_call_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -176,38 +175,12 @@ public:
     int32_t UpdateStopRttResponse(const ImsResponseInfo &info) override;
 
     /**
-     * UpdateCallWaitingResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallWaitingResponse(const ImsResponseInfo &info) override;
-
-    /**
-     * UpdateCallConnectResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallConnectResponse(const ImsResponseInfo &info) override;
-
-    /**
-     * UpdateCallEndResponse
-     *
-     * @param slotId
-     * @param CallEndInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo) override;
-
-    /**
      * UpdateCallStatusResponse
      *
      * @param slotId
-     * @param CallStatusInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo) override;
+    int32_t UpdateCallStatusResponse(int32_t slotId) override;
 
     /**
      * UpdateServiceStatusResponse
@@ -689,33 +662,6 @@ private:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnUpdateStopRttResponseInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * UpdateCallWaitingResponseInner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnUpdateCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * OnUpdateCallConnectResponseInner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnUpdateCallConnectResponseInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * OnUpdateCallEndResponseInner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnUpdateCallEndResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * OnUpdateCallStatusResponseInner

@@ -16,8 +16,8 @@
 #ifndef IMS_RIL_REQUEST_H
 #define IMS_RIL_REQUEST_H
 
-#include "cellular_call_types.h"
 #include "ims_types.h"
+#include "cellular_call_data_struct.h"
 #include "ims_register.h"
 
 namespace OHOS {

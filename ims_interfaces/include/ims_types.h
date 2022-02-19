@@ -16,7 +16,8 @@
 #ifndef TELEPHONY_IMS_TYPES_H
 #define TELEPHONY_IMS_TYPES_H
 
-#include "cellular_call_types.h"
+#include "call_manager_errors.h"
+#include "call_manager_inner_type.h"
 
 namespace OHOS {
 namespace Telephony {
