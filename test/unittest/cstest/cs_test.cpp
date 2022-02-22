@@ -18,8 +18,7 @@
 #include "iservice_registry.h"
 #include "securec.h"
 #include "system_ability_definition.h"
-
-#include "cellular_call_client.h"
+#include "call_manager_errors.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -340,12 +339,7 @@ int32_t CsTest::KickOutFromConference(const sptr<CellularCallInterface> &telepho
 int32_t CsTest::HangUpAllConnection(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test HangUpAllConnection entry." << std::endl;
-
-    if (DelayedRefSingleton<CellularCallClient>::GetInstance().GetCellularCallProxy() == nullptr) {
-        std::cout << "HangUpAllConnection return, GetCellularCallProxy is nullptr!" << std::endl;
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    return DelayedRefSingleton<CellularCallClient>::GetInstance().GetCellularCallProxy()->HangUpAllConnection();
+    return telephonyService->HangUpAllConnection();
 }
 
 int32_t CsTest::UpdateImsCallMode(const sptr<CellularCallInterface> &telephonyService) const

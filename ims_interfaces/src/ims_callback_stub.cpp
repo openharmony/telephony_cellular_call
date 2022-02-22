@@ -49,9 +49,6 @@ void ImsCallbackStub::InitBasicCallFuncMap()
     requestFuncMap_[UPDATE_IMS_STOP_DTMF] = &ImsCallbackStub::OnUpdateStopDtmfResponseInner;
     requestFuncMap_[UPDATE_START_RTT] = &ImsCallbackStub::OnUpdateStartRttResponseInner;
     requestFuncMap_[UPDATE_STOP_RTT] = &ImsCallbackStub::OnUpdateStopRttResponseInner;
-    requestFuncMap_[UPDATE_IMS_CALL_WAITING] = &ImsCallbackStub::OnUpdateCallWaitingResponseInner;
-    requestFuncMap_[UPDATE_IMS_CALL_CONNECT] = &ImsCallbackStub::OnUpdateCallConnectResponseInner;
-    requestFuncMap_[UPDATE_IMS_CALL_END] = &ImsCallbackStub::OnUpdateCallEndResponseInner;
     requestFuncMap_[UPDATE_IMS_CALL_STATUS] = &ImsCallbackStub::OnUpdateCallStatusResponseInner;
     requestFuncMap_[UPDATE_IMS_SERVICE_STATUS] = &ImsCallbackStub::OnUpdateServiceStatusResponseInner;
 }
@@ -324,53 +321,11 @@ int32_t ImsCallbackStub::OnUpdateStopRttResponseInner(MessageParcel &data, Messa
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::OnUpdateCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateCallWaitingResponseInner entry");
-    auto info = (ImsResponseInfo *)data.ReadRawData(sizeof(ImsResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateCallWaitingResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(UpdateCallWaitingResponse(*info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallbackStub::OnUpdateCallConnectResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateCallConnectResponseInner entry");
-    auto info = (ImsResponseInfo *)data.ReadRawData(sizeof(ImsResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateCallConnectResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(UpdateCallConnectResponse(*info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallbackStub::OnUpdateCallEndResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::OnUpdateCallEndResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (CallEndInfo *)data.ReadRawData(sizeof(CallEndInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateCallEndResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(UpdateCallEndResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallbackStub::OnUpdateCallStatusResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsCallbackStub::OnUpdateCallStatusResponseInner entry");
     int32_t slotId = data.ReadInt32();
-    auto info = (CallStatusInfo *)data.ReadRawData(sizeof(CallStatusInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnUpdateCallStatusResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(UpdateCallStatusResponse(slotId, *info));
+    reply.WriteInt32(UpdateCallStatusResponse(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -1035,28 +990,9 @@ int32_t ImsCallbackStub::UpdateStopRttResponse(const ImsResponseInfo &info)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallbackStub::UpdateCallWaitingResponse(const ImsResponseInfo &info)
+int32_t ImsCallbackStub::UpdateCallStatusResponse(int32_t slotId)
 {
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateCallWaitingResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallbackStub::UpdateCallConnectResponse(const ImsResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateCallConnectResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallbackStub::UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateCallEndResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallbackStub::UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo)
-{
-    TELEPHONY_LOGI("ImsCallbackStub::UpdateCallStatusResponse entry status:%{public}d, voiceDomain:%{public}d",
-        callStatusInfo.status, callStatusInfo.voiceDomain);
+    TELEPHONY_LOGI("ImsCallbackStub::UpdateCallStatusResponse entry");
     return TELEPHONY_SUCCESS;
 }
 

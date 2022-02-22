@@ -13,20 +13,19 @@
  * limitations under the License.
  */
 
-#ifndef IMS_CALLBACK_PROXY_H
-#define IMS_CALLBACK_PROXY_H
+#ifndef IMS_CALLBACK_H
+#define IMS_CALLBACK_H
 
-#include "iremote_proxy.h"
-#include "ims_callback.h"
-#include "telephony_errors.h"
-#include "call_manager_errors.h"
+#include "iremote_broker.h"
+
+#include "hril_call_parcel.h"
+#include "ims_types.h"
 
 namespace OHOS {
 namespace Telephony {
-class ImsCallbackProxy : public IRemoteProxy<ImsCallback> {
+class ImsCallback : public IRemoteBroker {
 public:
-    explicit ImsCallbackProxy(const sptr<IRemoteObject> &impl);
-    virtual ~ImsCallbackProxy() = default;
+    virtual ~ImsCallback() = default;
 
     /**
      * UpdateDialResponse
@@ -34,7 +33,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateDialResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateDialResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateHangUpResponse
@@ -42,7 +41,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateHangUpResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateHangUpResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateRejectResponse
@@ -50,7 +49,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateRejectResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateRejectResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateAnswerResponse
@@ -58,7 +57,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateAnswerResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateAnswerResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateHoldResponse
@@ -66,7 +65,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateHoldResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateHoldResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateUnHoldResponse
@@ -74,7 +73,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateUnHoldResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateUnHoldResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSwitchResponse
@@ -82,7 +81,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSwitchResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSwitchResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateCombineConferenceResponse
@@ -90,7 +89,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCombineConferenceResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateCombineConferenceResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateInviteToConferenceResponse
@@ -98,7 +97,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateInviteToConferenceResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateInviteToConferenceResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateKickOutFromConferenceResponse
@@ -106,7 +105,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateKickOutFromConferenceResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateKickOutFromConferenceResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateCallMediaModeResponse
@@ -114,7 +113,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallMediaModeResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateCallMediaModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateIsEmergencyPhoneNumberResponse
@@ -122,7 +121,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateIsEmergencyPhoneNumberResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateIsEmergencyPhoneNumberResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateIsEmergencyPhoneNumberResponse
@@ -130,7 +129,7 @@ public:
      * @param bool
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateIsEmergencyPhoneNumberResponse(bool value) override;
+    virtual int32_t UpdateIsEmergencyPhoneNumberResponse(bool value) = 0;
 
     /**
      * UpdateStartDtmfResponse
@@ -138,15 +137,15 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateStartDtmfResponse(const ImsResponseInfo &info) override;
-
+    virtual int32_t UpdateStartDtmfResponse(const ImsResponseInfo &info) = 0;
     /**
      * UpdateSendDtmfResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSendDtmfResponse(const ImsResponseInfo &info) override;
+
+    virtual int32_t UpdateSendDtmfResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateStopDtmfResponse
@@ -154,7 +153,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateStopDtmfResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateStopDtmfResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateStartRttResponse
@@ -162,7 +161,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateStartRttResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateStartRttResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateStopRttResponse
@@ -170,41 +169,15 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateStopRttResponse(const ImsResponseInfo &info) override;
-
-    /**
-     * UpdateCallWaitingResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallWaitingResponse(const ImsResponseInfo &info) override;
-
-    /**
-     * UpdateCallConnectResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallConnectResponse(const ImsResponseInfo &info) override;
-
-    /**
-     * UpdateCallEndResponse
-     *
-     * @param slotId
-     * @param CallEndInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo) override;
+    virtual int32_t UpdateStopRttResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateCallStatusResponse
      *
      * @param slotId
-     * @param CallStatusInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo) override;
+    virtual int32_t UpdateCallStatusResponse(int32_t slotId) = 0;
 
     /**
      * UpdateServiceStatusResponse
@@ -213,7 +186,7 @@ public:
      * @param CallImsServiceStatus
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus) override;
+    virtual int32_t UpdateServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus) = 0;
 
     /**
      * UpdateSetPreModeResponse
@@ -222,7 +195,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetPreModeResponse(int32_t slotId, const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetPreModeResponse
@@ -230,7 +203,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetPreModeResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateGetPreModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetPreModeResponse
@@ -239,7 +212,7 @@ public:
      * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetPreModeResponse(int32_t slotId, int32_t mode) override;
+    virtual int32_t UpdateGetPreModeResponse(int32_t slotId, int32_t mode) = 0;
 
     /**
      * UpdateSetImsSwitchResponse
@@ -247,7 +220,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetImsSwitchResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetImsSwitchResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetImsSwitchResponse
@@ -255,16 +228,16 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsSwitchResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateGetImsSwitchResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetImsSwitchResponse
      *
      * @param slotId
-     * @param active
+     * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsSwitchResponse(int32_t slotId, int32_t active) override;
+    virtual int32_t UpdateGetImsSwitchResponse(int32_t slotId, int32_t active) = 0;
 
     /**
      * UpdateImsCallsDataResponse
@@ -272,7 +245,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateImsCallsDataResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateImsCallsDataResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateImsCallsDataResponse
@@ -281,7 +254,7 @@ public:
      * @param CallInfoList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateImsCallsDataResponse(int32_t slotId, const CallInfoList &callList) override;
+    virtual int32_t UpdateImsCallsDataResponse(int32_t slotId, const CallInfoList &callList) = 0;
 
     /**
      * UpdateSetImsConfigResponse
@@ -289,7 +262,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetImsConfigResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetImsConfigResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetImsConfigResponse
@@ -297,7 +270,7 @@ public:
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsConfigResponse(int32_t value) override;
+    virtual int32_t UpdateGetImsConfigResponse(int32_t value) = 0;
 
     /**
      * UpdateGetImsConfigResponse
@@ -305,7 +278,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsConfigResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateGetImsConfigResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetImsFeatureValueResponse
@@ -313,7 +286,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetImsFeatureValueResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetImsFeatureValueResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetImsFeatureValueResponse
@@ -321,7 +294,7 @@ public:
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsFeatureValueResponse(int32_t value) override;
+    virtual int32_t UpdateGetImsFeatureValueResponse(int32_t value) = 0;
 
     /**
      * UpdateGetImsFeatureValueResponse
@@ -329,7 +302,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsFeatureValueResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateGetImsFeatureValueResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetImsSwitchEnhanceModeResponse
@@ -337,7 +310,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateGetImsSwitchEnhanceModeResponse
@@ -345,7 +318,7 @@ public:
      * @param value
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsSwitchEnhanceModeResponse(int32_t value) override;
+    virtual int32_t UpdateGetImsSwitchEnhanceModeResponse(int32_t value) = 0;
 
     /**
      * UpdateGetImsSwitchEnhanceModeResponse
@@ -353,7 +326,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateGetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateCtrlCameraResponse
@@ -361,7 +334,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCtrlCameraResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateCtrlCameraResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetPreviewWindowResponse
@@ -369,7 +342,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetPreviewWindowResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetPreviewWindowResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetDisplayWindowResponse
@@ -377,7 +350,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetDisplayWindowResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetDisplayWindowResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetCameraZoomResponse
@@ -385,7 +358,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetCameraZoomResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetCameraZoomResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetPauseImageResponse
@@ -393,7 +366,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetPauseImageResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetPauseImageResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSetDeviceDirectionResponse
@@ -401,7 +374,7 @@ public:
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetDeviceDirectionResponse(const ImsResponseInfo &info) override;
+    virtual int32_t UpdateSetDeviceDirectionResponse(const ImsResponseInfo &info) = 0;
 
     /**
      * UpdateSrvccStateReport
@@ -410,7 +383,7 @@ public:
      * @param SrvccState
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSrvccStateReport(int32_t slotId, SrvccState srvccState) override;
+    virtual int32_t UpdateSrvccStateReport(int32_t slotId, SrvccState srvccState) = 0;
 
     /**
      * UpdateVtWfcReport
@@ -419,7 +392,7 @@ public:
      * @param TransferState
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateVtWfcReport(int32_t slotId, TransferState transferState) override;
+    virtual int32_t UpdateVtWfcReport(int32_t slotId, TransferState transferState) = 0;
 
     /**
      * UpdateCallRingBackResponse
@@ -427,7 +400,7 @@ public:
      * @param RingbackVoice
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallRingBackResponse(const RingbackVoice &info) override;
+    virtual int32_t UpdateCallRingBackResponse(const RingbackVoice &info) = 0;
 
     /**
      * UpdateSetMuteResponse
@@ -435,7 +408,7 @@ public:
      * @param MuteControlResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetMuteResponse(const MuteControlResponse &response) override;
+    virtual int32_t UpdateSetMuteResponse(const MuteControlResponse &response) = 0;
 
     /**
      * UpdateGetMuteResponse
@@ -443,7 +416,7 @@ public:
      * @param MuteControlResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetMuteResponse(const MuteControlResponse &response) override;
+    virtual int32_t UpdateGetMuteResponse(const MuteControlResponse &response) = 0;
 
     /**
      * UpdateGetEccCallListResponse
@@ -451,7 +424,7 @@ public:
      * @param EmergencyInfoList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetEccCallListResponse(const EmergencyInfoList &callList) override;
+    virtual int32_t UpdateGetEccCallListResponse(const EmergencyInfoList &callList) = 0;
 
     /**
      * UpdateCallFailReasonResponse
@@ -459,7 +432,7 @@ public:
      * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallFailReasonResponse(int32_t reason) override;
+    virtual int32_t UpdateCallFailReasonResponse(int32_t reason) = 0;
 
     /**
      * UpdateGetClipResponse
@@ -467,7 +440,7 @@ public:
      * @param ClipResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetClipResponse(const ClipResponse &response) override;
+    virtual int32_t UpdateGetClipResponse(const ClipResponse &response) = 0;
 
     /**
      * UpdateGetClirResponse
@@ -475,7 +448,7 @@ public:
      * @param ClirResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetClirResponse(const ClirResponse &response) override;
+    virtual int32_t UpdateGetClirResponse(const ClirResponse &response) = 0;
 
     /**
      * UpdateSetClirResponse
@@ -483,7 +456,7 @@ public:
      * @param HRilErrType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetClirResponse(HRilErrType errType) override;
+    virtual int32_t UpdateSetClirResponse(HRilErrType errType) = 0;
 
     /**
      * UpdateGetCallTransferResponse
@@ -491,7 +464,7 @@ public:
      * @param CallTransferResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetCallTransferResponse(const CallTransferResponse &response) override;
+    virtual int32_t UpdateGetCallTransferResponse(const CallTransferResponse &response) = 0;
 
     /**
      * UpdateSetCallTransferResponse
@@ -499,7 +472,7 @@ public:
      * @param HRilErrType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetCallTransferResponse(HRilErrType errType) override;
+    virtual int32_t UpdateSetCallTransferResponse(HRilErrType errType) = 0;
 
     /**
      * UpdateGetCallRestrictionResponse
@@ -507,7 +480,7 @@ public:
      * @param CallRestrictionResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetCallRestrictionResponse(const CallRestrictionResponse &response) override;
+    virtual int32_t UpdateGetCallRestrictionResponse(const CallRestrictionResponse &response) = 0;
 
     /**
      * UpdateSetCallRestrictionResponse
@@ -515,7 +488,7 @@ public:
      * @param HRilErrType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetCallRestrictionResponse(HRilErrType errType) override;
+    virtual int32_t UpdateSetCallRestrictionResponse(HRilErrType errType) = 0;
 
     /**
      * UpdateGetCallWaitingResponse
@@ -523,7 +496,7 @@ public:
      * @param CallWaitResponse
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateGetCallWaitingResponse(const CallWaitResponse &response) override;
+    virtual int32_t UpdateGetCallWaitingResponse(const CallWaitResponse &response) = 0;
 
     /**
      * UpdateSetCallWaitingResponse
@@ -531,10 +504,74 @@ public:
      * @param HRilErrType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateSetCallWaitingResponse(HRilErrType errType) override;
+    virtual int32_t UpdateSetCallWaitingResponse(HRilErrType errType) = 0;
 
-private:
-    static inline BrokerDelegator<ImsCallbackProxy> delegator_;
+    enum {
+        /****************** basic ******************/
+        UPDATE_IMS_DIAL = 0,
+        UPDATE_IMS_HANG_UP,
+        UPDATE_IMS_REJECT,
+        UPDATE_IMS_ANSWER,
+        UPDATE_IMS_HOLD,
+        UPDATE_IMS_UN_HOLD,
+        UPDATE_IMS_SWITCH,
+        UPDATE_IMS_COMBINE_CONFERENCE,
+        UPDATE_IMS_INVITE_TO_CONFERENCE,
+        UPDATE_IMS_KICK_OUT_CONFERENCE,
+        UPDATE_IMS_UPDATE_CALL_MEDIA_MODE,
+        UPDATE_IMS_EMERGENCY_CALL,
+        UPDATE_IMS_CALL_STATUS,
+        UPDATE_IMS_SERVICE_STATUS,
+        UPDATE_CALL_FAIL_REASON,
+        UPDATE_IMS_GET_CALLS_DATA,
+        UPDATE_SRVCC_STATE,
+        UPDATE_VT_OR_WFC,
+        UPDATE_CALL_CRING,
+
+        /****************** dtmf、rtt ******************/
+        UPDATE_IMS_START_DTMF,
+        UPDATE_IMS_SEND_DTMF,
+        UPDATE_IMS_STOP_DTMF,
+        UPDATE_START_RTT,
+        UPDATE_STOP_RTT,
+
+        /****************** ims config ******************/
+        UPDATE_IMS_SET_PRE_MODE,
+        UPDATE_IMS_GET_PRE_MODE,
+        UPDATE_IMS_SET_LTE_SWITCH,
+        UPDATE_IMS_GET_LTE_SWITCH,
+        UPDATE_SET_CONFIG,
+        UPDATE_GET_CONFIG,
+        UPDATE_SET_FEATURE,
+        UPDATE_GET_FEATURE,
+        UPDATE_SET_IMS_SWITCH_ENHANCE,
+        UPDATE_GET_IMS_SWITCH_ENHANCE,
+        UPDATE_SET_MUTE,
+        UPDATE_GET_MUTE,
+        UPDATE_GET_EMERGENCY_CALL_LIST,
+
+        /****************** video settings ******************/
+        UPDATE_CONTROL_CAMERA,
+        UPDATE_SET_PREVIEW_WINDOW,
+        UPDATE_SET_DISPLAY_WINDOW,
+        UPDATE_SET_CAMERA_ZOOM,
+        UPDATE_SET_PAUSE_IMAGE,
+        UPDATE_SET_DEVICE_DIRECTION,
+
+        /****************** supplement ******************/
+        UPDATE_GET_CALL_CLIP,
+        UPDATE_GET_CALL_CLIR,
+        UPDATE_SET_CALL_CLIR,
+        UPDATE_GET_CALL_FORWARD,
+        UPDATE_SET_CALL_FORWARD,
+        UPDATE_GET_CALL_RESTRICTION,
+        UPDATE_SET_CALL_RESTRICTION,
+        UPDATE_GET_CALL_WAIT,
+        UPDATE_SET_CALL_WAIT,
+    };
+
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallback");
 };
 } // namespace Telephony
 } // namespace OHOS

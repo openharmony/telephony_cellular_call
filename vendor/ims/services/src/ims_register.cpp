@@ -229,47 +229,14 @@ int32_t ImsRegister::UpdateStopRttResponse(const ImsResponseInfo &info)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRegister::UpdateCallWaitingResponse(const ImsResponseInfo &info)
-{
-    TELEPHONY_LOGI("UpdateCallWaitingResponse entry");
-    if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateCallWaitingResponse return, cellularCallBack_ is nullptr, report fail!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    cellularCallBack_->UpdateCallWaitingResponse(info);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsRegister::UpdateCallConnectResponse(const ImsResponseInfo &info)
-{
-    TELEPHONY_LOGI("UpdateCallConnectResponse entry");
-    if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateCallConnectResponse return, cellularCallBack_ is nullptr, report fail!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    cellularCallBack_->UpdateCallConnectResponse(info);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsRegister::UpdateCallEndResponse(int32_t slotId, const CallEndInfo &callEndInfo)
-{
-    TELEPHONY_LOGI("UpdateCallEndResponse entry");
-    if (cellularCallBack_ == nullptr) {
-        TELEPHONY_LOGE("UpdateCallEndResponse return, cellularCallBack_ is nullptr, report fail!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    cellularCallBack_->UpdateCallEndResponse(slotId, callEndInfo);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsRegister::UpdateCallStatusResponse(int32_t slotId, const CallStatusInfo &callStatusInfo)
+int32_t ImsRegister::UpdateCallStatusResponse(int32_t slotId)
 {
     TELEPHONY_LOGI("UpdateCallStatusResponse entry");
     if (cellularCallBack_ == nullptr) {
         TELEPHONY_LOGE("UpdateCallStatusResponse return, cellularCallBack_ is nullptr, report fail!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    cellularCallBack_->UpdateCallStatusResponse(slotId, callStatusInfo);
+    cellularCallBack_->UpdateCallStatusResponse(slotId);
     return TELEPHONY_SUCCESS;
 }
 

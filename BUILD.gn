@@ -18,13 +18,11 @@ SOURCE_DIR = "//base/telephony/cellular_call"
 
 ohos_shared_library("tel_cellular_call") {
   sources = [
-    "$SOURCE_DIR/framework/call_status_callback_proxy.cpp",
-    "$SOURCE_DIR/framework/cellular_call_callback.cpp",
-    "$SOURCE_DIR/framework/cellular_call_proxy.cpp",
-    "$SOURCE_DIR/framework/ims_callback_stub.cpp",
-    "$SOURCE_DIR/framework/ims_client.cpp",
-    "$SOURCE_DIR/framework/ims_death_recipient.cpp",
-    "$SOURCE_DIR/framework/ims_proxy.cpp",
+    "$SOURCE_DIR/ims_interfaces/src/cellular_call_callback.cpp",
+    "$SOURCE_DIR/ims_interfaces/src/ims_callback_stub.cpp",
+    "$SOURCE_DIR/ims_interfaces/src/ims_client.cpp",
+    "$SOURCE_DIR/ims_interfaces/src/ims_death_recipient.cpp",
+    "$SOURCE_DIR/ims_interfaces/src/ims_proxy.cpp",
     "$SOURCE_DIR/services/common/src/cellular_call_dump_helper.cpp",
     "$SOURCE_DIR/services/common/src/emergency_utils.cpp",
     "$SOURCE_DIR/services/common/src/mmi_code_utils.cpp",
@@ -45,6 +43,8 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/manager/src/cellular_call_register.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_service.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_stub.cpp",
+    "//base/telephony/call_manager/services/telephony_interaction/src/call_status_callback_proxy.cpp",
+    "//base/telephony/call_manager/services/telephony_interaction/src/cellular_call_proxy.cpp",
   ]
 
   include_dirs = [
@@ -52,8 +52,9 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/manager/include",
     "$SOURCE_DIR/services/control/include",
     "$SOURCE_DIR/services/connection/include",
-    "$SOURCE_DIR/interfaces",
+    "$SOURCE_DIR/ims_interfaces/include",
     "//base/telephony/call_manager/interfaces/innerkits",
+    "//base/telephony/call_manager/services/telephony_interaction/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
@@ -66,7 +67,9 @@ ohos_shared_library("tel_cellular_call") {
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
   deps = [
+    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
+    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
     "//utils/native/base:utils",
   ]

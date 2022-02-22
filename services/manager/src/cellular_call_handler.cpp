@@ -80,20 +80,16 @@ void CellularCallHandler::InitSupplementFuncMap()
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIR] = &CellularCallHandler::SetClirResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] = &CellularCallHandler::GetCallRestrictionResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_USSD_CUSD] = &CellularCallHandler::SendUssdResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_USSD] = &CellularCallHandler::SendUssdResponse;
 }
 
 void CellularCallHandler::InitActiveReportFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_CALL_STATE] = &CellularCallHandler::CallStateResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_WAITING] = &CellularCallHandler::CallWaitingResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_CONNECT] = &CellularCallHandler::CallConnectResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_END] = &CellularCallHandler::CallEndResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &CellularCallHandler::CallStatusInfoResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS] = &CellularCallHandler::CallImsServiceStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[RadioEvent::RADIO_NOT_AVAIL] = &CellularCallHandler::GetCsCallData;
-    requestFuncMap_[RadioEvent::RADIO_CALL_USSD_CUSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] = &CellularCallHandler::CallRingBackVoiceResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_SRVCC_STATUS] = &CellularCallHandler::UpdateSrvccStateReport;
 }
@@ -575,64 +571,20 @@ void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
     registerInstance_->ReportGetLteImsSwitchResult(lteImsSwitch);
 }
 
-void CellularCallHandler::CallStateResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    if (event == nullptr) {
-        TELEPHONY_LOGE("CallStateResponse return, event is nullptr");
-        return;
-    }
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CallStateResponse return, cellular call service instance  is nullptr");
-        return;
-    }
-    if (callType_ == CallType::TYPE_ERR_CALL) {
-        TELEPHONY_LOGI("CallStateResponse, default call type");
-        if (serviceInstance_->IsNeedIms(slotId_)) {
-            GetImsCallData(event);
-        } else {
-            GetCsCallData(event);
-        }
-    } else if (callType_ == CallType::TYPE_CS) {
-        GetCsCallData(event);
-    } else if (callType_ == CallType::TYPE_IMS) {
-        GetImsCallData(event);
-    }
-}
-
-void CellularCallHandler::CallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallWaitingResponse entry");
-}
-
-void CellularCallHandler::CallConnectResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallConnectResponse entry");
-}
-
-void CellularCallHandler::CallEndResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CallEndResponse entry");
-}
-
 void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
         TELEPHONY_LOGE("CallStatusInfoResponse return, event is nullptr");
         return;
     }
-    auto info = event->GetSharedObject<CallStatusInfo>();
-    if (info == nullptr) {
-        TELEPHONY_LOGE("CallStatusInfoResponse return, info is nullptr");
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ == nullptr) {
+        TELEPHONY_LOGE("CallStatusInfoResponse return, GetInstance is nullptr");
         return;
     }
-    /**
-     * 0: CS domain voice call
-     * 1: IMS domain voice call
-     */
     if (callType_ == CallType::TYPE_ERR_CALL) {
         TELEPHONY_LOGI("CallStatusInfoResponse, default call type");
-        if (info->voiceDomain) {
+        if (serviceInstance_->IsNeedIms(slotId_)) {
             GetImsCallData(event);
         } else {
             GetCsCallData(event);
@@ -792,8 +744,7 @@ void CellularCallHandler::SrvccStateCompleted()
         TELEPHONY_LOGE("SrvccStateCompleted return, srvccState_ != SrvccState::COMPLETED");
         return;
     }
-    auto info = std::shared_ptr<CallStatusInfo>();
-    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO, info);
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO);
     CallStatusInfoResponse(event);
     srvccState_ = SrvccState::SRVCC_NONE;
 }

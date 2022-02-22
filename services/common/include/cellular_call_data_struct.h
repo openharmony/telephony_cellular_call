@@ -16,10 +16,16 @@
 #ifndef CELLULAR_CALL_DATA_STRUCT_H
 #define CELLULAR_CALL_DATA_STRUCT_H
 
-#include "cellular_call_types.h"
+#include "call_manager_inner_type.h"
 
 namespace OHOS {
 namespace Telephony {
+enum CLIRMode {
+    DEFAULT = 0,
+    TRANSFER = 1,
+    INHIBITION = 2,
+};
+
 struct DialRequestStruct {
     std::string phoneNum;
     CLIRMode clirMode;

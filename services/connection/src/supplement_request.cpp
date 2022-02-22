@@ -150,7 +150,7 @@ std::shared_ptr<CellularCallHandler> SupplementRequest::GetMMIHandler(int32_t sl
 int32_t SupplementRequest::SendUssdRequest(int32_t slotId, const std::string &msg)
 {
     TELEPHONY_LOGI("SendUssdRequest entry");
-    CoreManagerInner::GetInstance().SetUssd(slotId, RadioEvent::RADIO_SET_USSD_CUSD, msg, GetMMIHandler(slotId));
+    CoreManagerInner::GetInstance().SetUssd(slotId, RadioEvent::RADIO_SET_USSD, msg, GetMMIHandler(slotId));
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

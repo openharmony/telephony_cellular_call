@@ -15,6 +15,8 @@
 
 #include "cellular_call_config.h"
 
+#include "telephony_types.h"
+
 #include "cellular_call_data_struct.h"
 
 namespace OHOS {

@@ -20,16 +20,15 @@ ohos_unittest("tel_cellular_call_cs_test") {
   module_out_path = part_name + "/" + test_module
 
   sources = [
-    "//base/telephony/cellular_call/framework/cellular_call_client.cpp",
-    "//base/telephony/cellular_call/framework/cellular_call_proxy.cpp",
+    "//base/telephony/call_manager/services/telephony_interaction/src/cellular_call_proxy.cpp",
     "cs_test.cpp",
   ]
 
   include_dirs = [
     "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/interfaces",
     "//base/telephony/call_manager/interfaces/innerkits",
+    "//base/telephony/call_manager/services/telephony_interaction/include",
   ]
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]

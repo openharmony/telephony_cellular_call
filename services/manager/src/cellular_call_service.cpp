@@ -25,6 +25,7 @@
 #include "emergency_utils.h"
 #include "module_service_utils.h"
 #include "radio_event.h"
+#include "telephony_permission.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -133,15 +134,11 @@ void CellularCallService::HandlerResetUnRegister()
             handler.reset();
         }
 
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_WAITING);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_CONNECT);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_END);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_CUSD_NOTICE);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
 
         if (GetCsControl(slot) != nullptr) {
@@ -160,18 +157,14 @@ void CellularCallService::RegisterCoreServiceHandler()
         int32_t slot = it.first;
         auto handler = it.second;
         if (handler != nullptr) {
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_WAITING, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_CONNECT, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_END, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_USSD_CUSD_NOTICE, nullptr);
+                slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
         }
@@ -192,14 +185,14 @@ void CellularCallService::RegisterCoreServiceHandler()
 
 void CellularCallService::SendEventRegisterHandler()
 {
-    int64_t delayTime_ = 1000;
+    int64_t delayTime = 1000;
     int32_t slot = DEFAULT_SIM_SLOT_ID;
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("SendEventRegisterHandler return, handler is nullptr");
         return;
     }
-    handler->SendEvent(handler->REGISTER_HANDLER_ID, delayTime_, CellularCallHandler::Priority::HIGH);
+    handler->SendEvent(handler->REGISTER_HANDLER_ID, delayTime, CellularCallHandler::Priority::HIGH);
 }
 
 void CellularCallService::SendEventRegisterImsCallback()
@@ -215,7 +208,7 @@ void CellularCallService::SendEventRegisterImsCallback()
     handler->SendEvent(handler->REGISTER_IMS_CALLBACK_ID, delayTime, CellularCallHandler::Priority::HIGH);
 }
 
-int32_t CellularCallService::Dump(std::int32_t fd, const std::vector<std::u16string> &args)
+int32_t CellularCallService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
     if (fd < 0) {
         TELEPHONY_LOGE("dump fd invalid");
@@ -228,7 +221,7 @@ int32_t CellularCallService::Dump(std::int32_t fd, const std::vector<std::u16str
     std::string result;
     CellularCallDumpHelper dumpHelper;
     if (dumpHelper.Dump(argsInStr, result)) {
-        std::int32_t ret = dprintf(fd, "%s", result.c_str());
+        int32_t ret = dprintf(fd, "%s", result.c_str());
         if (ret < 0) {
             TELEPHONY_LOGE("dprintf to dump fd failed");
             return TELEPHONY_ERR_FAIL;
@@ -263,6 +256,11 @@ std::string CellularCallService::GetSpendTime()
 
 int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::PLACE_CALL)) {
+        TELEPHONY_LOGE("Check permission failed, no PLACE_CALL permisson.");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
+
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Dial return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -361,6 +359,11 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
 
 int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
+        TELEPHONY_LOGE("Check permission failed, no ANSWER_CALL permisson.");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
+
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Answer return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -915,6 +918,7 @@ bool CellularCallService::IsValidSlotId(int32_t slotId) const
     } else if (SIM_SLOT_COUNT == slotDouble) {
         return slotId == SIM_SLOT_0 || slotId == SIM_SLOT_1;
     }
+    return false;
 }
 
 bool CellularCallService::IsNeedIms(int32_t slotId) const

@@ -13,20 +13,26 @@
  * limitations under the License.
  */
 
-#include "cellular_call_death_recipient.h"
+#ifndef TELEPHONY_CELLULAR_CALL_CALLBACK_H
+#define TELEPHONY_CELLULAR_CALL_CALLBACK_H
+
+#include "network_search_callback_base.h"
+#include "cellular_call_interface.h"
 
 namespace OHOS {
 namespace Telephony {
-CellularCallDeathRecipient::CellularCallDeathRecipient(
-    const std::function<void(const wptr<IRemoteObject> &object)> &deathCallback)
-    : deathCallback_(deathCallback)
-{}
+class CellularCallCallback : public NetworkSearchCallBackBase {
+public:
+    CellularCallCallback();
+    ~CellularCallCallback();
 
-void CellularCallDeathRecipient::OnRemoteDied(const OHOS::wptr<OHOS::IRemoteObject> &object)
-{
-    if (deathCallback_) {
-        deathCallback_(object);
-    }
-}
+    /**
+     * Clear the call corresponding to slotId
+     *
+     * @param slotId
+     */
+    void ClearCellularCallList(int32_t slotId) override;
+};
 } // namespace Telephony
 } // namespace OHOS
+#endif // TELEPHONY_CELLULAR_CALL_CALLBACK_H
