@@ -296,6 +296,12 @@ int32_t ImsTest::InputNumForInterface(const sptr<CellularCallInterface> &telepho
     return CELLULAR_CALL_SUCCESS;
 }
 
+/**
+ * @tc.number   cellular_call_ims_test_001
+ * @tc.name     Test the corresponding functions by entering commands, such as 300 -- SetCallPreferenceMode, 301 --
+ *              GetCallPreferenceMode, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(ImsTest, cellular_call_ims_test_001, TestSize.Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -312,6 +318,12 @@ HWTEST_F(ImsTest, cellular_call_ims_test_001, TestSize.Level0)
     std::cout << "HWTEST_F cellular_call_ims_test_001";
 }
 
+/**
+ * @tc.number   cellular_call_ims_test_002
+ * @tc.name     Test the corresponding functions by entering commands, such as 300 -- SetCallPreferenceMode, 301 --
+ *              GetCallPreferenceMode, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(ImsTest, cellular_call_ims_test_002, TestSize.Level1)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();

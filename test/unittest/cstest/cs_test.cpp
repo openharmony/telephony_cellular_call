@@ -619,6 +619,11 @@ int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephon
     return CELLULAR_CALL_SUCCESS;
 }
 
+/**
+ * @tc.number   cellular_call_cs_test_001
+ * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(CsTest, cellular_call_cs_test_001, TestSize.Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -635,6 +640,11 @@ HWTEST_F(CsTest, cellular_call_cs_test_001, TestSize.Level0)
     std::cout << "HWTEST_F cellular_call_cs_test_001";
 }
 
+/**
+ * @tc.number   cellular_call_cs_test_002
+ * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(CsTest, cellular_call_cs_test_002, TestSize.Level1)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
