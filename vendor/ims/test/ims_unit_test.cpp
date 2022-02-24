@@ -660,6 +660,11 @@ int32_t ImsUnitTest::InputNumForInterface(const sptr<ImsInterface> &telephonySer
     return CELLULAR_CALL_SUCCESS;
 }
 
+/**
+ * @tc.number   ims_vendor_test_001
+ * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(ImsUnitTest, ims_vendor_test_001, TestSize.Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -676,6 +681,11 @@ HWTEST_F(ImsUnitTest, ims_vendor_test_001, TestSize.Level0)
     std::cout << "ImsUnitTest HWTEST_F ims_vendor_test_001";
 }
 
+/**
+ * @tc.number   ims_vendor_test_002
+ * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
+ * @tc.desc     Function test
+ */
 HWTEST_F(ImsUnitTest, ims_vendor_test_002, TestSize.Level1)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();

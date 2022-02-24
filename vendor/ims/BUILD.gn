@@ -41,7 +41,6 @@ ohos_shared_library("tel_ims") {
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
   deps = [
-    "//base/startup/syspara_lite/interfaces/innerkits/native/syspara:syspara",
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
     "//utils/native/base:utils",
   ]
@@ -52,6 +51,7 @@ ohos_shared_library("tel_ims") {
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
   ]
 
   if (is_standard_system) {
