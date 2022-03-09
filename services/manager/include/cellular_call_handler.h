@@ -381,7 +381,7 @@ private:
     int64_t lastCallsDataFlag_ = 0L;
     const uint32_t GET_CS_CALL_DATA_ID = 10001;
     const uint32_t GET_IMS_CALL_DATA_ID = 10002;
-    int64_t delayTime_ = 500;
+    int64_t delayTime_ = 100;
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     CallType callType_ = CallType::TYPE_ERR_CALL;
