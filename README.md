@@ -51,7 +51,7 @@ The cellular call module consists of three layers:
 
 [Telephony Subsystem](https://gitee.com/openharmony/docs/blob/master/en/readme/telephony.md)
 
-[telephony_cellular_call](https://gitee.com/openharmony/telephony_cellular_call/blob/master/README.md)
+**telephony_cellular_call**
 
 [telephony_core_service](https://gitee.com/openharmony/telephony_core_service/blob/master/README.md)
 
