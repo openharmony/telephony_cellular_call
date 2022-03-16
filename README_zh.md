@@ -51,7 +51,7 @@
 
 [电话服务子系统](https://gitee.com/openharmony/docs/blob/master/zh-cn/readme/%E7%94%B5%E8%AF%9D%E6%9C%8D%E5%8A%A1%E5%AD%90%E7%B3%BB%E7%BB%9F.md)
 
-**telephony_cellular_call**
+[telephony_cellular_call](https://gitee.com/openharmony/telephony_cellular_call/blob/master/README_zh.md)
 
 [telephony_core_service](https://gitee.com/openharmony/telephony_core_service/blob/master/README_zh.md)
 
