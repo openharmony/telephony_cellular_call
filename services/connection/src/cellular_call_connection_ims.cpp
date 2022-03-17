@@ -280,18 +280,20 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("UpdateCallMediaModeRequest, call ims service");
-        ImsCallInfo callInfo;
-        if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        ImsCallInfo imsCallInfo;
+        if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
             TELEPHONY_LOGE("UpdateCallMediaModeRequest return, memset_s error.");
             return TELEPHONY_ERR_MEMSET_FAIL;
         }
-        if (strcpy_s(callInfo.phoneNum, strlen(callInfo.phoneNum) + 1, callInfo.phoneNum) != EOK) {
+        errno_t result = strcpy_s(imsCallInfo.phoneNum, strlen(callInfo.phoneNum) + 1,
+                                  callInfo.phoneNum);
+        if (result != EOK) {
             TELEPHONY_LOGE("UpdateCallMediaModeRequest return, strcpy_s fail.");
             return TELEPHONY_ERR_STRCPY_FAIL;
         }
-        callInfo.slotId = callInfo.slotId;
-        callInfo.index = callInfo.index;
-        return moduleUtils_.GetImsServiceRemoteObject()->UpdateImsCallMode(callInfo, mode);
+        imsCallInfo.slotId = callInfo.slotId;
+        imsCallInfo.index = callInfo.index;
+        return moduleUtils_.GetImsServiceRemoteObject()->UpdateImsCallMode(imsCallInfo, mode);
     }
     TELEPHONY_LOGI("UpdateCallMediaModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
