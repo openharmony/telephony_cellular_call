@@ -47,7 +47,7 @@ bool EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::string
 {
     TELEPHONY_LOGI("IsEmergencyCallProcessing entry.");
     std::vector<std::string> emergencyNumList = {
-        "110", "120", "119", "122", "12395", "114", "112", "000", "911", "08", "118", "999",
+        "110", "120", "119", "122", "112", "000", "911", "08", "118", "999",
     };
     if (std::find(emergencyNumList.begin(), emergencyNumList.end(), formatString) != emergencyNumList.end()) {
         TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with local configuration data.");
