@@ -18,7 +18,7 @@
 
 #include "base_connection.h"
 #include "module_service_utils.h"
-#include "ims_interface.h"
+#include "ims_call_interface.h"
 
 namespace OHOS {
 namespace Telephony {

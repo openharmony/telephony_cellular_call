@@ -73,7 +73,7 @@ void ImsStub::InitSupportCallFuncMap()
     requestFuncMap_[IMS_SET_MUTE] = &ImsStub::OnSetMuteInner;
     requestFuncMap_[IMS_GET_MUTE] = &ImsStub::OnGetMuteInner;
     requestFuncMap_[IMS_GET_EMERGENCY_CALL_LIST] = &ImsStub::OnGetEmergencyCallListInner;
-    requestFuncMap_[GET_CALL_FAIL_REASON] = &ImsStub::OnGetCallFailReasonInner;
+    requestFuncMap_[IMS_GET_CALL_FAIL_REASON] = &ImsStub::OnGetCallFailReasonInner;
     requestFuncMap_[IMS_INQUIRE_CLIP] = &ImsStub::OnInquireClipInner;
     requestFuncMap_[IMS_SET_CLIR] = &ImsStub::OnSetClirInner;
     requestFuncMap_[IMS_INQUIRE_CLIR] = &ImsStub::OnInquireClirInner;

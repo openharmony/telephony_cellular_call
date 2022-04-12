@@ -18,6 +18,7 @@
 #include "securec.h"
 
 #include "cellular_call_service.h"
+#include "ims_call_client.h"
 #include "radio_event.h"
 
 namespace OHOS {
@@ -38,7 +39,11 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
         }
         callInfo.videoState = dialRequest.videoState;
         callInfo.slotId = slotId;
-        return moduleUtils_.GetImsServiceRemoteObject()->Dial(callInfo, dialRequest.clirMode);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->Dial(callInfo, dialRequest.clirMode);
     }
 
     TELEPHONY_LOGI("DialRequest, ims vendor service does not exist.");
@@ -71,7 +76,11 @@ int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::stri
         }
         callInfo.slotId = slotId;
         callInfo.index = index;
-        return moduleUtils_.GetImsServiceRemoteObject()->HangUp(callInfo);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->HangUp(callInfo);
     }
 
     TELEPHONY_LOGI("HangUpRequest, ims vendor service does not exist.");
@@ -105,7 +114,11 @@ int32_t CellularCallConnectionIMS::AnswerRequest(
         callInfo.videoState = videoState;
         callInfo.slotId = slotId;
         callInfo.index = index;
-        return moduleUtils_.GetImsServiceRemoteObject()->Answer(callInfo);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->Answer(callInfo);
     }
 
     TELEPHONY_LOGI("AnswerRequest, ims vendor service does not exist.");
@@ -137,7 +150,11 @@ int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId, const std::stri
         }
         callInfo.slotId = slotId;
         callInfo.index = index;
-        return moduleUtils_.GetImsServiceRemoteObject()->Reject(callInfo);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->Reject(callInfo);
     }
 
     TELEPHONY_LOGI("RejectRequest, ims vendor service does not exist.");
@@ -158,7 +175,11 @@ int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("HoldCallRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->HoldCall(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->HoldCall(slotId);
     }
 
     TELEPHONY_LOGI("HoldCallRequest, ims vendor service does not exist.");
@@ -179,7 +200,11 @@ int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("UnHoldCallRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->UnHoldCall(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->UnHoldCall(slotId);
     }
 
     TELEPHONY_LOGI("UnHoldCallRequest, ims vendor service does not exist.");
@@ -200,7 +225,11 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("SwitchCallRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->SwitchCall(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId);
     }
 
     TELEPHONY_LOGI("SwitchCallRequest, ims vendor service does not exist.");
@@ -221,7 +250,11 @@ int32_t CellularCallConnectionIMS::CombineConferenceRequest(int32_t slotId, int3
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("CombineConferenceRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->CombineConference(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->CombineConference(slotId);
     }
 
     TELEPHONY_LOGI("CombineConferenceRequest, ims vendor service does not exist.");
@@ -243,7 +276,11 @@ int32_t CellularCallConnectionIMS::InviteToConferenceRequest(
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("InviteToConferenceRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->InviteToConference(slotId, numberList);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->InviteToConference(slotId, numberList);
     }
     TELEPHONY_LOGI("InviteToConferenceRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -254,7 +291,11 @@ int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("KickOutFromConferenceRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->KickOutFromConference(slotId, numberList);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->KickOutFromConference(slotId, numberList);
     }
     TELEPHONY_LOGI("KickOutFromConferenceRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -293,7 +334,11 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
         }
         imsCallInfo.slotId = callInfo.slotId;
         imsCallInfo.index = callInfo.index;
-        return moduleUtils_.GetImsServiceRemoteObject()->UpdateImsCallMode(imsCallInfo, mode);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->UpdateImsCallMode(imsCallInfo, mode);
     }
     TELEPHONY_LOGI("UpdateCallMediaModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -319,7 +364,11 @@ int32_t CellularCallConnectionIMS::SendDtmfRequest(int32_t slotId, char cDtmfCod
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("SendDtmfRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->SendDtmf(slotId, cDtmfCode, index);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->SendDtmf(slotId, cDtmfCode, index);
     }
 
     TELEPHONY_LOGI("SendDtmfRequest, ims vendor service does not exist.");
@@ -340,7 +389,11 @@ int32_t CellularCallConnectionIMS::StartDtmfRequest(int32_t slotId, char cDtmfCo
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("StartDtmfRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->StartDtmf(slotId, cDtmfCode, index);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StartDtmf(slotId, cDtmfCode, index);
     }
 
     TELEPHONY_LOGI("StartDtmfRequest, ims vendor service does not exist.");
@@ -361,7 +414,11 @@ int32_t CellularCallConnectionIMS::StopDtmfRequest(int32_t slotId, int32_t index
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("StopDtmfRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->StopDtmf(slotId, index);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StopDtmf(slotId, index);
     }
 
     TELEPHONY_LOGI("StopDtmfRequest, ims vendor service does not exist.");
@@ -382,7 +439,11 @@ int32_t CellularCallConnectionIMS::StartRttRequest(int32_t slotId, const std::st
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("StartRttRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->StartRtt(slotId, msg);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StartRtt(slotId, msg);
     }
     TELEPHONY_LOGI("StartRttRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -392,7 +453,11 @@ int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("StopRttRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->StopRtt(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StopRtt(slotId);
     }
     TELEPHONY_LOGI("StopRttRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
@@ -402,7 +467,11 @@ int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) cons
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("GetCallFailReasonRequest, call ims service");
-        return moduleUtils_.GetImsServiceRemoteObject()->GetCallFailReason(slotId);
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->GetCallFailReason(slotId);
     }
 
     TELEPHONY_LOGI("GetCallFailReasonRequest, ims vendor service does not exist.");

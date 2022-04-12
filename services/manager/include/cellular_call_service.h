@@ -568,11 +568,6 @@ private:
     void SendEventRegisterHandler();
 
     /**
-     * SendEventRegisterCallback
-     */
-    void SendEventRegisterImsCallback();
-
-    /**
      * Is Valid Slot Id
      *
      * @param slotId

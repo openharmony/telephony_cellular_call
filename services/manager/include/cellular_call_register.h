@@ -21,8 +21,7 @@
 #include "cellular_call_connection_cs.h"
 #include "i_call_status_callback.h"
 #include "singleton.h"
-#include "ims_callback_stub.h"
-#include "ims_interface.h"
+#include "ims_call_interface.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -271,15 +270,7 @@ public:
      */
     int32_t UnRegisterCallManagerCallBack();
 
-    /**
-     * Register Ims CallBack
-     *
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t RegisterImsCallBack();
-
 private:
-    sptr<ImsCallback> imsCallback_;
     sptr<ICallStatusCallback> callManagerCallBack_;
 };
 } // namespace Telephony

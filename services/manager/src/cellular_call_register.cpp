@@ -20,15 +20,9 @@
 
 namespace OHOS {
 namespace Telephony {
-CellularCallRegister::CellularCallRegister() : imsCallback_(nullptr), callManagerCallBack_(nullptr) {}
+CellularCallRegister::CellularCallRegister() : callManagerCallBack_(nullptr) {}
 
-CellularCallRegister::~CellularCallRegister()
-{
-    if (imsCallback_ != nullptr) {
-        imsCallback_.clear();
-        imsCallback_ = nullptr;
-    }
-}
+CellularCallRegister::~CellularCallRegister() {}
 
 void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInfo)
 {
@@ -254,31 +248,6 @@ void CellularCallRegister::ReportGetImsSwitchEnhanceModeResult(const GetLteEnhan
         return;
     }
     callManagerCallBack_->GetLteEnhanceModeResult(response);
-}
-
-int32_t CellularCallRegister::RegisterImsCallBack()
-{
-    auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (managerPtr == nullptr) {
-        TELEPHONY_LOGE("RegisterImsCallBack return, get system ability manager error.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    auto remoteObjectPtr = managerPtr->CheckSystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID);
-    if (remoteObjectPtr == nullptr) {
-        TELEPHONY_LOGE("RegisterImsCallBack return, remote service not exists.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    imsCallback_ = (std::make_unique<ImsCallbackStub>()).release();
-    if (imsCallback_ == nullptr) {
-        TELEPHONY_LOGE("RegisterImsCallBack return, make unique error.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    int32_t ret = iface_cast<ImsInterface>(remoteObjectPtr)->RegisterCellularCallBack(imsCallback_);
-    if (ret) {
-        TELEPHONY_LOGE("RegisterImsCallBack return, register callback error.");
-        return TELEPHONY_ERR_FAIL;
-    }
-    return TELEPHONY_SUCCESS;
 }
 
 void CellularCallRegister::ReportCallRingBackResult(int32_t status)
