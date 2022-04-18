@@ -23,6 +23,7 @@
 #include "cellular_call_dump_helper.h"
 #include "cellular_call_callback.h"
 #include "emergency_utils.h"
+#include "ims_call_client.h"
 #include "module_service_utils.h"
 #include "radio_event.h"
 #include "telephony_permission.h"
@@ -52,9 +53,8 @@ bool CellularCallService::Init()
     }
     CreateHandler();
     SendEventRegisterHandler();
-    SendEventRegisterImsCallback();
-    ModuleServiceUtils utils;
-    utils.ConnectImsService();
+    // connect ims_service
+    DelayedSingleton<ImsCallClient>::GetInstance()->Init();
     TELEPHONY_LOGI("CellularCallService::Init, init success");
     return true;
 }
@@ -193,19 +193,6 @@ void CellularCallService::SendEventRegisterHandler()
         return;
     }
     handler->SendEvent(handler->REGISTER_HANDLER_ID, delayTime, CellularCallHandler::Priority::HIGH);
-}
-
-void CellularCallService::SendEventRegisterImsCallback()
-{
-    TELEPHONY_LOGI("CellularCallService::SendEventRegisterImsCallback entry");
-    int64_t delayTime = 2000;
-    int32_t slot = DEFAULT_SIM_SLOT_ID;
-    auto handler = handlerMap_[slot];
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("SendEventRegisterImsCallback return, handler is nullptr");
-        return;
-    }
-    handler->SendEvent(handler->REGISTER_IMS_CALLBACK_ID, delayTime, CellularCallHandler::Priority::HIGH);
 }
 
 int32_t CellularCallService::Dump(int32_t fd, const std::vector<std::u16string> &args)

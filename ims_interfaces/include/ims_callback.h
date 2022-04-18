@@ -19,7 +19,7 @@
 #include "iremote_broker.h"
 
 #include "hril_call_parcel.h"
-#include "ims_types.h"
+#include "ims_call_types.h"
 
 namespace OHOS {
 namespace Telephony {

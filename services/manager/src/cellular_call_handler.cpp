@@ -54,7 +54,6 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
     requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
     requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
-    requestFuncMap_[REGISTER_IMS_CALLBACK_ID] = &CellularCallHandler::RegisterImsCallback;
     requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &CellularCallHandler::GetMMIResponse;
 }
 
@@ -465,16 +464,6 @@ void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer 
 {
     CellularCallConnectionCS connectionCs;
     connectionCs.RegisterHandler();
-}
-
-void CellularCallHandler::RegisterImsCallback(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("RegisterImsCallback entry");
-    if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("RegisterImsCallback return, GetInstance is nullptr");
-        return;
-    }
-    registerInstance_->RegisterImsCallBack();
 }
 
 void CellularCallHandler::SetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)

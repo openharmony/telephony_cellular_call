@@ -215,7 +215,6 @@ public:
 
 public:
     const uint32_t REGISTER_HANDLER_ID = 1002;
-    const uint32_t REGISTER_IMS_CALLBACK_ID = 1003;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
 
 private:
@@ -257,11 +256,6 @@ private:
      * Register Handler
      */
     void RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Register Ims Callback
-     */
-    void RegisterImsCallback(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * GetMMIResponse

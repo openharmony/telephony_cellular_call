@@ -19,7 +19,7 @@
 #include "iservice_registry.h"
 #include "singleton.h"
 
-#include "ims_interface.h"
+#include "ims_call_interface.h"
 #include "network_state.h"
 
 namespace OHOS {
@@ -85,12 +85,7 @@ public:
      *
      * @return sptr<ImsInterface>
      */
-    sptr<ImsInterface> GetImsServiceRemoteObject() const;
-
-    /**
-     * Register ImsCallBack Again
-     */
-    void RegisterImsCallBackAgain() const;
+    sptr<ImsCallInterface> GetImsServiceRemoteObject() const;
 
     /**
      * Connect ImsService

@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Copyright (C) 2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,45 +14,36 @@
 import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
-SOURCE_DIR = "//base/telephony/cellular_call/vendor/ims"
+CELLULAR_CALL_SOURCE_DIR = "//base/telephony/cellular_call"
+CELLULAR_CALL_INTERFACES_INNERKITS =
+    "$CELLULAR_CALL_SOURCE_DIR/interfaces/innerkits"
 
-ohos_shared_library("tel_ims") {
-  sources = [
-    "$SOURCE_DIR/services/src/ims_handler.cpp",
-    "$SOURCE_DIR/services/src/ims_register.cpp",
-    "$SOURCE_DIR/services/src/ims_ril_request.cpp",
-    "$SOURCE_DIR/services/src/ims_service.cpp",
-    "$SOURCE_DIR/services/src/ims_stub.cpp",
-    "//base/telephony/cellular_call/ims_interfaces/src/ims_callback_proxy.cpp",
-  ]
-
+config("public_config_ims_call_callback_proxy") {
+  # header file path
   include_dirs = [
-    "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/cellular_call/ims_interfaces/include",
-    "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/services/ims_service_interaction/include",
-    "$SOURCE_DIR/services/include",
+    "$CELLULAR_CALL_INTERFACES_INNERKITS/ims",
+    "$CELLULAR_CALL_SOURCE_DIR/services/common/include",
   ]
+}
 
-  defines += [
-    "TELEPHONY_LOG_TAG = \"ims\"",
-    "LOG_DOMAIN = 0xD002B01",
-  ]
+ohos_shared_library("tel_ims_call_callback_proxy") {
+  sources = [ "$CELLULAR_CALL_SOURCE_DIR/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
 
-  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
+  public_configs = [ ":public_config_ims_call_callback_proxy" ]
 
-  deps = [
-    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "$CELLULAR_CALL_SOURCE_DIR:tel_cellular_call" ]
 
   external_deps = [
+    "call_manager:tel_call_manager_api",
+    "core_service:libtel_common",
+    "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "startup_l2:syspara",
+    "utils_base:utils",
   ]
 
   if (is_standard_system) {
@@ -60,6 +51,11 @@ ohos_shared_library("tel_ims") {
   } else {
     external_deps += [ "hilog:libhilog" ]
   }
+
+  defines += [
+    "TELEPHONY_LOG_TAG = \"CellularCall\"",
+    "LOG_DOMAIN = 0xD002B01",
+  ]
 
   part_name = "cellular_call"
   subsystem_name = "telephony"

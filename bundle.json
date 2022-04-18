@@ -44,10 +44,25 @@
         "build": {
             "sub_component": [
                 "//base/telephony/cellular_call:tel_cellular_call",
-                "//base/telephony/cellular_call/sa_profile:cellular_call_sa_profile",
-                "//base/telephony/cellular_call/vendor/ims:tel_ims"
+                "//base/telephony/cellular_call/sa_profile:cellular_call_sa_profile"
             ],
             "inner_kits": [
+                {
+                    "header": {
+                        "header_base" : "//base/telephony/cellular_call/interfaces/innerkits/ims",
+                        "header_files": [
+                            "ims_call_callback_interface.h",
+                            "ims_call_callback_proxy.h",
+                            "ims_call_callback_stub.h",
+                            "ims_call_client.h",
+                            "ims_call_death_recipient.h",
+                            "ims_call_interface.h",
+                            "ims_call_proxy.h",
+                            "ims_call_types.h"
+                        ]
+                    },
+                    "name":"//base/telephony/cellular_call/interfaces/innerkits/ims:tel_ims_call_callback_proxy"
+                }
             ],
             "test": [
                 "//base/telephony/cellular_call/test:unittest"

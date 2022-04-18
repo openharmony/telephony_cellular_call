@@ -19,8 +19,8 @@
 #include "string_ex.h"
 
 #include "cellular_call_register.h"
-#include "ims_callback_stub.h"
-#include "ims_death_recipient.h"
+#include "ims_call_client.h"
+#include "ims_call_death_recipient.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_types.h"
 
@@ -72,38 +72,25 @@ std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()
 
 bool ModuleServiceUtils::NeedCallImsService() const
 {
-    auto remoteObject = GetImsServiceRemoteObject();
-    if (remoteObject == nullptr) {
-        TELEPHONY_LOGE("NeedCallImsService return, remote service not exists.");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
         return false;
     }
-    if (!remoteObject->IsCallBackExists()) {
-        TELEPHONY_LOGE("NeedCallImsService return, ims callBack not exists");
-        RegisterImsCallBackAgain();
+    auto remoteProxy = DelayedSingleton<ImsCallClient>::GetInstance()->GetImsCallProxy();
+    if (remoteProxy == nullptr) {
+        TELEPHONY_LOGE("NeedCallImsService return, ims service SA not exists.");
         return false;
     }
     return true;
 }
 
-sptr<ImsInterface> ModuleServiceUtils::GetImsServiceRemoteObject() const
+sptr<ImsCallInterface> ModuleServiceUtils::GetImsServiceRemoteObject() const
 {
-    auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (managerPtr == nullptr) {
-        TELEPHONY_LOGE("GetImsServiceRemoteObject return, get system ability manager error.");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
         return nullptr;
     }
-    auto remoteObjectPtr = managerPtr->CheckSystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID);
-    if (remoteObjectPtr == nullptr) {
-        TELEPHONY_LOGE("GetImsServiceRemoteObject return, remote service not exists.");
-        return nullptr;
-    }
-    return iface_cast<ImsInterface>(remoteObjectPtr);
-}
-
-void ModuleServiceUtils::RegisterImsCallBackAgain() const
-{
-    TELEPHONY_LOGI("RegisterImsCallBackAgain entry, register ims callback again.");
-    DelayedSingleton<CellularCallRegister>::GetInstance()->RegisterImsCallBack();
+    return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsCallProxy();
 }
 
 int32_t ModuleServiceUtils::ConnectImsService()
@@ -127,7 +114,8 @@ int32_t ModuleServiceUtils::ConnectImsService()
             sharedPtr->NotifyDeath();
         }
     };
-    sptr<IRemoteObject::DeathRecipient> imsRecipient_ = (std::make_unique<ImsDeathRecipient>(deathCallback)).release();
+    sptr<IRemoteObject::DeathRecipient> imsRecipient_ =
+        (std::make_unique<ImsCallDeathRecipient>(deathCallback)).release();
     if (imsRecipient_ == nullptr) {
         TELEPHONY_LOGE("ConnectImsService return, imsRecipient_ is nullptr.");
         return TELEPHONY_ERROR;
