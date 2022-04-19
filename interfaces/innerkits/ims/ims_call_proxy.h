@@ -30,6 +30,7 @@ public:
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode) override;
     int32_t HangUp(const ImsCallInfo &callInfo) override;
     int32_t Reject(const ImsCallInfo &callInfo) override;
+    int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason) override;
     int32_t Answer(const ImsCallInfo &callInfo) override;
     int32_t HoldCall(int32_t slotId) override;
     int32_t UnHoldCall(int32_t slotId) override;
@@ -40,7 +41,7 @@ public:
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
     int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum) override;
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag) override;
-    int32_t GetCallFailReason(int32_t slotId) override;
+    int32_t GetLastCallFailReason(int32_t slotId) override;
     
     int32_t StartDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t SendDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
@@ -50,7 +51,7 @@ public:
 
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) override;
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
-    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active) override;
+    int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active) override;
     int32_t GetLteImsSwitchStatus(int32_t slotId) override;
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value) override;
     int32_t SetImsConfig(ImsConfigItem item, int32_t value) override;

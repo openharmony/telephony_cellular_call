@@ -47,9 +47,9 @@ public:
     int32_t CallMediaModeResponse(const ImsResponseInfo &info) override;
     int32_t IsEmergencyPhoneNumberResponse(const ImsResponseInfo &info) override;
     int32_t IsEmergencyPhoneNumberResponse(bool value) override;
-    int32_t CallStatusResponse(int32_t slotId) override;
+    int32_t CallStateChangeReport(int32_t slotId) override;
     int32_t ServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus) override;
-    int32_t CallFailReasonResponse(int32_t reason) override;
+    int32_t LastCallFailReasonResponse(int32_t reason) override;
     int32_t SrvccStateReport(int32_t slotId, SrvccState srvccState) override;
     int32_t VtWfcReport(int32_t slotId, TransferState transferState) override;
     int32_t CallRingBackResponse(const RingbackVoice &info) override;
@@ -69,7 +69,7 @@ public:
     int32_t GetImsSwitchResponse(const ImsResponseInfo &info) override;
     int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) override;
     int32_t ImsCallsDataResponse(const ImsResponseInfo &info) override;
-    int32_t ImsCallsDataResponse(int32_t slotId, const CallInfoList &callList) override;
+    int32_t ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
     int32_t SetImsConfigResponse(const ImsResponseInfo &info) override;
     int32_t GetImsConfigResponse(int32_t value) override;
     int32_t GetImsConfigResponse(const ImsResponseInfo &info) override;
@@ -116,13 +116,13 @@ private:
     int32_t OnKickOutFromConferenceResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnIsEmergencyNumberResponseInner(MessageParcel &data, MessageParcel &reply);
-    int32_t OnCallStatusResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnCallStateChangeReportInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnServiceStatusResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsCallsDataResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSrvccStateReportInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnVtWfcReportInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnCallRingBackResponseInner(MessageParcel &data, MessageParcel &reply);
-    int32_t OnCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnLastCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /****************** dtmf、rtt ******************/
     int32_t OnStartDtmfResponseInner(MessageParcel &data, MessageParcel &reply);

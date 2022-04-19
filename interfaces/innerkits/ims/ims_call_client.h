@@ -46,6 +46,7 @@ public:
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode);
     int32_t HangUp(const ImsCallInfo &callInfo);
     int32_t Reject(const ImsCallInfo &callInfo);
+    int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason);
     int32_t Answer(const ImsCallInfo &callInfo);
     int32_t HoldCall(int32_t slotId);
     int32_t UnHoldCall(int32_t slotId);
@@ -56,7 +57,7 @@ public:
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode);
     int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum);
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag);
-    int32_t GetCallFailReason(int32_t slotId);
+    int32_t GetLastCallFailReason(int32_t slotId);
 
     /****************** dtmf、rtt ******************/
     int32_t StartDtmf(int32_t slotId, char cDtmfCode, int32_t index);
@@ -68,7 +69,7 @@ public:
     /****************** ims config ******************/
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode);
     int32_t GetDomainPreferenceMode(int32_t slotId);
-    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active);
+    int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active);
     int32_t GetLteImsSwitchStatus(int32_t slotId);
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value);
     int32_t SetImsConfig(ImsConfigItem item, int32_t value);

@@ -52,9 +52,9 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
     requestFuncMap_[IMS_KICK_OUT_CONFERENCE] = &ImsCallCallbackStub::OnKickOutFromConferenceResponseInner;
     requestFuncMap_[IMS_UPDATE_CALL_MEDIA_MODE] = &ImsCallCallbackStub::OnCallMediaModeResponseInner;
     requestFuncMap_[IMS_EMERGENCY_CALL] = &ImsCallCallbackStub::OnIsEmergencyNumberResponseInner;
-    requestFuncMap_[IMS_CALL_STATUS] = &ImsCallCallbackStub::OnCallStatusResponseInner;
+    requestFuncMap_[IMS_CALL_STATE_CHANGE] = &ImsCallCallbackStub::OnCallStateChangeReportInner;
     requestFuncMap_[IMS_SERVICE_STATUS] = &ImsCallCallbackStub::OnServiceStatusResponseInner;
-    requestFuncMap_[IMS_CALL_FAIL_REASON] = &ImsCallCallbackStub::OnCallFailReasonResponseInner;
+    requestFuncMap_[IMS_LAST_CALL_FAIL_REASON] = &ImsCallCallbackStub::OnLastCallFailReasonResponseInner;
     requestFuncMap_[IMS_SRVCC_STATE] = &ImsCallCallbackStub::OnSrvccStateReportInner;
     requestFuncMap_[IMS_VT_OR_WFC] = &ImsCallCallbackStub::OnVtWfcReportInner;
     requestFuncMap_[IMS_CALL_CRING] = &ImsCallCallbackStub::OnCallRingBackResponseInner;
@@ -344,11 +344,11 @@ int32_t ImsCallCallbackStub::OnStopRttResponseInner(MessageParcel &data, Message
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnCallStatusResponseInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallCallbackStub::OnCallStateChangeReportInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnCallStatusResponseInner entry");
+    TELEPHONY_LOGI("ImsCallCallbackStub::OnCallStateChangeReportInner entry");
     int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(CallStatusResponse(slotId));
+    reply.WriteInt32(CallStateChangeReport(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -427,7 +427,7 @@ int32_t ImsCallCallbackStub::OnImsCallsDataResponseInner(MessageParcel &data, Me
     if (info == nullptr) {
         TELEPHONY_LOGE("OnImsCallsDataResponseInner, info is nullptr.");
         int32_t slotId = data.ReadInt32();
-        auto callList = (CallInfoList *)data.ReadRawData(sizeof(CallInfoList));
+        auto callList = (ImsCurrentCallList *)data.ReadRawData(sizeof(ImsCurrentCallList));
         if (callList == nullptr) {
             TELEPHONY_LOGE("OnImsCallsDataResponseInner, callList is nullptr.");
             return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -655,11 +655,11 @@ int32_t ImsCallCallbackStub::OnGetEccListResponseInner(MessageParcel &data, Mess
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallCallbackStub::OnLastCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnCallFailReasonResponseInner entry");
+    TELEPHONY_LOGI("ImsCallCallbackStub::OnLastCallFailReasonResponseInner entry");
     int32_t reason = data.ReadInt32();
-    reply.WriteInt32(CallFailReasonResponse(reason));
+    reply.WriteInt32(LastCallFailReasonResponse(reason));
     return TELEPHONY_SUCCESS;
 }
 
@@ -863,9 +863,9 @@ int32_t ImsCallCallbackStub::StopRttResponse(const ImsResponseInfo &info)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::CallStatusResponse(int32_t slotId)
+int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
 {
-    TELEPHONY_LOGI("ImsCallCallbackStub::CallStatusResponse entry");
+    TELEPHONY_LOGI("ImsCallCallbackStub::CallStateChangeReport entry");
     return TELEPHONY_SUCCESS;
 }
 
@@ -917,7 +917,7 @@ int32_t ImsCallCallbackStub::ImsCallsDataResponse(const ImsResponseInfo &info)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::ImsCallsDataResponse(int32_t slotId, const CallInfoList &callList)
+int32_t ImsCallCallbackStub::ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::ImsCallsDataResponse entry");
     return TELEPHONY_SUCCESS;
@@ -1049,9 +1049,9 @@ int32_t ImsCallCallbackStub::CallRingBackResponse(const RingbackVoice &info)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::CallFailReasonResponse(int32_t reason)
+int32_t ImsCallCallbackStub::LastCallFailReasonResponse(int32_t reason)
 {
-    TELEPHONY_LOGI("ImsCallCallbackStub::CallFailReasonResponse entry");
+    TELEPHONY_LOGI("ImsCallCallbackStub::LastCallFailReasonResponse entry");
     return TELEPHONY_SUCCESS;
 }
 

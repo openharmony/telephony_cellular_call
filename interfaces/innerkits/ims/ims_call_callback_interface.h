@@ -41,9 +41,9 @@ public:
         IMS_KICK_OUT_CONFERENCE,
         IMS_UPDATE_CALL_MEDIA_MODE,
         IMS_EMERGENCY_CALL,
-        IMS_CALL_STATUS,
+        IMS_CALL_STATE_CHANGE,
         IMS_SERVICE_STATUS,
-        IMS_CALL_FAIL_REASON,
+        IMS_LAST_CALL_FAIL_REASON,
         IMS_GET_CALLS_DATA,
         IMS_SRVCC_STATE,
         IMS_VT_OR_WFC,
@@ -236,12 +236,12 @@ public:
     virtual int32_t StopRttResponse(const ImsResponseInfo &info) = 0;
 
     /**
-     * CallStatusResponse
+     * CallStateChangeReport
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CallStatusResponse(int32_t slotId) = 0;
+    virtual int32_t CallStateChangeReport(int32_t slotId) = 0;
 
     /**
      * ServiceStatusResponse
@@ -298,7 +298,7 @@ public:
      * GetImsSwitchResponse
      *
      * @param slotId
-     * @param int32_t
+     * @param active 1: ims is enabled, 0: ims is disabled
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) = 0;
@@ -315,10 +315,10 @@ public:
      * ImsCallsDataResponse
      *
      * @param slotId
-     * @param CallInfoList
+     * @param callList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t ImsCallsDataResponse(int32_t slotId, const CallInfoList &callList) = 0;
+    virtual int32_t ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) = 0;
 
     /**
      * SetImsConfigResponse
@@ -491,12 +491,12 @@ public:
     virtual int32_t GetEccCallListResponse(const EmergencyInfoList &callList) = 0;
 
     /**
-     * CallFailReasonResponse
+     * LastCallFailReasonResponse
      *
-     * @param int32_t
+     * @param reason
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CallFailReasonResponse(int32_t reason) = 0;
+    virtual int32_t LastCallFailReasonResponse(int32_t reason) = 0;
 
     /**
      * GetClipResponse
