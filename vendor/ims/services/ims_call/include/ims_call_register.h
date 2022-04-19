@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 
-#ifndef TELEPHONY_IMS_REGISTER_H
-#define TELEPHONY_IMS_REGISTER_H
+#ifndef TELEPHONY_IMS_CALL_REGISTER_H
+#define TELEPHONY_IMS_CALL_REGISTER_H
 
 #include "singleton.h"
-#include "ims_callback.h"
+#include "ims_call_callback_interface.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
-class ImsRegister {
-    DECLARE_DELAYED_SINGLETON(ImsRegister);
+class ImsCallRegister {
+    DECLARE_DELAYED_SINGLETON(ImsCallRegister)
 
 public:
     /**
@@ -137,13 +137,13 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t UpdateStartDtmfResponse(const ImsResponseInfo &info);
-
     /**
      * UpdateSendDtmfResponse
      *
      * @param ImsResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
+
     int32_t UpdateSendDtmfResponse(const ImsResponseInfo &info);
 
     /**
@@ -171,12 +171,12 @@ public:
     int32_t UpdateStopRttResponse(const ImsResponseInfo &info);
 
     /**
-     * UpdateCallStatusResponse
+     * UpdateCallStateChangeReport
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallStatusResponse(int32_t slotId);
+    int32_t UpdateCallStateChangeReport(int32_t slotId);
 
     /**
      * UpdateServiceStatusResponse
@@ -253,7 +253,7 @@ public:
      * @param CallInfoList
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateImsCallsDataResponse(int32_t slotId, const CallInfoList &callList);
+    int32_t UpdateImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList  &callList);
 
     /**
      * UpdateSetImsConfigResponse
@@ -376,6 +376,24 @@ public:
     int32_t UpdateSetDeviceDirectionResponse(const ImsResponseInfo &info);
 
     /**
+     * UpdateSrvccStateReport
+     *
+     * @param slotId
+     * @param SrvccState
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateSrvccStateReport(int32_t slotId, SrvccState srvccState);
+
+    /**
+     * UpdateVtWfcReport
+     *
+     * @param slotId
+     * @param TransferState
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateVtWfcReport(int32_t slotId, TransferState transferState);
+
+    /**
      * UpdateCallRingBackResponse
      *
      * @param RingbackVoice
@@ -408,12 +426,12 @@ public:
     int32_t UpdateGetEccCallListResponse(const EmergencyInfoList &callList);
 
     /**
-     * UpdateCallFailReasonResponse
+     * UpdateLastCallFailReasonResponse
      *
      * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateCallFailReasonResponse(int32_t reason);
+    int32_t UpdateLastCallFailReasonResponse(int32_t reason);
 
     /**
      * UpdateGetClipResponse
@@ -488,24 +506,24 @@ public:
     int32_t UpdateSetCallWaitingResponse(HRilErrType errType);
 
     /**
-     * Register CellularCallBack
+     * Register ImsCallCallback
      *
      * @param sptr<ImsCallback>
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t RegisterCellularCallBack(const sptr<ImsCallback> &callback);
+    int32_t RegisterImsCallCallBack(const sptr<ImsCallCallbackInterface> &callback);
 
     /**
-     * Is CellularCallBack Exists
+     * Is ImsCallCallback Exists
      *
      * @return bool
      */
     bool IsCallBackExists();
 
 private:
-    sptr<ImsCallback> cellularCallBack_;
+    sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS
 
-#endif // TELEPHONY_IMS_REGISTER_H
+#endif // TELEPHONY_IMS_CALL_REGISTER_H
