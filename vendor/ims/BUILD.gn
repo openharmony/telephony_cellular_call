@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Copyright (C) 2021-2022 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,45 +14,61 @@
 import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
-SOURCE_DIR = "//base/telephony/cellular_call/vendor/ims"
+TELEPHONY_CELLULAR_CALL_ROOT = "//base/telephony/cellular_call"
+TELEPHONY_IMS_SERVICE_ROOT = "$TELEPHONY_CELLULAR_CALL_ROOT/vendor/ims"
 
 ohos_shared_library("tel_ims") {
   sources = [
-    "$SOURCE_DIR/services/src/ims_handler.cpp",
-    "$SOURCE_DIR/services/src/ims_register.cpp",
-    "$SOURCE_DIR/services/src/ims_ril_request.cpp",
-    "$SOURCE_DIR/services/src/ims_service.cpp",
-    "$SOURCE_DIR/services/src/ims_stub.cpp",
-    "//base/telephony/cellular_call/ims_interfaces/src/ims_callback_proxy.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_base/src/ims_base_handler.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_handler.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_register.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_stub.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_handler.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_register.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_stub.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_ril/src/ims_ril_manager.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_handler.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_register.cpp",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_stub.cpp",
   ]
 
   include_dirs = [
-    "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/cellular_call/ims_interfaces/include",
-    "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/services/ims_service_interaction/include",
-    "$SOURCE_DIR/services/include",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_base/include",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/include",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/include",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/include",
+    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_ril/include",
   ]
 
   defines += [
-    "TELEPHONY_LOG_TAG = \"ims\"",
+    "TELEPHONY_LOG_TAG = \"ImsCoreService\"",
     "LOG_DOMAIN = 0xD002B01",
   ]
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
   deps = [
-    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
-    "//utils/native/base:utils",
+    "$TELEPHONY_CELLULAR_CALL_ROOT:tel_cellular_call",
+    "$TELEPHONY_CELLULAR_CALL_ROOT/interfaces/innerkits/ims:tel_ims_call_callback_proxy",
   ]
 
   external_deps = [
+    "call_manager:tel_call_manager_api",
+    "core_service:libtel_common",
+    "core_service:tel_core_service_api",
+    "device_driver_framework:libhdf_utils",
+    "device_driver_framework:libhdi",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "sms_mms:tel_sms_mms_api",
     "startup_l2:syspara",
+    "utils_base:utils",
   ]
 
   if (is_standard_system) {
