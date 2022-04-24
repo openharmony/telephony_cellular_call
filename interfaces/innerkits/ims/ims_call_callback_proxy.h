@@ -41,11 +41,11 @@ public:
     int32_t CallMediaModeResponse(const ImsResponseInfo &info) override;
     int32_t IsEmergencyPhoneNumberResponse(const ImsResponseInfo &info) override;
     int32_t IsEmergencyPhoneNumberResponse(bool value) override;
-    int32_t CallStatusResponse(int32_t slotId) override;
+    int32_t CallStateChangeReport(int32_t slotId) override;
     int32_t ServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus) override;
-    int32_t CallFailReasonResponse(int32_t reason) override;
+    int32_t LastCallFailReasonResponse(int32_t reason) override;
     int32_t ImsCallsDataResponse(const ImsResponseInfo &info) override;
-    int32_t ImsCallsDataResponse(int32_t slotId, const CallInfoList &callList) override;
+    int32_t ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
     int32_t SrvccStateReport(int32_t slotId, SrvccState srvccState) override;
     int32_t VtWfcReport(int32_t slotId, TransferState transferState) override;
     int32_t CallRingBackResponse(const RingbackVoice &info) override;

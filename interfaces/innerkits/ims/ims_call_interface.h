@@ -30,6 +30,7 @@ public:
         IMS_DIAL = 1,
         IMS_HANG_UP,
         IMS_REJECT,
+        IMS_REJECT_WITH_REASON,
         IMS_ANSWER,
         IMS_HOLD,
         IMS_UN_HOLD,
@@ -40,7 +41,7 @@ public:
         IMS_UPDATE_CALL_MEDIA_MODE,
         IMS_EMERGENCY_CALL,
         IMS_GET_CALL_DATA,
-        IMS_GET_CALL_FAIL_REASON,
+        IMS_GET_LAST_CALL_FAIL_REASON,
 
         /****************** dtmf、rtt ******************/
         IMS_START_DTMF = 100,
@@ -112,6 +113,15 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t Reject(const ImsCallInfo &callInfo) = 0;
+
+    /**
+     * IMS Reject with reason interface
+     *
+     * @param ImsCallInfo
+     * @param ImsRejectReason
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason) = 0;
 
     /**
      * IMS Answer interface
@@ -199,12 +209,12 @@ public:
     virtual int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag) = 0;
 
     /**
-     * Get Call Fail Reason
+     * Get Last Call Fail Reason
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetCallFailReason(int32_t slotId) = 0;
+    virtual int32_t GetLastCallFailReason(int32_t slotId) = 0;
 
     /**
      * IMS StartDtmf interface
@@ -273,10 +283,10 @@ public:
      * IMS SetLteImsSwitchStatus interface
      *
      * @param slotId
-     * @param active
+     * @param active 1: enable ims, 0: disable ims
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetLteImsSwitchStatus(int32_t slotId, bool active) = 0;
+    virtual int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active) = 0;
 
     /**
      * IMS GetLteImsSwitchStatus interface
@@ -347,7 +357,7 @@ public:
     /**
      * IMS SetMute interface
      *
-     * @param mute
+     * @param mute 0: not mute, 1:mute
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
@@ -499,7 +509,7 @@ public:
      * IMS SetCallWaiting interface
      *
      * @param slotId
-     * @param activate
+     * @param activate 0: disabled, 1: enabled
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t SetCallWaiting(int32_t slotId, bool activate) = 0;

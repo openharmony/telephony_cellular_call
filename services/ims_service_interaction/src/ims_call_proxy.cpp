@@ -88,6 +88,31 @@ int32_t ImsCallProxy::Reject(const ImsCallInfo &callInfo)
     return error;
 }
 
+int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason)
+{
+    MessageOption option;
+    MessageParcel in;
+    MessageParcel out;
+    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
+        TELEPHONY_LOGE("ImsCallProxy::Reject return, write descriptor token fail!");
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
+        TELEPHONY_LOGE("ImsCallProxy::Reject return, write callInfo fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(reason)) {
+        TELEPHONY_LOGE("ImsCallProxy::Reject return, write reason fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    int32_t error = Remote()->SendRequest(IMS_REJECT_WITH_REASON, in, out, option);
+    if (error == ERR_NONE) {
+        TELEPHONY_LOGI("ImsCallProxy::Reject return, send request success!");
+        return out.ReadInt32();
+    }
+    return error;
+}
+
 int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
 {
     MessageOption option;
@@ -310,21 +335,21 @@ int32_t ImsCallProxy::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDa
     return false;
 }
 
-int32_t ImsCallProxy::GetCallFailReason(int32_t slotId)
+int32_t ImsCallProxy::GetLastCallFailReason(int32_t slotId)
 {
-    TELEPHONY_LOGI("ImsCallProxy::GetCallFailReason entry");
+    TELEPHONY_LOGI("ImsCallProxy::GetLastCallFailReason entry");
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsCallProxy::GetCallFailReason return false, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsCallProxy::GetLastCallFailReason return false, write descriptor token fail!");
         return false;
     }
     if (!in.WriteInt32(slotId)) {
-        TELEPHONY_LOGE("ImsCallProxy::GetCallFailReason return false, write slotId fail!");
+        TELEPHONY_LOGE("ImsCallProxy::GetLastCallFailReason return false, write slotId fail!");
         return false;
     }
-    int32_t ret = Remote()->SendRequest(IMS_GET_CALL_FAIL_REASON, in, out, option);
+    int32_t ret = Remote()->SendRequest(IMS_GET_LAST_CALL_FAIL_REASON, in, out, option);
     if (ret == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -499,7 +524,7 @@ int32_t ImsCallProxy::GetDomainPreferenceMode(int32_t slotId)
     return error;
 }
 
-int32_t ImsCallProxy::SetLteImsSwitchStatus(int32_t slotId, bool active)
+int32_t ImsCallProxy::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
 {
     MessageOption option;
     MessageParcel in;
@@ -512,7 +537,7 @@ int32_t ImsCallProxy::SetLteImsSwitchStatus(int32_t slotId, bool active)
         TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteBool(active)) {
+    if (!in.WriteInt32(active)) {
         TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
@@ -701,11 +726,11 @@ int32_t ImsCallProxy::SetMute(int32_t slotId, int32_t mute)
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(slotId)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetMute return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetMute return, write slotId fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(mute)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetMute return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetMute return, write mute fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_MUTE, in, out, option);
@@ -1106,11 +1131,11 @@ int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate)
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(slotId)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetCallWaiting return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetCallWaiting return, write slotId fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteBool(activate)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetCallWaiting string return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetCallWaiting return, write activate fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_CALL_WAITING, in, out, option);

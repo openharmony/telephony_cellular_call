@@ -24,6 +24,17 @@ namespace OHOS {
 namespace Telephony {
 const int32_t kMaxNumberLength = 30;
 
+enum ImsRejectReason {
+    USER_IS_BUSY = 0,
+    USER_DECLINE = 1,
+};
+
+// service class used in IMS Set Call Waiting interface
+enum ImsServiceClass {
+    SERVICE_CLASS_VOICE = 1,
+    SERVICE_CLASS_VIDEO = 2,
+};
+
 enum SrvccState {
     SRVCC_NONE = -1,
     STARTED = 0,
@@ -59,6 +70,25 @@ struct ImsCallInfo {
     int32_t slotId;
     int32_t videoState; // 0: audio 1:video
     int32_t index; // call index
+};
+
+struct ImsCurrentCall {
+    int32_t index;
+    int32_t dir;
+    int32_t state;
+    int32_t mode;
+    int32_t mpty;
+    int32_t voiceDomain;
+    int32_t callType;
+    std::string number;
+    int32_t type;
+    std::string alpha;
+};
+
+struct ImsCurrentCallList {
+    int32_t callSize;
+    int32_t flag;
+    std::vector<ImsCurrentCall> calls;
 };
 } // namespace Telephony
 } // namespace OHOS

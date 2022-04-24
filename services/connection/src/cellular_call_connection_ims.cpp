@@ -471,7 +471,7 @@ int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) cons
             TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetCallFailReason(slotId);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->GetLastCallFailReason(slotId);
     }
 
     TELEPHONY_LOGI("GetCallFailReasonRequest, ims vendor service does not exist.");

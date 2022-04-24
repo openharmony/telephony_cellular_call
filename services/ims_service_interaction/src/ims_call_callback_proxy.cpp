@@ -347,7 +347,7 @@ int32_t ImsCallCallbackProxy::StopRttResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::CallStatusResponse(int32_t slotId)
+int32_t ImsCallCallbackProxy::CallStateChangeReport(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
@@ -358,7 +358,7 @@ int32_t ImsCallCallbackProxy::CallStatusResponse(int32_t slotId)
     if (!in.WriteInt32(slotId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(IMS_CALL_STATUS, in, out, option);
+    int32_t error = Remote()->SendRequest(IMS_CALL_STATE_CHANGE, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -522,7 +522,7 @@ int32_t ImsCallCallbackProxy::ImsCallsDataResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::ImsCallsDataResponse(int32_t slotId, const CallInfoList &callList)
+int32_t ImsCallCallbackProxy::ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList)
 {
     MessageOption option;
     MessageParcel in;
@@ -533,7 +533,7 @@ int32_t ImsCallCallbackProxy::ImsCallsDataResponse(int32_t slotId, const CallInf
     if (!in.WriteInt32(slotId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteRawData((const void *)&callList, sizeof(CallInfoList))) {
+    if (!in.WriteRawData((const void *)&callList, sizeof(ImsCurrentCallList))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_CALLS_DATA, in, out, option);
@@ -927,7 +927,7 @@ int32_t ImsCallCallbackProxy::GetEccCallListResponse(const EmergencyInfoList &ca
     return error;
 }
 
-int32_t ImsCallCallbackProxy::CallFailReasonResponse(int32_t reason)
+int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t reason)
 {
     MessageOption option;
     MessageParcel in;
@@ -938,7 +938,7 @@ int32_t ImsCallCallbackProxy::CallFailReasonResponse(int32_t reason)
     if (!in.WriteInt32(reason)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    int32_t error = Remote()->SendRequest(IMS_CALL_FAIL_REASON, in, out, option);
+    int32_t error = Remote()->SendRequest(IMS_LAST_CALL_FAIL_REASON, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }

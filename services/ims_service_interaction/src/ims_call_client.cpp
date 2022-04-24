@@ -130,6 +130,16 @@ int32_t ImsCallClient::Reject(const ImsCallInfo &callInfo)
     }
 }
 
+int32_t ImsCallClient::RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason)
+{
+    if (imsCallProxy_ != nullptr) {
+        return imsCallProxy_->RejectWithReason(callInfo, reason);
+    } else {
+        TELEPHONY_LOGE("imsCallProxy_ is null!");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+}
+
 int32_t ImsCallClient::Answer(const ImsCallInfo &callInfo)
 {
     if (imsCallProxy_ != nullptr) {
@@ -228,10 +238,10 @@ int32_t ImsCallClient::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsD
     }
 }
 
-int32_t ImsCallClient::GetCallFailReason(int32_t slotId)
+int32_t ImsCallClient::GetLastCallFailReason(int32_t slotId)
 {
     if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetCallFailReason(slotId);
+        return imsCallProxy_->GetLastCallFailReason(slotId);
     } else {
         TELEPHONY_LOGE("imsCallProxy_ is null!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -308,7 +318,7 @@ int32_t ImsCallClient::GetDomainPreferenceMode(int32_t slotId)
     }
 }
 
-int32_t ImsCallClient::SetLteImsSwitchStatus(int32_t slotId, bool active)
+int32_t ImsCallClient::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
 {
     if (imsCallProxy_ != nullptr) {
         return imsCallProxy_->SetLteImsSwitchStatus(slotId, active);
