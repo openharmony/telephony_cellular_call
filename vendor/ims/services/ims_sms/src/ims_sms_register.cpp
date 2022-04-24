@@ -33,20 +33,20 @@ int32_t ImsSmsRegister::UpdateImsSendMessageResponse(const ImsResponseInfo &info
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsSmsRegister::UpdateImsGetSmsConfigResponse(const ImsResponseInfo &info, int32_t imsSmsConfig)
+int32_t ImsSmsRegister::UpdateImsSetSmsConfigResponse(const ImsResponseInfo &info)
 {
     TELEPHONY_LOGI("ImsSetSmsConfigResponse");
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    imsSmsCallback_->ImsGetSmsConfigResponse(info, imsSmsConfig);
+    imsSmsCallback_->ImsSetSmsConfigResponse(info);
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsSmsRegister::UpdateImsGetSmsConfigResponse(const ImsResponseInfo &info, int32_t imsSmsConfig)
 {
-    TELEPHONY_LOGI("ImsSetSmsConfigResponse");
+    TELEPHONY_LOGI("ImsGetSmsConfigResponse");
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
