@@ -22,6 +22,8 @@
 
 namespace OHOS {
 namespace Telephony {
+bool g_registerResult = SystemAbility::MakeAndRegisterAbility(DelayedSingleton<ImsCoreService>::GetInstance().get());
+
 ImsCoreService::ImsCoreService() : SystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID, true)
 {
     state_ = ServiceRunningState::STATE_STOPPED;
