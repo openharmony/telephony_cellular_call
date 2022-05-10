@@ -352,5 +352,20 @@ int32_t ConfigRequest::GetEmergencyCallListRequest(int32_t slotId)
     CoreManagerInner::GetInstance().GetEmergencyCallList(slotId, RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST, handle);
     return TELEPHONY_SUCCESS;
 }
+
+int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall>  &eccVec)
+{
+    TELEPHONY_LOGI("SetEmergencyCallListRequest start ");
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetEmergencyCallListRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    int32_t errorCode = TELEPHONY_ERR_FAIL;
+    errorCode = CoreManagerInner::GetInstance().SetEmergencyCallList(slotId,
+        RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST, eccVec, handle);
+    TELEPHONY_LOGI("SetEmergencyCallListRequest end %{public}d", errorCode);
+    return errorCode;
+}
 } // namespace Telephony
 } // namespace OHOS

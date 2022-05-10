@@ -61,6 +61,13 @@ public:
      */
     int32_t GetSlotId();
 
+/**
+     * SimStateChangeReport
+     *
+     * @param code process
+     */
+    void SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
+
     /**
      * DialResponse
      *
@@ -116,6 +123,8 @@ public:
      * @param code process
      */
     void CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void ReportEccChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * CallImsServiceStatusResponse
@@ -186,6 +195,13 @@ public:
      * @param code process
      */
     void GetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SetEmergencyCallListResponse
+     *
+     * @param code process
+     */
+    void SetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * GetCallFailReasonResponse

@@ -11,6 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/telephony/core_service/telephony.gni")
+import("//build/ohos.gni")
+SOURCE_DIR = "//base/telephony/cellular_call"
 import("//build/test.gni")
 
 ohos_unittest("tel_cellular_call_cs_test") {
@@ -18,31 +21,45 @@ ohos_unittest("tel_cellular_call_cs_test") {
   part_name = "cellular_call"
   test_module = "tel_cellular_call_cs_test"
   module_out_path = part_name + "/" + test_module
-
   sources = [
     "//base/telephony/call_manager/services/telephony_interaction/src/cellular_call_proxy.cpp",
     "cs_test.cpp",
   ]
 
-  include_dirs = [
+ include_dirs = [
     "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/cellular_call/services/common/include",
+    "$SOURCE_DIR/interfaces/innerkits/ims",
+    "$SOURCE_DIR/services/common/include",
+    "$SOURCE_DIR/services/manager/include",
+    "$SOURCE_DIR/interfaces/innerkits/ims",
+    "$SOURCE_DIR/services/control/include",
+    "$SOURCE_DIR/services/connection/include",
+    "$SOURCE_DIR/ims_interfaces/include",
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/call_manager/services/telephony_interaction/include",
+    "//third_party/libphonenumber/cpp/src",
+    "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
-  deps = [
+   deps = [
+    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
+    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
+    "//third_party/libphonenumber/cpp:phonenumber_standard",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
     "core_service:tel_core_service_api",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
+    "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
   ]
 
   if (is_standard_system) {

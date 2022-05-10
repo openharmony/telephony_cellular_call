@@ -270,6 +270,13 @@ public:
      */
     int32_t UnRegisterCallManagerCallBack();
 
+  /**
+     * ReportSetEmergencyCallListResponse
+     *
+     * @param SetEmergencyCallListResponse
+     */
+    void ReportSetEmergencyCallListResponse(const SetEccListResponse &response);
+
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;
 };

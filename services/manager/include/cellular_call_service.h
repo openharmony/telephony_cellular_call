@@ -153,6 +153,15 @@ public:
     int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum, int32_t &errorCode) override;
 
     /**
+     * SetEmergencyCallListg
+     *
+     * @param slotId
+     * @param eccVec
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec) override;
+    
+    /**
      * Merge into multiple calls
      *
      * @param CellularCallInfo

@@ -462,6 +462,8 @@ private:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnGetMuteInner(MessageParcel &data, MessageParcel &reply);
+    
+    int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
 private:
     const int32_t MAX_SIZE = 10;

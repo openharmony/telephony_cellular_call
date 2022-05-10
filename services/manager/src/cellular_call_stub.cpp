@@ -15,7 +15,7 @@
 
 #include "cellular_call_stub.h"
 #include "call_manager_errors.h"
-
+#include "telephony_log_wrapper.h"
 #include "emergency_utils.h"
 #include "i_call_status_callback.h"
 
@@ -50,6 +50,7 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::REJECT] = &CellularCallStub::OnRejectInner;
     requestFuncMap_[OperationType::ANSWER] = &CellularCallStub::OnAnswerInner;
     requestFuncMap_[OperationType::EMERGENCY_CALL] = &CellularCallStub::OnIsEmergencyPhoneNumberInner;
+    requestFuncMap_[OperationType::SET_EMERGENCY_CALL_LIST] = &CellularCallStub::OnSetEmergencyCallList;
     requestFuncMap_[OperationType::HOLD_CALL] = &CellularCallStub::OnHoldCallInner;
     requestFuncMap_[OperationType::UN_HOLD_CALL] = &CellularCallStub::OnUnHoldCallInner;
     requestFuncMap_[OperationType::SWITCH_CALL] = &CellularCallStub::OnSwitchCallInner;
@@ -191,6 +192,29 @@ int32_t CellularCallStub::OnIsEmergencyPhoneNumberInner(MessageParcel &data, Mes
     reply.WriteInt32(IsEmergencyPhoneNumber(slotId, phoneNum, errorCode));
 
     reply.WriteInt32(errorCode);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnSetEmergencyCallList entry.");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnSetEmergencyCallList data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    int32_t len = data.ReadInt32();
+    std::vector<EmergencyCall>  eccVec;
+    for (int i = 0 ; i < len; i++) {
+        eccVec.push_back(*((EmergencyCall *)data.ReadRawData(sizeof(EmergencyCall))));
+    }
+    for (auto ecc : eccVec) {
+        TELEPHONY_LOGE("OnSetEmergencyCallList, data: eccNum %{public}s mcc %{public}s",
+            ecc.eccNum.c_str(), ecc.mcc.c_str());
+    }
+    reply.WriteInt32(SetEmergencyCallList(slotId, eccVec));
     return TELEPHONY_SUCCESS;
 }
 

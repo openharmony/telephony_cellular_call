@@ -33,17 +33,26 @@ ohos_unittest("tel_cellular_call_ims_test") {
   ]
 
   deps = [
+    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
+    "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
+    "//third_party/libphonenumber/cpp:phonenumber_standard",
+    "//utils/native/base:utils",
     "//utils/native/base:utils",
   ]
 
   external_deps = [
     "core_service:tel_core_service_api",
+    "eventhandler:libeventhandler",
     "ipc:ipc_core",
+    "ril_adapter:hril_innerkits",
+    "safwk:system_ability_fwk",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
+    "samgr_standard:samgr_proxy",
+    "startup_l2:syspara",
   ]
-
+  
   if (is_standard_system) {
     external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
   } else {

@@ -660,5 +660,61 @@ HWTEST_F(CsTest, cellular_call_cs_test_002, TestSize.Level1)
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
     std::cout << "HWTEST_F cellular_call_cs_test_002";
 }
+
+/**
+ * @tc.number   Telephony_CallManager_SetEmergencyCallList_0101
+ * @tc.name     SetEmergencyCallList "443,356,789",test SetEmergencyCallList(),return success
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
+        return;
+    }
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    if (remote == nullptr) {
+        std::cout << "CellularCallService Remote service not exists.\n";
+        return;
+    }
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    int32_t slotId = 0;
+    int32_t errorCode = 0;
+    std::vector<EmergencyCall>  eccVec;
+    EmergencyCall temp0 = {
+    "499", "460", EccType::TYPE_CATEGORY, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
+    };
+    EmergencyCall temp1 = {
+    "443", "460", EccType::TYPE_POLICE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
+    };
+    EmergencyCall temp2 = {
+    "356", "460", EccType::TYPE_AMBULANCE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
+    };
+    EmergencyCall temp3 = {
+    "783", "460", EccType::TYPE_FIRE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
+    };
+    EmergencyCall temp4 = {
+    "975", "460", EccType::TYPE_SEA, SimpresentType::TYPE_HAS_CARD, AbnormalServiceType::TYPE_ONLY_CS
+    };
+    EmergencyCall temp5 = {
+    "350", "460", EccType::TYPE_MOUNTAIN, SimpresentType::TYPE_HAS_CARD, AbnormalServiceType::TYPE_ALL
+    };
+    eccVec.push_back(temp0);
+    eccVec.push_back(temp1);
+    eccVec.push_back(temp2);
+    eccVec.push_back(temp3);
+    eccVec.push_back(temp4);
+    eccVec.push_back(temp5);
+    EXPECT_EQ(telephonyService->SetEmergencyCallList(slotId, eccVec), 0);
+    int32_t successCode = 1;
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "499", errorCode), successCode);
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "443", errorCode), successCode);
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "356", errorCode), successCode);
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "975", errorCode), successCode);
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "783", errorCode), successCode);
+    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "350", errorCode), successCode);
+    std::cout << "HWTEST_F cellular_call_cs_test_001 end";
+}
 } // namespace Telephony
 } // namespace OHOS

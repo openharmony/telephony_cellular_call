@@ -19,6 +19,7 @@
 #include "telephony_log_wrapper.h"
 #include "module_service_utils.h"
 #include "base_request.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -198,6 +199,15 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetEmergencyCallListRequest(int32_t slotId);
+
+    /**
+     * SetEmergencyCallListRequest
+     *
+     * @param slotId
+     * @param eccVec
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall>  &eccVec);
 
 private:
     ModuleServiceUtils moduleUtils_;
