@@ -359,7 +359,7 @@ bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
 
 void CellularCallConfig::GetEmergencyCallListResponse(int32_t slotId, const EmergencyInfoList &eccList)
 {
-   TELEPHONY_LOGI("GetEmergencyCallListResponse %{publid}d", slotId);
+    TELEPHONY_LOGI("GetEmergencyCallListResponse %{publid}d", slotId);
     eccListRadioMap_[slotId] = std::vector<EmergencyCall>();
     for (auto ecc : eccList.calls) {
         TELEPHONY_LOGE("GetEmergencyCallListResponse , data: eccNum %{public}s mcc %{public}s",
