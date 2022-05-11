@@ -61,7 +61,7 @@ public:
      */
     int32_t GetSlotId();
 
-/**
+    /**
      * SimStateChangeReport
      *
      * @param code process

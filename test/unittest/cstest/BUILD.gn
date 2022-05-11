@@ -26,7 +26,7 @@ ohos_unittest("tel_cellular_call_cs_test") {
     "cs_test.cpp",
   ]
 
- include_dirs = [
+  include_dirs = [
     "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/cellular_call/services/common/include",
     "$SOURCE_DIR/interfaces/innerkits/ims",
@@ -44,7 +44,7 @@ ohos_unittest("tel_cellular_call_cs_test") {
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
-   deps = [
+  deps = [
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
     "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",

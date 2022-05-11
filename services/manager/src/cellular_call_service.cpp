@@ -134,7 +134,6 @@ void CellularCallService::HandlerResetUnRegister()
         if (handler != nullptr) {
             handler.reset();
         }
-
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
@@ -169,7 +168,7 @@ void CellularCallService::RegisterCoreServiceHandler()
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);    
+                slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
         }

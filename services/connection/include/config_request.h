@@ -200,7 +200,7 @@ public:
      */
     int32_t GetEmergencyCallListRequest(int32_t slotId);
 
-    /**
+     /**
      * SetEmergencyCallListRequest
      *
      * @param slotId
