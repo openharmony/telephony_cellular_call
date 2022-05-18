@@ -357,5 +357,11 @@ void CellularCallRegister::ReportSendUssdResult(int32_t result)
     }
     callManagerCallBack_->SendUssdResult(result);
 }
+
+void CellularCallRegister::ReportSetEmergencyCallListResponse(const SetEccListResponse &response)
+{
+    TELEPHONY_LOGI("ReportSetEmergencyCallListResponse entry result:%{public}d, value:%{public}d",
+        response.result, response.value);
+}
 } // namespace Telephony
 } // namespace OHOS

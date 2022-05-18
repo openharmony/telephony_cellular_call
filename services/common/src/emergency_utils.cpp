@@ -56,9 +56,10 @@ bool EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::string
     CellularCallConfig config;
     ModuleServiceUtils dependDataObtain;
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);
-    std::vector<EmergencyInfo> eccCallList = config.GetEccCallList(slotId);
+    std::vector<EmergencyCall> eccCallList = config.GetEccCallList(slotId);
+    std::string mcc = config.GetMcc(slotId);
     for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
-        if (countryIsoCode == it->mcc && formatString == it->eccNum) {
+        if (mcc == it->mcc && formatString == it->eccNum) {
             TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with sim data.");
             return true;
         }

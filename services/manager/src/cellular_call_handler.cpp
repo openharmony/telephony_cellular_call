@@ -65,6 +65,7 @@ void CellularCallHandler::InitConfigFuncMap()
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetDomainPreferenceModeResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::SetLteImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::GetLteImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] = &CellularCallHandler::SetEmergencyCallListResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
 }
 
@@ -91,10 +92,15 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] = &CellularCallHandler::CallRingBackVoiceResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_SRVCC_STATUS] = &CellularCallHandler::UpdateSrvccStateReport;
+    requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
+    requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
 }
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    uint32_t eventId = event->GetInnerEventId();
+    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), eventId = %{public}d", eventId);
+    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), slotId_ = %{public}d", slotId_);
     if (event == nullptr) {
         TELEPHONY_LOGE("CellularCallHandler::ProcessEvent, event is nullptr");
         return;
@@ -392,6 +398,17 @@ void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointe
     registerInstance_->ReportStartDtmfResult(static_cast<int32_t>(result->error));
 }
 
+void CellularCallHandler::SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("SimStateChangeReport");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SimStateChangeReport return, event is nullptr");
+        return;
+    }
+    CellularCallConfig config;
+    config.HandleSimStateChanged(slotId_);
+}
+
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
@@ -667,6 +684,28 @@ void CellularCallHandler::GetEmergencyCallListResponse(const AppExecFwk::InnerEv
     config.GetEmergencyCallListResponse(slotId_, *eccList);
 }
 
+void CellularCallHandler::SetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::SetEmergencyCallListResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SetEmergencyCallListResponse return, event is nullptr");
+        return;
+    }
+    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (info == nullptr) {
+        TELEPHONY_LOGE("SetEmergencyCallListResponse return, info is nullptr");
+        return;
+    }
+    SetEccListResponse response;
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("SetEmergencyCallListResponse return, registerInstance_ is nullptr");
+        return;
+    }
+    response.result = static_cast<int32_t>(info->error);
+    TELEPHONY_LOGI("SetEmergencyCallListResponse report to call manager");
+    registerInstance_->ReportSetEmergencyCallListResponse(response);
+}
+
 void CellularCallHandler::CallRingBackVoiceResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CellularCallHandler::CallRingBackVoiceResponse entry");
@@ -725,6 +764,22 @@ void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::P
         return;
     }
     SrvccStateCompleted();
+}
+
+void CellularCallHandler::ReportEccChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::ReportEccChanged entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("ReportEccChanged return, event is nullptr");
+        return;
+    }
+    auto emergencyInfo = event->GetSharedObject<EmergencyInfo>();
+    if (emergencyInfo == nullptr) {
+        TELEPHONY_LOGE("ReportEccChanged return, emergencyInfo is nullptr");
+        return;
+    }
+    CellularCallConfig config;
+    config.UpdateEmergencyCallList(slotId_, *emergencyInfo);
 }
 
 void CellularCallHandler::SrvccStateCompleted()

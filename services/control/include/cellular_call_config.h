@@ -16,6 +16,7 @@
 #ifndef CELLULAR_CALL_CONFIG_H
 #define CELLULAR_CALL_CONFIG_H
 
+#include <mutex>
 #include <map>
 #include "config_request.h"
 #include "telephony_log_wrapper.h"
@@ -242,6 +243,15 @@ public:
     int32_t GetEmergencyCallList(int32_t slotId);
 
     /**
+     * SetEmergencyCallList
+     *
+     * @param slotId
+     * @param eccVec
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec);
+
+    /**
      * SetTempMode
      *
      * @param slotId
@@ -262,18 +272,44 @@ public:
     void GetEmergencyCallListResponse(int32_t slotId, const EmergencyInfoList &eccList);
 
     /**
+     * HandleSimStateChanged
+     *
+     * @param slotId
+     */
+    void HandleSimStateChanged(int32_t slotId);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId
-     * @return std::vector<EmergencyInfo>
+     * @return std::vector<EmergencyCall>
      */
-    std::vector<EmergencyInfo> GetEccCallList(int32_t slotId);
+    std::vector<EmergencyCall> GetEccCallList(int32_t slotId);
+
+    void UpdateEmergencyCallList(int32_t slotId, const EmergencyInfo &emergencyInfo);
+
+    int32_t SetEmergencyCallList(int32_t slotId);
+
+    std::string GetMcc(int32_t slotId_);
 
 private:
+    EmergencyCall BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from);
+    EmergencyCall CreateWithSimEmergencyInfo(const std::string &number);
+    void MergeEccCallList(int32_t slotId_);
+    bool IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId);
+    bool IsEmergencyCallExit(const EmergencyCall &from, const EmergencyCall &to);
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
     static std::map<int32_t, int32_t> activeMap_;
-    static std::map<int32_t, std::vector<EmergencyInfo>> eccListMap_;
+    static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
+    static std::vector<EmergencyCall> eccList3gppHasSim_;
+    static std::vector<EmergencyCall> eccList3gppNoSim_;
+    static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
+    static std::map<int32_t, int32_t> simState_;
+    static int32_t SIM_PRESENT;
+    static int32_t SIM_ABSENT;
+    std::mutex mutex_;
+    const int MCC_LEN = 3;
     ConfigRequest configRequest_;
 };
 } // namespace Telephony

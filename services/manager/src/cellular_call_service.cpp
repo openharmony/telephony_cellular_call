@@ -127,20 +127,21 @@ void CellularCallService::CreateHandler()
 
 void CellularCallService::HandlerResetUnRegister()
 {
+    TELEPHONY_LOGI("HandlerResetUnRegister");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
         if (handler != nullptr) {
             handler.reset();
         }
-
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
-
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler,
+            RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -153,6 +154,7 @@ void CellularCallService::HandlerResetUnRegister()
 
 void CellularCallService::RegisterCoreServiceHandler()
 {
+    TELEPHONY_LOGI("RegisterCoreServiceHandle");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -165,6 +167,8 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
         }
@@ -784,6 +788,17 @@ int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::s
     EmergencyUtils emergencyUtils;
     errorCode = TELEPHONY_SUCCESS;
     return emergencyUtils.IsEmergencyCall(slotId, phoneNum);
+}
+
+int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec)
+{
+    TELEPHONY_LOGE("CellularCallService::SetEmergencyCallList start");
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetMute return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallConfig config;
+    return config.SetEmergencyCallList(slotId, eccVec);
 }
 
 int32_t CellularCallService::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
