@@ -1004,5 +1004,10 @@ int32_t CellularCallService::GetMute(int32_t slotId)
     CellularCallConfig config;
     return config.GetMute(slotId);
 }
-} // namespace Telephony
-} // namespace OHOS
+
+void CellularCallService::SetSrvccState(int32_t srvccState)
+{
+    srvccState_ = srvccState;
+}
+}  // namespace Telephony
+}  // namespace OHOS

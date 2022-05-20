@@ -81,6 +81,7 @@ void CellularCallHandler::InitSupplementFuncMap()
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] = &CellularCallHandler::GetCallRestrictionResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_USSD] = &CellularCallHandler::SendUssdResponse;
+    requestFuncMap_[MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID] = &CellularCallHandler::SendUnlockPinPukResponse;
 }
 
 void CellularCallHandler::InitActiveReportFuncMap()
@@ -92,6 +93,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] = &CellularCallHandler::CallRingBackVoiceResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_SRVCC_STATUS] = &CellularCallHandler::UpdateSrvccStateReport;
+    requestFuncMap_[RadioEvent::RADIO_CALL_SS_NOTICE] = &CellularCallHandler::SsNotifyResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
 }
