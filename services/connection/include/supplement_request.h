@@ -107,6 +107,46 @@ public:
      */
     int32_t SendUssdRequest(int32_t slotId, const std::string &msg);
 
+    /*
+     * SIM PIN unlock
+     *
+     * @param slotId The ID of SIM slot
+     * @param newPin The new pin code for unlock SIM
+     * @param oldPin The old pin code for unlock SIM
+     * @return Returns true on success.
+     */
+    bool AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin);
+
+    /**
+     * SIM PUK unlock
+     *
+     * @param slotId The ID of SIM slot
+     * @param newPin  The new pin code for unlock SIM
+     * @param puk The puk code for unlock SIM
+     * @return Returns true on success.
+     */
+    bool UnlockPuk(int32_t slotId, std::string newPin, std::string puk);
+
+    /**
+     * SIM PIN2 unlock
+     *
+     * @param slotId The ID of SIM slot
+     * @param newPin2 The new pin2 code for unlock SIM
+     * @param oldPin2 The old pin2 code for unlock SIM
+     * @return Returns true on success.
+     */
+    bool AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2);
+
+    /**
+     * SIM PUK2 unlock
+     *
+     * @param slotId The ID of SIM slot
+     * @param newPin2 The new pin2 code for unlock SIM
+     * @param puk2 The puk2 code for unlock SIM
+     * @return Returns true on success.
+     */
+    bool UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2);
+
 private:
     /**
      * GetMMIHandler

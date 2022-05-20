@@ -49,9 +49,37 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
     return false;
 }
 
+void InitMmiCodeFunc(std::map<std::uint64_t,
+    void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData)> &mmiCodeFunc)
+{
+    mmiCodeFunc["30"_hash] = &CellularCallSupplement::GetClip;
+    mmiCodeFunc["31"_hash] = &CellularCallSupplement::GetClir;
+    mmiCodeFunc["21"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["61"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["62"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["67"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["002"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["004"_hash] = &CellularCallSupplement::DealCallTransfer;
+    mmiCodeFunc["33"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["330"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["331"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["332"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["35"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["351"_hash] = &CellularCallSupplement::DealCallRestriction;
+    mmiCodeFunc["43"_hash] = &CellularCallSupplement::DealCallWaiting;
+    mmiCodeFunc["04"_hash] = &CellularCallSupplement::AlterPinPassword;
+    mmiCodeFunc["05"_hash] = &CellularCallSupplement::UnlockPuk;
+    mmiCodeFunc["042"_hash] = &CellularCallSupplement::AlterPin2Password;
+    mmiCodeFunc["052"_hash] = &CellularCallSupplement::UnlockPuk2;
+}
+
 bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 {
     TELEPHONY_LOGI("ExecuteMmiCode entry.");
+    using MmiCodeFunc = void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData);
+    std::map<std::uint64_t, MmiCodeFunc> mmiCodeFunc;
+    InitMmiCodeFunc(mmiCodeFunc);
+
     CellularCallSupplement supplement;
 
     /**
@@ -74,70 +102,19 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
      * "43" Handling call waiting
      */
     if (!mmiData_.serviceCode.empty()) {
-        switch (StandardizeUtils::Hash_(mmiData_.serviceCode.c_str())) {
-            // 3GPP TS 22.030 V4.0.0 (2001-03) 6.5.6.2  Calling Line Identification Presentation (CLIP)
-            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
-            case "30"_hash:
-                supplement.GetClip(slotId, mmiData_);
-                return true;
-
-            // 3GPP TS 22.081 V4.0.0 (2001-03) 2 Calling Line Identification Restriction (CLIR)
-            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
-            case "31"_hash:
-                supplement.GetClir(slotId, mmiData_);
-                return true;
-
-            // 3GPP TS 22.081 V4.0.0 (2001-03)
-            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
-            // 3GPP TS 24.082 V4.0.0 (2001-03) 1 Call Forwarding Unconditional (CFU)
-            // 3GPP TS 24.082 V4.0.0 (2001-03) 2 Call Forwarding on mobile subscriber Busy (CFB)
-            // 3GPP TS 24.082 V4.0.0 (2001-03) 3 Call Forwarding on No Reply (CFNRy)
-            // 3GPP TS 24.082 V4.0.0 (2001-03) 4 Call Forwarding on mobile subscriber Not Reachable (CFNRc)
-            case "21"_hash:
-            case "61"_hash:
-            case "62"_hash:
-            case "67"_hash:
-            case "002"_hash:
-            case "004"_hash:
-                supplement.DealCallTransfer(slotId, mmiData_);
-                return true;
-
-            // 27007-430_2001 7.4	Facility lock +CLCK
-            // 3GPP TS 22.088 [6] 1	Barring of outgoing calls
-            // 3GPP TS 22.088 [6] 2	Barring of incoming calls
-            /* 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
-             * BAOC	                33
-             * BAOIC	            331
-             * BAOIC exc home	    332
-             * BAIC	                35
-             * BAIC roaming	        351
-             * all Barring Serv.	330
-             * Outg. Barr. Serv.	333
-             * Inc. Barr. Serv.	    353
-             */
-            case "33"_hash:
-            case "330"_hash:
-            case "331"_hash:
-            case "332"_hash:
-            case "35"_hash:
-            case "351"_hash:
-                supplement.DealCallRestriction(slotId, mmiData_);
-                return true;
-
-            // 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.4 Registration of new password
-            case "03"_hash:
-                return true;
-
-            // 27007-430_2001 7.12	Call waiting +CCWA
-            // 3GPP TS 22.083 [5] 1	Call waiting (CW)
-            // 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
-            case "43"_hash:
-                supplement.DealCallWaiting(slotId, mmiData_);
-                return true;
-            default:
-                TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
-                break;
+        auto serviceCode = StandardizeUtils::Hash_(mmiData_.serviceCode.c_str());
+        if (serviceCode == "03"_hash) {
+            return true;
         }
+        auto itFunc = mmiCodeFunc.find(serviceCode);
+        if (itFunc != mmiCodeFunc.end()) {
+            auto func = itFunc->second;
+            if (func != nullptr) {
+                (supplement.*func)(slotId, mmiData_);
+                return true;
+            }
+        }
+        TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
     }
 
     if (!mmiData_.fullString.empty()) {

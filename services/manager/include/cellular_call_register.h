@@ -271,6 +271,13 @@ public:
     int32_t UnRegisterCallManagerCallBack();
 
     /**
+     * ReportMmiCodeResult
+     *
+     * @param MmiCodeInfo
+     */
+    void ReportMmiCodeResult(const MmiCodeInfo &info);
+
+    /**
      * ReportSetEmergencyCallListResponse
      *
      * @param SetEmergencyCallListResponse

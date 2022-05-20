@@ -119,7 +119,8 @@ void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &r
     TELEPHONY_LOGI("ReportGetTransferResult entry");
     TELEPHONY_LOGI("ReportGetTransferResult result:%{public}d, status:%{public}d, class:%{public}d", response.result,
         response.status, response.classx);
-    TELEPHONY_LOGI("ReportGetTransferResult number:%{public}s, type:%{public}d", response.number, response.type);
+    TELEPHONY_LOGI("ReportGetTransferResult type:%{public}d, reason:%{public}d, time:%{public}d",
+        response.type, response.reason, response.time);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -356,6 +357,16 @@ void CellularCallRegister::ReportSendUssdResult(int32_t result)
         return;
     }
     callManagerCallBack_->SendUssdResult(result);
+}
+
+void CellularCallRegister::ReportMmiCodeResult(const MmiCodeInfo &info)
+{
+    TELEPHONY_LOGI("ReportMmiCodeResult entry result:%{public}d, value:%{public}s", info.result, info.message);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportMmiCodeResult return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    callManagerCallBack_->SendMmiCodeResult(info);
 }
 
 void CellularCallRegister::ReportSetEmergencyCallListResponse(const SetEccListResponse &response)

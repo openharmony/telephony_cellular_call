@@ -548,6 +548,7 @@ public:
      */
     std::shared_ptr<CellularCallHandler> GetHandler(int32_t slotId);
 
+    void SetSrvccState(int32_t srvccState);
 private:
     /**
      * Init service

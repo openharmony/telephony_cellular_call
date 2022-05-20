@@ -583,6 +583,10 @@ void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::P
         TELEPHONY_LOGE("CallStatusInfoResponse return, event is nullptr");
         return;
     }
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGI("CallStatusInfoResponse ignore, srvcc started");
+        return;
+    }
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("CallStatusInfoResponse return, GetInstance is nullptr");
@@ -615,6 +619,17 @@ void CellularCallHandler::SetCallType(CallType callType)
 void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("CellularCallHandler::UssdNotifyResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("UssdNotifyResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<UssdNoticeInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("UssdNotifyResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventUssdNotify(*result);
 }
 
 void CellularCallHandler::SetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -748,17 +763,24 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
 
 void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    int offset = 1;
     TELEPHONY_LOGI("CellularCallHandler::UpdateSrvccStateReport entry");
     if (event == nullptr) {
         TELEPHONY_LOGE("UpdateSrvccStateReport return, event is nullptr");
         return;
     }
-    auto srvccStatus = event->GetSharedObject<HRilCallSrvccStatus>();
+    auto srvccStatus = event->GetSharedObject<SrvccStatus>();
     if (srvccStatus == nullptr) {
         TELEPHONY_LOGE("UpdateSrvccStateReport return, srvccStatus is nullptr");
         return;
     }
-    srvccState_ = srvccStatus->status;
+    TELEPHONY_LOGI("srvccStatus %{public}d", srvccStatus->status);
+    srvccState_ = srvccStatus->status - offset;
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ != nullptr) {
+        TELEPHONY_LOGE("UpdateSrvccState");
+        serviceInstance_->SetSrvccState(srvccState_);
+    }
     if (srvccState_ != SrvccState::COMPLETED) {
         TELEPHONY_LOGE("UpdateSrvccStateReport return, srvccState_ != SrvccState::COMPLETED");
         return;
@@ -773,20 +795,36 @@ void CellularCallHandler::ReportEccChanged(const AppExecFwk::InnerEvent::Pointer
         TELEPHONY_LOGE("ReportEccChanged return, event is nullptr");
         return;
     }
-    auto emergencyInfo = event->GetSharedObject<EmergencyInfo>();
-    if (emergencyInfo == nullptr) {
-        TELEPHONY_LOGE("ReportEccChanged return, emergencyInfo is nullptr");
+    auto emergencyInfoList = event->GetSharedObject<EmergencyInfoList>();
+    if (emergencyInfoList == nullptr) {
+        TELEPHONY_LOGE("ReportEccChanged return, emergencyInfoList is nullptr");
         return;
     }
     CellularCallConfig config;
-    config.UpdateEmergencyCallList(slotId_, *emergencyInfo);
+    config.GetEmergencyCallListResponse(slotId_, *emergencyInfoList);
 }
 
 void CellularCallHandler::SrvccStateCompleted()
 {
+    TELEPHONY_LOGI("CellularCallHandler::SrvccStateCompleted entry");
     if (srvccState_ != SrvccState::COMPLETED) {
         TELEPHONY_LOGE("SrvccStateCompleted return, srvccState_ != SrvccState::COMPLETED");
         return;
+    }
+    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance_ == nullptr) {
+        TELEPHONY_LOGE("SrvccStateCompleted return, GetInstance is nullptr");
+        return;
+    }
+    auto csControl = serviceInstance_->GetCsControl(slotId_);
+    if (csControl != nullptr) {
+        TELEPHONY_LOGI("SrvccStateCompleted CsControl ReleaseAllConnection");
+        csControl->ReleaseAllConnection();
+    }
+    auto imsControl = serviceInstance_->GetImsControl(slotId_);
+    if (imsControl != nullptr) {
+        TELEPHONY_LOGI("SrvccStateCompleted ImsControl ReleaseAllConnection");
+        imsControl->ReleaseAllConnection();
     }
     auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO);
     CallStatusInfoResponse(event);
@@ -894,13 +932,13 @@ void CellularCallHandler::GetCallTransferResponse(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("GetCallTransferResponse, event is nullptr");
         return;
     }
-    auto cFQueryResult = event->GetSharedObject<CallForwardQueryResult>();
-    if (cFQueryResult == nullptr) {
-        TELEPHONY_LOGE("GetCallTransferResponse, cFQueryResult is nullptr");
+    auto cFQueryList = event->GetSharedObject<CallForwardQueryInfoList>();
+    if (cFQueryList == nullptr) {
+        TELEPHONY_LOGE("GetCallTransferResponse, cFQueryList is nullptr");
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventGetCallTransferInfo(*cFQueryResult);
+    supplement.EventGetCallTransferInfo(*cFQueryList);
 }
 
 void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -965,5 +1003,36 @@ void CellularCallHandler::SendUssdResponse(const AppExecFwk::InnerEvent::Pointer
     CellularCallSupplement supplement;
     supplement.EventSendUssd(*result);
 }
-} // namespace Telephony
-} // namespace OHOS
+
+void CellularCallHandler::SsNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    TELEPHONY_LOGI("CellularCallHandler::SsNotifyResponse entry");
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SsNotifyResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<SsNoticeInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SsNotifyResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSsNotify(*result);
+}
+
+void CellularCallHandler::SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SendUnlockPinPukResponse, event is nullptr");
+        return;
+    }
+    auto result = event->GetSharedObject<PinPukResponse>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("SendUnlockPinPukResponse, result is nullptr");
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventSetPinPuk(*result);
+}
+}  // namespace Telephony
+}  // namespace OHOS
