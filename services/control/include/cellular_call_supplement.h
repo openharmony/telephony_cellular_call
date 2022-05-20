@@ -184,6 +184,49 @@ public:
     int32_t SendUssd(int32_t slotId, const std::string &msg);
 
     /**
+     * Event Set Pin Puk
+     *
+     * @param PinPukResponse
+     */
+    void EventSetPinPuk(const PinPukResponse &pinPukResponse);
+
+    /**
+     * SIM PIN unlock
+     *
+     * @param slotId
+     * @param mmiData
+     * @return Returns true on success.
+     */
+    void AlterPinPassword(int32_t slotId, const MMIData &mmiData);
+
+    /**
+     * SIM PUK unlock
+     *
+     * @param slotId
+     * @param mmiData
+     * @return Returns true on success.
+     */
+    void UnlockPuk(int32_t slotId, const MMIData &mmiData);
+
+    /**
+     * SIM PIN2 unlock
+     *
+     * @param slotId
+     * @param mmiData
+     * @return Returns true on success.
+     */
+    void AlterPin2Password(int32_t slotId, const MMIData &mmiData);
+
+    /**
+     * SIM PUK2 unlock
+     *
+     * @param slotId
+     * @param mmiData
+     * @return Returns true on success.
+     */
+    void UnlockPuk2(int32_t slotId, const MMIData &mmiData);
+
+    /**
      * Event Deal clip Mmi
      *
      * 3GPP TS 27.007 V3.9.0 (2001-06) 7.6	Calling line identification presentation +CLIP
@@ -252,9 +295,9 @@ public:
      *
      * 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
      *
-     * @param CallForwardQueryResult
+     * @param CallForwardQueryInfoList
      */
-    void EventGetCallTransferInfo(CallForwardQueryResult &queryResult);
+    void EventGetCallTransferInfo(CallForwardQueryInfoList &cFQueryList);
 
     /**
      * Event Set Call Transfer
@@ -273,6 +316,20 @@ public:
      * @param HRilRadioResponseInfo
      */
     void EventSendUssd(HRilRadioResponseInfo &responseInfo);
+
+    /**
+     * Event Ss Notify
+     *
+     * @param SsNoticeInfo
+     */
+    void EventSsNotify(SsNoticeInfo &ssNoticeInfo);
+
+    /**
+     * Event Ussd Notify
+     *
+     * @param UssdNoticeInfo
+     */
+    void EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo);
 
 private:
     /**
@@ -313,7 +370,18 @@ private:
      */
     bool PhoneTypeGsmOrNot(int32_t slotId);
 
+    /**
+     * Get Message
+     *
+     * @param MmiCodeInfo
+     * @param SsNoticeInfo
+     */
+    void GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNoticeInfo &ssNoticeInfo);
+
 private:
+    void BuildCallForwardQueryInfo(const CallForwardQueryResult &queryResult);
+    void ReportMmiCodeMessage(int32_t result, const std::string successMsg, const std::string failedMsg);
+    bool IsVaildPinOrPuk(std::string newPinOrPuk, std::string newPinOrPukCheck);
     const int32_t ACTIVATE_ACTION = 1;
     const int32_t DEACTIVATE_ACTION = 2;
     SupplementRequest supplementRequest_;
@@ -326,6 +394,42 @@ private:
     const std::string ALL_BARRING_SERVICES = "AB";
     const std::string ALL_OUTGOING_BARRING_SERVICES = "AG";
     const std::string ALL_INCOMING_BARRING_SERVICES = "AC";
+    const std::string TRANSFER_UNCONDITIONAL_SUCCESS = "Transfer unconditional success";
+    const std::string TRANSFER_BUSY_SUCCESS = "Transfer busy success";
+    const std::string TRANSFER_NO_REPLYL_SUCCESS = "Transfer no replay success";
+    const std::string TRANSFER_NOT_REACHABLE_SUCCESS = "Transfer not reachable success";
+    const std::string QUERY_SS_SUCCESS = "Query SS success";
+    const std::string QUERY_SS_FAILED = "Query SS failed";
+    const std::string INVALID_MMI_CODE = "Invalid MMI code";
+    const std::string GET_CALL_WAITING_SUCCESS = "Get call waiting success";
+    const std::string GET_CALL_WAITING_FAILED = "Get call waiting failed";
+    const std::string SET_CALL_WAITING_SUCCESS = "Set call waiting success";
+    const std::string SET_CALL_WAITING_FAILED = "Set call waiting failed";
+    const std::string GET_CALL_TRANSFER_SUCCESS = "Get call transfer success";
+    const std::string GET_CALL_TRANSFER_FAILED = "Get call transfer failed";
+    const std::string SET_CALL_TRANSFER_SUCCESS = "Set call transfer success";
+    const std::string SET_CALL_TRANSFER_FAILED = "Set call transfer failed";
+    const std::string GET_CALL_RESTRICTION_SUCCESS = "Get call restriction success";
+    const std::string GET_CALL_RESTRICTION_FAILED = "Get call restriction failed";
+    const std::string SET_CALL_RESTRICTION_SUCCESS = "Set call restriction success";
+    const std::string SET_CALL_RESTRICTION_FAILED = "Set call restriction failed";
+    const std::string GET_CLIP_SUCCESS = "Get clip success";
+    const std::string GET_CLIP_FAILED = "Get clip failed";
+    const std::string GET_CLIR_SUCCESS = "Get clir success";
+    const std::string GET_CLIR_FAILED = "Get clir failed";
+    const std::string SET_CLIR_SUCCESS = "Set clir success";
+    const std::string SET_CLIR_FAILED = "Set clir failed";
+    const std::string MIS_MATCH_PIN_PUK = "PIN or PUK don\'t match";
+    const std::string INVAILD_PIN_PUK = "Invaild PIN or PUK numbers";
+    const int32_t USSD_MODE_NOTIFY = 0;
+    const int32_t USSD_MODE_REQUEST = 1;
+    const int32_t USSD_MODE_NW_RELEASE = 2;
+    const int32_t USSD_SUCCESS = 0;
+    const int32_t USSD_FAILED = 1;
+    const int32_t RESULT_SUCCESS = 0;
+    const int32_t MMI_CODE_FAILED = 1;
+    const int32_t PIN_PUK_MIN = 4;
+    const int32_t PIN_PUK_MAX = 8;
 };
 } // namespace Telephony
 } // namespace OHOS

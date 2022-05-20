@@ -286,8 +286,6 @@ public:
      */
     std::vector<EmergencyCall> GetEccCallList(int32_t slotId);
 
-    void UpdateEmergencyCallList(int32_t slotId, const EmergencyInfo &emergencyInfo);
-
     int32_t SetEmergencyCallList(int32_t slotId);
 
     std::string GetMcc(int32_t slotId_);

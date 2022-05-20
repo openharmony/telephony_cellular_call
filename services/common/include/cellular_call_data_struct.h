@@ -47,6 +47,7 @@ enum MMIHandlerId {
     EVENT_INQUIRE_CALL_FORWARD_MMI = 4,
     EVENT_SET_CALL_FORWARD_MMI = 5,
     EVENT_DEAL_USSD_MMI = 6,
+    EVENT_SET_UNLOCK_PIN_PUK_ID = 7,
 };
 
 /**
@@ -278,6 +279,11 @@ struct ImsCallInfoResponse {
     bool cliValidityPresent;
     CallType callType; // call type: CS、IMS
     int32_t videoState; // 0: audio 1:video
+};
+
+struct PinPukResponse {
+    int32_t result;
+    int32_t remain;  // It can be repeated operator N times
 };
 
 enum ImsHandleId {

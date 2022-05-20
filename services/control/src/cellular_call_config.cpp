@@ -369,20 +369,6 @@ void CellularCallConfig::GetEmergencyCallListResponse(int32_t slotId, const Emer
     MergeEccCallList(slotId);
 }
 
-void CellularCallConfig::UpdateEmergencyCallList(int32_t slotId, const EmergencyInfo &emergencyInfo)
-{
-    TELEPHONY_LOGI("updateEmergencyCallList");
-    int32_t first = 1;
-    if (emergencyInfo.index == first) {
-        eccListRadioMap_[slotId] = std::vector<EmergencyCall>();
-    }
-    eccListRadioMap_[slotId].push_back(BuildEmergencyCall(slotId, emergencyInfo));
-    if (emergencyInfo.index == emergencyInfo.total) {
-        MergeEccCallList(slotId);
-    }
-    TELEPHONY_LOGI("updateEmergencyCallList end");
-}
-
 std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
     TELEPHONY_LOGI("GetEccCallList  start %{publiic}d", slotId);

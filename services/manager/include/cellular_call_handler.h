@@ -169,6 +169,13 @@ public:
     void UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
+     * SsNotifyResponse
+     *
+     * @param code process
+     */
+    void SsNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
      * CallRingBackVoiceResponse
      *
      * @param code process
@@ -349,6 +356,13 @@ private:
      * @param AppExecFwk::InnerEvent::Pointer
      */
     void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SendUnlockPinPukResponse
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * InitBasicFuncMap

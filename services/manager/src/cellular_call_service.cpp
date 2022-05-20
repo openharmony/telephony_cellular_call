@@ -139,9 +139,11 @@ void CellularCallService::HandlerResetUnRegister()
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler,
             RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -168,9 +170,13 @@ void CellularCallService::RegisterCoreServiceHandler()
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
         }
 
         CellularCallConfig config;
@@ -998,5 +1004,10 @@ int32_t CellularCallService::GetMute(int32_t slotId)
     CellularCallConfig config;
     return config.GetMute(slotId);
 }
-} // namespace Telephony
-} // namespace OHOS
+
+void CellularCallService::SetSrvccState(int32_t srvccState)
+{
+    srvccState_ = srvccState;
+}
+}  // namespace Telephony
+}  // namespace OHOS

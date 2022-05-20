@@ -50,21 +50,28 @@ int32_t CSControl::Dial(const CellularCallInfo &callInfo)
 
 int32_t CSControl::DialCdma(const CellularCallInfo &callInfo)
 {
+    TELEPHONY_LOGI("DialCdma entry.");
+    StandardizeUtils standardizeUtils;
+    // Remove the phone number separator
+    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
+
+    CLIRMode clirMode = CLIRMode::DEFAULT;
+    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode)) {
+        TELEPHONY_LOGI("DialCdma return, mmi code type.");
+        return RETURN_TYPE_MMI;
+    }
+
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("CSControl::DialCdma return, error type: call state error.");
         return CALL_ERR_CALL_COUNTS_EXCEED_LIMIT;
     }
-
-    StandardizeUtils standardizeUtils;
-    // Remove the phone number separator
-    std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
 
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         TELEPHONY_LOGI("DialCdma, CDMA is have connection in active state.");
         CellularCallConnectionCS csConnection;
         return csConnection.SendCDMAThreeWayDialRequest(callInfo.slotId);
     }
-    CLIRMode clirMode = CLIRMode::DEFAULT;
+
     return EncapsulateDialCommon(callInfo.slotId, newPhoneNum, clirMode);
 }
 
