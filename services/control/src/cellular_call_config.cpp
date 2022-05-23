@@ -35,7 +35,7 @@
 namespace OHOS {
 namespace Telephony {
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
-std::map<int32_t, int32_t> CellularCallConfig::activeMap_;
+
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
 std::mutex mutex_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
