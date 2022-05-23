@@ -53,7 +53,8 @@ std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
 
 bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
 {
-    return CoreManagerInner::GetInstance().GetImsRegStatus(slotId);
+    return CoreManagerInner::GetInstance().GetImsRegStatus(slotId,
+        ImsServiceType::TYPE_VOICE).imsRegState == ImsRegState::IMS_REGISTERED;
 }
 
 std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()

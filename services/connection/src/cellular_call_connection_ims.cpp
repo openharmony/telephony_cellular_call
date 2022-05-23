@@ -179,7 +179,8 @@ int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId)
             TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->HoldCall(slotId);
+        int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->HoldCall(slotId, callType);
     }
 
     TELEPHONY_LOGI("HoldCallRequest, ims vendor service does not exist.");
@@ -204,7 +205,8 @@ int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
             TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->UnHoldCall(slotId);
+        int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->UnHoldCall(slotId, callType);
     }
 
     TELEPHONY_LOGI("UnHoldCallRequest, ims vendor service does not exist.");
@@ -229,7 +231,8 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
             TELEPHONY_LOGE("DialRequest return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId);
+        int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, callType);
     }
 
     TELEPHONY_LOGI("SwitchCallRequest, ims vendor service does not exist.");
@@ -346,6 +349,15 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
 
 int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
+    if (moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("GetImsCallsDataRequest, call ims service");
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("GetImsCallsDataRequest return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsCallsDataRequest(slotId, lastCallsDataFlag);
+    }
+
     TELEPHONY_LOGI("CellularCallConnectionIMS::GetImsCallsDataRequest entry.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetImsCallsDataRequest return, error type: GetInstance() is nullptr.");

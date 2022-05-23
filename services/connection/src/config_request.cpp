@@ -334,16 +334,6 @@ int32_t ConfigRequest::GetMuteRequest(int32_t slotId)
 
 int32_t ConfigRequest::GetEmergencyCallListRequest(int32_t slotId)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetEmergencyCallListRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetEmergencyCallList(slotId);
-    }
-
-    TELEPHONY_LOGI("GetEmergencyCallListRequest, ims vendor service does not exist.");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("GetEmergencyCallListRequest return, error type: handle is nullptr.");

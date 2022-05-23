@@ -18,6 +18,7 @@
 
 #include <memory>
 
+#include "cellular_call_config.h"
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"
 #include "cs_control.h"
@@ -62,11 +63,23 @@ public:
     int32_t GetSlotId();
 
     /**
+     * RegisterImsCallCallbackHandler()
+     */
+    void RegisterImsCallCallbackHandler();
+
+    /**
      * SimStateChangeReport
      *
      * @param code process
      */
     void SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * SimRecordsLoadedReport
+     *
+     * @param code process
+     */
+    void SimRecordsLoadedReport(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * DialResponse
@@ -385,6 +398,26 @@ private:
     void InitActiveReportFuncMap();
 
     /**
+     * InitImsBasicFuncMap
+     */
+    void InitImsBasicFuncMap();
+
+    /**
+     * InitImsConfigFuncMap
+     */
+    void InitImsConfigFuncMap();
+
+    /**
+     * InitImsActiveReportFuncMap
+     */
+    void InitImsActiveReportFuncMap();
+
+    /**
+     * InitImsSupplementFuncMap()
+     */
+    void InitImsSupplementFuncMap();
+
+    /**
      * ReportCsCallsData
      *
      * @param CallInfoList
@@ -396,7 +429,7 @@ private:
      *
      * @param CallInfoList
      */
-    void ReportImsCallsData(const CallInfoList &imsCallInfoList);
+    void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
 
 private:
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;

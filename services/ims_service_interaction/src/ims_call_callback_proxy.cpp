@@ -23,7 +23,7 @@ namespace Telephony {
 ImsCallCallbackProxy::ImsCallCallbackProxy(const sptr<IRemoteObject> &impl)
     : IRemoteProxy<ImsCallCallbackInterface>(impl) {}
 
-int32_t ImsCallCallbackProxy::DialResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::DialResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -31,7 +31,10 @@ int32_t ImsCallCallbackProxy::DialResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_DIAL, in, out, option);
@@ -41,7 +44,7 @@ int32_t ImsCallCallbackProxy::DialResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::HangUpResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -49,7 +52,10 @@ int32_t ImsCallCallbackProxy::HangUpResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_HANG_UP, in, out, option);
@@ -59,7 +65,7 @@ int32_t ImsCallCallbackProxy::HangUpResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::RejectResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -67,7 +73,10 @@ int32_t ImsCallCallbackProxy::RejectResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_REJECT, in, out, option);
@@ -77,7 +86,7 @@ int32_t ImsCallCallbackProxy::RejectResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::AnswerResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -85,7 +94,10 @@ int32_t ImsCallCallbackProxy::AnswerResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_ANSWER, in, out, option);
@@ -95,7 +107,7 @@ int32_t ImsCallCallbackProxy::AnswerResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::HoldResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -103,7 +115,10 @@ int32_t ImsCallCallbackProxy::HoldResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_HOLD, in, out, option);
@@ -113,7 +128,7 @@ int32_t ImsCallCallbackProxy::HoldResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::UnHoldResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -121,7 +136,10 @@ int32_t ImsCallCallbackProxy::UnHoldResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_UN_HOLD, in, out, option);
@@ -131,7 +149,7 @@ int32_t ImsCallCallbackProxy::UnHoldResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SwitchResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -139,7 +157,10 @@ int32_t ImsCallCallbackProxy::SwitchResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SWITCH, in, out, option);
@@ -149,7 +170,7 @@ int32_t ImsCallCallbackProxy::SwitchResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::CombineConferenceResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::CombineConferenceResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -157,7 +178,7 @@ int32_t ImsCallCallbackProxy::CombineConferenceResponse(const ImsResponseInfo &i
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_COMBINE_CONFERENCE, in, out, option);
@@ -167,7 +188,7 @@ int32_t ImsCallCallbackProxy::CombineConferenceResponse(const ImsResponseInfo &i
     return error;
 }
 
-int32_t ImsCallCallbackProxy::InviteToConferenceResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::InviteToConferenceResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -175,7 +196,7 @@ int32_t ImsCallCallbackProxy::InviteToConferenceResponse(const ImsResponseInfo &
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_INVITE_TO_CONFERENCE, in, out, option);
@@ -185,7 +206,7 @@ int32_t ImsCallCallbackProxy::InviteToConferenceResponse(const ImsResponseInfo &
     return error;
 }
 
-int32_t ImsCallCallbackProxy::KickOutFromConferenceResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::KickOutFromConferenceResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -193,7 +214,7 @@ int32_t ImsCallCallbackProxy::KickOutFromConferenceResponse(const ImsResponseInf
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_KICK_OUT_CONFERENCE, in, out, option);
@@ -203,7 +224,7 @@ int32_t ImsCallCallbackProxy::KickOutFromConferenceResponse(const ImsResponseInf
     return error;
 }
 
-int32_t ImsCallCallbackProxy::CallMediaModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::CallMediaModeResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -211,7 +232,7 @@ int32_t ImsCallCallbackProxy::CallMediaModeResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_UPDATE_CALL_MEDIA_MODE, in, out, option);
@@ -221,7 +242,7 @@ int32_t ImsCallCallbackProxy::CallMediaModeResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::IsEmergencyPhoneNumberResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::StartDtmfResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -229,43 +250,7 @@ int32_t ImsCallCallbackProxy::IsEmergencyPhoneNumberResponse(const ImsResponseIn
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_EMERGENCY_CALL, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallCallbackProxy::IsEmergencyPhoneNumberResponse(bool value)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteBool(value)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_EMERGENCY_CALL, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallCallbackProxy::StartDtmfResponse(const ImsResponseInfo &info)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_START_DTMF, in, out, option);
@@ -275,7 +260,7 @@ int32_t ImsCallCallbackProxy::StartDtmfResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SendDtmfResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -283,7 +268,10 @@ int32_t ImsCallCallbackProxy::SendDtmfResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SEND_DTMF, in, out, option);
@@ -293,7 +281,7 @@ int32_t ImsCallCallbackProxy::SendDtmfResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::StopDtmfResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::StopDtmfResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -301,7 +289,7 @@ int32_t ImsCallCallbackProxy::StopDtmfResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_STOP_DTMF, in, out, option);
@@ -311,7 +299,7 @@ int32_t ImsCallCallbackProxy::StopDtmfResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::StartRttResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::StartRttResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -319,7 +307,7 @@ int32_t ImsCallCallbackProxy::StartRttResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_START_RTT, in, out, option);
@@ -329,7 +317,7 @@ int32_t ImsCallCallbackProxy::StartRttResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::StopRttResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::StopRttResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -337,7 +325,7 @@ int32_t ImsCallCallbackProxy::StopRttResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_STOP_RTT, in, out, option);
@@ -365,7 +353,7 @@ int32_t ImsCallCallbackProxy::CallStateChangeReport(int32_t slotId)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::ServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus)
+int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -373,20 +361,17 @@ int32_t ImsCallCallbackProxy::ServiceStatusResponse(int32_t slotId, const CallIm
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteInt32(slotId)) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteRawData((const void *)&callImsServiceStatus, sizeof(CallImsServiceStatus))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_SERVICE_STATUS, in, out, option);
+    int32_t error = Remote()->SendRequest(IMS_GET_CALLS_DATA, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetPreModeResponse(int32_t slotId, const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList)
 {
     MessageOption option;
     MessageParcel in;
@@ -397,7 +382,28 @@ int32_t ImsCallCallbackProxy::SetPreModeResponse(int32_t slotId, const ImsRespon
     if (!in.WriteInt32(slotId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&callList, sizeof(ImsCurrentCallList))) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    int32_t error = Remote()->SendRequest(IMS_GET_CALLS_DATA, in, out, option);
+    if (error == ERR_NONE) {
+        return out.ReadInt32();
+    }
+    return error;
+}
+
+int32_t ImsCallCallbackProxy::SetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+{
+    MessageOption option;
+    MessageParcel in;
+    MessageParcel out;
+    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_PRE_MODE, in, out, option);
@@ -407,7 +413,7 @@ int32_t ImsCallCallbackProxy::SetPreModeResponse(int32_t slotId, const ImsRespon
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetPreModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetPreModeResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -415,7 +421,7 @@ int32_t ImsCallCallbackProxy::GetPreModeResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_PRE_MODE, in, out, option);
@@ -447,7 +453,7 @@ int32_t ImsCallCallbackProxy::GetPreModeResponse(int32_t slotId, int32_t mode)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetImsSwitchResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetImsSwitchResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -455,7 +461,7 @@ int32_t ImsCallCallbackProxy::SetImsSwitchResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_LTE_SWITCH_STATUS, in, out, option);
@@ -465,7 +471,7 @@ int32_t ImsCallCallbackProxy::SetImsSwitchResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetImsSwitchResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsSwitchResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -473,7 +479,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_LTE_SWITCH_STATUS, in, out, option);
@@ -504,7 +510,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, int32_t activ
     return error;
 }
 
-int32_t ImsCallCallbackProxy::ImsCallsDataResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetImsConfigResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -512,46 +518,7 @@ int32_t ImsCallCallbackProxy::ImsCallsDataResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_GET_CALLS_DATA, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallCallbackProxy::ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteInt32(slotId)) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&callList, sizeof(ImsCurrentCallList))) {
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_GET_CALLS_DATA, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallCallbackProxy::SetImsConfigResponse(const ImsResponseInfo &info)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_CONFIG, in, out, option);
@@ -579,7 +546,7 @@ int32_t ImsCallCallbackProxy::GetImsConfigResponse(int32_t value)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetImsConfigResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsConfigResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -587,7 +554,7 @@ int32_t ImsCallCallbackProxy::GetImsConfigResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_CONFIG, in, out, option);
@@ -597,7 +564,7 @@ int32_t ImsCallCallbackProxy::GetImsConfigResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetImsFeatureValueResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetImsFeatureValueResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -605,7 +572,7 @@ int32_t ImsCallCallbackProxy::SetImsFeatureValueResponse(const ImsResponseInfo &
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_FEATURE, in, out, option);
@@ -633,7 +600,7 @@ int32_t ImsCallCallbackProxy::GetImsFeatureValueResponse(int32_t value)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetImsFeatureValueResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsFeatureValueResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -641,7 +608,7 @@ int32_t ImsCallCallbackProxy::GetImsFeatureValueResponse(const ImsResponseInfo &
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_FEATURE, in, out, option);
@@ -651,7 +618,7 @@ int32_t ImsCallCallbackProxy::GetImsFeatureValueResponse(const ImsResponseInfo &
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -659,7 +626,7 @@ int32_t ImsCallCallbackProxy::SetImsSwitchEnhanceModeResponse(const ImsResponseI
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_LTE_SWITCH_ENHANCE_MODE_STATUS, in, out, option);
@@ -687,7 +654,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchEnhanceModeResponse(int32_t value)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -695,7 +662,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchEnhanceModeResponse(const ImsResponseI
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_GET_LTE_SWITCH_ENHANCE_MODE_STATUS, in, out, option);
@@ -705,7 +672,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchEnhanceModeResponse(const ImsResponseI
     return error;
 }
 
-int32_t ImsCallCallbackProxy::CtrlCameraResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::CtrlCameraResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -713,7 +680,7 @@ int32_t ImsCallCallbackProxy::CtrlCameraResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_CONTROL_CAMERA, in, out, option);
@@ -723,7 +690,7 @@ int32_t ImsCallCallbackProxy::CtrlCameraResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetPreviewWindowResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetPreviewWindowResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -731,7 +698,7 @@ int32_t ImsCallCallbackProxy::SetPreviewWindowResponse(const ImsResponseInfo &in
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_PREVIEW_WINDOW, in, out, option);
@@ -741,7 +708,7 @@ int32_t ImsCallCallbackProxy::SetPreviewWindowResponse(const ImsResponseInfo &in
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetDisplayWindowResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetDisplayWindowResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -749,7 +716,7 @@ int32_t ImsCallCallbackProxy::SetDisplayWindowResponse(const ImsResponseInfo &in
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_DISPLAY_WINDOW, in, out, option);
@@ -759,7 +726,7 @@ int32_t ImsCallCallbackProxy::SetDisplayWindowResponse(const ImsResponseInfo &in
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetCameraZoomResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetCameraZoomResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -767,7 +734,7 @@ int32_t ImsCallCallbackProxy::SetCameraZoomResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_CAMERA_ZOOM, in, out, option);
@@ -777,7 +744,7 @@ int32_t ImsCallCallbackProxy::SetCameraZoomResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetPauseImageResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetPauseImageResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -785,7 +752,7 @@ int32_t ImsCallCallbackProxy::SetPauseImageResponse(const ImsResponseInfo &info)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_PAUSE_IMAGE, in, out, option);
@@ -795,7 +762,7 @@ int32_t ImsCallCallbackProxy::SetPauseImageResponse(const ImsResponseInfo &info)
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetDeviceDirectionResponse(const ImsResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetDeviceDirectionResponse(const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -803,7 +770,7 @@ int32_t ImsCallCallbackProxy::SetDeviceDirectionResponse(const ImsResponseInfo &
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(ImsResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_DEVICE_DIRECTION, in, out, option);
@@ -909,7 +876,7 @@ int32_t ImsCallCallbackProxy::GetMuteResponse(const MuteControlResponse &respons
     return error;
 }
 
-int32_t ImsCallCallbackProxy::GetEccCallListResponse(const EmergencyInfoList &callList)
+int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, int32_t reason)
 {
     MessageOption option;
     MessageParcel in;
@@ -917,23 +884,8 @@ int32_t ImsCallCallbackProxy::GetEccCallListResponse(const EmergencyInfoList &ca
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteRawData((const void *)&callList, sizeof(EmergencyInfoList))) {
+    if (!in.WriteInt32(slotId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    int32_t error = Remote()->SendRequest(IMS_GET_EMERGENCY_CALL_LIST, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t reason)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(reason)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
@@ -1089,7 +1041,7 @@ int32_t ImsCallCallbackProxy::GetCallWaitingResponse(const CallWaitResponse &res
     return error;
 }
 
-int32_t ImsCallCallbackProxy::SetCallWaitingResponse(HRilErrType errType)
+int32_t ImsCallCallbackProxy::SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     MessageOption option;
     MessageParcel in;
@@ -1097,7 +1049,10 @@ int32_t ImsCallCallbackProxy::SetCallWaitingResponse(HRilErrType errType)
     if (!in.WriteInterfaceToken(ImsCallCallbackProxy::GetDescriptor())) {
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
-    if (!in.WriteInt32((int32_t)errType)) {
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     int32_t error = Remote()->SendRequest(IMS_SET_CALL_WAIT, in, out, option);

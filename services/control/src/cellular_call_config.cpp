@@ -17,6 +17,7 @@
 
 #include "telephony_types.h"
 
+#include "cellular_call_register.h"
 #include "cellular_call_data_struct.h"
 
 #include "cellular_call_service.h"
@@ -62,6 +63,8 @@ int32_t CellularCallConfig::GetDomainPreferenceMode(int32_t slotId)
 
 int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
 {
+    TELEPHONY_LOGI(
+        "CellularCallConfig::SetLteImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
     /*
      * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
      * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
@@ -72,30 +75,69 @@ int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
      *      0 – Mobility Management for IMS Voice Termination disabled.
      *      1 – Mobility Management for IMS Voice Termination enabled.
      */
-    return configRequest_.SetLteImsSwitchStatusRequest(slotId, active);
+    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
+    bool ret = OHOS::system::SetParameter(ENHANCED_4G_MODE_ENABLED_KEY, BooleanToPropertyString(active));
+    if (!ret) {
+        TELEPHONY_LOGE("SetLteImsSwitchStatus  failed!");
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(ImsErrType::IMS_FAILED);
+        return TELEPHONY_ERROR;
+    }
+
+    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
+    if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)) {
+        configRequest_.SetLteImsSwitchStatusRequest(slotId, active);
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(ImsErrType::IMS_SUCCESS);
+    return TELEPHONY_SUCCESS;
+}
+
+std::string CellularCallConfig::BooleanToPropertyString(bool value)
+{
+    return value ? "1" : "0";
 }
 
 int32_t CellularCallConfig::GetLteImsSwitchStatus(int32_t slotId)
 {
-    /*
-     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
-     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
-     * terminating access domain selection by the network.
-     * -	Format: bool
-     * -	Access Types: Get, Replace
-     * -	Values: 0, 1
-     *      0 – Mobility Management for IMS Voice Termination disabled.
-     *      1 – Mobility Management for IMS Voice Termination enabled.
-     */
-    return configRequest_.GetLteImsSwitchStatusRequest(slotId);
+    TELEPHONY_LOGI("CellularCallConfig::GetLteImsSwitchStatus entry, slotId: %{public}d", slotId);
+    LteImsSwitchResponse response;
+    response.result = ImsErrType::IMS_SUCCESS;
+    response.active = GetSwitchStatus(slotId);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetLteImsSwitchResult(response);
+    return TELEPHONY_SUCCESS;
 }
 
 void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimStateChanged entry, slotId: %{public}d", slotId);
-    if (IsNeedUpdateEccListWhenSimStateChanged(slotId)) {
-        MergeEccCallList(slotId);
-        SetEmergencyCallList(slotId);
+    // need to add condition
+}
+
+void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
+{
+    TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry");
+    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
+
+    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
+    std::string imsSwhichValueSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY,
+        IMS_SWITCH_VALUE_DISABLED);
+    TELEPHONY_LOGI("imsSwhichValueSetting : %{public}s", imsSwhichValueSetting.c_str());
+    if (simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
+        if (imsSwhichValueSetting == IMS_SWITCH_VALUE_ENABLED) {
+            configRequest_.SetLteImsSwitchStatusRequest(slotId, true);
+        } else {
+            configRequest_.SetLteImsSwitchStatusRequest(slotId, false);
+        }
+    }
+}
+
+void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result)
+{
+    TELEPHONY_LOGI("CellularCallConfig::HandleSetLteImsSwitchResult entry, slotId: %{public}d", slotId);
+    if (result != HRilErrType::NONE) {
+        TELEPHONY_LOGE("HandleSetLteImsSwitchResult set ims switch to modem failed!");
+        // need to reset the Ims Switch parameter and notify APP to update UI.
     }
 }
 
@@ -106,7 +148,6 @@ void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t
 
 void CellularCallConfig::GetLteImsSwitchStatusResponse(int32_t slotId, int32_t active)
 {
-    activeMap_[slotId] = active;
 }
 
 int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
@@ -116,7 +157,22 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 
 int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
 {
-    return activeMap_[slotId];
+    TELEPHONY_LOGI("CellularCallConfig::GetSwitchStatus entry, slotId: %{public}d", slotId);
+    /*
+     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
+     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
+     * terminating access domain selection by the network.
+     * -	Format: bool
+     * -	Access Types: Get, Replace
+     * -	Values: 0, 1
+     *      0 – Mobility Management for IMS Voice Termination disabled.
+     *      1 – Mobility Management for IMS Voice Termination enabled.
+     */
+    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
+    std::string prevSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY, IMS_SWITCH_VALUE_DISABLED);
+    int32_t imsSwitchStatus = static_cast<int32_t>(atoi(prevSetting.c_str()));
+    TELEPHONY_LOGI("imsSwitchStatus : %{public}d", imsSwitchStatus);
+    return imsSwitchStatus;
 }
 
 int32_t CellularCallConfig::SetImsConfig(ImsConfigItem item, const std::string &value)

@@ -29,20 +29,18 @@ public:
     ~ImsCallProxy() = default;
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode) override;
     int32_t HangUp(const ImsCallInfo &callInfo) override;
-    int32_t Reject(const ImsCallInfo &callInfo) override;
     int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason) override;
     int32_t Answer(const ImsCallInfo &callInfo) override;
-    int32_t HoldCall(int32_t slotId) override;
-    int32_t UnHoldCall(int32_t slotId) override;
-    int32_t SwitchCall(int32_t slotId) override;
+    int32_t HoldCall(int32_t slotId, int32_t callType) override;
+    int32_t UnHoldCall(int32_t slotId, int32_t callType) override;
+    int32_t SwitchCall(int32_t slotId, int32_t callType) override;
     int32_t CombineConference(int32_t slotId) override;
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList) override;
     int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
-    int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum) override;
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag) override;
     int32_t GetLastCallFailReason(int32_t slotId) override;
-    
+
     int32_t StartDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t SendDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
@@ -62,7 +60,6 @@ public:
     int32_t GetImsSwitchEnhanceMode() override;
     int32_t SetMute(int32_t slotId, int32_t mute) override;
     int32_t GetMute(int32_t slotId) override;
-    int32_t GetEmergencyCallList(int32_t slotId) override;
 
     int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) override;
     int32_t SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) override;

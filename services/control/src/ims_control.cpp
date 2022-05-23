@@ -313,7 +313,7 @@ ImsConnectionMap IMSControl::GetConnectionMap()
     return connectionMap_;
 }
 
-int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfoList)
+int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
     if (callInfoList.callSize <= 0 && !connectionMap_.empty()) {
         return ReportHungUpInfo(slotId);
@@ -322,6 +322,11 @@ int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfo
     } else if (callInfoList.callSize > 0 && !connectionMap_.empty()) {
         return ReportUpdateInfo(slotId, callInfoList);
     }
+    return TELEPHONY_ERROR;
+}
+
+int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfoList)
+{
     return TELEPHONY_ERROR;
 }
 
@@ -346,7 +351,7 @@ int32_t IMSControl::ReportHungUpInfo(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callInfoList)
+int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
     TELEPHONY_LOGI("ReportIncomingInfo entry");
     CallsReportInfo callsReportInfo;
@@ -370,7 +375,7 @@ int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callI
     return TELEPHONY_SUCCESS;
 }
 
-int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfoList)
+int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
     TELEPHONY_LOGI("ReportUpdateInfo entry");
     CallsReportInfo callsReportInfo;
@@ -402,7 +407,7 @@ int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInf
     return TELEPHONY_SUCCESS;
 }
 
-CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const CallInfo &callInfo)
+CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const ImsCurrentCall &callInfo)
 {
     TELEPHONY_LOGI("EncapsulationCallReportInfo entry");
     CallReportInfo callReportInfo;
@@ -425,7 +430,7 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Cal
     return callReportInfo;
 }
 
-void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const CallInfoList &callInfoList)
+void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCurrentCallList &callInfoList)
 {
     TELEPHONY_LOGI("DeleteConnection entry");
     auto it = connectionMap_.begin();

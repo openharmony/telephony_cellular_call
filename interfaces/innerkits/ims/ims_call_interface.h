@@ -29,7 +29,6 @@ public:
         /****************** basic ******************/
         IMS_DIAL = 1,
         IMS_HANG_UP,
-        IMS_REJECT,
         IMS_REJECT_WITH_REASON,
         IMS_ANSWER,
         IMS_HOLD,
@@ -39,7 +38,7 @@ public:
         IMS_INVITE_TO_CONFERENCE,
         IMS_KICK_OUT_CONFERENCE,
         IMS_UPDATE_CALL_MEDIA_MODE,
-        IMS_EMERGENCY_CALL,
+        IMS_CALL_STATE_CHANGE,
         IMS_GET_CALL_DATA,
         IMS_GET_LAST_CALL_FAIL_REASON,
 
@@ -64,7 +63,7 @@ public:
         IMS_GET_LTE_SWITCH_ENHANCE_MODE_STATUS,
         IMS_SET_MUTE,
         IMS_GET_MUTE,
-        IMS_GET_EMERGENCY_CALL_LIST,
+        IMS_SET_IMS_REG_ERROR_REPORT,
 
         /****************** video settings ******************/
         IMS_CTRL_CAMERA = 300,
@@ -107,14 +106,6 @@ public:
     virtual int32_t HangUp(const ImsCallInfo &callInfo) = 0;
 
     /**
-     * IMS Reject interface
-     *
-     * @param ImsCallInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t Reject(const ImsCallInfo &callInfo) = 0;
-
-    /**
      * IMS Reject with reason interface
      *
      * @param ImsCallInfo
@@ -135,25 +126,28 @@ public:
      * IMS HoldCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HoldCall(int32_t slotId) = 0;
+    virtual int32_t HoldCall(int32_t slotId, int32_t callType) = 0;
 
     /**
      * IMS UnHoldCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UnHoldCall(int32_t slotId) = 0;
+    virtual int32_t UnHoldCall(int32_t slotId, int32_t callType) = 0;
 
     /**
      * IMS SwitchCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SwitchCall(int32_t slotId) = 0;
+    virtual int32_t SwitchCall(int32_t slotId, int32_t callType) = 0;
 
     /**
      * IMS CombineConference interface
@@ -189,15 +183,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) = 0;
-
-    /**
-     * IMS IsEmergencyPhoneNumber interface
-     *
-     * @param slotId
-     * @param phoneNum
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum) = 0;
 
     /**
      * Get Ims Calls Data Request
@@ -370,14 +355,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t GetMute(int32_t slotId) = 0;
-
-    /**
-     * IMS GetEmergencyCallList interface
-     *
-     * @param slotId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t GetEmergencyCallList(int32_t slotId) = 0;
 
     /**
      * IMS CtrlCamera interface
