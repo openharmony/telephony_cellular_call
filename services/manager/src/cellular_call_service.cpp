@@ -121,6 +121,7 @@ void CellularCallService::CreateHandler()
     for (const auto &it : slotVector) {
         auto handler = std::make_shared<CellularCallHandler>(eventLoop_);
         handler->SetSlotId(it);
+        handler->RegisterImsCallCallbackHandler();
         handlerMap_.insert(std::make_pair(it, handler));
     }
 }
@@ -136,6 +137,7 @@ void CellularCallService::HandlerResetUnRegister()
         }
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
@@ -163,6 +165,10 @@ void CellularCallService::RegisterCoreServiceHandler()
         if (handler != nullptr) {
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_SIM_STATE_CHANGE, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(

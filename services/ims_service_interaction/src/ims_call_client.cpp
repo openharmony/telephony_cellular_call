@@ -37,8 +37,6 @@ void ImsCallClient::Init()
     if (!IsConnect()) {
         GetImsCallProxy();
     }
-    // register callback
-    RegisterImsCallCallback();
 }
 
 sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
@@ -71,6 +69,8 @@ sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
         TELEPHONY_LOGE("GetImsCallProxy return, iface_cast<imsCallProxy_> failed!");
         return nullptr;
     }
+    // register callback
+    RegisterImsCallCallback();
     TELEPHONY_LOGI("GetImsCallProxy success.");
     return imsCallProxy_;
 }
@@ -100,493 +100,459 @@ int32_t ImsCallClient::RegisterImsCallCallback()
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallClient::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
+int32_t ImsCallClient::RegisterImsCallCallbackHandler(int32_t slotId,
+    const std::shared_ptr<AppExecFwk::EventHandler> &handler)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->Dial(callInfo, mode);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("RegisterImsCallCallbackHandler return, handler is null.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+
+    handlerMap_.insert(std::make_pair(slotId, handler));
+    TELEPHONY_LOGI("RegisterImsCallCallbackHandler success.");
+    return TELEPHONY_SUCCESS;
+}
+
+std::shared_ptr<AppExecFwk::EventHandler> ImsCallClient::GetHandler(int32_t slotId)
+{
+    return handlerMap_[slotId];
+}
+
+int32_t ImsCallClient::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->Dial(callInfo, mode);
 }
 
 int32_t ImsCallClient::HangUp(const ImsCallInfo &callInfo)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->HangUp(callInfo);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->HangUp(callInfo);
 }
 
 int32_t ImsCallClient::Reject(const ImsCallInfo &callInfo)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->Reject(callInfo);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
 }
 
 int32_t ImsCallClient::RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->RejectWithReason(callInfo, reason);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->RejectWithReason(callInfo, reason);
 }
 
 int32_t ImsCallClient::Answer(const ImsCallInfo &callInfo)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->Answer(callInfo);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->Answer(callInfo);
 }
 
-int32_t ImsCallClient::HoldCall(int32_t slotId)
+int32_t ImsCallClient::HoldCall(int32_t slotId, int32_t callType)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->HoldCall(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->HoldCall(slotId, callType);
 }
 
-int32_t ImsCallClient::UnHoldCall(int32_t slotId)
+int32_t ImsCallClient::UnHoldCall(int32_t slotId, int32_t callType)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->UnHoldCall(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->UnHoldCall(slotId, callType);
 }
-int32_t ImsCallClient::SwitchCall(int32_t slotId)
+
+int32_t ImsCallClient::SwitchCall(int32_t slotId, int32_t callType)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SwitchCall(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SwitchCall(slotId, callType);
 }
 
 int32_t ImsCallClient::CombineConference(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->CombineConference(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->CombineConference(slotId);
 }
+
 int32_t ImsCallClient::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->InviteToConference(slotId, numberList);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->InviteToConference(slotId, numberList);
 }
 
 int32_t ImsCallClient::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->KickOutFromConference(slotId, numberList);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->KickOutFromConference(slotId, numberList);
 }
 
 int32_t ImsCallClient::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->UpdateImsCallMode(callInfo, mode);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-}
-
-int32_t ImsCallClient::IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum)
-{
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->IsEmergencyPhoneNumber(slotId, phoneNum);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    return imsCallProxy_->UpdateImsCallMode(callInfo, mode);
 }
 
 int32_t ImsCallClient::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetImsCallsDataRequest(slotId, lastCallsDataFlag);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetImsCallsDataRequest(slotId, lastCallsDataFlag);
 }
 
 int32_t ImsCallClient::GetLastCallFailReason(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetLastCallFailReason(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetLastCallFailReason(slotId);
 }
 
 int32_t ImsCallClient::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->StartDtmf(slotId, cDtmfCode, index);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->StartDtmf(slotId, cDtmfCode, index);
 }
 
 int32_t ImsCallClient::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SendDtmf(slotId, cDtmfCode, index);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SendDtmf(slotId, cDtmfCode, index);
 }
 
 int32_t ImsCallClient::StopDtmf(int32_t slotId, int32_t index)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->StopDtmf(slotId, index);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->StopDtmf(slotId, index);
 }
 
 int32_t ImsCallClient::StartRtt(int32_t slotId, const std::string &msg)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->StartRtt(slotId, msg);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->StartRtt(slotId, msg);
 }
 
 int32_t ImsCallClient::StopRtt(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->StopRtt(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->StopRtt(slotId);
 }
 
 int32_t ImsCallClient::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetDomainPreferenceMode(slotId, mode);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetDomainPreferenceMode(slotId, mode);
 }
 
 int32_t ImsCallClient::GetDomainPreferenceMode(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetDomainPreferenceMode(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetDomainPreferenceMode(slotId);
 }
 
 int32_t ImsCallClient::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetLteImsSwitchStatus(slotId, active);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetLteImsSwitchStatus(slotId, active);
 }
 
 int32_t ImsCallClient::GetLteImsSwitchStatus(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetLteImsSwitchStatus(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetLteImsSwitchStatus(slotId);
 }
 
 int32_t ImsCallClient::SetImsConfig(ImsConfigItem item, const std::string &value)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetImsConfig(item, value);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetImsConfig(item, value);
 }
 
 int32_t ImsCallClient::SetImsConfig(ImsConfigItem item, int32_t value)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetImsConfig(item, value);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetImsConfig(item, value);
 }
 
 int32_t ImsCallClient::GetImsConfig(ImsConfigItem item)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetImsConfig(item);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetImsConfig(item);
 }
 
 int32_t ImsCallClient::SetImsFeatureValue(FeatureType type, int32_t value)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetImsFeatureValue(type, value);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetImsFeatureValue(type, value);
 }
 
 int32_t ImsCallClient::GetImsFeatureValue(FeatureType type)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetImsFeatureValue(type);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetImsFeatureValue(type);
 }
 
 int32_t ImsCallClient::SetImsSwitchEnhanceMode(bool value)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetImsSwitchEnhanceMode(value);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetImsSwitchEnhanceMode(value);
 }
 
 int32_t ImsCallClient::GetImsSwitchEnhanceMode()
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetImsSwitchEnhanceMode();
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetImsSwitchEnhanceMode();
 }
 
 int32_t ImsCallClient::SetMute(int32_t slotId, int32_t mute)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetMute(slotId, mute);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetMute(slotId, mute);
 }
 
 int32_t ImsCallClient::GetMute(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetMute(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-}
-
-int32_t ImsCallClient::GetEmergencyCallList(int32_t slotId)
-{
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetEmergencyCallList(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    return imsCallProxy_->GetMute(slotId);
 }
 
 int32_t ImsCallClient::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->CtrlCamera(cameraId, callingUid, callingPid);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->CtrlCamera(cameraId, callingUid, callingPid);
 }
 
 int32_t ImsCallClient::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetPreviewWindow(x, y, z, width, height);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetPreviewWindow(x, y, z, width, height);
 }
 
 int32_t ImsCallClient::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetDisplayWindow(x, y, z, width, height);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetDisplayWindow(x, y, z, width, height);
 }
 
 int32_t ImsCallClient::SetCameraZoom(float zoomRatio)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetCameraZoom(zoomRatio);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetCameraZoom(zoomRatio);
 }
 
 int32_t ImsCallClient::SetPauseImage(const std::u16string &path)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetPauseImage(path);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetPauseImage(path);
 }
 
 int32_t ImsCallClient::SetDeviceDirection(int32_t rotation)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetDeviceDirection(rotation);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetDeviceDirection(rotation);
 }
 
 int32_t ImsCallClient::GetClip(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetClip(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetClip(slotId);
 }
 
 int32_t ImsCallClient::SetClir(int32_t slotId, int32_t action)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetClir(slotId, action);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetClir(slotId, action);
 }
 
 int32_t ImsCallClient::GetClir(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetClir(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetClir(slotId);
 }
 
 int32_t ImsCallClient::SetCallTransfer(
     int32_t slotId, int32_t reason, int32_t mode, const std::string &transferNum, int32_t classType)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetCallTransfer(slotId, reason, mode, transferNum, classType);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetCallTransfer(slotId, reason, mode, transferNum, classType);
 }
 
 int32_t ImsCallClient::GetCallTransfer(int32_t slotId, int32_t reason)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetCallTransfer(slotId, reason);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetCallTransfer(slotId, reason);
 }
 
 int32_t ImsCallClient::SetCallRestriction(int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetCallRestriction(slotId, fac, mode, pw);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetCallRestriction(slotId, fac, mode, pw);
 }
 
 int32_t ImsCallClient::GetCallRestriction(int32_t slotId, const std::string &fac)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetCallRestriction(slotId, fac);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetCallRestriction(slotId, fac);
 }
 
 int32_t ImsCallClient::SetCallWaiting(int32_t slotId, bool activate)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->SetCallWaiting(slotId, activate);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->SetCallWaiting(slotId, activate);
 }
 
 int32_t ImsCallClient::GetCallWaiting(int32_t slotId)
 {
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_->GetCallWaiting(slotId);
-    } else {
-        TELEPHONY_LOGE("imsCallProxy_ is null!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    return imsCallProxy_->GetCallWaiting(slotId);
 }
-} // namespace Telephony
-} // namespace OHOS
+
+int32_t ImsCallClient::ReConnectService()
+{
+    if (imsCallProxy_ == nullptr) {
+        TELEPHONY_LOGI("try to reconnect ims call service now...");
+        GetImsCallProxy();
+        if (imsCallProxy_ == nullptr) {
+            TELEPHONY_LOGE("Connect service failed");
+            return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+        }
+    }
+    return TELEPHONY_SUCCESS;
+}
+}  // namespace Telephony
+}  // namespace OHOS

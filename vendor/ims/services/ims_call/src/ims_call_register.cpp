@@ -310,12 +310,12 @@ int32_t ImsCallRegister::UpdateGetImsSwitchResponse(int32_t slotId, int32_t acti
 
 int32_t ImsCallRegister::UpdateImsCallsDataResponse(const ImsResponseInfo &info)
 {
-    TELEPHONY_LOGI("ImsCallsDataResponse");
+    TELEPHONY_LOGI("UpdateImsCallsDataResponse");
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    imsCallCallback_->ImsCallsDataResponse(info);
+    imsCallCallback_->GetImsCallsDataResponse(info);
     return TELEPHONY_SUCCESS;
 }
 
@@ -326,7 +326,7 @@ int32_t ImsCallRegister::UpdateImsCallsDataResponse(int32_t slotId, const ImsCur
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    imsCallCallback_->ImsCallsDataResponse(slotId, callList);
+    imsCallCallback_->GetImsCallsDataResponse(slotId, callList);
     return TELEPHONY_SUCCESS;
 }
 

@@ -279,6 +279,21 @@ public:
     void HandleSimStateChanged(int32_t slotId);
 
     /**
+     * HandleSetLteImsSwitchResult
+     *
+     * @param slotId
+     * @param result
+     */
+    void HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result);
+
+    /**
+     * HandleSimRecordsLoaded
+     *
+     * @param slotId
+     */
+    void HandleSimRecordsLoaded(int32_t slotId);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId
@@ -298,7 +313,6 @@ private:
     bool IsEmergencyCallExit(const EmergencyCall &from, const EmergencyCall &to);
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
-    static std::map<int32_t, int32_t> activeMap_;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
     static std::vector<EmergencyCall> eccList3gppHasSim_;
     static std::vector<EmergencyCall> eccList3gppNoSim_;
@@ -308,7 +322,17 @@ private:
     static int32_t SIM_ABSENT;
     std::mutex mutex_;
     const int MCC_LEN = 3;
+    const std::string IMS_SWITCH_VALUE_ENABLED = "1";
+    const std::string IMS_SWITCH_VALUE_DISABLED = "0";
     ConfigRequest configRequest_;
+
+    /**
+     * BooleanToPropertyString
+     *
+     * @param value
+     * @return std::string
+     */
+    std::string BooleanToPropertyString(bool value);
 };
 } // namespace Telephony
 } // namespace OHOS

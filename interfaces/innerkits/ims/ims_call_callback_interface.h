@@ -94,146 +94,138 @@ public:
     /**
      * DialResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
+     * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t DialResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t DialResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
      * HangUpResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
+     * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HangUpResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * RejectResponse
+     * RejectWithReasonResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
+     * @param int32_t
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t RejectResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
      * AnswerResponse
      *
-     * @param ImsResponseInfo
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t AnswerResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * HoldResponse
+     * HoldCallResponse
      *
-     * @param ImsResponseInfo
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HoldResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * UnHoldResponse
+     * UnHoldCallResponse
      *
-     * @param ImsResponseInfo
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UnHoldResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * SwitchResponse
+     * SwitchCallResponse
      *
-     * @param ImsResponseInfo
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SwitchResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
      * CombineConferenceResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CombineConferenceResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t CombineConferenceResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * InviteToConferenceResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t InviteToConferenceResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t InviteToConferenceResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * KickOutFromConferenceResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t KickOutFromConferenceResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t KickOutFromConferenceResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * CallMediaModeResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CallMediaModeResponse(const ImsResponseInfo &info) = 0;
-
-    /**
-     * IsEmergencyPhoneNumberResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t IsEmergencyPhoneNumberResponse(const ImsResponseInfo &info) = 0;
-
-    /**
-     * IsEmergencyPhoneNumberResponse
-     *
-     * @param bool
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t IsEmergencyPhoneNumberResponse(bool value) = 0;
+    virtual int32_t CallMediaModeResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * StartDtmfResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StartDtmfResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t StartDtmfResponse(const HRilRadioResponseInfo &info) = 0;
     /**
      * SendDtmfResponse
      *
-     * @param ImsResponseInfo
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
 
-    virtual int32_t SendDtmfResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
      * StopDtmfResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StopDtmfResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t StopDtmfResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * StartRttResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StartRttResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t StartRttResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * StopRttResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StopRttResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t StopRttResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * CallStateChangeReport
@@ -244,30 +236,38 @@ public:
     virtual int32_t CallStateChangeReport(int32_t slotId) = 0;
 
     /**
-     * ServiceStatusResponse
+     * ImsCallsDataResponse
      *
-     * @param slotId
-     * @param CallImsServiceStatus
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t ServiceStatusResponse(int32_t slotId, const CallImsServiceStatus &callImsServiceStatus) = 0;
+    virtual int32_t GetImsCallsDataResponse(const HRilRadioResponseInfo &info) = 0;
+
+    /**
+     * ImsCallsDataResponse
+     *
+     * @param slotId
+     * @param callList
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) = 0;
 
     /**
      * SetPreModeResponse
      *
      * @param slotId
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetPreModeResponse(int32_t slotId, const ImsResponseInfo &info) = 0;
+    virtual int32_t SetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetPreModeResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetPreModeResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t GetPreModeResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetPreModeResponse
@@ -281,18 +281,18 @@ public:
     /**
      * SetImsSwitchResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetImsSwitchResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetImsSwitchResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetImsSwitchResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetImsSwitchResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t GetImsSwitchResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetImsSwitchResponse
@@ -304,29 +304,12 @@ public:
     virtual int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) = 0;
 
     /**
-     * ImsCallsDataResponse
-     *
-     * @param ImsResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t ImsCallsDataResponse(const ImsResponseInfo &info) = 0;
-
-    /**
-     * ImsCallsDataResponse
-     *
-     * @param slotId
-     * @param callList
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t ImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) = 0;
-
-    /**
      * SetImsConfigResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetImsConfigResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetImsConfigResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetImsConfigResponse
@@ -339,18 +322,18 @@ public:
     /**
      * GetImsConfigResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetImsConfigResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t GetImsConfigResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetImsFeatureValueResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetImsFeatureValueResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetImsFeatureValueResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetImsFeatureValueResponse
@@ -363,18 +346,18 @@ public:
     /**
      * GetImsFeatureValueResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetImsFeatureValueResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t GetImsFeatureValueResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetImsSwitchEnhanceModeResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * GetImsSwitchEnhanceModeResponse
@@ -387,58 +370,58 @@ public:
     /**
      * GetImsSwitchEnhanceModeResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetImsSwitchEnhanceModeResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t GetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * CtrlCameraResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CtrlCameraResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t CtrlCameraResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetPreviewWindowResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetPreviewWindowResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetPreviewWindowResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetDisplayWindowResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetDisplayWindowResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetDisplayWindowResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetCameraZoomResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetCameraZoomResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetCameraZoomResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetPauseImageResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetPauseImageResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetPauseImageResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SetDeviceDirectionResponse
      *
-     * @param ImsResponseInfo
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetDeviceDirectionResponse(const ImsResponseInfo &info) = 0;
+    virtual int32_t SetDeviceDirectionResponse(const HRilRadioResponseInfo &info) = 0;
 
     /**
      * SrvccStateReport
@@ -483,20 +466,13 @@ public:
     virtual int32_t GetMuteResponse(const MuteControlResponse &response) = 0;
 
     /**
-     * GetEccCallListResponse
-     *
-     * @param EmergencyInfoList
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t GetEccCallListResponse(const EmergencyInfoList &callList) = 0;
-
-    /**
      * LastCallFailReasonResponse
      *
      * @param reason
+     * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t LastCallFailReasonResponse(int32_t reason) = 0;
+    virtual int32_t LastCallFailReasonResponse(int32_t slotId, int32_t reason) = 0;
 
     /**
      * GetClipResponse
@@ -565,15 +541,16 @@ public:
     /**
      * SetCallWaitingResponse
      *
-     * @param HRilErrType
+     * @param slotId
+     * @param HRilRadioResponseInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetCallWaitingResponse(HRilErrType errType) = 0;
+    virtual int32_t SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };
-} // namespace Telephony
-} // namespace OHOS
+}  // namespace Telephony
+}  // namespace OHOS
 
-#endif // TELEPHONY_IMS_CALL_CALLBACK_INTERFACE_H
+#endif  // TELEPHONY_IMS_CALL_CALLBACK_INTERFACE_H

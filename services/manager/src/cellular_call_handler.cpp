@@ -20,6 +20,7 @@
 #include "cellular_call_config.h"
 #include "cellular_call_service.h"
 #include "radio_event.h"
+#include "ims_call_client.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -30,6 +31,10 @@ CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::Event
     InitConfigFuncMap();
     InitSupplementFuncMap();
     InitActiveReportFuncMap();
+    InitImsBasicFuncMap();
+    InitImsConfigFuncMap();
+    InitImsActiveReportFuncMap();
+    InitImsSupplementFuncMap();
 }
 
 void CellularCallHandler::InitBasicFuncMap()
@@ -48,7 +53,6 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[RadioEvent::RADIO_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
     requestFuncMap_[RadioEvent::RADIO_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
     requestFuncMap_[RadioEvent::RADIO_CURRENT_CALLS] = &CellularCallHandler::GetCsCallsDataResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_IMS_CALL_LIST] = &CellularCallHandler::GetImsCallsDataResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
 
     requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
@@ -96,6 +100,50 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_SS_NOTICE] = &CellularCallHandler::SsNotifyResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
+    requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
+}
+
+void CellularCallHandler::InitImsBasicFuncMap()
+{
+    requestFuncMap_[ImsCallInterface::IMS_DIAL] = &CellularCallHandler::DialResponse;
+    requestFuncMap_[ImsCallInterface::IMS_HANG_UP] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_REJECT_WITH_REASON] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_ANSWER] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_HOLD] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_UN_HOLD] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_SWITCH] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[ImsCallInterface::IMS_SEND_DTMF] = &CellularCallHandler::SendDtmfResponse;
+    requestFuncMap_[ImsCallInterface::IMS_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
+    requestFuncMap_[ImsCallInterface::IMS_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
+    requestFuncMap_[ImsCallInterface::IMS_GET_CALL_DATA] = &CellularCallHandler::GetImsCallsDataResponse;
+    requestFuncMap_[ImsCallInterface::IMS_GET_LAST_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
+}
+
+void CellularCallHandler::InitImsConfigFuncMap()
+{
+    requestFuncMap_[ImsCallInterface::IMS_SET_MUTE] = &CellularCallHandler::SetMuteResponse;
+    requestFuncMap_[ImsCallInterface::IMS_GET_MUTE] = &CellularCallHandler::GetMuteResponse;
+    requestFuncMap_[ImsCallInterface::IMS_SET_LTE_SWITCH_STATUS] = &CellularCallHandler::SetLteImsSwitchStatusResponse;
+    requestFuncMap_[ImsCallInterface::IMS_GET_LTE_SWITCH_STATUS] = &CellularCallHandler::GetLteImsSwitchStatusResponse;
+}
+
+void CellularCallHandler::InitImsActiveReportFuncMap()
+{
+    requestFuncMap_[ImsCallInterface::IMS_CALL_STATE_CHANGE] = &CellularCallHandler::CallStatusInfoResponse;
+}
+
+void CellularCallHandler::InitImsSupplementFuncMap()
+{
+    requestFuncMap_[ImsCallInterface::IMS_SET_CALL_WAITING] = &CellularCallHandler::SetCallWaitingResponse;
+}
+
+void CellularCallHandler::RegisterImsCallCallbackHandler()
+{
+    // Register IMS
+    std::shared_ptr< ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient != nullptr) {
+        imsCallClient->RegisterImsCallCallbackHandler(slotId_, shared_from_this());
+    }
 }
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
@@ -168,7 +216,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     csControl->ReportCallsData(slotId_, callInfoList);
 }
 
-void CellularCallHandler::ReportImsCallsData(const CallInfoList &imsCallInfoList)
+void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList)
 {
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
@@ -183,7 +231,7 @@ void CellularCallHandler::ReportImsCallsData(const CallInfoList &imsCallInfoList
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
             return;
         }
-        imsControl->ReportCallsData(slotId_, imsCallInfoList);
+        imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
         serviceInstance_->CleanControlMap();
         return;
     }
@@ -198,7 +246,7 @@ void CellularCallHandler::ReportImsCallsData(const CallInfoList &imsCallInfoList
         TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
         return;
     }
-    imsControl->ReportCallsData(slotId_, imsCallInfoList);
+    imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
 }
 
 void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -243,7 +291,7 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
     }
     // Returns list of current calls of ME. If command succeeds but no calls are available,
     // no information response is sent to TE. Refer subclause 9.2 for possible <err> values.
-    auto imsCallInfoList = event->GetSharedObject<CallInfoList>();
+    auto imsCallInfoList = event->GetSharedObject<ImsCurrentCallList>();
     if (imsCallInfoList == nullptr) {
         TELEPHONY_LOGE("GetImsCallsDataResponse, Cannot get the imsCallInfoList, need to get rilResponseInfo");
         auto rilResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
@@ -402,13 +450,23 @@ void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointe
 
 void CellularCallHandler::SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("SimStateChangeReport");
     if (event == nullptr) {
         TELEPHONY_LOGE("SimStateChangeReport return, event is nullptr");
         return;
     }
     CellularCallConfig config;
     config.HandleSimStateChanged(slotId_);
+}
+
+void CellularCallHandler::SimRecordsLoadedReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("SimRecordsLoadedReport return, event is nullptr");
+        return;
+    }
+    TELEPHONY_LOGI("SimRecordsLoadedReport: report to cellular call config");
+    CellularCallConfig config;
+    config.HandleSimRecordsLoaded(slotId_);
 }
 
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -546,7 +604,8 @@ void CellularCallHandler::SetLteImsSwitchStatusResponse(const AppExecFwk::InnerE
         TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, GetInstance is nullptr");
         return;
     }
-    registerInstance_->ReportSetLteImsSwitchResult(static_cast<int32_t>(info->error));
+    CellularCallConfig config;
+    config.HandleSetLteImsSwitchResult(slotId_, info->error);
 }
 
 void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)

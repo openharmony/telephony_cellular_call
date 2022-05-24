@@ -169,6 +169,15 @@ public:
     ImsConnectionMap GetConnectionMap();
 
     /**
+     * IMSControl ReportImsCallsData.
+     *
+     * @param slotId
+     * @param CallInfoList
+     * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList);
+
+    /**
      * IMSControl ReportCallsData.
      *
      * @param slotId
@@ -212,7 +221,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportIncomingInfo(int32_t slotId, const CallInfoList &callInfoList);
+    int32_t ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList &callInfoList);
 
     /**
      * Report update info
@@ -220,7 +229,7 @@ private:
      * @param CallInfoList
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfoList);
+    int32_t ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &callInfoList);
 
     /**
      * Encapsulation CallReportInfo
@@ -228,7 +237,7 @@ private:
      * @param CallInfo
      * @return CallReportInfo
      */
-    CallReportInfo EncapsulationCallReportInfo(int32_t slotId, const CallInfo &callInfo);
+    CallReportInfo EncapsulationCallReportInfo(int32_t slotId, const ImsCurrentCall &callInfo);
 
     /**
      * DeleteConnection Connection send
@@ -236,7 +245,7 @@ private:
      * @param CallsReportInfo
      * @param CallInfoList
      */
-    void DeleteConnection(CallsReportInfo &callsReportInfo, const CallInfoList &callInfoList);
+    void DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCurrentCallList &callInfoList);
 
 private:
     ImsConnectionMap connectionMap_; // save callConnection map

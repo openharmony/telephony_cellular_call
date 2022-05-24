@@ -16,6 +16,7 @@
 #ifndef TELEPHONY_IMS_CALL_CLIENT_H
 #define TELEPHONY_IMS_CALL_CLIENT_H
 
+#include "event_runner.h"
 #include "singleton.h"
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
@@ -41,6 +42,15 @@ public:
     bool IsConnect() const;
     void Init();
     int32_t RegisterImsCallCallback();
+    int32_t RegisterImsCallCallbackHandler(int32_t slotId, const std::shared_ptr<AppExecFwk::EventHandler> &handler);
+
+    /**
+     * Get Handler
+     *
+     * @param slotId
+     * @return AppExecFwk::EventHandler
+     */
+    std::shared_ptr<AppExecFwk::EventHandler> GetHandler(int32_t slotId);
 
     /****************** call basic ******************/
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode);
@@ -48,14 +58,13 @@ public:
     int32_t Reject(const ImsCallInfo &callInfo);
     int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason);
     int32_t Answer(const ImsCallInfo &callInfo);
-    int32_t HoldCall(int32_t slotId);
-    int32_t UnHoldCall(int32_t slotId);
-    int32_t SwitchCall(int32_t slotId);
+    int32_t HoldCall(int32_t slotId, int32_t callType);
+    int32_t UnHoldCall(int32_t slotId, int32_t callType);
+    int32_t SwitchCall(int32_t slotId, int32_t callType);
     int32_t CombineConference(int32_t slotId);
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList);
     int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList);
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode);
-    int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum);
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag);
     int32_t GetLastCallFailReason(int32_t slotId);
 
@@ -80,7 +89,6 @@ public:
     int32_t GetImsSwitchEnhanceMode();
     int32_t SetMute(int32_t slotId, int32_t mute);
     int32_t GetMute(int32_t slotId);
-    int32_t GetEmergencyCallList(int32_t slotId);
 
     /****************** video settings ******************/
     int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid);
@@ -106,6 +114,8 @@ private:
     sptr<ImsCoreServiceInterface> imsCoreServiceProxy_ = nullptr;
     sptr<ImsCallInterface> imsCallProxy_ = nullptr;
     sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
+    std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
+    int32_t ReConnectService();
 };
 } // namespace Telephony
 } // namespace OHOS
