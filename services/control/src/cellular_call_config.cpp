@@ -110,7 +110,10 @@ int32_t CellularCallConfig::GetLteImsSwitchStatus(int32_t slotId)
 void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimStateChanged entry, slotId: %{public}d", slotId);
-    // need to add condition
+    if (IsNeedUpdateEccListWhenSimStateChanged(slotId)) {
+        MergeEccCallList(slotId);
+        SetEmergencyCallList(slotId);
+    }
 }
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
