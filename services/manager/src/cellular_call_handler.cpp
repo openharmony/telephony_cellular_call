@@ -881,11 +881,15 @@ void CellularCallHandler::SrvccStateCompleted()
     if (csControl != nullptr) {
         TELEPHONY_LOGI("SrvccStateCompleted CsControl ReleaseAllConnection");
         csControl->ReleaseAllConnection();
+    } else {
+        TELEPHONY_LOGE("SrvccStateCompleted CsControl is nullptr");
     }
     auto imsControl = serviceInstance_->GetImsControl(slotId_);
     if (imsControl != nullptr) {
         TELEPHONY_LOGI("SrvccStateCompleted ImsControl ReleaseAllConnection");
         imsControl->ReleaseAllConnection();
+    } else {
+        TELEPHONY_LOGE("SrvccStateCompleted imsControl is nullptr");
     }
     auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO);
     CallStatusInfoResponse(event);

@@ -115,7 +115,7 @@ public:
      * @param oldPin The old pin code for unlock SIM
      * @return Returns true on success.
      */
-    bool AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin);
+    int32_t AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin);
 
     /**
      * SIM PUK unlock
@@ -125,7 +125,7 @@ public:
      * @param puk The puk code for unlock SIM
      * @return Returns true on success.
      */
-    bool UnlockPuk(int32_t slotId, std::string newPin, std::string puk);
+    int32_t UnlockPuk(int32_t slotId, std::string newPin, std::string puk);
 
     /**
      * SIM PIN2 unlock
@@ -135,7 +135,7 @@ public:
      * @param oldPin2 The old pin2 code for unlock SIM
      * @return Returns true on success.
      */
-    bool AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2);
+    int32_t AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2);
 
     /**
      * SIM PUK2 unlock
@@ -145,7 +145,7 @@ public:
      * @param puk2 The puk2 code for unlock SIM
      * @return Returns true on success.
      */
-    bool UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2);
+    int32_t UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2);
 
 private:
     /**

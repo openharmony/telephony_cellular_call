@@ -191,72 +191,84 @@ int32_t SupplementRequest::SendUssdRequest(int32_t slotId, const std::string &ms
     return TELEPHONY_SUCCESS;
 }
 
-bool SupplementRequest::AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin)
+int32_t SupplementRequest::AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin)
 {
     TELEPHONY_LOGI("SupplementRequest::AlterPinPassword entry");
     LockStatusResponse response = {0};
     bool result = CoreManagerInner::GetInstance().AlterPin(slotId, newPin, oldPin, response);
     TELEPHONY_LOGI("SupplementRequest::AlterPinPassword result: %{public}d, remain: %{public}d",
         response.result, response.remain);
-    std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
-    std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
-    pinResData->result = response.result;
-    pinResData->remain = response.remain;
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
-        MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
-    ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-    return result;
+    if (result) {
+        std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
+        pinResData->result = response.result;
+        pinResData->remain = response.remain;
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
+            MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return TELEPHONY_SUCCESS;
+    }
+    return TELEPHONY_ERROR;
 }
 
-bool SupplementRequest::UnlockPuk(int32_t slotId, std::string newPin, std::string puk)
+int32_t SupplementRequest::UnlockPuk(int32_t slotId, std::string newPin, std::string puk)
 {
     TELEPHONY_LOGI("SupplementRequest::UnlockPuk entry");
     LockStatusResponse response = {0};
     bool result = CoreManagerInner::GetInstance().UnlockPuk(slotId, newPin, puk, response);
     TELEPHONY_LOGI("SupplementRequest::UnlockPuk result: %{public}d, remain: %{public}d",
         response.result, response.remain);
-    std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
-    std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
-    pinResData->result = response.result;
-    pinResData->remain = response.remain;
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
-        MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
-    ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-    return result;
+    if (result) {
+        std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
+        pinResData->result = response.result;
+        pinResData->remain = response.remain;
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
+            MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return TELEPHONY_SUCCESS;
+    }
+    return TELEPHONY_ERROR;
 }
 
-bool SupplementRequest::AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2)
+int32_t SupplementRequest::AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2)
 {
     TELEPHONY_LOGI("SupplementRequest::AlterPin2Password entry");
     LockStatusResponse response = {0};
     bool result = CoreManagerInner::GetInstance().AlterPin2(slotId, newPin2, oldPin2, response);
     TELEPHONY_LOGI("SupplementRequest::AlterPin2Password result: %{public}d, remain: %{public}d",
         response.result, response.remain);
-    std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
-    std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
-    pinResData->result = response.result;
-    pinResData->remain = response.remain;
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
-        MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
-    ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-    return result;
+    if (result) {
+        std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
+        pinResData->result = response.result;
+        pinResData->remain = response.remain;
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
+            MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return TELEPHONY_SUCCESS;
+    }
+    return TELEPHONY_ERROR;
 }
 
-bool SupplementRequest::UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2)
+int32_t SupplementRequest::UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2)
 {
     TELEPHONY_LOGI("SupplementRequest::UnlockPuk2 entry");
     LockStatusResponse response = {0};
     bool result = CoreManagerInner::GetInstance().UnlockPuk2(slotId, newPin2, puk2, response);
     TELEPHONY_LOGI("SupplementRequest::UnlockPuk2 result: %{public}d, remain: %{public}d",
         response.result, response.remain);
-    std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
-    std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
-    pinResData->result = response.result;
-    pinResData->remain = response.remain;
-    AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
-        MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
-    ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
-    return result;
+    if (result) {
+        std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
+        pinResData->result = response.result;
+        pinResData->remain = response.remain;
+        AppExecFwk::InnerEvent::Pointer msgEvent = AppExecFwk::InnerEvent::Get(
+            MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
+        return TELEPHONY_SUCCESS;
+    }
+    return TELEPHONY_ERROR;
 }
 } // namespace Telephony
 } // namespace OHOS
