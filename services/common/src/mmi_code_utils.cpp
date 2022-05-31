@@ -52,6 +52,28 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
 void InitMmiCodeFunc(std::map<std::uint64_t,
     void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData)> &mmiCodeFunc)
 {
+    /**
+     * "30" Processing caller ID
+     * "31" Processing calling number display
+     * "21" Deal with unconditional transfer
+     * "61" Handling no answer transfer
+     * "62" Handling no signal transfer
+     * "67" Deal with busy transfer
+     * "002" Process all transfers
+     * "004" Handle transfer under all conditions
+     * "33" Processing limits all outgoing calls
+     * "330" Processing all restrictions
+     * "331" Processing limits all international calls
+     * "332" Handling international outgoing calls belonging to foreign countries when roaming is
+     * restricted
+     * "35" Processing limits all incoming calls
+     * "351" Handle all incoming calls when roaming is restricted
+     * "43" Handling call waiting
+     * "04" Change pin password
+     * "05" Use puk unlock sim and change pin password
+     * "042" Change pin2 password
+     * "052" Use puk2 unlock sim and change pin2 password
+     */
     mmiCodeFunc["30"_hash] = &CellularCallSupplement::GetClip;
     mmiCodeFunc["31"_hash] = &CellularCallSupplement::GetClir;
     mmiCodeFunc["21"_hash] = &CellularCallSupplement::DealCallTransfer;
@@ -81,28 +103,9 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
     InitMmiCodeFunc(mmiCodeFunc);
 
     CellularCallSupplement supplement;
-
-    /**
-     * "30" Processing caller ID
-     * "31" Processing calling number display
-     * "21" Deal with unconditional transfer
-     * "61" Handling no answer transfer
-     * "62" Handling no signal transfer
-     * "67" Deal with busy transfer
-     * "002" Process all transfers
-     * "004" Handle transfer under all conditions
-     * "33" Processing limits all outgoing calls
-     * "330" Processing all restrictions
-     * "331" Processing limits all international calls
-     * "332" Handling international outgoing calls belonging to foreign countries when roaming is
-     * restricted
-     * "35" Processing limits all incoming calls
-     * "351" Handle all incoming calls when roaming is restricted
-     * "03" Processing network password
-     * "43" Handling call waiting
-     */
     if (!mmiData_.serviceCode.empty()) {
         auto serviceCode = StandardizeUtils::Hash_(mmiData_.serviceCode.c_str());
+        // "03" Processing network password
         if (serviceCode == "03"_hash) {
             return true;
         }
