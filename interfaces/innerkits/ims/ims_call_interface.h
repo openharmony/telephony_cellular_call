@@ -27,7 +27,7 @@ class ImsCallInterface : public IRemoteBroker {
 public:
     enum {
         /****************** basic ******************/
-        IMS_DIAL = 1,
+        IMS_DIAL = 5000,
         IMS_HANG_UP,
         IMS_REJECT_WITH_REASON,
         IMS_ANSWER,
@@ -43,14 +43,14 @@ public:
         IMS_GET_LAST_CALL_FAIL_REASON,
 
         /****************** dtmf、rtt ******************/
-        IMS_START_DTMF = 100,
+        IMS_START_DTMF = 5100,
         IMS_SEND_DTMF,
         IMS_STOP_DTMF,
         IMS_START_RTT,
         IMS_STOP_RTT,
 
         /****************** ims config ******************/
-        IMS_SET_DOMAIN_PREFERENCE_MODE = 200,
+        IMS_SET_DOMAIN_PREFERENCE_MODE = 5200,
         IMS_GET_DOMAIN_PREFERENCE_MODE,
         IMS_SET_LTE_SWITCH_STATUS,
         IMS_GET_LTE_SWITCH_STATUS,
@@ -66,7 +66,7 @@ public:
         IMS_SET_IMS_REG_ERROR_REPORT,
 
         /****************** video settings ******************/
-        IMS_CTRL_CAMERA = 300,
+        IMS_CTRL_CAMERA = 5300,
         IMS_SET_PREVIEW_WINDOW,
         IMS_SET_DISPLAY_WINDOW,
         IMS_SET_CAMERA_ZOOM,
@@ -74,7 +74,7 @@ public:
         IMS_SET_DEVICE_DIRECTION,
 
         /****************** Supplement ******************/
-        IMS_GET_CLIP = 400,
+        IMS_GET_CLIP = 5400,
         IMS_SET_CLIR,
         IMS_GET_CLIR,
         IMS_SET_CALL_TRANSFER,
@@ -85,7 +85,7 @@ public:
         IMS_GET_CALL_WAITING,
 
         /****************** callback ******************/
-        IMS_CALL_REGISTER_CALLBACK = 500,
+        IMS_CALL_REGISTER_CALLBACK = 5500,
     };
     
     /**

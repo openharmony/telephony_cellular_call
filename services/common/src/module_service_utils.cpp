@@ -93,53 +93,5 @@ sptr<ImsCallInterface> ModuleServiceUtils::GetImsServiceRemoteObject() const
     }
     return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsCallProxy();
 }
-
-int32_t ModuleServiceUtils::ConnectImsService()
-{
-    auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (managerPtr == nullptr) {
-        TELEPHONY_LOGE("ConnectImsService return, get system ability manager error.");
-        return TELEPHONY_ERROR;
-    }
-    int32_t imsSaId = TELEPHONY_IMS_SYS_ABILITY_ID;
-    auto iRemoteObjectPtr = managerPtr->GetSystemAbility(imsSaId);
-    if (iRemoteObjectPtr == nullptr) {
-        TELEPHONY_LOGE("ConnectImsService return, remote service not exists.");
-        return TELEPHONY_ERROR;
-    }
-
-    std::weak_ptr<ModuleServiceUtils> weakPtr = shared_from_this();
-    auto deathCallback = [weakPtr](const wptr<IRemoteObject> &object) {
-        auto sharedPtr = weakPtr.lock();
-        if (sharedPtr) {
-            sharedPtr->NotifyDeath();
-        }
-    };
-    sptr<IRemoteObject::DeathRecipient> imsRecipient_ =
-        (std::make_unique<ImsCallDeathRecipient>(deathCallback)).release();
-    if (imsRecipient_ == nullptr) {
-        TELEPHONY_LOGE("ConnectImsService return, imsRecipient_ is nullptr.");
-        return TELEPHONY_ERROR;
-    }
-    if (!iRemoteObjectPtr->AddDeathRecipient(imsRecipient_)) {
-        TELEPHONY_LOGE("ConnectImsService return, add death recipient fail.");
-        return TELEPHONY_ERROR;
-    }
-    return TELEPHONY_SUCCESS;
-}
-
-void ModuleServiceUtils::NotifyDeath()
-{
-    TELEPHONY_LOGI("service is dead, connect again");
-    for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
-        int32_t result = ConnectImsService();
-        if (result != TELEPHONY_SUCCESS) {
-            TELEPHONY_LOGI("connect Ims service successful");
-            return;
-        }
-    }
-    TELEPHONY_LOGI("connect cellular call service failed");
-}
 } // namespace Telephony
 } // namespace OHOS

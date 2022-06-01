@@ -16,13 +16,14 @@
 #ifndef TELEPHONY_IMS_CALL_DEATH_RECIPIENT_H
 #define TELEPHONY_IMS_CALL_DEATH_RECIPIENT_H
 
+#include <unistd.h>
 #include "iremote_broker.h"
 
 namespace OHOS {
 namespace Telephony {
 class ImsCallDeathRecipient : public IRemoteObject::DeathRecipient {
 public:
-    explicit ImsCallDeathRecipient(const std::function<void(const wptr<IRemoteObject> &object)> &deathCallback);
+    ImsCallDeathRecipient();
     virtual ~ImsCallDeathRecipient() = default;
     void OnRemoteDied(const wptr<IRemoteObject> &object) override;
 

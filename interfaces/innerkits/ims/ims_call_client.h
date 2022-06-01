@@ -18,8 +18,10 @@
 
 #include "event_runner.h"
 #include "singleton.h"
+#include "rwlock.h"
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -51,6 +53,9 @@ public:
      * @return AppExecFwk::EventHandler
      */
     std::shared_ptr<AppExecFwk::EventHandler> GetHandler(int32_t slotId);
+
+    int32_t ReConnectService();
+    void Clean();
 
     /****************** call basic ******************/
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode);
@@ -110,12 +115,16 @@ public:
     int32_t SetCallWaiting(int32_t slotId, bool activate);
     int32_t GetCallWaiting(int32_t slotId);
 
+public:
+    static const int32_t RE_CONNECT_SERVICE_COUNT_MAX = 10;
+
 private:
+    sptr<OHOS::IPCObjectStub::DeathRecipient> death_;
     sptr<ImsCoreServiceInterface> imsCoreServiceProxy_ = nullptr;
     sptr<ImsCallInterface> imsCallProxy_ = nullptr;
     sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
-    int32_t ReConnectService();
+    Utils::RWLock rwClientLock_;
 };
 } // namespace Telephony
 } // namespace OHOS
