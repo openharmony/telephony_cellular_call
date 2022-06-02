@@ -19,6 +19,7 @@
 #include "ims_call_callback_stub.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_errors.h"
+#include "ims_call_death_recipient.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -41,6 +42,7 @@ void ImsCallClient::Init()
 
 sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
 {
+    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
     if (imsCallProxy_ != nullptr) {
         return imsCallProxy_;
     }
@@ -64,6 +66,16 @@ sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
         TELEPHONY_LOGE("GetImsCallProxy return, ImsCallRemoteObjectPtr is nullptr.");
         return nullptr;
     }
+    death_ = sptr<OHOS::IPCObjectStub::DeathRecipient>(new ImsCallDeathRecipient());
+    if (death_ == nullptr) {
+        TELEPHONY_LOGE("GetImsCallProxy return, death_ is nullptr.");
+        return nullptr;
+    }
+    if (!imsCallRemoteObjectPtr->AddDeathRecipient(death_)) {
+        TELEPHONY_LOGE("GetImsCallProxy return, AddDeathRecipient failed");
+        return nullptr;
+    }
+
     imsCallProxy_ = iface_cast<ImsCallInterface>(imsCallRemoteObjectPtr);
     if (imsCallProxy_ == nullptr) {
         TELEPHONY_LOGE("GetImsCallProxy return, iface_cast<imsCallProxy_> failed!");
@@ -544,6 +556,7 @@ int32_t ImsCallClient::GetCallWaiting(int32_t slotId)
 
 int32_t ImsCallClient::ReConnectService()
 {
+    TELEPHONY_LOGI("try to reconnect ims call service now...");
     if (imsCallProxy_ == nullptr) {
         TELEPHONY_LOGI("try to reconnect ims call service now...");
         GetImsCallProxy();
@@ -554,5 +567,26 @@ int32_t ImsCallClient::ReConnectService()
     }
     return TELEPHONY_SUCCESS;
 }
-}  // namespace Telephony
-}  // namespace OHOS
+
+void ImsCallClient::Clean()
+{
+    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
+    if (death_ != nullptr) {
+        death_.clear();
+        death_ = nullptr;
+    }
+    if (imsCoreServiceProxy_ != nullptr) {
+        imsCoreServiceProxy_.clear();
+        imsCoreServiceProxy_ = nullptr;
+    }
+    if (imsCallProxy_ != nullptr) {
+        imsCallProxy_.clear();
+        imsCallProxy_ = nullptr;
+    }
+    if (imsCallCallback_ != nullptr) {
+        imsCallCallback_.clear();
+        imsCallCallback_ = nullptr;
+    }
+}
+} // namespace Telephony
+} // namespace OHOS

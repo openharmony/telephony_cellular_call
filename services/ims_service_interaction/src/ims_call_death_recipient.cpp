@@ -14,19 +14,40 @@
  */
 
 #include "ims_call_death_recipient.h"
+#include "ims_call_client.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
-ImsCallDeathRecipient::ImsCallDeathRecipient(
-    const std::function<void(const wptr<IRemoteObject> &object)> &deathCallback)
-    : deathCallback_(deathCallback)
+ImsCallDeathRecipient::ImsCallDeathRecipient()
 {}
 
 void ImsCallDeathRecipient::OnRemoteDied(const OHOS::wptr<OHOS::IRemoteObject> &object)
 {
-    if (deathCallback_) {
-        deathCallback_(object);
+    std::shared_ptr<ImsCallClient> imsCallClient =
+        DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr) {
+        TELEPHONY_LOGE("ImsCallDeathRecipient OnRemoteDied, imsCallClient is nullptr!");
+        return;
     }
+
+    bool res = false;
+    int32_t i = 0;
+
+    do {
+        TELEPHONY_LOGI("ImsCallDeathRecipient ReConnect service!");
+        imsCallClient->Clean();
+        res = imsCallClient->ReConnectService();
+        if (!res) {
+            i++;
+            sleep(1);
+        }
+    } while (!res && (i < ImsCallClient::RE_CONNECT_SERVICE_COUNT_MAX));
+    if (!res) {
+        TELEPHONY_LOGE("ImsCallDeathRecipient Reconnect service is failed!");
+        return;
+    }
+    TELEPHONY_LOGI("ImsCallDeathRecipient Reconnect service is successful!");
 }
 } // namespace Telephony
 } // namespace OHOS

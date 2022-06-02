@@ -86,21 +86,6 @@ public:
      * @return sptr<ImsInterface>
      */
     sptr<ImsCallInterface> GetImsServiceRemoteObject() const;
-
-    /**
-     * Connect ImsService
-     *
-     * @return int32_t
-     */
-    int32_t ConnectImsService();
-
-    /**
-     * Notify Death
-     */
-    void NotifyDeath();
-
-private:
-    const uint32_t CONNECT_MAX_TRY_COUNT = 5;
 };
 } // namespace Telephony
 } // namespace OHOS
