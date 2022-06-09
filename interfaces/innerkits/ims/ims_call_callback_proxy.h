@@ -82,15 +82,20 @@ public:
     int32_t SetDeviceDirectionResponse(const HRilRadioResponseInfo &info) override;
 
     /****************** supplement ******************/
-    int32_t GetClipResponse(const ClipResponse &response) override;
-    int32_t GetClirResponse(const ClirResponse &response) override;
-    int32_t SetClirResponse(HRilErrType errType) override;
-    int32_t GetCallTransferResponse(const CallTransferResponse &response) override;
-    int32_t SetCallTransferResponse(HRilErrType errType) override;
-    int32_t GetCallRestrictionResponse(const CallRestrictionResponse &response) override;
-    int32_t SetCallRestrictionResponse(HRilErrType errType) override;
-    int32_t GetCallWaitingResponse(const CallWaitResponse &response) override;
+    int32_t SetClipResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetClipResponse(int32_t slotId, const ClipResponse &response) override;
+    int32_t GetClirResponse(int32_t slotId, const ClirResponse &response) override;
+    int32_t SetClirResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallTransferResponse(int32_t slotId, const CallTransferResponse &response) override;
+    int32_t SetCallTransferResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResponse &response) override;
+    int32_t SetCallRestrictionResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallWaitingResponse(int32_t slotId, const CallWaitResponse &response) override;
     int32_t SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetColrResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetColrResponse(int32_t slotId, const ColrResponse &response) override;
+    int32_t SetColpResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetColpResponse(int32_t slotId, const ColpResponse &response) override;
 
 private:
     static inline BrokerDelegator<ImsCallCallbackProxy> delegator_;

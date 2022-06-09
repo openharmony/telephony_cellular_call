@@ -113,8 +113,12 @@ enum CFServiceCode {
 };
 
 /**
-* 27007-430_2001 7.11	Call forwarding number and conditions +CCFC
-* 3GPP TS 22.082 [4]
+* 27007-430_2001 7.11 Used for various supplementary services apis
+*
+* 3GPP TS 22.082 [4] Call forwarding number and conditions +CCFC
+* 3GPP TS 22.083 [5] Call Waiting +CCWA
+* 3GPP TS 22.088 [6] Facility lock +CLCK(for call barring)
+*
 * <classx> is a sum of integers each representing a class of information (default 7):
 * 1	voice (telephony)
 * 2	data (refers to all bearer services; with <mode>=2 this may refer only to some bearer service if TA does
@@ -126,7 +130,7 @@ not support values 16, 32, 64 and 128)
 * 64	dedicated packet access
 * 128	dedicated PAD access
 */
-enum CFInformation {
+enum ServiceClassType {
     NONE = 0,
     VOICE = 1,
     FAX = 4,

@@ -23,6 +23,22 @@
 
 namespace OHOS {
 namespace Telephony {
+int32_t SupplementRequest::SetClipRequest(int32_t slotId, int32_t action)
+{
+    TELEPHONY_LOGI("SetClipRequest entry");
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("SetClipRequest, NeedCallImsService return false");
+        return TELEPHONY_ERROR;
+    }
+
+    TELEPHONY_LOGI("SetClipRequest, call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->SetClip(slotId, action);
+}
+
 int32_t SupplementRequest::InquireClipRequest(int32_t slotId)
 {
     TELEPHONY_LOGI("InquireClipRequest entry");
@@ -143,7 +159,7 @@ int32_t SupplementRequest::SetCallRestrictionRequest(int32_t slotId, std::string
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SupplementRequest::SetCallWaitingRequest(int32_t slotId, bool activate)
+int32_t SupplementRequest::SetCallWaitingRequest(int32_t slotId, bool activate, int32_t classType)
 {
     TELEPHONY_LOGI("SetCallWaitingRequest entry");
     if (moduleUtils_.NeedCallImsService()) {
@@ -152,7 +168,7 @@ int32_t SupplementRequest::SetCallWaitingRequest(int32_t slotId, bool activate)
             TELEPHONY_LOGE("ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetCallWaiting(slotId, activate);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->SetCallWaiting(slotId, activate, classType);
     }
     CoreManagerInner::GetInstance().SetCallWaiting(
         slotId, RadioEvent::RADIO_SET_CALL_WAIT, activate, GetMMIHandler(slotId));
@@ -172,6 +188,70 @@ int32_t SupplementRequest::GetCallWaitingRequest(int32_t slotId)
     }
     CoreManagerInner::GetInstance().GetCallWaiting(slotId, RadioEvent::RADIO_GET_CALL_WAIT, GetMMIHandler(slotId));
     return TELEPHONY_SUCCESS;
+}
+
+int32_t SupplementRequest::SetColrRequest(int32_t slotId, int32_t presentation)
+{
+    TELEPHONY_LOGI("SetColrRequest entry");
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("SetColrRequest, NeedCallImsService return false");
+        return TELEPHONY_ERROR;
+    }
+
+    TELEPHONY_LOGI("SetColrRequest, call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->SetColr(slotId, presentation);
+}
+
+int32_t SupplementRequest::GetColrRequest(int32_t slotId)
+{
+    TELEPHONY_LOGI("GetColrRequest entry");
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("GetColrRequest, NeedCallImsService return false");
+        return TELEPHONY_ERROR;
+    }
+
+    TELEPHONY_LOGI("GetColrRequest, call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->GetColr(slotId);
+}
+
+int32_t SupplementRequest::SetColpRequest(int32_t slotId, int32_t action)
+{
+    TELEPHONY_LOGI("SetColpRequest entry");
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("SetColpRequest, NeedCallImsService return false");
+        return TELEPHONY_ERROR;
+    }
+
+    TELEPHONY_LOGI("SetColpRequest, call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->SetColp(slotId, action);
+}
+
+int32_t SupplementRequest::GetColpRequest(int32_t slotId)
+{
+    TELEPHONY_LOGI("GetColpRequest entry");
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("GetColpRequest, NeedCallImsService return false");
+        return TELEPHONY_ERROR;
+    }
+
+    TELEPHONY_LOGI("GetColpRequest, call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->GetColp(slotId);
 }
 
 std::shared_ptr<CellularCallHandler> SupplementRequest::GetMMIHandler(int32_t slotId) const

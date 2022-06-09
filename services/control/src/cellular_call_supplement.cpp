@@ -247,8 +247,9 @@ void CellularCallSupplement::DealCallWaiting(int32_t slotId, const MMIData &mmiD
     const std::string activate = "*";
     const std::string deactivate = "#";
     const std::string interrogate = "*#";
+    int32_t classType = ObtainServiceCode(mmiData.serviceInfoA);
     if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest_.SetCallWaitingRequest(slotId, mmiData.actionString == activate);
+        supplementRequest_.SetCallWaitingRequest(slotId, mmiData.actionString == activate, classType);
     } else if (mmiData.actionString == interrogate) {
         supplementRequest_.GetCallWaitingRequest(slotId);
     }
@@ -460,7 +461,7 @@ int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
         TELEPHONY_LOGE("SetCallWaiting return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.SetCallWaitingRequest(slotId, activate);
+    return supplementRequest_.SetCallWaitingRequest(slotId, activate, ServiceClassType::VOICE);
 }
 
 int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)
