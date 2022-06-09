@@ -88,15 +88,20 @@ public:
     int32_t SetDeviceDirectionResponse(const HRilRadioResponseInfo &info) override;
 
     /****************** supplement ******************/
-    int32_t GetClipResponse(const ClipResponse &response) override;
-    int32_t GetClirResponse(const ClirResponse &response) override;
-    int32_t SetClirResponse(HRilErrType errType) override;
-    int32_t GetCallTransferResponse(const CallTransferResponse &response) override;
-    int32_t SetCallTransferResponse(HRilErrType errType) override;
-    int32_t GetCallRestrictionResponse(const CallRestrictionResponse &response) override;
-    int32_t SetCallRestrictionResponse(HRilErrType errType) override;
-    int32_t GetCallWaitingResponse(const CallWaitResponse &response) override;
+    int32_t SetClipResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetClipResponse(int32_t slotId, const ClipResponse &response) override;
+    int32_t GetClirResponse(int32_t slotId, const ClirResponse &response) override;
+    int32_t SetClirResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallTransferResponse(int32_t slotId, const CallTransferResponse &response) override;
+    int32_t SetCallTransferResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResponse &response) override;
+    int32_t SetCallRestrictionResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetCallWaitingResponse(int32_t slotId, const CallWaitResponse &response) override;
     int32_t SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetColrResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetColrResponse(int32_t slotId, const ColrResponse &response) override;
+    int32_t SetColpResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetColpResponse(int32_t slotId, const ColpResponse &response) override;
 
 private:
     /****************** call basic ******************/
@@ -149,6 +154,7 @@ private:
     int32_t OnSetDeviceDirectionResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /****************** supplement ******************/
+    int32_t OnSetClipResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetClipResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetClirResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetClirResponseInner(MessageParcel &data, MessageParcel &reply);
@@ -158,6 +164,10 @@ private:
     int32_t OnSetCallRestrictionResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetColrResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetColrResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetColpResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetColpResponseInner(MessageParcel &data, MessageParcel &reply);
 
     int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
     // delete this at last

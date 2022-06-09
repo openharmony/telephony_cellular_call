@@ -104,6 +104,7 @@ public:
     int32_t SetDeviceDirection(int32_t rotation);
 
     /****************** supplement ******************/
+    int32_t SetClip(int32_t slotId, int32_t action);
     int32_t GetClip(int32_t slotId);
     int32_t SetClir(int32_t slotId, int32_t action);
     int32_t GetClir(int32_t slotId);
@@ -112,8 +113,12 @@ public:
     int32_t GetCallTransfer(int32_t slotId, int32_t reason);
     int32_t SetCallRestriction(int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw);
     int32_t GetCallRestriction(int32_t slotId, const std::string &fac);
-    int32_t SetCallWaiting(int32_t slotId, bool activate);
+    int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType);
     int32_t GetCallWaiting(int32_t slotId);
+    int32_t SetColr(int32_t slotId, int32_t presentation);
+    int32_t GetColr(int32_t slotId);
+    int32_t SetColp(int32_t slotId, int32_t action);
+    int32_t GetColp(int32_t slotId);
 
 public:
     static const int32_t RE_CONNECT_SERVICE_COUNT_MAX = 10;

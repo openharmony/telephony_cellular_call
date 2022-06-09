@@ -472,6 +472,15 @@ int32_t ImsCallClient::SetDeviceDirection(int32_t rotation)
     return imsCallProxy_->SetDeviceDirection(rotation);
 }
 
+int32_t ImsCallClient::SetClip(int32_t slotId, int32_t action)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->SetClip(slotId, action);
+}
+
 int32_t ImsCallClient::GetClip(int32_t slotId)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
@@ -536,13 +545,13 @@ int32_t ImsCallClient::GetCallRestriction(int32_t slotId, const std::string &fac
     return imsCallProxy_->GetCallRestriction(slotId, fac);
 }
 
-int32_t ImsCallClient::SetCallWaiting(int32_t slotId, bool activate)
+int32_t ImsCallClient::SetCallWaiting(int32_t slotId, bool activate, int32_t classType)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetCallWaiting(slotId, activate);
+    return imsCallProxy_->SetCallWaiting(slotId, activate, classType);
 }
 
 int32_t ImsCallClient::GetCallWaiting(int32_t slotId)
@@ -552,6 +561,42 @@ int32_t ImsCallClient::GetCallWaiting(int32_t slotId)
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->GetCallWaiting(slotId);
+}
+
+int32_t ImsCallClient::SetColr(int32_t slotId, int32_t presentation)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->SetColr(slotId, presentation);
+}
+
+int32_t ImsCallClient::GetColr(int32_t slotId)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->GetColr(slotId);
+}
+
+int32_t ImsCallClient::SetColp(int32_t slotId, int32_t action)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->SetColp(slotId, action);
+}
+
+int32_t ImsCallClient::GetColp(int32_t slotId)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->GetColp(slotId);
 }
 
 int32_t ImsCallClient::ReConnectService()

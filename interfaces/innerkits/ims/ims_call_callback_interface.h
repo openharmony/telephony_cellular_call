@@ -81,6 +81,7 @@ public:
 
         /****************** supplement ******************/
         IMS_GET_CALL_CLIP,
+        IMS_SET_CALL_CLIP,
         IMS_GET_CALL_CLIR,
         IMS_SET_CALL_CLIR,
         IMS_GET_CALL_FORWARD,
@@ -89,6 +90,10 @@ public:
         IMS_SET_CALL_RESTRICTION,
         IMS_GET_CALL_WAIT,
         IMS_SET_CALL_WAIT,
+        IMS_GET_CALL_COLR,
+        IMS_SET_CALL_COLR,
+        IMS_SET_CALL_COLP,
+        IMS_GET_CALL_COLP,
     };
 
     /**
@@ -475,77 +480,144 @@ public:
     virtual int32_t LastCallFailReasonResponse(int32_t slotId, int32_t reason) = 0;
 
     /**
-     * GetClipResponse
+     * @brief SetClipResponse the result of set the clip by IMS.
      *
-     * @param ClipResponse
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetClipResponse(const ClipResponse &response) = 0;
+    virtual int32_t SetClipResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * GetClirResponse
+     * @brief GetClipResponse the result of get the clip by IMS.
      *
-     * @param ClirResponse
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetClirResponse(const ClirResponse &response) = 0;
+    virtual int32_t GetClipResponse(int32_t slotId, const ClipResponse &response) = 0;
 
     /**
-     * SetClirResponse
+     * @brief GetClirResponse the result of get the clir by IMS.
      *
-     * @param HRilErrType
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetClirResponse(HRilErrType errType) = 0;
+    virtual int32_t GetClirResponse(int32_t slotId, const ClirResponse &response) = 0;
 
     /**
-     * GetCallTransferResponse
+     * @brief SetClirResponse the result of set the clir by IMS.
      *
-     * @param CallTransferResponse
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallTransferResponse(const CallTransferResponse &response) = 0;
+    virtual int32_t SetClirResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * SetCallTransferResponse
+     * @brief GetCallTransferResponse the result of get the call transfer by IMS.
      *
-     * @param HRilErrType
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetCallTransferResponse(HRilErrType errType) = 0;
+    virtual int32_t GetCallTransferResponse(int32_t slotId, const CallTransferResponse &response) = 0;
 
     /**
-     * GetCallRestrictionResponse
+     * @brief SetCallTransferResponse the result of set the call transfer by IMS.
      *
-     * @param CallRestrictionResponse
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallRestrictionResponse(const CallRestrictionResponse &response) = 0;
+    virtual int32_t SetCallTransferResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * SetCallRestrictionResponse
+     * @brief GetCallRestrictionResponse the result of get the call restriction by IMS.
      *
-     * @param HRilErrType
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetCallRestrictionResponse(HRilErrType errType) = 0;
+    virtual int32_t GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResponse &response) = 0;
 
     /**
-     * GetCallWaitingResponse
+     * @brief SetCallRestrictionResponse the result of set the call restriction by IMS.
      *
-     * @param CallWaitResponse
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallWaitingResponse(const CallWaitResponse &response) = 0;
+    virtual int32_t SetCallRestrictionResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
     /**
-     * SetCallWaitingResponse
+     * @brief GetCallWaitingResponse the result of get the call waiting by IMS.
      *
-     * @param slotId
-     * @param HRilRadioResponseInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t GetCallWaitingResponse(int32_t slotId, const CallWaitResponse &response) = 0;
+
+    /**
+     * @brief SetCallWaitingResponse the result of set the call waiting by IMS.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     virtual int32_t SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+
+    /**
+     * @brief SetColrResponse the result of set the colr by IMS.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t SetColrResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+
+    /**
+     * @brief GetColrResponse the result of get the colr by IMS.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t GetColrResponse(int32_t slotId, const ColrResponse &response) = 0;
+
+    /**
+     * @brief SetColpResponse the result of set the colp by IMS.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates set action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t SetColpResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+
+    /**
+     * @brief GetColpResponse the result of get the colp by IMS.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param response Indicates the result of get action.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t GetColpResponse(int32_t slotId, const ColpResponse &response) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");

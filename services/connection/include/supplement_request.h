@@ -25,79 +25,152 @@ namespace Telephony {
 class SupplementRequest : BaseRequest {
 public:
     /**
-     * Inquire Clip Request
+     * @brief SetClipRequest Set Clip Request
      *
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param action Indicates the action for SetClip,
+     * 1, means turn on clip; 0, means turn off clip.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t SetClipRequest(int32_t slotId, int32_t action);
+
+    /**
+     * @brief InquireClipRequest Inquire Clip Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t InquireClipRequest(int32_t slotId);
 
     /**
-     * set Clir Request
+     * @brief SetClirRequest Set Clir Request
      *
-     * @param action
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param action Indicates the action for SetClir,
+     * 1, means turn on clir; 0, means turn off clir.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t SetClirRequest(int32_t slotId, int32_t action);
 
     /**
-     * Inquire Clir Request
+     * @brief InquireClirRequest Inquire Clir Request
      *
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t InquireClirRequest(int32_t slotId);
 
     /**
-     * Inquire Call Transfer Request
+     * @brief GetCallTransferRequest Get Call Transfer Request
      *
-     * @param reason
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param reason Indicates the reason of the get call transfer.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t GetCallTransferRequest(int32_t slotId, int32_t reason);
 
     /**
-     * Set Call Transfer Request
+     * @brief SetCallTransferRequest Set Call Transfer Request
      *
-     * @param action
-     * @param reason
-     * @param transferNum
-     * @param classType
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param reason Indicates the reason of the set call transfer.
+     * @param mode Indicates the mode of the set call transfer.
+     * @param transferNum Indicates the target phone number to transfer calls to.
+     * @param classType Indicates a sum of service class for setting call transfer.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t SetCallTransferRequest(
         int32_t slotId, int32_t action, int32_t reason, const std::string &transferNum, int32_t classType);
 
     /**
-     * Get Call Restriction
+     * @brief GetCallRestrictionRequest Get Call Restriction Request
      *
-     * @param fac
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param fac Indicates the facility of the get call restriction.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t GetCallRestrictionRequest(int32_t slotId, const std::string &fac);
 
     /**
-     * Set Call Restriction
+     * @brief SetCallRestrictionRequest Set Call Restriction Request
      *
-     * @param fac
-     * @param mode
-     * @param pw
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param fac Indicates the facility of the set call restriction.
+     * @param mode Indicates the mode of the set call restriction.
+     * @param pw Indicates password or "" if not required.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t SetCallRestrictionRequest(int32_t slotId, std::string &fac, int32_t mode, std::string &pw);
 
     /**
-     * Set CallWaiting Request
+     * @brief SetCallWaitingRequest Set CallWaiting Request
      *
-     * @param bool
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param activate Indicates the action for SetCallWaiting,
+     * true, means turn on CallWaiting; false, means turn off CallWaiting.
+     * @param classType Call waiting and conditions +CCWA,
+     * the value was {@code ServiceClassType}, See 3GPP TS 22.083.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    int32_t SetCallWaitingRequest(int32_t slotId, bool activate);
+    int32_t SetCallWaitingRequest(int32_t slotId, bool activate, int32_t classType);
 
     /**
-     * Get Call Waiting Request
+     * @brief GetCallWaitingRequest Get Call Waiting Request
      *
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     int32_t GetCallWaitingRequest(int32_t slotId);
+
+    /**
+     * @brief SetColrRequest Set Colr Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param presentation Indicates the action for SetClir,
+     * 1, means turn on colr; 0, means turn off colr.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t SetColrRequest(int32_t slotId, int32_t presentation);
+
+    /**
+     * @brief GetColrRequest Get Colr Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t GetColrRequest(int32_t slotId);
+
+    /**
+     * @brief SetColpRequest Set Colp Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param action Indicates the action for SetClir,
+     * 1, means turn on colp; 0, means turn off colp.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t SetColpRequest(int32_t slotId, int32_t action);
+
+    /**
+     * @brief GetColpRequest Get Colp Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t GetColpRequest(int32_t slotId);
 
     /**
      * Send ussd Request

@@ -336,7 +336,7 @@ private:
      * Obtain ServiceCode
      *
      * @param serviceInfoB
-     * @return CFInformation
+     * @return ServiceClassType
      */
     int32_t ObtainServiceCode(const std::string &serviceInfoB);
 
