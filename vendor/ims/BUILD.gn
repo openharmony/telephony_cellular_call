@@ -63,7 +63,7 @@ ohos_shared_library("tel_ims") {
     "device_driver_framework:libhdi",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
-    "ril_adapter:hril_innerkits",
+    "ril_device_driver_interface:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "sms_mms:tel_sms_mms_api",
