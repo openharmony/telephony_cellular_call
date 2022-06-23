@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -123,11 +123,11 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 
     const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
-    std::string imsSwhichValueSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY,
+    std::string imsSwitchValueSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY,
         IMS_SWITCH_VALUE_DISABLED);
-    TELEPHONY_LOGI("imsSwhichValueSetting : %{public}s", imsSwhichValueSetting.c_str());
+    TELEPHONY_LOGI("imsSwitchValueSetting : %{public}s", imsSwitchValueSetting.c_str());
     if (simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
-        if (imsSwhichValueSetting == IMS_SWITCH_VALUE_ENABLED) {
+        if (imsSwitchValueSetting == IMS_SWITCH_VALUE_ENABLED) {
             configRequest_.SetLteImsSwitchStatusRequest(slotId, true);
         } else {
             configRequest_.SetLteImsSwitchStatusRequest(slotId, false);

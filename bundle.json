@@ -55,7 +55,6 @@
                             "ims_call_callback_proxy.h",
                             "ims_call_callback_stub.h",
                             "ims_call_client.h",
-                            "ims_call_death_recipient.h",
                             "ims_call_interface.h",
                             "ims_call_proxy.h",
                             "ims_call_types.h"
