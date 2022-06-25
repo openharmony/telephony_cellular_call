@@ -55,6 +55,13 @@ enum ImsSrvccAction {
     ACTION_STOP_DTMF,
 };
 
+enum ImsCallType {
+    TEL_IMS_CALL_TYPE_VOICE,
+    TEL_IMS_CALL_TYPE_VT_TX,
+    TEL_IMS_CALL_TYPE_VT_RX,
+    TEL_IMS_CALL_TYPE_VT,
+};
+
 struct ImsSrvccActionInfo {
     CellularCallInfo callInfo;
     char dtmfCode;
@@ -79,7 +86,7 @@ struct ImsCurrentCall {
     int32_t mode;
     int32_t mpty;
     int32_t voiceDomain;
-    int32_t callType;
+    ImsCallType callType;
     std::string number;
     int32_t type;
     std::string alpha;
