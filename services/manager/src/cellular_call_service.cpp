@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,8 +14,6 @@
  */
 
 #include "cellular_call_service.h"
-
-#include <sstream>
 
 #include "string_ex.h"
 #include "system_ability_definition.h"
@@ -93,6 +91,7 @@ void CellularCallService::OnStop()
     if (eventLoop_ != nullptr) {
         eventLoop_.reset();
     }
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     state_ = ServiceRunningState::STATE_STOPPED;
     HandlerResetUnRegister();
 }

@@ -18,9 +18,9 @@
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
 #include "ims_call_client.h"
-#include "telephony_log_wrapper.h"
-#include "telephony_errors.h"
 #include "radio_event.h"
+#include "telephony_errors.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -947,13 +947,13 @@ int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const ImsCu
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<ImsCurrentCallList> para = std::make_unique<ImsCurrentCallList>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique HRilRadioResponseInfo failed!");
+    std::shared_ptr<ImsCurrentCallList> imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
+    if (imsCurrentCallList == nullptr) {
+        TELEPHONY_LOGE("make_shared ImsCurrentCallList failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = callList;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_DATA, std::move(para));
+    *imsCurrentCallList = callList;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_DATA, imsCurrentCallList);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1152,13 +1152,13 @@ int32_t ImsCallCallbackStub::GetClipResponse(int32_t slotId, const ClipResponse 
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<ClipResponse> para = std::make_unique<ClipResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetClipResponse failed!");
+    std::shared_ptr<ClipResponse> clipResponse = std::make_shared<ClipResponse>();
+    if (clipResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared ClipResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CLIP, std::move(para));
+    *clipResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CLIP, clipResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1175,13 +1175,13 @@ int32_t ImsCallCallbackStub::GetClirResponse(int32_t slotId, const ClirResponse 
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<ClirResponse> para = std::make_unique<ClirResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetClirResponse failed!");
+    std::shared_ptr<ClirResponse> clirResponse = std::make_shared<ClirResponse>();
+    if (clirResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared ClirResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CLIR, std::move(para));
+    *clirResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CLIR, clirResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1204,13 +1204,13 @@ int32_t ImsCallCallbackStub::GetCallTransferResponse(int32_t slotId, const CallT
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<CallTransferResponse> para = std::make_unique<CallTransferResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetCallTransferResponse failed!");
+    std::shared_ptr<CallTransferResponse> callTransferResponse = std::make_shared<CallTransferResponse>();
+    if (callTransferResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared CallTransferResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_TRANSFER, std::move(para));
+    *callTransferResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_TRANSFER, callTransferResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1233,13 +1233,13 @@ int32_t ImsCallCallbackStub::GetCallRestrictionResponse(int32_t slotId, const Ca
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<CallRestrictionResponse> para = std::make_unique<CallRestrictionResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetCallRestrictionResponse failed!");
+    std::shared_ptr<CallRestrictionResponse> callRestrictionResponse = std::make_shared<CallRestrictionResponse>();
+    if (callRestrictionResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared CallRestrictionResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_RESTRICTION, std::move(para));
+    *callRestrictionResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_RESTRICTION, callRestrictionResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1262,13 +1262,13 @@ int32_t ImsCallCallbackStub::GetCallWaitingResponse(int32_t slotId, const CallWa
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<CallWaitResponse> para = std::make_unique<CallWaitResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetCallWaitingResponse failed!");
+    std::shared_ptr<CallWaitResponse> callWaitResponse = std::make_shared<CallWaitResponse>();
+    if (callWaitResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared CallWaitResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_WAITING, std::move(para));
+    *callWaitResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_CALL_WAITING, callWaitResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1297,13 +1297,13 @@ int32_t ImsCallCallbackStub::GetColrResponse(int32_t slotId, const ColrResponse 
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<ColrResponse> para = std::make_unique<ColrResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetColrResponse failed!");
+    std::shared_ptr<ColrResponse> colrResponse = std::make_shared<ColrResponse>();
+    if (colrResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared ColrResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_COLR, std::move(para));
+    *colrResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_COLR, colrResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1326,13 +1326,13 @@ int32_t ImsCallCallbackStub::GetColpResponse(int32_t slotId, const ColpResponse 
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<ColpResponse> para = std::make_unique<ColpResponse>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique GetColpResponse failed!");
+    std::shared_ptr<ColpResponse> colpResponse = std::make_shared<ColpResponse>();
+    if (colpResponse == nullptr) {
+        TELEPHONY_LOGE("make_shared ColpResponse failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = response;
-    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_COLP, std::move(para));
+    *colpResponse = response;
+    bool ret = handler->SendEvent(ImsCallInterface::IMS_GET_COLP, colpResponse);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1348,13 +1348,13 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HR
         TELEPHONY_LOGE("handler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::unique_ptr<HRilRadioResponseInfo> para = std::make_unique<HRilRadioResponseInfo>();
-    if (para == nullptr) {
-        TELEPHONY_LOGE("make_unique HRilRadioResponseInfo failed!");
+    std::shared_ptr<HRilRadioResponseInfo> hRilRadioResponseInfo = std::make_shared<HRilRadioResponseInfo>();
+    if (hRilRadioResponseInfo == nullptr) {
+        TELEPHONY_LOGE("make_shared HRilRadioResponseInfo failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    *para = info;
-    bool ret = handler->SendEvent(eventId, std::move(para));
+    *hRilRadioResponseInfo = info;
+    bool ret = handler->SendEvent(eventId, hRilRadioResponseInfo);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1367,5 +1367,5 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t eventId, const HRilRadioResponseI
     // delete this at last
     return TELEPHONY_SUCCESS;
 }
-}  // namespace Telephony
-}  // namespace OHOS
+} // namespace Telephony
+} // namespace OHOS

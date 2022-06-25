@@ -22,6 +22,7 @@
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
 #include "iremote_stub.h"
+#include "system_ability_status_change_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -43,6 +44,7 @@ public:
      */
     bool IsConnect() const;
     void Init();
+    void UnInit();
     int32_t RegisterImsCallCallback();
     int32_t RegisterImsCallCallbackHandler(int32_t slotId, const std::shared_ptr<AppExecFwk::EventHandler> &handler);
 
@@ -120,16 +122,23 @@ public:
     int32_t SetColp(int32_t slotId, int32_t action);
     int32_t GetColp(int32_t slotId);
 
-public:
-    static const int32_t RE_CONNECT_SERVICE_COUNT_MAX = 10;
+private:
+    class SystemAbilityListener : public SystemAbilityStatusChangeStub {
+    public:
+        SystemAbilityListener() {}
+        ~SystemAbilityListener() {}
+    public:
+        void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+        void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+    };
 
 private:
-    sptr<OHOS::IPCObjectStub::DeathRecipient> death_;
     sptr<ImsCoreServiceInterface> imsCoreServiceProxy_ = nullptr;
     sptr<ImsCallInterface> imsCallProxy_ = nullptr;
     sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
     Utils::RWLock rwClientLock_;
+    sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
 };
 } // namespace Telephony
 } // namespace OHOS

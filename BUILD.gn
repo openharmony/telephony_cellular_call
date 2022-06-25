@@ -36,7 +36,6 @@ ohos_shared_library("tel_cellular_call") {
     "$SOURCE_DIR/services/control/src/ims_control.cpp",
     "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_callback_stub.cpp",
     "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_client.cpp",
-    "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_death_recipient.cpp",
     "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_proxy.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_callback.cpp",
     "$SOURCE_DIR/services/manager/src/cellular_call_handler.cpp",
