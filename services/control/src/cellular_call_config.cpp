@@ -85,7 +85,8 @@ int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
 
     int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
     TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
-    if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)) {
+    if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)
+        || simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
         configRequest_.SetLteImsSwitchStatusRequest(slotId, active);
     }
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(ImsErrType::IMS_SUCCESS);
