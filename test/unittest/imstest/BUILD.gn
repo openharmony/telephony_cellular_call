@@ -44,13 +44,13 @@ ohos_unittest("tel_cellular_call_ims_test") {
   external_deps = [
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
+    "init:libbegetutil",
     "ipc:ipc_core",
     "ril_device_driver_interface:hril_innerkits",
     "safwk:system_ability_fwk",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "samgr_standard:samgr_proxy",
-    "startup_l2:syspara",
   ]
 
   if (is_standard_system) {
