@@ -15,10 +15,11 @@
 
 #include "cs_test.h"
 
+#include "call_manager_errors.h"
+#include "core_service_client.h"
 #include "iservice_registry.h"
 #include "securec.h"
 #include "system_ability_definition.h"
-#include "call_manager_errors.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -670,16 +671,17 @@ HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest 
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
         return;
     }
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
     if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
         return;
     }
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
     int32_t slotId = 0;
+    if (!DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId)) {
+        return;
+    }
     int32_t errorCode = 0;
     std::vector<EmergencyCall>  eccVec;
     EmergencyCall temp0 = {
@@ -714,7 +716,6 @@ HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest 
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "975", errorCode), successCode);
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "783", errorCode), successCode);
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "350", errorCode), successCode);
-    std::cout << "HWTEST_F cellular_call_cs_test_001 end";
 }
 } // namespace Telephony
 } // namespace OHOS
