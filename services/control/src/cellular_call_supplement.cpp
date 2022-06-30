@@ -854,7 +854,8 @@ bool CellularCallSupplement::IsVaildPinOrPuk(std::string newPinOrPuk, std::strin
     if (newPinOrPuk != newPinOrPukCheck) {
         ReportMmiCodeMessage(MMI_CODE_FAILED, "", MIS_MATCH_PIN_PUK);
         return false;
-    } else if (newPinOrPuk.length() < PIN_PUK_MIN || newPinOrPuk.length() > PIN_PUK_MAX) {
+    } else if (static_cast<int32_t>(newPinOrPuk.length()) < PIN_PUK_MIN ||
+               static_cast<int32_t>(newPinOrPuk.length()) > PIN_PUK_MAX) {
         ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVAILD_PIN_PUK);
         return false;
     } else {
