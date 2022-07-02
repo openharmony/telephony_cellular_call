@@ -39,8 +39,8 @@ ohos_unittest("tel_vendor_ims_test") {
 
   external_deps = [
     "core_service:tel_core_service_api",
+    "drivers_interface_ril:hril_innerkits",
     "ipc:ipc_core",
-    "ril_device_driver_interface:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
   ]
