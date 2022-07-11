@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,8 +49,8 @@ public:
     int32_t StopRtt(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetDomainPreferenceMode(const sptr<ImsInterface> &telephonyService) const;
     int32_t GetDomainPreferenceMode(const sptr<ImsInterface> &telephonyService) const;
-    int32_t SetLteImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const;
-    int32_t GetLteImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const;
+    int32_t SetImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const;
+    int32_t GetImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetImsConfigString(const sptr<ImsInterface> &telephonyService) const;
     int32_t SetImsConfigInt(const sptr<ImsInterface> &telephonyService) const;
     int32_t GetImsConfig(const sptr<ImsInterface> &telephonyService) const;

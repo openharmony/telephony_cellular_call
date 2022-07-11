@@ -61,10 +61,10 @@ int32_t CellularCallConfig::GetDomainPreferenceMode(int32_t slotId)
     return configRequest_.GetDomainPreferenceModeRequest(slotId);
 }
 
-int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
+int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     TELEPHONY_LOGI(
-        "CellularCallConfig::SetLteImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
+        "CellularCallConfig::SetImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
     /*
      * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
      * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
@@ -78,8 +78,8 @@ int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
     const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
     bool ret = OHOS::system::SetParameter(ENHANCED_4G_MODE_ENABLED_KEY, BooleanToPropertyString(active));
     if (!ret) {
-        TELEPHONY_LOGE("SetLteImsSwitchStatus  failed!");
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(ImsErrType::IMS_FAILED);
+        TELEPHONY_LOGE("SetImsSwitchStatus  failed!");
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(ImsErrType::IMS_FAILED);
         return TELEPHONY_ERROR;
     }
 
@@ -87,9 +87,9 @@ int32_t CellularCallConfig::SetLteImsSwitchStatus(int32_t slotId, bool active)
     TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
     if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)
         || simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
-        configRequest_.SetLteImsSwitchStatusRequest(slotId, active);
+        configRequest_.SetImsSwitchStatusRequest(slotId, active);
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(ImsErrType::IMS_SUCCESS);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(ImsErrType::IMS_SUCCESS);
     return TELEPHONY_SUCCESS;
 }
 
@@ -98,13 +98,13 @@ std::string CellularCallConfig::BooleanToPropertyString(bool value)
     return value ? "1" : "0";
 }
 
-int32_t CellularCallConfig::GetLteImsSwitchStatus(int32_t slotId)
+int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId)
 {
-    TELEPHONY_LOGI("CellularCallConfig::GetLteImsSwitchStatus entry, slotId: %{public}d", slotId);
-    LteImsSwitchResponse response;
+    TELEPHONY_LOGI("CellularCallConfig::GetImsSwitchStatus entry, slotId: %{public}d", slotId);
+    ImsSwitchResponse response;
     response.result = ImsErrType::IMS_SUCCESS;
     response.active = GetSwitchStatus(slotId);
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetLteImsSwitchResult(response);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchResult(response);
     return TELEPHONY_SUCCESS;
 }
 
@@ -129,9 +129,9 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     TELEPHONY_LOGI("imsSwitchValueSetting : %{public}s", imsSwitchValueSetting.c_str());
     if (simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
         if (imsSwitchValueSetting == IMS_SWITCH_VALUE_ENABLED) {
-            configRequest_.SetLteImsSwitchStatusRequest(slotId, true);
+            configRequest_.SetImsSwitchStatusRequest(slotId, true);
         } else {
-            configRequest_.SetLteImsSwitchStatusRequest(slotId, false);
+            configRequest_.SetImsSwitchStatusRequest(slotId, false);
         }
     }
 }
@@ -150,9 +150,7 @@ void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t
     modeMap_[slotId] = mode;
 }
 
-void CellularCallConfig::GetLteImsSwitchStatusResponse(int32_t slotId, int32_t active)
-{
-}
+void CellularCallConfig::GetImsSwitchStatusResponse(int32_t slotId, int32_t active) {}
 
 int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 {
@@ -202,16 +200,6 @@ int32_t CellularCallConfig::SetImsFeatureValue(FeatureType type, int32_t value)
 int32_t CellularCallConfig::GetImsFeatureValue(FeatureType type)
 {
     return configRequest_.GetImsFeatureValueRequest(type);
-}
-
-int32_t CellularCallConfig::SetImsSwitchEnhanceMode(bool value)
-{
-    return configRequest_.SetImsSwitchEnhanceModeRequest(value);
-}
-
-int32_t CellularCallConfig::GetImsSwitchEnhanceMode()
-{
-    return configRequest_.GetImsSwitchEnhanceModeRequest();
 }
 
 int32_t CellularCallConfig::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)

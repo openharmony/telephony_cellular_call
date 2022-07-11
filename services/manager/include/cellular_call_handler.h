@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -161,18 +161,18 @@ public:
     void GetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * SetLteImsSwitchStatusResponse
+     * SetImsSwitchStatusResponse
      *
      * @param code process
      */
-    void SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * GetLteImsSwitchStatusResponse
+     * GetImsSwitchStatusResponse
      *
      * @param code process
      */
-    void GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * UssdNotifyResponse
@@ -250,7 +250,7 @@ public:
     void SrvccStateCompleted();
 
 public:
-    const uint32_t REGISTER_HANDLER_ID = 1002;
+    const uint32_t REGISTER_HANDLER_ID = 10003;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
 
 private:
@@ -396,26 +396,6 @@ private:
      * InitActiveReportFuncMap
      */
     void InitActiveReportFuncMap();
-
-    /**
-     * InitImsBasicFuncMap
-     */
-    void InitImsBasicFuncMap();
-
-    /**
-     * InitImsConfigFuncMap
-     */
-    void InitImsConfigFuncMap();
-
-    /**
-     * InitImsActiveReportFuncMap
-     */
-    void InitImsActiveReportFuncMap();
-
-    /**
-     * InitImsSupplementFuncMap()
-     */
-    void InitImsSupplementFuncMap();
 
     /**
      * ReportCsCallsData

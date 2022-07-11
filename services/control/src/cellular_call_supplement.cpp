@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,9 +15,9 @@
 
 #include "cellular_call_supplement.h"
 
-#include "securec.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
+#include "securec.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 
@@ -32,7 +32,7 @@ void CellularCallSupplement::GetClip(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.InquireClipRequest(slotId);
+        supplementRequest_.GetClipRequest(slotId);
     }
 }
 
@@ -50,7 +50,7 @@ void CellularCallSupplement::GetClir(int32_t slotId, const MMIData &mmiData)
     } else if (mmiData.actionString == deactivate) {
         supplementRequest_.SetClirRequest(slotId, DEACTIVATE_ACTION);
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest_.InquireClirRequest(slotId);
+        supplementRequest_.GetClirRequest(slotId);
     }
 }
 
@@ -864,8 +864,8 @@ bool CellularCallSupplement::IsVaildPinOrPuk(std::string newPinOrPuk, std::strin
     return true;
 }
 
-void CellularCallSupplement::ReportMmiCodeMessage(int32_t result, const std::string successMsg,
-    const std::string failedMsg)
+void CellularCallSupplement::ReportMmiCodeMessage(
+    int32_t result, const std::string successMsg, const std::string failedMsg)
 {
     MmiCodeInfo mmiCodeInfo;
     mmiCodeInfo.result = result;

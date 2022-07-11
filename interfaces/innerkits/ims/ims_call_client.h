@@ -85,15 +85,13 @@ public:
     /****************** ims config ******************/
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode);
     int32_t GetDomainPreferenceMode(int32_t slotId);
-    int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active);
-    int32_t GetLteImsSwitchStatus(int32_t slotId);
+    int32_t SetImsSwitchStatus(int32_t slotId, int32_t active);
+    int32_t GetImsSwitchStatus(int32_t slotId);
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value);
     int32_t SetImsConfig(ImsConfigItem item, int32_t value);
     int32_t GetImsConfig(ImsConfigItem item);
     int32_t SetImsFeatureValue(FeatureType type, int32_t value);
     int32_t GetImsFeatureValue(FeatureType type);
-    int32_t SetImsSwitchEnhanceMode(bool value);
-    int32_t GetImsSwitchEnhanceMode();
     int32_t SetMute(int32_t slotId, int32_t mute);
     int32_t GetMute(int32_t slotId);
 

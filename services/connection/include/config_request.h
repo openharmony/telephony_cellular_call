@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,7 @@ public:
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatusRequest(int32_t slotId, bool active);
+    int32_t SetImsSwitchStatusRequest(int32_t slotId, bool active);
 
     /**
      * Get Lte Ims Switch Status Request
@@ -57,7 +57,7 @@ public:
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatusRequest(int32_t slotId);
+    int32_t GetImsSwitchStatusRequest(int32_t slotId);
 
     /**
      * Set Ims Config Request
@@ -101,21 +101,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetImsFeatureValueRequest(FeatureType type);
-
-    /**
-     * Set Ims Switch Enhance Mode Request
-     *
-     * @param value
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetImsSwitchEnhanceModeRequest(bool value);
-
-    /**
-     * Get Ims Switch Enhance Mode Request
-     *
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t GetImsSwitchEnhanceModeRequest();
 
     /**
      * Ctrl Camera Request

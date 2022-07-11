@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,8 +58,8 @@ void ImsUnitTest::SetUp(void)
     requestFuncMap_[ImsInterface::IMS_STOP_RTT] = &ImsUnitTest::StopRtt;
     requestFuncMap_[ImsInterface::IMS_SET_DOMAIN_PREFERENCE_MODE] = &ImsUnitTest::SetDomainPreferenceMode;
     requestFuncMap_[ImsInterface::IMS_GET_DOMAIN_PREFERENCE_MODE] = &ImsUnitTest::GetDomainPreferenceMode;
-    requestFuncMap_[ImsInterface::IMS_SET_LTE_IMS_SWITCH_STATUS] = &ImsUnitTest::SetLteImsSwitchStatus;
-    requestFuncMap_[ImsInterface::IMS_GET_LTE_IMS_SWITCH_STATUS] = &ImsUnitTest::GetLteImsSwitchStatus;
+    requestFuncMap_[ImsInterface::IMS_SET_IMS_SWITCH_STATUS] = &ImsUnitTest::SetImsSwitchStatus;
+    requestFuncMap_[ImsInterface::IMS_GET_IMS_SWITCH_STATUS] = &ImsUnitTest::GetImsSwitchStatus;
     requestFuncMap_[ImsInterface::IMS_SET_IMS_CONFIG_STRING] = &ImsUnitTest::SetImsConfigString;
     requestFuncMap_[ImsInterface::IMS_SET_IMS_CONFIG_INT] = &ImsUnitTest::SetImsConfigInt;
     requestFuncMap_[ImsInterface::IMS_GET_IMS_CONFIG] = &ImsUnitTest::GetImsConfig;
@@ -363,26 +363,26 @@ int32_t ImsUnitTest::GetDomainPreferenceMode(const sptr<ImsInterface> &telephony
     return CELLULAR_CALL_SUCCESS;
 }
 
-int32_t ImsUnitTest::SetLteImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const
+int32_t ImsUnitTest::SetImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const
 {
-    std::cout << "test SetLteImsSwitchStatus entry." << std::endl;
+    std::cout << "test SetImsSwitchStatus entry." << std::endl;
     std::cout << "please enter the switch state:";
     bool active;
     std::cin >> active;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    telephonyService->SetLteImsSwitchStatus(slotId, active);
+    telephonyService->SetImsSwitchStatus(slotId, active);
     return CELLULAR_CALL_SUCCESS;
 }
 
-int32_t ImsUnitTest::GetLteImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const
+int32_t ImsUnitTest::GetImsSwitchStatus(const sptr<ImsInterface> &telephonyService) const
 {
-    std::cout << "test GetLteImsSwitchStatus entry." << std::endl;
+    std::cout << "test GetImsSwitchStatus entry." << std::endl;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    telephonyService->GetLteImsSwitchStatus(slotId);
+    telephonyService->GetImsSwitchStatus(slotId);
     return CELLULAR_CALL_SUCCESS;
 }
 
@@ -630,7 +630,7 @@ int32_t ImsUnitTest::InputNumForInterface(const sptr<ImsInterface> &telephonySer
                      "8:CombineConference\n9:InviteToConference\n10:KickOutFromConference\n11:UpdateImsCallMode\n"
                      "12:IsEmergencyPhoneNumber\n13:GetCallFailReason\n100:StartDtmf\n101:SendDtmf\n102:StopDtmf\n"
                      "103:StartRtt\n104:StopRtt\n200:SetCallPreferenceMode\n201:GetCallPreferenceMode\n202:"
-                     "SetLteImsSwitchStatus\n203:GetLteImsSwitchStatus\n204:SetImsConfigString\n205:SetImsConfigInt\n"
+                     "SetImsSwitchStatus\n203:GetImsSwitchStatus\n204:SetImsConfigString\n205:SetImsConfigInt\n"
                      "206:GetImsConfig\n207:SetImsFeatureValue\n208:GetImsFeatureValue\n209:SetImsSwitchEnhanceMode\n"
                      "210:GetImsSwitchEnhanceMode\n211:SetMUte\n212:GetMute\n300:CtrlCamera\n301:SetPreviewWindow\n"
                      "302:SetDisplayWindow\n303:SetCameraZoom\n304:SetPauseImage\n305:SetDeviceDirection\n"

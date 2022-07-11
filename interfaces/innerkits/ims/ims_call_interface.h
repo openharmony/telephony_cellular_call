@@ -52,15 +52,13 @@ public:
         /****************** ims config ******************/
         IMS_SET_DOMAIN_PREFERENCE_MODE = 5200,
         IMS_GET_DOMAIN_PREFERENCE_MODE,
-        IMS_SET_LTE_SWITCH_STATUS,
-        IMS_GET_LTE_SWITCH_STATUS,
+        IMS_SET_SWITCH_STATUS,
+        IMS_GET_SWITCH_STATUS,
         IMS_SET_IMS_CONFIG_STRING,
         IMS_SET_IMS_CONFIG_INT,
         IMS_GET_IMS_CONFIG,
         IMS_SET_IMS_FEATURE,
         IMS_GET_IMS_FEATURE,
-        IMS_SET_LTE_SWITCH_ENHANCE_MODE_STATUS,
-        IMS_GET_LTE_SWITCH_ENHANCE_MODE_STATUS,
         IMS_SET_MUTE,
         IMS_GET_MUTE,
         IMS_SET_IMS_REG_ERROR_REPORT,
@@ -92,7 +90,7 @@ public:
         /****************** callback ******************/
         IMS_CALL_REGISTER_CALLBACK = 5500,
     };
-    
+
     /**
      * IMS dial interface
      *
@@ -270,21 +268,21 @@ public:
     virtual int32_t GetDomainPreferenceMode(int32_t slotId) = 0;
 
     /**
-     * IMS SetLteImsSwitchStatus interface
+     * IMS SetImsSwitchStatus interface
      *
      * @param slotId
      * @param active 1: enable ims, 0: disable ims
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active) = 0;
+    virtual int32_t SetImsSwitchStatus(int32_t slotId, int32_t active) = 0;
 
     /**
-     * IMS GetLteImsSwitchStatus interface
+     * IMS GetImsSwitchStatus interface
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetLteImsSwitchStatus(int32_t slotId) = 0;
+    virtual int32_t GetImsSwitchStatus(int32_t slotId) = 0;
 
     /**
      * IMS SetImsConfig interface
@@ -328,21 +326,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t GetImsFeatureValue(FeatureType type) = 0;
-
-    /**
-     * IMS SetImsSwitchEnhanceMode interface
-     *
-     * @param value
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t SetImsSwitchEnhanceMode(bool value) = 0;
-
-    /**
-     * IMS GetImsSwitchEnhanceMode interface
-     *
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t GetImsSwitchEnhanceMode() = 0;
 
     /**
      * IMS SetMute interface

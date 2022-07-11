@@ -234,21 +234,21 @@ public:
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
 
     /**
-     * IMS SetLteImsSwitchStatus interface
+     * IMS SetImsSwitchStatus interface
      *
      * @param slotId
      * @param active 1: enable ims, 0: disable ims
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active) override;
+    int32_t SetImsSwitchStatus(int32_t slotId, int32_t active) override;
 
     /**
-     * IMS GetLteImsSwitchStatus interface
+     * IMS GetImsSwitchStatus interface
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatus(int32_t slotId) override;
+    int32_t GetImsSwitchStatus(int32_t slotId) override;
 
     /**
      * IMS SetImsConfig interface

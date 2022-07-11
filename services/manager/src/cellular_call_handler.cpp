@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,10 +31,6 @@ CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::Event
     InitConfigFuncMap();
     InitSupplementFuncMap();
     InitActiveReportFuncMap();
-    InitImsBasicFuncMap();
-    InitImsConfigFuncMap();
-    InitImsActiveReportFuncMap();
-    InitImsSupplementFuncMap();
 }
 
 void CellularCallHandler::InitBasicFuncMap()
@@ -59,6 +55,8 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
     requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
     requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &CellularCallHandler::GetMMIResponse;
+
+    requestFuncMap_[RadioEvent::RADIO_IMS_GET_CALL_DATA] = &CellularCallHandler::GetImsCallsDataResponse;
 }
 
 void CellularCallHandler::InitConfigFuncMap()
@@ -67,8 +65,8 @@ void CellularCallHandler::InitConfigFuncMap()
     requestFuncMap_[RadioEvent::RADIO_GET_CMUT] = &CellularCallHandler::GetMuteResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &CellularCallHandler::SetDomainPreferenceModeResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetDomainPreferenceModeResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::SetLteImsSwitchStatusResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS] = &CellularCallHandler::GetLteImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_IMS_SWITCH_STATUS] = &CellularCallHandler::SetImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_IMS_SWITCH_STATUS] = &CellularCallHandler::GetImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] = &CellularCallHandler::SetEmergencyCallListResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
 }
@@ -101,40 +99,6 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
-}
-
-void CellularCallHandler::InitImsBasicFuncMap()
-{
-    requestFuncMap_[ImsCallInterface::IMS_DIAL] = &CellularCallHandler::DialResponse;
-    requestFuncMap_[ImsCallInterface::IMS_HANG_UP] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_REJECT_WITH_REASON] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_ANSWER] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_HOLD] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_UN_HOLD] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_SWITCH] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[ImsCallInterface::IMS_SEND_DTMF] = &CellularCallHandler::SendDtmfResponse;
-    requestFuncMap_[ImsCallInterface::IMS_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
-    requestFuncMap_[ImsCallInterface::IMS_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
-    requestFuncMap_[ImsCallInterface::IMS_GET_CALL_DATA] = &CellularCallHandler::GetImsCallsDataResponse;
-    requestFuncMap_[ImsCallInterface::IMS_GET_LAST_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
-}
-
-void CellularCallHandler::InitImsConfigFuncMap()
-{
-    requestFuncMap_[ImsCallInterface::IMS_SET_MUTE] = &CellularCallHandler::SetMuteResponse;
-    requestFuncMap_[ImsCallInterface::IMS_GET_MUTE] = &CellularCallHandler::GetMuteResponse;
-    requestFuncMap_[ImsCallInterface::IMS_SET_LTE_SWITCH_STATUS] = &CellularCallHandler::SetLteImsSwitchStatusResponse;
-    requestFuncMap_[ImsCallInterface::IMS_GET_LTE_SWITCH_STATUS] = &CellularCallHandler::GetLteImsSwitchStatusResponse;
-}
-
-void CellularCallHandler::InitImsActiveReportFuncMap()
-{
-    requestFuncMap_[ImsCallInterface::IMS_CALL_STATE_CHANGE] = &CellularCallHandler::CallStatusInfoResponse;
-}
-
-void CellularCallHandler::InitImsSupplementFuncMap()
-{
-    requestFuncMap_[ImsCallInterface::IMS_SET_CALL_WAITING] = &CellularCallHandler::SetCallWaitingResponse;
 }
 
 void CellularCallHandler::RegisterImsCallCallbackHandler()
@@ -588,54 +552,54 @@ void CellularCallHandler::GetDomainPreferenceModeResponse(const AppExecFwk::Inne
     config.GetDomainPreferenceModeResponse(slotId_, *mode);
 }
 
-void CellularCallHandler::SetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::SetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("SetLteImsSwitchStatusResponse entry");
+    TELEPHONY_LOGI("SetImsSwitchStatusResponse entry");
     if (event == nullptr) {
-        TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, event is nullptr");
+        TELEPHONY_LOGE("SetImsSwitchStatusResponse return, event is nullptr");
         return;
     }
     auto info = event->GetSharedObject<HRilRadioResponseInfo>();
     if (info == nullptr) {
-        TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, info is nullptr");
+        TELEPHONY_LOGE("SetImsSwitchStatusResponse return, info is nullptr");
         return;
     }
     if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("SetLteImsSwitchStatusResponse return, GetInstance is nullptr");
+        TELEPHONY_LOGE("SetImsSwitchStatusResponse return, GetInstance is nullptr");
         return;
     }
     CellularCallConfig config;
     config.HandleSetLteImsSwitchResult(slotId_, info->error);
 }
 
-void CellularCallHandler::GetLteImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    TELEPHONY_LOGI("GetLteImsSwitchStatusResponse entry");
+    TELEPHONY_LOGI("GetImsSwitchStatusResponse entry");
     if (event == nullptr) {
-        TELEPHONY_LOGE("GetLteImsSwitchStatusResponse return, event is nullptr");
+        TELEPHONY_LOGE("GetImsSwitchStatusResponse return, event is nullptr");
         return;
     }
-    LteImsSwitchResponse lteImsSwitch;
+    ImsSwitchResponse imsSwitch;
     auto active = event->GetSharedObject<int32_t>();
     if (active == nullptr) {
-        TELEPHONY_LOGI("GetLteImsSwitchStatusResponse, Cannot get the active, need to get rilResponseInfo");
+        TELEPHONY_LOGI("GetImsSwitchStatusResponse, Cannot get the active, need to get rilResponseInfo");
         auto info = event->GetSharedObject<HRilRadioResponseInfo>();
         if (info == nullptr) {
-            TELEPHONY_LOGE("GetLteImsSwitchStatusResponse return, info is nullptr");
+            TELEPHONY_LOGE("GetImsSwitchStatusResponse return, info is nullptr");
             return;
         }
-        lteImsSwitch.result = static_cast<int32_t>(info->error);
+        imsSwitch.result = static_cast<int32_t>(info->error);
     } else {
         CellularCallConfig config;
-        config.GetLteImsSwitchStatusResponse(slotId_, *active);
-        lteImsSwitch.result = static_cast<int32_t>(HRilErrType::NONE);
-        lteImsSwitch.active = *active;
+        config.GetImsSwitchStatusResponse(slotId_, *active);
+        imsSwitch.result = static_cast<int32_t>(HRilErrType::NONE);
+        imsSwitch.active = *active;
     }
     if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("GetLteImsSwitchStatusResponse return, GetInstance is nullptr");
+        TELEPHONY_LOGE("GetImsSwitchStatusResponse return, GetInstance is nullptr");
         return;
     }
-    registerInstance_->ReportGetLteImsSwitchResult(lteImsSwitch);
+    registerInstance_->ReportGetImsSwitchResult(imsSwitch);
 }
 
 void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)

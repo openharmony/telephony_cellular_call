@@ -189,8 +189,8 @@ void CellularCallService::RegisterCoreServiceHandler()
         if (config.GetDomainPreferenceMode(slot) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetDomainPreferenceMode request fail");
         }
-        if (config.GetLteImsSwitchStatus(slot) != TELEPHONY_SUCCESS) {
-            TELEPHONY_LOGW("RegisterCoreServiceHandler, GetLteImsSwitchStatus request fail");
+        if (config.GetImsSwitchStatus(slot) != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGW("RegisterCoreServiceHandler, GetImsSwitchStatus request fail");
         }
         if (config.GetEmergencyCallList(it.first) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetEmergencyCallList request fail");
@@ -832,24 +832,24 @@ int32_t CellularCallService::GetDomainPreferenceMode(int32_t slotId)
     return config.GetDomainPreferenceMode(slotId);
 }
 
-int32_t CellularCallService::SetLteImsSwitchStatus(int32_t slotId, bool active)
+int32_t CellularCallService::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetLteImsSwitchStatus return, invalid slot id");
+        TELEPHONY_LOGE("CellularCallService::SetImsSwitchStatus return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.SetLteImsSwitchStatus(slotId, active);
+    return config.SetImsSwitchStatus(slotId, active);
 }
 
-int32_t CellularCallService::GetLteImsSwitchStatus(int32_t slotId)
+int32_t CellularCallService::GetImsSwitchStatus(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::GetLteImsSwitchStatus return, invalid slot id");
+        TELEPHONY_LOGE("CellularCallService::GetImsSwitchStatus return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.GetLteImsSwitchStatus(slotId);
+    return config.GetImsSwitchStatus(slotId);
 }
 
 int32_t CellularCallService::SetImsConfig(int32_t slotId, ImsConfigItem item, const std::string &value)
@@ -900,26 +900,6 @@ int32_t CellularCallService::GetImsFeatureValue(int32_t slotId, FeatureType type
     }
     CellularCallConfig config;
     return config.GetImsFeatureValue(type);
-}
-
-int32_t CellularCallService::SetImsSwitchEnhanceMode(int32_t slotId, bool value)
-{
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetImsSwitchEnhanceMode return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
-    CellularCallConfig config;
-    return config.SetImsSwitchEnhanceMode(value);
-}
-
-int32_t CellularCallService::GetImsSwitchEnhanceMode(int32_t slotId)
-{
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::GetImsSwitchEnhanceMode return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
-    CellularCallConfig config;
-    return config.GetImsSwitchEnhanceMode();
 }
 
 bool CellularCallService::IsValidSlotId(int32_t slotId) const

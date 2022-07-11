@@ -49,15 +49,13 @@ public:
 
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) override;
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
-    int32_t SetLteImsSwitchStatus(int32_t slotId, int32_t active) override;
-    int32_t GetLteImsSwitchStatus(int32_t slotId) override;
+    int32_t SetImsSwitchStatus(int32_t slotId, int32_t active) override;
+    int32_t GetImsSwitchStatus(int32_t slotId) override;
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value) override;
     int32_t SetImsConfig(ImsConfigItem item, int32_t value) override;
     int32_t GetImsConfig(ImsConfigItem item) override;
     int32_t SetImsFeatureValue(FeatureType type, int32_t value) override;
     int32_t GetImsFeatureValue(FeatureType type) override;
-    int32_t SetImsSwitchEnhanceMode(bool value) override;
-    int32_t GetImsSwitchEnhanceMode() override;
     int32_t SetMute(int32_t slotId, int32_t mute) override;
     int32_t GetMute(int32_t slotId) override;
 

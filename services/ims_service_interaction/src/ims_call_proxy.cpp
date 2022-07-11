@@ -591,55 +591,55 @@ int32_t ImsCallProxy::GetDomainPreferenceMode(int32_t slotId)
     return error;
 }
 
-int32_t ImsCallProxy::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
+int32_t ImsCallProxy::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
-    TELEPHONY_LOGI("ImsCallProxy::SetLteImsSwitchStatus entry");
+    TELEPHONY_LOGI("ImsCallProxy::SetImsSwitchStatus entry");
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchStatus return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(slotId)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchStatus return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(active)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchStatus return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        TELEPHONY_LOGE("ImsCallProxy::SetLteImsSwitchStatus return, remote is nullptr!");
+        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchStatus return, remote is nullptr!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    int32_t error = remote->SendRequest(IMS_SET_LTE_SWITCH_STATUS, in, out, option);
+    int32_t error = remote->SendRequest(IMS_SET_SWITCH_STATUS, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
     return error;
 }
 
-int32_t ImsCallProxy::GetLteImsSwitchStatus(int32_t slotId)
+int32_t ImsCallProxy::GetImsSwitchStatus(int32_t slotId)
 {
     MessageOption option;
     MessageParcel in;
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsCallProxy::GetLteImsSwitchStatus return, write descriptor token fail!");
+        TELEPHONY_LOGE("ImsCallProxy::GetImsSwitchStatus return, write descriptor token fail!");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteInt32(slotId)) {
-        TELEPHONY_LOGE("ImsCallProxy::GetLteImsSwitchStatus return, write data fail!");
+        TELEPHONY_LOGE("ImsCallProxy::GetImsSwitchStatus return, write data fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
-        TELEPHONY_LOGE("ImsCallProxy::GetLteImsSwitchStatus return, remote is nullptr!");
+        TELEPHONY_LOGE("ImsCallProxy::GetImsSwitchStatus return, remote is nullptr!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    int32_t error = remote->SendRequest(IMS_GET_LTE_SWITCH_STATUS, in, out, option);
+    int32_t error = remote->SendRequest(IMS_GET_SWITCH_STATUS, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -777,52 +777,6 @@ int32_t ImsCallProxy::GetImsFeatureValue(FeatureType type)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     int32_t error = remote->SendRequest(IMS_GET_IMS_FEATURE, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallProxy::SetImsSwitchEnhanceMode(bool value)
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchEnhanceMode return, write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    if (!in.WriteBool(value)) {
-        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchEnhanceMode return, write data fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        TELEPHONY_LOGE("ImsCallProxy::SetImsSwitchEnhanceMode return, remote is nullptr!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    int32_t error = remote->SendRequest(IMS_SET_LTE_SWITCH_ENHANCE_MODE_STATUS, in, out, option);
-    if (error == ERR_NONE) {
-        return out.ReadInt32();
-    }
-    return error;
-}
-
-int32_t ImsCallProxy::GetImsSwitchEnhanceMode()
-{
-    MessageOption option;
-    MessageParcel in;
-    MessageParcel out;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("ImsCallProxy::GetImsSwitchEnhanceMode return, write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        TELEPHONY_LOGE("ImsCallProxy::GetImsSwitchEnhanceMode return, remote is nullptr!");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    int32_t error = remote->SendRequest(IMS_GET_LTE_SWITCH_ENHANCE_MODE_STATUS, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }

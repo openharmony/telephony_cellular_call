@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -1069,7 +1069,7 @@ int32_t ImsCallbackStub::UpdateSetImsSwitchResponse(const ImsResponseInfo &info)
         TELEPHONY_LOGE("UpdateSetImsSwitchResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetLteImsSwitchResult(info.error);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(info.error);
     return TELEPHONY_SUCCESS;
 }
 
@@ -1081,9 +1081,9 @@ int32_t ImsCallbackStub::UpdateGetImsSwitchResponse(const ImsResponseInfo &info)
             TELEPHONY_LOGE("UpdateGetImsSwitchResponse return, GetInstance is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        LteImsSwitchResponse response;
+        ImsSwitchResponse response;
         response.result = info.error;
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetLteImsSwitchResult(response);
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchResult(response);
     } else {
         TELEPHONY_LOGI("UpdateGetImsSwitchResponse, result error");
     }
@@ -1103,17 +1103,17 @@ int32_t ImsCallbackStub::UpdateGetImsSwitchResponse(int32_t slotId, int32_t acti
         TELEPHONY_LOGE("UpdateGetImsSwitchResponse return, GetHandler is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS, imsSwitch);
-    DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->GetLteImsSwitchStatusResponse(event);
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, imsSwitch);
+    DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->GetImsSwitchStatusResponse(event);
 
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UpdateGetImsSwitchResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    LteImsSwitchResponse response;
+    ImsSwitchResponse response;
     response.result = IMS_SUCCESS;
     response.active = active;
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetLteImsSwitchResult(response);
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchResult(response);
     return TELEPHONY_SUCCESS;
 }
 
