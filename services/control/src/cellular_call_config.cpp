@@ -75,8 +75,8 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
      *      0 – Mobility Management for IMS Voice Termination disabled.
      *      1 – Mobility Management for IMS Voice Termination enabled.
      */
-    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
-    bool ret = OHOS::system::SetParameter(ENHANCED_4G_MODE_ENABLED_KEY, BooleanToPropertyString(active));
+    const std::string imsSwitchKey = "persist.telephony.ims_switch" + std::to_string(slotId);
+    bool ret = OHOS::system::SetParameter(imsSwitchKey, BooleanToPropertyString(active));
     if (!ret) {
         TELEPHONY_LOGE("SetImsSwitchStatus  failed!");
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(ImsErrType::IMS_FAILED);
@@ -123,9 +123,8 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 
-    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
-    std::string imsSwitchValueSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY,
-        IMS_SWITCH_VALUE_DISABLED);
+    const std::string imsSwitchKey = "persist.telephony.ims_switch" + std::to_string(slotId);
+    std::string imsSwitchValueSetting = system::GetParameter(imsSwitchKey, IMS_SWITCH_VALUE_ENABLED);
     TELEPHONY_LOGI("imsSwitchValueSetting : %{public}s", imsSwitchValueSetting.c_str());
     if (simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
         if (imsSwitchValueSetting == IMS_SWITCH_VALUE_ENABLED) {
@@ -170,8 +169,8 @@ int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
      *      0 – Mobility Management for IMS Voice Termination disabled.
      *      1 – Mobility Management for IMS Voice Termination enabled.
      */
-    const std::string ENHANCED_4G_MODE_ENABLED_KEY = std::to_string(slotId) + "ENHANCED_4G_MODE_ENABLED";
-    std::string prevSetting = system::GetParameter(ENHANCED_4G_MODE_ENABLED_KEY, IMS_SWITCH_VALUE_DISABLED);
+    const std::string imsSwitchKey = "persist.telephony.ims_switch" + std::to_string(slotId);
+    std::string prevSetting = system::GetParameter(imsSwitchKey, IMS_SWITCH_VALUE_ENABLED);
     int32_t imsSwitchStatus = static_cast<int32_t>(atoi(prevSetting.c_str()));
     TELEPHONY_LOGI("imsSwitchStatus : %{public}d", imsSwitchStatus);
     return imsSwitchStatus;
