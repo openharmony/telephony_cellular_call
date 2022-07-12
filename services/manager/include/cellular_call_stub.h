@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -311,22 +311,22 @@ private:
     int32_t OnGetDomainPreferenceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On Set Lte Ims Switch Status
+     * On Set Ims Switch Status
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnSetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On Get Lte Ims Switch Status
+     * On Get Ims Switch Status
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnGetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On SetImsConfigStringInner
@@ -372,24 +372,6 @@ private:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnGetImsFeatureValueInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * On SetImsSwitchEnhanceModeInner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * On GetImsSwitchEnhanceModeInner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On Ctrl Camera Inner

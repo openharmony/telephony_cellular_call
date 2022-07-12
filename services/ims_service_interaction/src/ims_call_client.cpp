@@ -341,22 +341,22 @@ int32_t ImsCallClient::GetDomainPreferenceMode(int32_t slotId)
     return imsCallProxy_->GetDomainPreferenceMode(slotId);
 }
 
-int32_t ImsCallClient::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
+int32_t ImsCallClient::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetLteImsSwitchStatus(slotId, active);
+    return imsCallProxy_->SetImsSwitchStatus(slotId, active);
 }
 
-int32_t ImsCallClient::GetLteImsSwitchStatus(int32_t slotId)
+int32_t ImsCallClient::GetImsSwitchStatus(int32_t slotId)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->GetLteImsSwitchStatus(slotId);
+    return imsCallProxy_->GetImsSwitchStatus(slotId);
 }
 
 int32_t ImsCallClient::SetImsConfig(ImsConfigItem item, const std::string &value)
@@ -402,24 +402,6 @@ int32_t ImsCallClient::GetImsFeatureValue(FeatureType type)
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->GetImsFeatureValue(type);
-}
-
-int32_t ImsCallClient::SetImsSwitchEnhanceMode(bool value)
-{
-    if (ReConnectService() != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("ipc reconnect failed!");
-        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
-    }
-    return imsCallProxy_->SetImsSwitchEnhanceMode(value);
-}
-
-int32_t ImsCallClient::GetImsSwitchEnhanceMode()
-{
-    if (ReConnectService() != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("ipc reconnect failed!");
-        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
-    }
-    return imsCallProxy_->GetImsSwitchEnhanceMode();
 }
 
 int32_t ImsCallClient::SetMute(int32_t slotId, int32_t mute)

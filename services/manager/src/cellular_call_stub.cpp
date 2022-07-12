@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,15 +75,13 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::GET_CALL_RESTRICTION] = &CellularCallStub::OnGetCallRestrictionInner;
     requestFuncMap_[OperationType::SET_DOMAIN_PREFERENCE_MODE] = &CellularCallStub::OnSetDomainPreferenceModeInner;
     requestFuncMap_[OperationType::GET_DOMAIN_PREFERENCE_MODE] = &CellularCallStub::OnGetDomainPreferenceModeInner;
-    requestFuncMap_[OperationType::SET_LTE_IMS_SWITCH_STATUS] = &CellularCallStub::OnSetLteImsSwitchStatusInner;
-    requestFuncMap_[OperationType::GET_LTE_IMS_SWITCH_STATUS] = &CellularCallStub::OnGetLteImsSwitchStatusInner;
+    requestFuncMap_[OperationType::SET_IMS_SWITCH_STATUS] = &CellularCallStub::OnSetImsSwitchStatusInner;
+    requestFuncMap_[OperationType::GET_IMS_SWITCH_STATUS] = &CellularCallStub::OnGetImsSwitchStatusInner;
     requestFuncMap_[OperationType::SET_IMS_CONFIG_STRING] = &CellularCallStub::OnSetImsConfigStringInner;
     requestFuncMap_[OperationType::SET_IMS_CONFIG_INT] = &CellularCallStub::OnSetImsConfigIntInner;
     requestFuncMap_[OperationType::GET_IMS_CONFIG] = &CellularCallStub::OnGetImsConfigInner;
     requestFuncMap_[OperationType::SET_IMS_FEATURE] = &CellularCallStub::OnSetImsFeatureValueInner;
     requestFuncMap_[OperationType::GET_IMS_FEATURE] = &CellularCallStub::OnGetImsFeatureValueInner;
-    requestFuncMap_[OperationType::SET_IMS_SWITCH_ENHANCE_MODE] = &CellularCallStub::OnSetImsSwitchEnhanceModeInner;
-    requestFuncMap_[OperationType::GET_IMS_SWITCH_ENHANCE_MODE] = &CellularCallStub::OnGetImsSwitchEnhanceModeInner;
     requestFuncMap_[OperationType::CTRL_CAMERA] = &CellularCallStub::OnCtrlCameraInner;
     requestFuncMap_[OperationType::SET_PREVIEW_WINDOW] = &CellularCallStub::OnSetPreviewWindowInner;
     requestFuncMap_[OperationType::SET_DISPLAY_WINDOW] = &CellularCallStub::OnSetDisplayWindowInner;
@@ -663,34 +661,34 @@ int32_t CellularCallStub::OnGetDomainPreferenceModeInner(MessageParcel &data, Me
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnSetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnSetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnSetLteImsSwitchStatusInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnSetImsSwitchStatusInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnSetLteImsSwitchStatusInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnSetImsSwitchStatusInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
     int32_t slotId = data.ReadInt32();
     bool active = data.ReadBool();
 
-    reply.WriteInt32(SetLteImsSwitchStatus(slotId, active));
+    reply.WriteInt32(SetImsSwitchStatus(slotId, active));
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnGetLteImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnGetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnGetLteImsSwitchStatusInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnGetImsSwitchStatusInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnGetLteImsSwitchStatusInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnGetImsSwitchStatusInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
     int32_t slotId = data.ReadInt32();
 
-    reply.WriteInt32(GetLteImsSwitchStatus(slotId));
+    reply.WriteInt32(GetImsSwitchStatus(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -774,37 +772,6 @@ int32_t CellularCallStub::OnGetImsFeatureValueInner(MessageParcel &data, Message
     auto type = static_cast<FeatureType>(data.ReadInt32());
 
     reply.WriteInt32(GetImsFeatureValue(slotId, type));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallStub::OnSetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("CellularCallStub::OnSetImsSwitchEnhanceModeInner entry");
-    int32_t size = data.ReadInt32();
-    size = ((size > MAX_SIZE) ? 0 : size);
-    if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnSetImsSwitchEnhanceModeInner data size error");
-        return TELEPHONY_ERR_FAIL;
-    }
-    int32_t slotId = data.ReadInt32();
-    bool value = data.ReadBool();
-
-    reply.WriteInt32(SetImsSwitchEnhanceMode(slotId, value));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallStub::OnGetImsSwitchEnhanceModeInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("CellularCallStub::OnGetImsSwitchEnhanceModeInner entry");
-    int32_t size = data.ReadInt32();
-    size = ((size > MAX_SIZE) ? 0 : size);
-    if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnGetImsSwitchEnhanceModeInner data size error");
-        return TELEPHONY_ERR_FAIL;
-    }
-    int32_t slotId = data.ReadInt32();
-
-    reply.WriteInt32(GetImsSwitchEnhanceMode(slotId));
     return TELEPHONY_SUCCESS;
 }
 

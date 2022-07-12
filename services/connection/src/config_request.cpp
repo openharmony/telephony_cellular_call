@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,8 @@
 
 #include "call_manager_errors.h"
 #include "cellular_call_service.h"
-#include "radio_event.h"
 #include "ims_call_client.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -65,47 +65,34 @@ int32_t ConfigRequest::GetDomainPreferenceModeRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::SetLteImsSwitchStatusRequest(int32_t slotId, bool active)
+int32_t ConfigRequest::SetImsSwitchStatusRequest(int32_t slotId, bool active)
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetLteImsSwitchStatusRequest, call ims service");
+        TELEPHONY_LOGI("SetImsSwitchStatusRequest, call ims service");
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetLteImsSwitchStatus(slotId, active);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsSwitchStatus(slotId, active);
     }
 
-    TELEPHONY_LOGI("SetLteImsSwitchStatusRequest, ims vendor service does not exist.");
-    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
-    if (handle == nullptr) {
-        TELEPHONY_LOGE("SetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    CoreManagerInner::GetInstance().SetLteImsSwitchStatus(
-        slotId, RadioEvent::RADIO_SET_LTE_IMS_SWITCH_STATUS, active, handle);
-    return TELEPHONY_SUCCESS;
+    TELEPHONY_LOGI("SetImsSwitchStatusRequest, ims vendor service does not exist.");
+    return TELEPHONY_ERROR;
 }
 
-int32_t ConfigRequest::GetLteImsSwitchStatusRequest(int32_t slotId)
+int32_t ConfigRequest::GetImsSwitchStatusRequest(int32_t slotId)
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetLteImsSwitchStatusRequest, call ims service");
+        TELEPHONY_LOGI("GetImsSwitchStatusRequest, call ims service");
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetLteImsSwitchStatus(slotId);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsSwitchStatus(slotId);
     }
 
-    TELEPHONY_LOGI("GetLteImsSwitchStatusRequest, ims vendor service does not exist.");
-    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
-    if (handle == nullptr) {
-        TELEPHONY_LOGE("GetLteImsSwitchStatusRequest return, error type: handle is nullptr.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    CoreManagerInner::GetInstance().GetLteImsSwitchStatus(slotId, RadioEvent::RADIO_GET_LTE_IMS_SWITCH_STATUS, handle);
-    return TELEPHONY_SUCCESS;
+    TELEPHONY_LOGI("GetImsSwitchStatusRequest, ims vendor service does not exist.");
+    return TELEPHONY_ERROR;
 }
 
 int32_t ConfigRequest::SetImsConfigRequest(ImsConfigItem item, const std::string &value)
@@ -175,34 +162,6 @@ int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type)
         return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsFeatureValue(type);
     }
     TELEPHONY_LOGI("GetImsFeatureValueRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ConfigRequest::SetImsSwitchEnhanceModeRequest(bool value)
-{
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsSwitchEnhanceMode(value);
-    }
-    TELEPHONY_LOGI("SetImsSwitchEnhanceModeRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ConfigRequest::GetImsSwitchEnhanceModeRequest()
-{
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetImsSwitchEnhanceModeRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsSwitchEnhanceMode();
-    }
-    TELEPHONY_LOGI("GetImsSwitchEnhanceModeRequest, ims vendor service does not exist.");
     return TELEPHONY_SUCCESS;
 }
 
@@ -343,7 +302,7 @@ int32_t ConfigRequest::GetEmergencyCallListRequest(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall>  &eccVec)
+int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall> &eccVec)
 {
     TELEPHONY_LOGI("SetEmergencyCallListRequest start ");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
@@ -352,8 +311,8 @@ int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<E
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     int32_t errorCode = TELEPHONY_ERR_FAIL;
-    errorCode = CoreManagerInner::GetInstance().SetEmergencyCallList(slotId,
-        RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST, eccVec, handle);
+    errorCode = CoreManagerInner::GetInstance().SetEmergencyCallList(
+        slotId, RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST, eccVec, handle);
     TELEPHONY_LOGI("SetEmergencyCallListRequest end %{public}d", errorCode);
     return errorCode;
 }

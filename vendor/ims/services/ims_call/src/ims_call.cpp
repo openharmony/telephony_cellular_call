@@ -493,7 +493,7 @@ int32_t ImsCall::GetDomainPreferenceMode(int32_t slotId)
     return imsRilManager->GetDomainPreferenceMode(slotId, response);
 }
 
-int32_t ImsCall::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
+int32_t ImsCall::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_SET_LTE_SWITCH_STATUS);
@@ -510,10 +510,10 @@ int32_t ImsCall::SetLteImsSwitchStatus(int32_t slotId, int32_t active)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    return imsRilManager->SetLteImsSwitchStatus(slotId, active, response);
+    return imsRilManager->SetImsSwitchStatus(slotId, active, response);
 }
 
-int32_t ImsCall::GetLteImsSwitchStatus(int32_t slotId)
+int32_t ImsCall::GetImsSwitchStatus(int32_t slotId)
 {
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_GET_LTE_SWITCH_STATUS);
@@ -530,7 +530,7 @@ int32_t ImsCall::GetLteImsSwitchStatus(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    return imsRilManager->GetLteImsSwitchStatus(slotId, response);
+    return imsRilManager->GetImsSwitchStatus(slotId, response);
 }
 
 int32_t ImsCall::SetImsConfig(ImsConfigItem item, const std::string &value)

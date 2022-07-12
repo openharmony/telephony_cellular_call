@@ -158,13 +158,12 @@ int32_t ImsRilManager::GetDomainPreferenceMode(int32_t slotId, const AppExecFwk:
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilManager::SetLteImsSwitchStatus(int32_t slotId, bool active,
-                                             const AppExecFwk::InnerEvent::Pointer &response)
+int32_t ImsRilManager::SetImsSwitchStatus(int32_t slotId, bool active, const AppExecFwk::InnerEvent::Pointer &response)
 {
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsRilManager::GetLteImsSwitchStatus(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response)
+int32_t ImsRilManager::GetImsSwitchStatus(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response)
 {
     return TELEPHONY_SUCCESS;
 }

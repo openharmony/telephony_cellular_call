@@ -53,8 +53,8 @@ private:
     int32_t OnStopRtt(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetDomainPreferenceMode(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetDomainPreferenceMode(MessageParcel &data, MessageParcel &reply);
-    int32_t OnSetLteImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
-    int32_t OnGetLteImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetImsConfig(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsConfig(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetImsFeatureValue(MessageParcel &data, MessageParcel &reply);

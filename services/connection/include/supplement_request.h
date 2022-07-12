@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,8 @@
 #ifndef CELLULAR_CALL_SUPPLEMENT_REQUEST_H
 #define CELLULAR_CALL_SUPPLEMENT_REQUEST_H
 
-#include "cellular_call_handler.h"
-
 #include "base_request.h"
+#include "cellular_call_handler.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -36,13 +35,13 @@ public:
     int32_t SetClipRequest(int32_t slotId, int32_t action);
 
     /**
-     * @brief InquireClipRequest Inquire Clip Request
+     * @brief GetClipRequest Get Clip Request
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    int32_t InquireClipRequest(int32_t slotId);
+    int32_t GetClipRequest(int32_t slotId);
 
     /**
      * @brief SetClirRequest Set Clir Request
@@ -56,13 +55,13 @@ public:
     int32_t SetClirRequest(int32_t slotId, int32_t action);
 
     /**
-     * @brief InquireClirRequest Inquire Clir Request
+     * @brief GetClirRequest Get Clir Request
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    int32_t InquireClirRequest(int32_t slotId);
+    int32_t GetClirRequest(int32_t slotId);
 
     /**
      * @brief GetCallTransferRequest Get Call Transfer Request

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -339,21 +339,21 @@ public:
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
 
     /**
-     * Set Lte Ims Switch Status
+     * Set Ims Switch Status
      *
      * @param slotId
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active) override;
+    int32_t SetImsSwitchStatus(int32_t slotId, bool active) override;
 
     /**
-     * Get Lte Ims Switch Status
+     * Get Ims Switch Status
      *
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetLteImsSwitchStatus(int32_t slotId) override;
+    int32_t GetImsSwitchStatus(int32_t slotId) override;
 
     /**
      * Set Ims Config
@@ -402,23 +402,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetImsFeatureValue(int32_t slotId, FeatureType type) override;
-
-    /**
-     * Set Ims Switch Enhance Mode
-     *
-     * @param slotId
-     * @param value
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetImsSwitchEnhanceMode(int32_t slotId, bool value) override;
-
-    /**
-     * Get Ims Switch Enhance Mode
-     *
-     * @param slotId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t GetImsSwitchEnhanceMode(int32_t slotId) override;
 
     /**
      * CtrlCamera

@@ -35,51 +35,48 @@ public:
     int32_t HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t CombineConferenceResponse(const HRilRadioResponseInfo &info) override;
-    int32_t InviteToConferenceResponse(const HRilRadioResponseInfo &info) override;
-    int32_t KickOutFromConferenceResponse(const HRilRadioResponseInfo &info) override;
-    int32_t CallMediaModeResponse(const HRilRadioResponseInfo &info) override;
+    int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t KickOutFromConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t CallMediaModeResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t CallStateChangeReport(int32_t slotId) override;
-    int32_t GetImsCallsDataResponse(const HRilRadioResponseInfo &info) override;
+    int32_t GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
     int32_t LastCallFailReasonResponse(int32_t slotId, int32_t reason) override;
     int32_t SrvccStateReport(int32_t slotId, SrvccState srvccState) override;
     int32_t VtWfcReport(int32_t slotId, TransferState transferState) override;
-    int32_t CallRingBackResponse(const RingbackVoice &info) override;
+    int32_t CallRingBackReport(int32_t slotId, const RingbackVoice &info) override;
 
     /****************** dtmf、rtt ******************/
-    int32_t StartDtmfResponse(const HRilRadioResponseInfo &info) override;
+    int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t StopDtmfResponse(const HRilRadioResponseInfo &info) override;
-    int32_t StartRttResponse(const HRilRadioResponseInfo &info) override;
-    int32_t StopRttResponse(const HRilRadioResponseInfo &info) override;
+    int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t StartRttResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t StopRttResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
 
     /****************** ims config ******************/
     int32_t SetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetPreModeResponse(const HRilRadioResponseInfo &info) override;
+    int32_t GetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t GetPreModeResponse(int32_t slotId, int32_t mode) override;
-    int32_t SetImsSwitchResponse(const HRilRadioResponseInfo &info) override;
-    int32_t GetImsSwitchResponse(const HRilRadioResponseInfo &info) override;
+    int32_t SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) override;
-    int32_t SetImsConfigResponse(const HRilRadioResponseInfo &info) override;
-    int32_t GetImsConfigResponse(int32_t value) override;
-    int32_t GetImsConfigResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetImsFeatureValueResponse(const HRilRadioResponseInfo &info) override;
-    int32_t GetImsFeatureValueResponse(int32_t value) override;
-    int32_t GetImsFeatureValueResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info) override;
-    int32_t GetImsSwitchEnhanceModeResponse(int32_t value) override;
-    int32_t GetImsSwitchEnhanceModeResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetMuteResponse(const MuteControlResponse &response) override;
-    int32_t GetMuteResponse(const MuteControlResponse &response) override;
+    int32_t SetImsConfigResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetImsConfigResponse(int32_t slotId, int32_t value) override;
+    int32_t GetImsConfigResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetImsFeatureValueResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetImsFeatureValueResponse(int32_t slotId, int32_t value) override;
+    int32_t GetImsFeatureValueResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetMuteResponse(int32_t slotId, const MuteControlResponse &response) override;
+    int32_t GetMuteResponse(int32_t slotId, const MuteControlResponse &response) override;
 
     /****************** video settings ******************/
-    int32_t CtrlCameraResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetPreviewWindowResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetDisplayWindowResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetCameraZoomResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetPauseImageResponse(const HRilRadioResponseInfo &info) override;
-    int32_t SetDeviceDirectionResponse(const HRilRadioResponseInfo &info) override;
+    int32_t CtrlCameraResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetPreviewWindowResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetDisplayWindowResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetCameraZoomResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetPauseImageResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetDeviceDirectionResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
 
     /****************** supplement ******************/
     int32_t SetClipResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;

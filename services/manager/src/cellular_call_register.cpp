@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -174,24 +174,24 @@ void CellularCallRegister::ReportSetClirResult(int32_t result)
     callManagerCallBack_->UpdateSetCallClirResult(result);
 }
 
-void CellularCallRegister::ReportGetLteImsSwitchResult(const LteImsSwitchResponse &lteImsSwitch)
+void CellularCallRegister::ReportGetImsSwitchResult(const ImsSwitchResponse &imsSwitch)
 {
     if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportGetLteImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("ReportGetImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->GetVoLteStatusResult(lteImsSwitch);
+    callManagerCallBack_->GetImsSwitchStatusResult(imsSwitch);
 }
 
-void CellularCallRegister::ReportSetLteImsSwitchResult(int32_t result)
+void CellularCallRegister::ReportSetImsSwitchResult(int32_t result)
 {
     if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportSetLteImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
+        TELEPHONY_LOGE("ReportSetImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    LteImsSwitchResponse response;
+    ImsSwitchResponse response;
     response.result = result;
-    callManagerCallBack_->SetVoLteStatusResult(response);
+    callManagerCallBack_->SetImsSwitchStatusResult(response);
 }
 
 void CellularCallRegister::ReportGetImsConfigResult(const GetImsConfigResponse &response)

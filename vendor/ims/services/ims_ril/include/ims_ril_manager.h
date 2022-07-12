@@ -64,8 +64,8 @@ public:
     int32_t StopRtt(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response);
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode, const AppExecFwk::InnerEvent::Pointer &response);
     int32_t GetDomainPreferenceMode(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response);
-    int32_t SetLteImsSwitchStatus(int32_t slotId, bool active, const AppExecFwk::InnerEvent::Pointer &response);
-    int32_t GetLteImsSwitchStatus(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response);
+    int32_t SetImsSwitchStatus(int32_t slotId, bool active, const AppExecFwk::InnerEvent::Pointer &response);
+    int32_t GetImsSwitchStatus(int32_t slotId, const AppExecFwk::InnerEvent::Pointer &response);
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value,
         const AppExecFwk::InnerEvent::Pointer &response);
     int32_t SetImsConfig(ImsConfigItem item, int32_t value, const AppExecFwk::InnerEvent::Pointer &response);

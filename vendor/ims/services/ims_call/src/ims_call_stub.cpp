@@ -50,8 +50,8 @@ void ImsCallStub::InitFuncMap()
 
     memberFuncMap_[IMS_SET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnSetDomainPreferenceMode;
     memberFuncMap_[IMS_GET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnGetDomainPreferenceMode;
-    memberFuncMap_[IMS_SET_LTE_SWITCH_STATUS] = &ImsCallStub::OnSetLteImsSwitchStatus;
-    memberFuncMap_[IMS_GET_LTE_SWITCH_STATUS] = &ImsCallStub::OnGetLteImsSwitchStatus;
+    memberFuncMap_[IMS_SET_SWITCH_STATUS] = &ImsCallStub::OnSetImsSwitchStatus;
+    memberFuncMap_[IMS_GET_SWITCH_STATUS] = &ImsCallStub::OnGetImsSwitchStatus;
     memberFuncMap_[IMS_SET_IMS_CONFIG_STRING] = &ImsCallStub::OnSetImsConfig;
     memberFuncMap_[IMS_SET_IMS_CONFIG_INT] = &ImsCallStub::OnSetImsConfig;
     memberFuncMap_[IMS_GET_IMS_CONFIG] = &ImsCallStub::OnGetImsConfig;
@@ -348,20 +348,20 @@ int32_t ImsCallStub::OnGetDomainPreferenceMode(MessageParcel &data, MessageParce
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallStub::OnSetLteImsSwitchStatus(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallStub::OnSetImsSwitchStatus(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
     int32_t active = data.ReadInt32();
 
-    reply.WriteInt32(SetLteImsSwitchStatus(slotId, active));
+    reply.WriteInt32(SetImsSwitchStatus(slotId, active));
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallStub::OnGetLteImsSwitchStatus(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallStub::OnGetImsSwitchStatus(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
 
-    reply.WriteInt32(GetLteImsSwitchStatus(slotId));
+    reply.WriteInt32(GetImsSwitchStatus(slotId));
     return TELEPHONY_SUCCESS;
 }
 
