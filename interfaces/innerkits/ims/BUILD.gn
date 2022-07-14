@@ -53,8 +53,8 @@ ohos_shared_library("tel_ims_call_callback_proxy") {
   }
 
   defines += [
-    "TELEPHONY_LOG_TAG = \"CellularCall\"",
-    "LOG_DOMAIN = 0xD002B01",
+    "TELEPHONY_LOG_TAG = \"ImsCallbackProxy\"",
+    "LOG_DOMAIN = 0xD001F02",
   ]
 
   part_name = "cellular_call"
