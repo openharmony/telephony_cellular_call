@@ -42,7 +42,7 @@ ohos_unittest("tel_vendor_ims_test") {
     "drivers_interface_ril:hril_innerkits",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
   defines += [
     "TELEPHONY_LOG_TAG = \"VendorImsTest\"",
