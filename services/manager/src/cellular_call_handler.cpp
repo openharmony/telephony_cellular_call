@@ -788,7 +788,6 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
 
 void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    int offset = 1;
     TELEPHONY_LOGI("CellularCallHandler::UpdateSrvccStateReport entry");
     if (event == nullptr) {
         TELEPHONY_LOGE("UpdateSrvccStateReport return, event is nullptr");
@@ -800,7 +799,7 @@ void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::P
         return;
     }
     TELEPHONY_LOGI("srvccStatus %{public}d", srvccStatus->status);
-    srvccState_ = srvccStatus->status - offset;
+    srvccState_ = srvccStatus->status;
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ != nullptr) {
         TELEPHONY_LOGE("UpdateSrvccState");
@@ -858,6 +857,9 @@ void CellularCallHandler::SrvccStateCompleted()
     auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO);
     CallStatusInfoResponse(event);
     srvccState_ = SrvccState::SRVCC_NONE;
+    if (callType_ == CallType::TYPE_IMS) {
+        callType_ = CallType::TYPE_CS;
+    }
 }
 
 void CellularCallHandler::GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event)
