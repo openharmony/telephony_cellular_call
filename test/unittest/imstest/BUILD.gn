@@ -37,11 +37,10 @@ ohos_unittest("tel_cellular_call_ims_test") {
     "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
-    "//utils/native/base:utils",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "c_utils:utils",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",

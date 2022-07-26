@@ -34,6 +34,7 @@ ohos_shared_library("tel_ims_call_callback_proxy") {
   deps = [ "$CELLULAR_CALL_SOURCE_DIR:tel_cellular_call" ]
 
   external_deps = [
+    "c_utils:utils",
     "call_manager:tel_call_manager_api",
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
@@ -43,7 +44,6 @@ ohos_shared_library("tel_ims_call_callback_proxy") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "utils_base:utils",
   ]
 
   if (is_standard_system) {
