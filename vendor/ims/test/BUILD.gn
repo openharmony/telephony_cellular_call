@@ -32,12 +32,10 @@ ohos_unittest("tel_vendor_ims_test") {
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
-  deps = [
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//third_party/googletest:gtest_main" ]
 
   external_deps = [
+    "c_utils:utils",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "ipc:ipc_core",
