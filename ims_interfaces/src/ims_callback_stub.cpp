@@ -1141,7 +1141,7 @@ int32_t ImsCallbackStub::UpdateImsCallsDataResponse(int32_t slotId, const CallIn
         TELEPHONY_LOGE("ImsCallbackStub::UpdateImsCallsDataResponse, callInfoList == nullptr !!!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_IMS_CALL_LIST, callInfoList);
+    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_IMS_GET_CALL_DATA, callInfoList);
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UpdateImsCallsDataResponse return, GetInstance is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
