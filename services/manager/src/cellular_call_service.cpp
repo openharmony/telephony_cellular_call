@@ -138,7 +138,6 @@ void CellularCallService::HandlerResetUnRegister()
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
@@ -170,8 +169,6 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
@@ -919,11 +916,13 @@ bool CellularCallService::IsNeedIms(int32_t slotId) const
     ModuleServiceUtils moduleUtils;
     CellularCallConfig config;
     bool imsRegState = moduleUtils.GetImsRegistrationState(slotId);
+    bool imsServiceConnected = moduleUtils.NeedCallImsService();
     int32_t preferenceMode = config.GetPreferenceMode(slotId);
     bool imsSwitchStatus = config.GetSwitchStatus(slotId);
-    TELEPHONY_LOGI("IsNeedIms state:%{public}d, mode:%{public}d, status:%{public}d", imsRegState, preferenceMode,
-        imsSwitchStatus);
-    if (imsRegState && preferenceMode != DomainPreferenceMode::CS_VOICE_ONLY && imsSwitchStatus) {
+    TELEPHONY_LOGI("IsNeedIms state:%{public}d, mode:%{public}d, status:%{public}d, connected:%{public}d", imsRegState,
+        preferenceMode, imsSwitchStatus, imsServiceConnected);
+    if (imsRegState && preferenceMode != DomainPreferenceMode::CS_VOICE_ONLY && imsSwitchStatus &&
+        imsServiceConnected) {
         return true;
     }
     return false;

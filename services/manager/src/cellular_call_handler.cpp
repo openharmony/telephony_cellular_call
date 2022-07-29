@@ -89,7 +89,6 @@ void CellularCallHandler::InitSupplementFuncMap()
 void CellularCallHandler::InitActiveReportFuncMap()
 {
     requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &CellularCallHandler::CallStatusInfoResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_IMS_SERVICE_STATUS] = &CellularCallHandler::CallImsServiceStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[RadioEvent::RADIO_NOT_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
@@ -629,11 +628,6 @@ void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::P
     } else if (callType_ == CallType::TYPE_IMS) {
         GetImsCallData(event);
     }
-}
-
-void CellularCallHandler::CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
-{
-    TELEPHONY_LOGI("CellularCallHandler::CallImsServiceStatusResponse entry");
 }
 
 void CellularCallHandler::SetCallType(CallType callType)

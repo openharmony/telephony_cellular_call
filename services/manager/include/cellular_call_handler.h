@@ -140,13 +140,6 @@ public:
     void ReportEccChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallImsServiceStatusResponse
-     *
-     * @param code process
-     */
-    void CallImsServiceStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
      * SetDomainPreferenceModeResponse
      *
      * @param code process

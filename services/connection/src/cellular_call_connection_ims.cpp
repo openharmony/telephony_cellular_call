@@ -25,28 +25,24 @@ namespace OHOS {
 namespace Telephony {
 int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfoStruct &dialRequest)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
-        ImsCallInfo callInfo;
-        if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-            TELEPHONY_LOGE("return, memset_s error.");
-            return TELEPHONY_ERR_MEMSET_FAIL;
-        }
-        size_t cpyLen = strlen(dialRequest.phoneNum.c_str()) + 1;
-        if (strcpy_s(callInfo.phoneNum, cpyLen, dialRequest.phoneNum.c_str()) != EOK) {
-            TELEPHONY_LOGE("return, strcpy_s fail.");
-            return TELEPHONY_ERR_STRCPY_FAIL;
-        }
-        callInfo.videoState = dialRequest.videoState;
-        callInfo.slotId = slotId;
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->Dial(callInfo, dialRequest.clirMode);
+    TELEPHONY_LOGI("call ims service");
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        TELEPHONY_LOGE("return, memset_s error.");
+        return TELEPHONY_ERR_MEMSET_FAIL;
     }
-    TELEPHONY_LOGE("ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
+    size_t cpyLen = strlen(dialRequest.phoneNum.c_str()) + 1;
+    if (strcpy_s(callInfo.phoneNum, cpyLen, dialRequest.phoneNum.c_str()) != EOK) {
+        TELEPHONY_LOGE("return, strcpy_s fail.");
+        return TELEPHONY_ERR_STRCPY_FAIL;
+    }
+    callInfo.videoState = dialRequest.videoState;
+    callInfo.slotId = slotId;
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->Dial(callInfo, dialRequest.clirMode);
 }
 
 int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::string &phoneNum, int32_t index)
