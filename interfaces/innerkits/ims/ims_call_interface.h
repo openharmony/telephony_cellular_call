@@ -16,10 +16,12 @@
 #ifndef TELEPHONY_IMS_CALL_INTERFACE_H
 #define TELEPHONY_IMS_CALL_INTERFACE_H
 
-#include "iremote_broker.h"
-#include "ims_call_types.h"
 #include "cellular_call_data_struct.h"
 #include "ims_call_callback_interface.h"
+#include "ims_call_types.h"
+#include "ims_feature.h"
+#include "iremote_broker.h"
+
 
 namespace OHOS {
 namespace Telephony {
@@ -62,6 +64,7 @@ public:
         IMS_SET_MUTE,
         IMS_GET_MUTE,
         IMS_SET_IMS_REG_ERROR_REPORT,
+        IMS_UPDATE_CAPABILITY,
 
         /****************** video settings ******************/
         IMS_CTRL_CAMERA = 5300,
@@ -322,10 +325,11 @@ public:
     /**
      * IMS GetImsFeatureValue interface
      *
-     * @param FeatureType
+     * @param FeatureType Indicate which feature type to query.
+     * @param value Indicate the return value of the query feature type.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t GetImsFeatureValue(FeatureType type) = 0;
+    virtual int32_t GetImsFeatureValue(FeatureType type, int32_t &value) = 0;
 
     /**
      * IMS SetMute interface
@@ -558,6 +562,16 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback) = 0;
+
+    /**
+     * Update Ims Capabilities
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param imsCapabilityList Indicates the related ims capability
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallInterface");

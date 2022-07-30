@@ -17,8 +17,8 @@
 #define TELEPHONY_IMS_CALL_PROXY_H
 
 #include "ims_call_interface.h"
+#include "ims_feature.h"
 #include "iremote_proxy.h"
-
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -55,7 +55,7 @@ public:
     int32_t SetImsConfig(ImsConfigItem item, int32_t value) override;
     int32_t GetImsConfig(ImsConfigItem item) override;
     int32_t SetImsFeatureValue(FeatureType type, int32_t value) override;
-    int32_t GetImsFeatureValue(FeatureType type) override;
+    int32_t GetImsFeatureValue(FeatureType type, int32_t &value) override;
     int32_t SetMute(int32_t slotId, int32_t mute) override;
     int32_t GetMute(int32_t slotId) override;
 
@@ -83,6 +83,7 @@ public:
     int32_t GetColp(int32_t slotId) override;
 
     int32_t RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback) override;
+    int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) override;
 
 private:
     static inline BrokerDelegator<ImsCallProxy> delegator_;
