@@ -461,7 +461,10 @@ int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
         TELEPHONY_LOGE("SetCallWaiting return, network type is not supported!");
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.SetCallWaitingRequest(slotId, activate, ServiceClassType::VOICE);
+    int32_t classType = ServiceClassType::VOICE;
+    CellularCallConfig config;
+    classType = config.GetCallWaitingServiceClassConfig(slotId);
+    return supplementRequest_.SetCallWaitingRequest(slotId, activate, classType);
 }
 
 int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)

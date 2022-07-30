@@ -16,9 +16,10 @@
 #ifndef CELLULAR_CALL_CONFIG_REQUEST_H
 #define CELLULAR_CALL_CONFIG_REQUEST_H
 
-#include "telephony_log_wrapper.h"
-#include "module_service_utils.h"
 #include "base_request.h"
+#include "ims_feature.h"
+#include "module_service_utils.h"
+#include "telephony_log_wrapper.h"
 #include "telephony_types.h"
 
 namespace OHOS {
@@ -97,10 +98,11 @@ public:
     /**
      * Get Ims Feature Value Request
      *
-     * @param FeatureType
+     * @param FeatureType Indicate which feature type to query.
+     * @param value Indicate the return value of the query feature type.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetImsFeatureValueRequest(FeatureType type);
+    int32_t GetImsFeatureValueRequest(FeatureType type, int32_t &value);
 
     /**
      * Ctrl Camera Request
@@ -193,6 +195,16 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall>  &eccVec);
+
+    /**
+     * Update Ims Capabilities
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param imsCapabilityList Indicates the related ims capability
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList);
 
 private:
     ModuleServiceUtils moduleUtils_;

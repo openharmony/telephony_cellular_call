@@ -396,13 +396,13 @@ int32_t ImsCallClient::SetImsFeatureValue(FeatureType type, int32_t value)
     return imsCallProxy_->SetImsFeatureValue(type, value);
 }
 
-int32_t ImsCallClient::GetImsFeatureValue(FeatureType type)
+int32_t ImsCallClient::GetImsFeatureValue(FeatureType type, int32_t &value)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->GetImsFeatureValue(type);
+    return imsCallProxy_->GetImsFeatureValue(type, value);
 }
 
 int32_t ImsCallClient::SetMute(int32_t slotId, int32_t mute)
@@ -668,6 +668,15 @@ void ImsCallClient::SystemAbilityListener::OnRemoveSystemAbility(int32_t systemA
     }
 
     imsCallClient->Clean();
+}
+
+int32_t ImsCallClient::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 } // namespace Telephony
 } // namespace OHOS

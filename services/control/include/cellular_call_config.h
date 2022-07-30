@@ -16,15 +16,23 @@
 #ifndef CELLULAR_CALL_CONFIG_H
 #define CELLULAR_CALL_CONFIG_H
 
-#include <mutex>
 #include <map>
+#include <mutex>
+
 #include "config_request.h"
+#include "sim_state_type.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
 class CellularCallConfig {
 public:
+    /**
+     * CellularCallConfig constructor
+     *
+     */
+    CellularCallConfig();
+
     /**
      * Set Domain Preference Mode
      *
@@ -279,6 +287,13 @@ public:
     void HandleSimRecordsLoaded(int32_t slotId);
 
     /**
+     * Handle when operator config change.
+     *
+     * @param slotId
+     */
+    void HandleOperatorConfigChanged(int32_t slotId);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId
@@ -290,14 +305,158 @@ public:
 
     std::string GetMcc(int32_t slotId_);
 
+    /**
+     * Change bool value to Ims switch value.
+     *
+     * @param value
+     * @return std::int32_t
+     */
+    std::int32_t BooleanToImsSwitchValue(bool value);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_IMS_SWITCH_ON_BY_DEFAULT_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetImsSwitchOnByDefaultConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_HIDE_IMS_SWITCH_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GethideImsSwitchConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_VOLTE_SUPPORTED_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetvolteSupportedConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY}
+     *
+     * @param slotId
+     * @return std::vector<int32_t>
+     */
+    std::vector<int32_t> GetNrModeSupportedListConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_VOLTE_PROVISIONING_SUPPORTED_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetVolteProvisioningSupportedConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_SS_OVER_UT_SUPPORTED_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetSsOverUtSupportedConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_IMS_GBA_REQUIRED_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetImsGbaRequiredConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_UT_PROVISIONING_SUPPORTED_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetUtProvisioningSupportedConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_IMS_PREFER_FOR_EMERGENCY_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetImsPreferForEmergencyConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_CALL_WAITING_SERVICE_CLASS_INT}
+     *
+     * @param slotId
+     * @return std::int32_t
+     */
+    std::int32_t GetCallWaitingServiceClassConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_IMS_CALL_DISCONNECT_REASONINFO_MAPPING_STRING_ARRAY}
+     *
+     * @param slotId
+     * @return std::vector<std::string>
+     */
+    std::vector<std::string> GetImsCallDisconnectResoninfoMappingConfig(int32_t slotId);
+
+    /**
+     * The IF used to get the value of operator config
+     * {@link OperatorConfig#KEY_FORCE_VOLTE_SWITCH_ON_BOOL}
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool GetForceVolteSwitchOnConfig(int32_t slotId);
+
+    /**
+     * Is Valid Slot Id
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool IsValidSlotId(int32_t slotId);
+
 private:
+    static void InitDefaultOperatorConfig();
     EmergencyCall BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from);
     EmergencyCall CreateWithSimEmergencyInfo(const std::string &number);
     void MergeEccCallList(int32_t slotId_);
     bool IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId);
     bool IsEmergencyCallExit(const EmergencyCall &from, const EmergencyCall &to);
+    int32_t ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc);
+    void ParseBoolOperatorConfigs(
+        int32_t slotId, std::map<int32_t, bool> &config, OperatorConfig &poc, std::string configName);
+    void ResetImsSwitch(int32_t slotId);
+    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
+    void UpdateImsUtCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
+    void UpdateImsVoiceCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
+    bool IsGbaValid(int32_t slotId);
+    bool IsVolteProvisioned(int32_t slotId);
+    bool IsVonrSupported(int32_t slotId, bool isGbaValid);
+    bool IsUtProvisioned(int32_t slotId);
+    bool IsNeedTurnOnIms(const ImsCapabilityList &imsCapabilityList);
+    bool IsSimChanged(int32_t slotId, std::string iccid);
+    bool ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active);
+    int32_t SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue);
+
+private:
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
+    const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
+    const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
     static std::vector<EmergencyCall> eccList3gppHasSim_;
     static std::vector<EmergencyCall> eccList3gppNoSim_;
@@ -307,17 +466,27 @@ private:
     static int32_t SIM_ABSENT;
     std::mutex mutex_;
     const int MCC_LEN = 3;
-    const std::string IMS_SWITCH_VALUE_ENABLED = "1";
-    const std::string IMS_SWITCH_VALUE_DISABLED = "0";
+    const int32_t IMS_SWITCH_STATUS_OFF = 0;
+    const int32_t IMS_SWITCH_STATUS_ON = 1;
+    const int32_t SAVE_IMS_SWITCH_FAILED = 0;
+    const int32_t SAVE_IMS_SWITCH_SUCCESS_CHANGED = 1;
+    const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
+    const int32_t INVALID_SIM_ID = 0;
     ConfigRequest configRequest_;
-
-    /**
-     * BooleanToPropertyString
-     *
-     * @param value
-     * @return std::string
-     */
-    std::string BooleanToPropertyString(bool value);
+    const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
+    static std::map<int32_t, bool> imsSwitchOnByDefault_;
+    static std::map<int32_t, bool> hideImsSwitch_;
+    static std::map<int32_t, bool> volteSupported_;
+    static std::map<int32_t, std::vector<int32_t>> nrModeSupportedList_;
+    static std::map<int32_t, bool> volteProvisioningSupported_;
+    static std::map<int32_t, bool> ssOverUtSupported_;
+    static std::map<int32_t, bool> imsGbaRequired_;
+    static std::map<int32_t, bool> utProvisioningSupported_;
+    static std::map<int32_t, bool> imsPreferForEmergency_;
+    static std::map<int32_t, int32_t> callWaitingServiceClass_;
+    static std::map<int32_t, std::vector<std::string>> imsCallDisconnectResoninfoMapping_;
+    static std::map<int32_t, bool> forceVolteSwitchOn_;
+    static bool isOperatorConfigInit_;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -15,17 +15,18 @@
 
 #include "cellular_call_handler.h"
 
-#include "hril_call_parcel.h"
-
 #include "cellular_call_config.h"
 #include "cellular_call_service.h"
-#include "radio_event.h"
+#include "hril_call_parcel.h"
 #include "ims_call_client.h"
+#include "operator_config_types.h"
+#include "radio_event.h"
 
 namespace OHOS {
 namespace Telephony {
-CellularCallHandler::CellularCallHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner)
-    : AppExecFwk::EventHandler(runner)
+CellularCallHandler::CellularCallHandler(
+    const std::shared_ptr<AppExecFwk::EventRunner> &runner, const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
+    : AppExecFwk::EventHandler(runner), CommonEventSubscriber(subscriberInfo)
 {
     InitBasicFuncMap();
     InitConfigFuncMap();
@@ -69,6 +70,7 @@ void CellularCallHandler::InitConfigFuncMap()
     requestFuncMap_[RadioEvent::RADIO_GET_IMS_SWITCH_STATUS] = &CellularCallHandler::GetImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] = &CellularCallHandler::SetEmergencyCallListResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
+    requestFuncMap_[OPERATOR_CONFIG_CHANGED_ID] = &CellularCallHandler::HandleOperatorConfigChanged;
 }
 
 void CellularCallHandler::InitSupplementFuncMap()
@@ -126,6 +128,20 @@ void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
         }
     }
     TELEPHONY_LOGI("CellularCallHandler::ProcessEvent, default case, need check.");
+}
+
+void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
+{
+    EventFwk::Want want = data.GetWant();
+    std::string action = want.GetAction();
+    TELEPHONY_LOGI("Slot%{public}d: action=%{public}s code=%{public}d", slotId_, action.c_str(), data.GetCode());
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED) {
+        int32_t slotId = want.GetIntParam(BROADCAST_ARG_SLOT_ID, DEFAULT_SIM_SLOT_ID);
+        if (slotId_ != slotId) {
+            return;
+        }
+        this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, delayTime_, Priority::HIGH);
+    }
 }
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1058,6 +1074,17 @@ void CellularCallHandler::SendUnlockPinPukResponse(const AppExecFwk::InnerEvent:
     }
     CellularCallSupplement supplement;
     supplement.EventSetPinPuk(*result);
+}
+
+void CellularCallHandler::HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("event is nullptr");
+        return;
+    }
+
+    CellularCallConfig config;
+    config.HandleOperatorConfigChanged(slotId_);
 }
 }  // namespace Telephony
 }  // namespace OHOS

@@ -25,6 +25,7 @@
 #include "event_runner.h"
 #include "iremote_broker.h"
 #include "system_ability.h"
+#include "system_ability_status_change_stub.h"
 
 #include "cellular_call_handler.h"
 #include "cellular_call_stub.h"
@@ -568,6 +569,14 @@ private:
      */
     bool IsValidSlotId(int32_t slotId) const;
 
+    /**
+     * Check whether IMS should be used firstly for emergency call
+     *
+     * @param CellularCallInfo
+     * @return bool
+     */
+    bool UseImsForEmergency(const CellularCallInfo &callInfo);
+
 private:
     const uint32_t CONNECT_MAX_TRY_COUNT = 20;
     const uint32_t CONNECT_SERVICE_WAIT_TIME = 2000; // ms
@@ -581,6 +590,19 @@ private:
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
+    sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
+
+private:
+    class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {
+    public:
+        explicit SystemAbilityStatusChangeListener(std::shared_ptr<CellularCallHandler> &cellularCallHandler);
+        ~SystemAbilityStatusChangeListener() = default;
+        virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
+        virtual void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
+
+    private:
+        std::shared_ptr<CellularCallHandler> cellularCallHandler_ = nullptr;
+    };
 };
 } // namespace Telephony
 } // namespace OHOS

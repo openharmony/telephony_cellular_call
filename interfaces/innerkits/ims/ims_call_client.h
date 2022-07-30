@@ -17,11 +17,11 @@
 #define TELEPHONY_IMS_CALL_CLIENT_H
 
 #include "event_runner.h"
-#include "singleton.h"
-#include "rwlock.h"
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
 #include "iremote_stub.h"
+#include "rwlock.h"
+#include "singleton.h"
 #include "system_ability_status_change_stub.h"
 
 namespace OHOS {
@@ -91,7 +91,7 @@ public:
     int32_t SetImsConfig(ImsConfigItem item, int32_t value);
     int32_t GetImsConfig(ImsConfigItem item);
     int32_t SetImsFeatureValue(FeatureType type, int32_t value);
-    int32_t GetImsFeatureValue(FeatureType type);
+    int32_t GetImsFeatureValue(FeatureType type, int32_t &value);
     int32_t SetMute(int32_t slotId, int32_t mute);
     int32_t GetMute(int32_t slotId);
 
@@ -119,6 +119,7 @@ public:
     int32_t GetColr(int32_t slotId);
     int32_t SetColp(int32_t slotId, int32_t action);
     int32_t GetColp(int32_t slotId);
+    int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList);
 
 private:
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {

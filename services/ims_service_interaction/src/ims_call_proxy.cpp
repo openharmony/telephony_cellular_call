@@ -758,7 +758,7 @@ int32_t ImsCallProxy::SetImsFeatureValue(FeatureType type, int32_t value)
     return error;
 }
 
-int32_t ImsCallProxy::GetImsFeatureValue(FeatureType type)
+int32_t ImsCallProxy::GetImsFeatureValue(FeatureType type, int32_t &value)
 {
     MessageOption option;
     MessageParcel in;
@@ -778,9 +778,11 @@ int32_t ImsCallProxy::GetImsFeatureValue(FeatureType type)
     }
     int32_t error = remote->SendRequest(IMS_GET_IMS_FEATURE, in, out, option);
     if (error == ERR_NONE) {
-        return out.ReadInt32();
+        int32_t result = out.ReadInt32();
+        value = out.ReadInt32();
+        return result;
     }
-    return error;
+    return TELEPHONY_ERROR;
 }
 
 int32_t ImsCallProxy::SetMute(int32_t slotId, int32_t mute)
@@ -1461,6 +1463,35 @@ int32_t ImsCallProxy::RegisterImsCallCallback(const sptr<ImsCallCallbackInterfac
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     int32_t error = remote->SendRequest(IMS_CALL_REGISTER_CALLBACK, in, out, option);
+    if (error == ERR_NONE) {
+        return out.ReadInt32();
+    }
+    return error;
+}
+
+int32_t ImsCallProxy::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList)
+{
+    MessageOption option;
+    MessageParcel in;
+    MessageParcel out;
+    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
+        TELEPHONY_LOGE("write descriptor token fail!");
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("write slotId data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&imsCapabilityList, sizeof(ImsCapabilityList))) {
+        TELEPHONY_LOGE("write action data fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        TELEPHONY_LOGE("ImsCallProxy::UpdateImsCapabilities return, remote is nullptr!");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t error = remote->SendRequest(IMS_UPDATE_CAPABILITY, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }

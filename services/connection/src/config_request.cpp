@@ -151,18 +151,18 @@ int32_t ConfigRequest::SetImsFeatureValueRequest(FeatureType type, int32_t value
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type)
+int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type, int32_t &value)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetImsFeatureValueRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsFeatureValue(type);
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGE("ims vendor service does not exist.");
+        return TELEPHONY_ERROR;
     }
-    TELEPHONY_LOGI("GetImsFeatureValueRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    TELEPHONY_LOGI("call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsFeatureValue(type, value);
 }
 
 int32_t ConfigRequest::CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
@@ -315,6 +315,24 @@ int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<E
         slotId, RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST, eccVec, handle);
     TELEPHONY_LOGI("SetEmergencyCallListRequest end %{public}d", errorCode);
     return errorCode;
+}
+
+int32_t ConfigRequest::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList)
+{
+    if (!moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGE("ims vendor service does not exist.");
+        return TELEPHONY_ERROR;
+    }
+    TELEPHONY_LOGI("call ims service");
+    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    for (auto it : imsCapabilityList.imsCapabilities) {
+        TELEPHONY_LOGI("ImsCapabilityType:%{public}d imsRadioTech:%{public}d enable:%{public}d", it.imsCapabilityType,
+            it.imsRadioTech, it.enable);
+    }
+    return DelayedSingleton<ImsCallClient>::GetInstance()->UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 } // namespace Telephony
 } // namespace OHOS

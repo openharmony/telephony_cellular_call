@@ -21,21 +21,25 @@
 #include "cellular_call_config.h"
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"
+#include "common_event.h"
+#include "common_event_manager.h"
+#include "common_event_support.h"
 #include "cs_control.h"
 #include "ims_control.h"
 #include "cellular_call_register.h"
 
 namespace OHOS {
 namespace Telephony {
-class CellularCallHandler : public AppExecFwk::EventHandler {
+class CellularCallHandler : public AppExecFwk::EventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
      * CellularCallHandler constructor
      *
      * @param runner
-     * @param server
+     * @param subscriberInfo
      */
-    explicit CellularCallHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+    explicit CellularCallHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
+        const EventFwk::CommonEventSubscribeInfo &subscriberInfo);
 
     /**
      * ~CellularCallHandler destructor
@@ -47,7 +51,14 @@ public:
      *
      * @param CellularCallRadioResponseEvent, Process Radio Response Event .
      */
-    void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event);
+    void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
+
+    /**
+     * Receive Operator Config Change event and process.
+     *
+     * @param CommonEventData, Process Operator Config Change .
+     */
+    void OnReceiveEvent(const EventFwk::CommonEventData &data) override;
 
     /**
      * Set Slot Id
@@ -404,6 +415,13 @@ private:
      */
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
 
+    /**
+     * Handle when receive Operator Config Changed event.
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
+
 private:
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
     int64_t lastTime_ = 0L;
@@ -411,6 +429,7 @@ private:
     int64_t lastCallsDataFlag_ = 0L;
     const uint32_t GET_CS_CALL_DATA_ID = 10001;
     const uint32_t GET_IMS_CALL_DATA_ID = 10002;
+    const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
     int64_t delayTime_ = 100;
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;

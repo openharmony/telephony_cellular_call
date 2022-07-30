@@ -15,15 +15,17 @@
 
 #include "cellular_call_service.h"
 
-#include "string_ex.h"
-#include "system_ability_definition.h"
-
-#include "cellular_call_dump_helper.h"
 #include "cellular_call_callback.h"
+#include "cellular_call_dump_helper.h"
+#include "common_event.h"
+#include "common_event_manager.h"
+#include "common_event_support.h"
 #include "emergency_utils.h"
 #include "ims_call_client.h"
 #include "module_service_utils.h"
 #include "radio_event.h"
+#include "string_ex.h"
+#include "system_ability_definition.h"
 #include "telephony_permission.h"
 
 namespace OHOS {
@@ -39,6 +41,10 @@ CellularCallService::CellularCallService() : SystemAbility(TELEPHONY_CELLULAR_CA
 CellularCallService::~CellularCallService()
 {
     state_ = ServiceRunningState::STATE_STOPPED;
+    if (statusChangeListener_ != nullptr) {
+        statusChangeListener_.clear();
+        statusChangeListener_ = nullptr;
+    }
 }
 
 bool CellularCallService::Init()
@@ -117,11 +123,24 @@ void CellularCallService::CreateHandler()
 {
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+
     for (const auto &it : slotVector) {
-        auto handler = std::make_shared<CellularCallHandler>(eventLoop_);
+        auto handler = std::make_shared<CellularCallHandler>(eventLoop_, subscriberInfo);
+        TELEPHONY_LOGI("setSlotId:%{public}d", it);
         handler->SetSlotId(it);
         handler->RegisterImsCallCallbackHandler();
         handlerMap_.insert(std::make_pair(it, handler));
+        auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        statusChangeListener_ = new (std::nothrow) SystemAbilityStatusChangeListener(handler);
+        if (samgrProxy == nullptr || statusChangeListener_ == nullptr) {
+            TELEPHONY_LOGE("samgrProxy or statusChangeListener_ is nullptr");
+        } else {
+            int32_t ret = samgrProxy->SubscribeSystemAbility(COMMON_EVENT_SERVICE_ID, statusChangeListener_);
+            TELEPHONY_LOGI("SubscribeSystemAbility result:%{public}d", ret);
+        }
     }
 }
 
@@ -272,7 +291,8 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
     if (srvccState_ == SrvccState::STARTED) {
         return TELEPHONY_ERR_FAIL;
     }
-    if (IsNeedIms(callInfo.slotId)) {
+    bool useImsForEmergency = UseImsForEmergency(callInfo);
+    if (IsNeedIms(callInfo.slotId) || useImsForEmergency) {
         handler->SetCallType(CallType::TYPE_IMS);
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
@@ -992,6 +1012,53 @@ int32_t CellularCallService::GetMute(int32_t slotId)
 void CellularCallService::SetSrvccState(int32_t srvccState)
 {
     srvccState_ = srvccState;
+}
+
+bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo)
+{
+    ModuleServiceUtils moduleUtils;
+    CellularCallConfig config;
+    int32_t errorCode = TELEPHONY_ERROR;
+    if (IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, errorCode) && moduleUtils.NeedCallImsService() &&
+        config.GetImsPreferForEmergencyConfig(callInfo.slotId)) {
+        return true;
+    }
+    return false;
+}
+
+CellularCallService::SystemAbilityStatusChangeListener::SystemAbilityStatusChangeListener(
+    std::shared_ptr<CellularCallHandler> &cellularCallHandler)
+    : cellularCallHandler_(cellularCallHandler)
+{}
+
+void CellularCallService::SystemAbilityStatusChangeListener::OnAddSystemAbility(
+    int32_t systemAbilityId, const std::string &deviceId)
+{
+    if (systemAbilityId != COMMON_EVENT_SERVICE_ID) {
+        TELEPHONY_LOGE("systemAbilityId is not COMMON_EVENT_SERVICE_ID");
+        return;
+    }
+    if (cellularCallHandler_ == nullptr) {
+        TELEPHONY_LOGE("COMMON_EVENT_SERVICE_ID cellularCallHandler_ is nullptr");
+        return;
+    }
+    bool subscribeResult = EventFwk::CommonEventManager::SubscribeCommonEvent(cellularCallHandler_);
+    TELEPHONY_LOGI("subscribeResult = %{public}d", subscribeResult);
+}
+
+void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbility(
+    int32_t systemAbilityId, const std::string &deviceId)
+{
+    if (systemAbilityId != COMMON_EVENT_SERVICE_ID) {
+        TELEPHONY_LOGE("systemAbilityId is not COMMON_EVENT_SERVICE_ID");
+        return;
+    }
+    if (cellularCallHandler_ == nullptr) {
+        TELEPHONY_LOGE("cellularCallHandler_ is nullptr");
+        return;
+    }
+    bool unSubscribeResult = EventFwk::CommonEventManager::UnSubscribeCommonEvent(cellularCallHandler_);
+    TELEPHONY_LOGI("unSubscribeResult = %{public}d", unSubscribeResult);
 }
 }  // namespace Telephony
 }  // namespace OHOS
