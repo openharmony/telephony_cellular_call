@@ -635,6 +635,7 @@ void CellularCallSupplement::EventSendUssd(HRilRadioResponseInfo &responseInfo)
     }
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSendUssdResult(
         static_cast<int32_t>(responseInfo.error));
+    ReportMmiCodeMessage(static_cast<int32_t>(responseInfo.error), SEND_USSD_SUCCESS, INVALID_MMI_CODE);
 }
 
 void CellularCallSupplement::EventSsNotify(SsNoticeInfo &ssNoticeInfo)
