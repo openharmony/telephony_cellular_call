@@ -421,6 +421,7 @@ private:
     const std::string SET_CLIR_FAILED = "Set clir failed";
     const std::string MIS_MATCH_PIN_PUK = "PIN or PUK don\'t match";
     const std::string INVAILD_PIN_PUK = "Invaild PIN or PUK numbers";
+    const std::string SEND_USSD_SUCCESS = "Send ussd success";
     const int32_t USSD_MODE_NOTIFY = 0;
     const int32_t USSD_MODE_REQUEST = 1;
     const int32_t USSD_MODE_NW_RELEASE = 2;
