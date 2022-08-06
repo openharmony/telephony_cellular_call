@@ -43,7 +43,7 @@ ohos_shared_library("tel_ims_call_callback_proxy") {
     "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   if (is_standard_system) {
