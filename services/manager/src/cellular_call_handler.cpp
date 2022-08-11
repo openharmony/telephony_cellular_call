@@ -727,11 +727,11 @@ void CellularCallHandler::GetEmergencyCallListResponse(const AppExecFwk::InnerEv
     }
     auto eccList = event->GetSharedObject<EmergencyInfoList>();
     if (eccList == nullptr) {
-        TELEPHONY_LOGE("GetEmergencyCallListResponse return, eccList is nullptr");
+        TELEPHONY_LOGE("UpdateEmergencyCallFromRadio return, eccList is nullptr");
         return;
     }
     CellularCallConfig config;
-    config.GetEmergencyCallListResponse(slotId_, *eccList);
+    config.UpdateEmergencyCallFromRadio(slotId_, *eccList);
 }
 
 void CellularCallHandler::SetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -835,7 +835,18 @@ void CellularCallHandler::ReportEccChanged(const AppExecFwk::InnerEvent::Pointer
         return;
     }
     CellularCallConfig config;
-    config.GetEmergencyCallListResponse(slotId_, *emergencyInfoList);
+    auto calls = emergencyInfoList->calls;
+    if (calls.size() > 0 && calls.back().total != calls.size()) {
+        TELEPHONY_LOGE("ReportEccChanged data error");
+        auto endCall = calls.back();
+        if (endCall.index < endCall.total) {
+            return;
+        }
+        TELEPHONY_LOGI("ReportEccChanged try query");
+        config.GetEmergencyCallList(slotId_);
+        return;
+    }
+    config.UpdateEmergencyCallFromRadio(slotId_, *emergencyInfoList);
 }
 
 void CellularCallHandler::SrvccStateCompleted()

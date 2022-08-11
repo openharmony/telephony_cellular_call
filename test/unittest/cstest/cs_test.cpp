@@ -18,7 +18,9 @@
 #include "call_manager_errors.h"
 #include "core_service_client.h"
 #include "iservice_registry.h"
+#include "operator_config_types.h"
 #include "securec.h"
+#include "sim_state_type.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -716,6 +718,33 @@ HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest 
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "975", errorCode), successCode);
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "783", errorCode), successCode);
     EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "350", errorCode), successCode);
+}
+
+HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
+        return;
+    }
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    if (remote == nullptr) {
+        std::cout << "CellularCallService Remote service not exists.\n";
+        return;
+    }
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    int32_t slotId = 0;
+    if (!DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId)) {
+        return;
+    }
+    OperatorConfig opc;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(slotId, opc);
+    if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
+        for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
+            int32_t errorCode = 0;
+            telephonyService->IsEmergencyPhoneNumber(slotId, number, errorCode);
+        }
+    }
 }
 } // namespace Telephony
 } // namespace OHOS
