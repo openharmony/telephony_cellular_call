@@ -110,8 +110,8 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
      *      0 – Mobility Management for IMS Voice Termination disabled.
      *      1 – Mobility Management for IMS Voice Termination enabled.
      */
-    if (active && !IsVolteProvisioned(slotId)) {
-        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled.");
+    if (!volteSupported_[slotId] || (active && !IsVolteProvisioned(slotId))) {
+        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled or volte is not supported.");
         return TELEPHONY_ERROR;
     }
     int32_t simId = CoreManagerInner::GetInstance().GetSimId(slotId);
@@ -180,21 +180,6 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry");
     int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
-
-    int32_t imsSwitchStatus;
-    int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
-    if (ret != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("get ims switch failed");
-        return;
-    }
-    TELEPHONY_LOGI("imsSwitchStatus : %{public}d", imsSwitchStatus);
-    if (simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
-        if (imsSwitchStatus == IMS_SWITCH_VALUE_ENABLED) {
-            configRequest_.SetImsSwitchStatusRequest(slotId, true);
-        } else {
-            configRequest_.SetImsSwitchStatusRequest(slotId, false);
-        }
-    }
 }
 
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
@@ -239,7 +224,7 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
         nrModeSupportedList_[slotId] = poc.intArrayValue[KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY];
     }
     if (poc.intValue.count(KEY_CALL_WAITING_SERVICE_CLASS_INT) > 0) {
-        callWaitingServiceClass_[slotId] = poc.boolValue[KEY_CALL_WAITING_SERVICE_CLASS_INT];
+        callWaitingServiceClass_[slotId] = poc.intValue[KEY_CALL_WAITING_SERVICE_CLASS_INT];
     }
     if (poc.stringArrayValue.count(KEY_IMS_CALL_DISCONNECT_REASONINFO_MAPPING_STRING_ARRAY) > 0) {
         imsCallDisconnectResoninfoMapping_[slotId] =
