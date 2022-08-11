@@ -20,6 +20,7 @@
 #include <mutex>
 
 #include "config_request.h"
+#include "operator_config_types.h"
 #include "sim_state_type.h"
 #include "telephony_log_wrapper.h"
 
@@ -242,7 +243,7 @@ public:
      * @param eccVec
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec);
+    int32_t SetEmergencyCallList(int32_t slotId, const std::vector<EmergencyCall> &eccVec);
 
     /**
      * SetTempMode
@@ -262,7 +263,7 @@ public:
      * @param slotId
      * @param EmergencyInfoList
      */
-    void GetEmergencyCallListResponse(int32_t slotId, const EmergencyInfoList &eccList);
+    void UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList);
 
     /**
      * HandleSimStateChanged
@@ -431,11 +432,12 @@ public:
 
 private:
     static void InitDefaultOperatorConfig();
+    void UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc);
+    EmergencyCall BuildDefaultEmergencyCall(const std::string &number);
     EmergencyCall BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from);
-    EmergencyCall CreateWithSimEmergencyInfo(const std::string &number);
+    void UniqueEccCallList(int32_t slotId_);
     void MergeEccCallList(int32_t slotId_);
     bool IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId);
-    bool IsEmergencyCallExit(const EmergencyCall &from, const EmergencyCall &to);
     int32_t ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc);
     void ParseBoolOperatorConfigs(
         int32_t slotId, std::map<int32_t, bool> &config, OperatorConfig &poc, std::string configName);
@@ -458,6 +460,7 @@ private:
     const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
     const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
+    static std::map<int32_t, std::vector<EmergencyCall>> eccListConfigMap_;
     static std::vector<EmergencyCall> eccList3gppHasSim_;
     static std::vector<EmergencyCall> eccList3gppNoSim_;
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;

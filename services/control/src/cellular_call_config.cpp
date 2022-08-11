@@ -20,7 +20,6 @@
 #include "cellular_call_service.h"
 #include "core_manager_inner.h"
 #include "module_service_utils.h"
-#include "operator_config_types.h"
 #include "parameters.h"
 #include "string_ex.h"
 #include "telephony_types.h"
@@ -44,6 +43,7 @@ std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnec
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::mutex mutex_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
+std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListConfigMap_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppHasSim_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::allEccList_;
@@ -200,13 +200,13 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 {
     TELEPHONY_LOGI("entry");
-
     OperatorConfig operatorConfig;
     bool ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
     if (!ret) {
         TELEPHONY_LOGE("failed due to get operator config");
         return;
     }
+    UpdateEccWhenOperatorConfigChange(slotId, operatorConfig);
     int32_t result = ParseAndCacheOperatorConfigs(slotId, operatorConfig);
     if (result != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("failed due to parse operator config");
@@ -365,6 +365,17 @@ bool CellularCallConfig::IsUtProvisioned(int32_t slotId)
         return utFeatureValue == ImsFeatureIntResult::IMS_FEATURE_INT_VALUE_ENABLED;
     }
     return true;
+}
+
+EmergencyCall CellularCallConfig::BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from)
+{
+    EmergencyCall to = {};
+    to.eccNum = from.eccNum;
+    to.eccType = EccType(from.category);
+    to.simpresent = SimpresentType(from.simpresent);
+    to.mcc = from.mcc;
+    to.abnormalService = AbnormalServiceType(from.abnormalService);
+    return to;
 }
 
 bool CellularCallConfig::IsNeedTurnOnIms(const ImsCapabilityList &imsCapabilityList)
@@ -543,47 +554,79 @@ void CellularCallConfig::SetTempMode(int32_t slotId)
 
 void CellularCallConfig::InitModeActive()
 {
-    TELEPHONY_LOGE("InitModeActive start ");
     int32_t slotId = DEFAULT_SIM_SLOT_ID;
     modeMap_[slotId] = DomainPreferenceMode::IMS_PS_VOICE_PREFERRED;
     eccListRadioMap_.clear();
     eccList3gppHasSim_.clear();
     eccList3gppNoSim_.clear();
+    eccListConfigMap_.clear();
     allEccList_.clear();
-    eccList3gppHasSim_.push_back(CreateWithSimEmergencyInfo("112"));
-    eccList3gppHasSim_.push_back(CreateWithSimEmergencyInfo("991"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("112"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("991"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("000"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("08"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("110"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("118"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("119"));
-    eccList3gppNoSim_.push_back(CreateWithSimEmergencyInfo("999"));
+    eccList3gppHasSim_.push_back(BuildDefaultEmergencyCall("112"));
+    eccList3gppHasSim_.push_back(BuildDefaultEmergencyCall("991"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("112"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("991"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("000"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("08"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("110"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("118"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("119"));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("999"));
+    TELEPHONY_LOGI("InitModeActive finish");
 }
 
-EmergencyCall CellularCallConfig::CreateWithSimEmergencyInfo(const std::string &number)
+EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number)
 {
     EmergencyCall  emergencyCall;
     emergencyCall.eccNum = number;
     emergencyCall.eccType = EccType::TYPE_CATEGORY;
-    emergencyCall.simpresent = SimpresentType::TYPE_NO_CARD;
-    emergencyCall.mcc = "460";
+    emergencyCall.simpresent = SimpresentType::TYPE_HAS_CARD;
+    emergencyCall.mcc = "";
     emergencyCall.abnormalService = AbnormalServiceType::TYPE_ALL;
     return emergencyCall;
+}
+
+void CellularCallConfig::UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc)
+{
+    eccListConfigMap_[slotId].clear();
+    std::vector<EmergencyCall> configVector;
+    std::string mcc = GetMcc(slotId);
+    if (mcc.empty()) {
+        TELEPHONY_LOGE("MergeEccCallList  countryCode is null");
+        return;
+    }
+    std::vector<std::string> callList = opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
+    for (auto call : callList) {
+        auto emergencyCall = BuildDefaultEmergencyCall(call);
+        emergencyCall.mcc = mcc;
+        configVector.push_back(emergencyCall);
+    }
+    eccListConfigMap_[slotId] = configVector;
+    TELEPHONY_LOGI("UpdateEccWhenOperatorConfigChange slotId %{public}d config call size %{public}zu  success", slotId,
+        callList.size());
+    MergeEccCallList(slotId);
+    SetEmergencyCallList(slotId);
 }
 
 void CellularCallConfig::MergeEccCallList(int32_t slotId_)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    TELEPHONY_LOGE("MergeEccCallList start %{public}d", slotId_);
     allEccList_[slotId_].clear();
     for (auto ecc : eccListRadioMap_[slotId_]) {
         allEccList_[slotId_].push_back(ecc);
     }
+    TELEPHONY_LOGI("MergeEccCallList merge radio slotId  %{public}d size  %{public}d", slotId_,
+        static_cast<int32_t>(eccListRadioMap_[slotId_].size()));
+    for (auto ecc : eccListConfigMap_[slotId_]) {
+        allEccList_[slotId_].push_back(ecc);
+    }
+    TELEPHONY_LOGI("MergeEccCallList merge config slotId  %{public}d size  %{public}zu", slotId_,
+        eccListConfigMap_[slotId_].size());
     if (CoreManagerInner::GetInstance().GetSimState(slotId_) != static_cast<int32_t>(SimState::SIM_STATE_NOT_PRESENT)) {
         std::string mcc = GetMcc(slotId_);
-        TELEPHONY_LOGE("MergeEccCallList start countryCode %{public}s", mcc.c_str());
+        if (mcc.empty()) {
+            TELEPHONY_LOGE("MergeEccCallList  countryCode is null");
+            return;
+        }
         for (auto ecc : eccList3gppHasSim_) {
             ecc.mcc = mcc;
             allEccList_[slotId_].push_back(ecc);
@@ -593,24 +636,36 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId_)
             allEccList_[slotId_].push_back(ecc);
         }
     }
+    UniqueEccCallList(slotId_);
+}
+
+void CellularCallConfig::UniqueEccCallList(int32_t slotId_)
+{
+    std::vector<EmergencyCall> uniques;
+    for (auto call : allEccList_[slotId_]) {
+        if (std::find(uniques.begin(), uniques.end(), call) == uniques.end()) {
+            uniques.push_back(call);
+        }
+    }
+    TELEPHONY_LOGI("UniqueEccCallList end slotId  %{public}d from size %{public}zu to size %{public}zu", slotId_,
+        allEccList_[slotId_].size(), uniques.size());
 }
 
 std::string CellularCallConfig::GetMcc(int32_t slotId_)
 {
-    TELEPHONY_LOGE("getMcc slotd_ %{public}d", slotId_);
     std::string imsi = Str16ToStr8(CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_));
     int len = (int)imsi.length();
     std::string mcc = imsi;
     if (len >= MCC_LEN) {
         mcc = imsi.substr(0, MCC_LEN);
     }
-    TELEPHONY_LOGE("getMcc countryCode %{public}s", mcc.c_str());
+    TELEPHONY_LOGI("getMcc slotd %{public}d mcc %{public}s end", slotId_, mcc.c_str());
     return mcc;
 }
 
 int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId)
 {
-    TELEPHONY_LOGE("SetEmergencyCallList start");
+    TELEPHONY_LOGI("SetEmergencyCallList start");
     return SetEmergencyCallList(slotId, allEccList_[slotId]);
 }
 
@@ -629,64 +684,28 @@ int32_t CellularCallConfig::GetEmergencyCallList(int32_t slotId)
     return configRequest_.GetEmergencyCallListRequest(slotId);
 }
 
-int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec)
+int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, const std::vector<EmergencyCall> &eccVec)
 {
     TELEPHONY_LOGI("SetEmergencyCallList start %{public}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
     std::vector<EmergencyCall> uniques;
-    for (auto ecc : eccVec) {
-        bool hasEcc = false;
-        for (auto temp : uniques) {
-            if (IsEmergencyCallExit(ecc, temp)) {
-                hasEcc = true;
-                break;
-            }
+    for (auto call : eccVec) {
+        if (std::find(eccListRadioMap_[slotId].begin(), eccListRadioMap_[slotId].end(), call) ==
+            eccListRadioMap_[slotId].end()) {
+            uniques.push_back(call);
         }
-        if (hasEcc) {
-            TELEPHONY_LOGI("SetEmergencyCallList ecc %{public}s mcc %{public}s has repeat",
-                ecc.eccNum.c_str(), ecc.mcc.c_str());
-            continue;
-        }
-        for (auto temp : eccListRadioMap_[slotId]) {
-            if (IsEmergencyCallExit(ecc, temp)) {
-                hasEcc = true;
-                break;
-            }
-        }
-        if (hasEcc) {
-            TELEPHONY_LOGI("SetEmergencyCallList ecc %{public}s mcc %{public}s has set in modem",
-                ecc.eccNum.c_str(), ecc.mcc.c_str());
-                continue;
-        }
-        uniques.push_back(ecc);
     }
+    TELEPHONY_LOGI("select end slotId  %{public}d from size %{public}zu to size %{public}zu", slotId, eccVec.size(),
+        uniques.size());
     if (uniques.size() <= 0) {
         TELEPHONY_LOGI("SetEmergencyCallList eccList has exit");
         return TELEPHONY_ERR_SUCCESS;
     }
-    TELEPHONY_LOGI("SetEmergencyCallList temp refresh size %{public}zu", uniques.size());
+    TELEPHONY_LOGI("SetEmergencyCallList  refresh size %{public}zu", uniques.size());
     for (auto ecc : uniques) {
-        TELEPHONY_LOGE("SetEmergencyCallList temp refresh: eccNum %{public}s mcc %{public}s",
-            ecc.eccNum.c_str(), ecc.mcc.c_str());
         allEccList_[slotId].push_back(ecc);
     }
     return configRequest_.SetEmergencyCallListRequest(slotId, uniques);
-}
-
-bool CellularCallConfig::IsEmergencyCallExit(const EmergencyCall &from, const EmergencyCall &to)
-{
-    return from.mcc == to.mcc && from.eccNum == to.eccNum &&  from.simpresent == to.simpresent;
-}
-
-EmergencyCall CellularCallConfig::BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from)
-{
-    EmergencyCall to = {};
-    to.eccNum = from.eccNum;
-    to.eccType = EccType(from.category);
-    to.simpresent = SimpresentType(from.simpresent);
-    to.mcc = from.mcc;
-    to.abnormalService =  AbnormalServiceType(from.abnormalService);
-    return to;
 }
 
 bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
@@ -709,14 +728,14 @@ bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
     return result;
 }
 
-void CellularCallConfig::GetEmergencyCallListResponse(int32_t slotId, const EmergencyInfoList &eccList)
+void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList)
 {
-    TELEPHONY_LOGI("GetEmergencyCallListResponse %{publid}d", slotId);
+    TELEPHONY_LOGI("UpdateEmergencyCallFromRadio %{publid}d size %{public}d", slotId, eccList.callSize);
     eccListRadioMap_[slotId] = std::vector<EmergencyCall>();
     for (auto ecc : eccList.calls) {
-        TELEPHONY_LOGE("GetEmergencyCallListResponse , data: eccNum %{public}s mcc %{public}s",
-            ecc.eccNum.c_str(), ecc.mcc.c_str());
-    eccListRadioMap_[slotId] .push_back(BuildEmergencyCall(slotId, ecc));
+        TELEPHONY_LOGI("UpdateEmergencyCallFromRadio , data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(),
+            ecc.mcc.c_str());
+        eccListRadioMap_[slotId].push_back(BuildEmergencyCall(slotId, ecc));
     }
     MergeEccCallList(slotId);
 }
@@ -727,8 +746,7 @@ std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
     std::lock_guard<std::mutex> lock(mutex_);
     TELEPHONY_LOGI("GetEccCallList  size %{publiic}zu",  allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
-        TELEPHONY_LOGE("GetEccCallList, data: eccNum %{public}s mcc %{public}s",
-            ecc.eccNum.c_str(), ecc.mcc.c_str());
+        TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }
     return allEccList_[slotId];
 }
