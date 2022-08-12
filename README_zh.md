@@ -28,10 +28,14 @@
 /base/telephony/cellular_call     # 蜂窝通话子组件
 ├─ BUILD.gn                       # 编译gn脚本
 ├─ README.md                      # Readme文档
+├─ interfaces
+|  ├─ innerkits
+|  |  ├─ ims                      # IMS处理接口
 ├─ services
 │  ├─ common                      # 工具仓
 │  ├─ connection                  # 连接层
 │  ├─ control                     # 控制业务层
+|  ├─ ims_service_interaction     # IMS处理实现源文件
 │  └─ manager                     # 管理层
 ├─ sa_profile                     # sa文件
 ├─ ohos.build                     # 编译build
