@@ -15,12 +15,12 @@
 
 #include "ims_control.h"
 
-#include "securec.h"
-
-#include "module_service_utils.h"
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_register.h"
-#include "standardize_utils.h"
 #include "emergency_utils.h"
+#include "module_service_utils.h"
+#include "securec.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -33,6 +33,9 @@ IMSControl::~IMSControl()
 int32_t IMSControl::Dial(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("Dial start");
+    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
     int32_t ret = DialPreJudgment(callInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
@@ -58,6 +61,8 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
     TELEPHONY_LOGI("DialJudgment entry.");
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("DialJudgment return, error type: call state error.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(
+            slotId, INVALID_PARAMETER, videoState, CALL_ERR_CALL_COUNTS_EXCEED_LIMIT, "ims dial call state error");
         return CALL_ERR_CALL_COUNTS_EXCEED_LIMIT;
     }
 

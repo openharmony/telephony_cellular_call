@@ -15,11 +15,11 @@
 
 #include "cs_control.h"
 
-#include "securec.h"
-
-#include "standardize_utils.h"
-#include "module_service_utils.h"
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_register.h"
+#include "module_service_utils.h"
+#include "securec.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -31,6 +31,9 @@ CSControl::~CSControl()
 int32_t CSControl::Dial(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("Dial start");
+    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
     int32_t ret = DialPreJudgment(callInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
@@ -45,6 +48,8 @@ int32_t CSControl::Dial(const CellularCallInfo &callInfo)
         return DialCdma(callInfo);
     }
     TELEPHONY_LOGE("Dial return, net type error.");
+    CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState, CALL_ERR_UNSUPPORTED_NETWORK_TYPE, "Network type error");
     return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
 }
 
@@ -63,6 +68,8 @@ int32_t CSControl::DialCdma(const CellularCallInfo &callInfo)
 
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("CSControl::DialCdma return, error type: call state error.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, CALL_ERR_CALL_COUNTS_EXCEED_LIMIT, "cs cdma dial call state error");
         return CALL_ERR_CALL_COUNTS_EXCEED_LIMIT;
     }
 
@@ -90,6 +97,8 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo)
 
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("DialGsm return, error type: call state error.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, CALL_ERR_CALL_COUNTS_EXCEED_LIMIT, "cs gsm dial call state error");
         return CALL_ERR_CALL_COUNTS_EXCEED_LIMIT;
     }
 
@@ -151,6 +160,8 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
             }
             if (pConnection == nullptr) {
                 TELEPHONY_LOGE("CSControl::HangUp, error type: connection is null");
+                CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                    callInfo.slotId, callInfo.callId, CALL_ERR_CALL_CONNECTION_NOT_EXIST, "HangUp pConnection is null");
                 return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
             }
 
@@ -184,6 +195,8 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
         }
         default: {
             TELEPHONY_LOGE("HangUp warring, type is invalid");
+            CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                callInfo.slotId, callInfo.callId, TELEPHONY_ERR_ARGUMENT_INVALID, "HangUp type is invalid");
             return TELEPHONY_ERR_ARGUMENT_INVALID;
         }
     }
@@ -200,6 +213,8 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
     }
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("Answer return, error type: connection is null");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
+            CALL_ERR_CALL_CONNECTION_NOT_EXIST, "get connection data is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
 
@@ -238,6 +253,8 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
     }
 
     TELEPHONY_LOGE("CSControl::Answer return, error type: call state error, phone not ringing.");
+    CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
+        CALL_ERR_CALL_STATE, "call state error phone not ringing");
     return CALL_ERR_CALL_STATE;
 }
 
@@ -252,6 +269,8 @@ int32_t CSControl::Reject(const CellularCallInfo &callInfo)
     }
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("CSControl::Reject, error type: connection is null");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, callInfo.callId, CALL_ERR_CALL_CONNECTION_NOT_EXIST, "Reject pConnection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
 
@@ -262,6 +281,8 @@ int32_t CSControl::Reject(const CellularCallInfo &callInfo)
      */
     if (!pConnection->IsRingingState()) {
         TELEPHONY_LOGE("CSControl::Reject return, error type: call state error, phone not ringing.");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, callInfo.callId, CALL_ERR_CALL_STATE, "Reject call state error phone not ringing");
         return CALL_ERR_CALL_STATE;
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() != nullptr) {

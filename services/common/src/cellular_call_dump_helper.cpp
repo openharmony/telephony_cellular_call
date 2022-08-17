@@ -14,7 +14,9 @@
  */
 
 #include "cellular_call_dump_helper.h"
+
 #include "cellular_call_service.h"
+#include "core_service_client.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
 
@@ -23,15 +25,18 @@ namespace Telephony {
 bool CellularCallDumpHelper::Dump(const std::vector<std::string> &args, std::string &result) const
 {
     result.clear();
-    bool retRes = true;
     ShowHelp(result);
     ShowCellularCallInfo(result);
-    return retRes;
+    return true;
+}
+
+bool CellularCallDumpHelper::WhetherHasSimCard(const int32_t slotId) const
+{
+    return DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId);
 }
 
 void CellularCallDumpHelper::ShowHelp(std::string &result) const
 {
-    result.append("------------------------------------------------------------------\n");
     result.append("Usage       : dump <command> [options]\n")
         .append("Description :\n")
         .append("    -cellular_call_info      : ")
@@ -40,18 +45,40 @@ void CellularCallDumpHelper::ShowHelp(std::string &result) const
 
 void CellularCallDumpHelper::ShowCellularCallInfo(std::string &result) const
 {
-    int32_t slotId = DEFAULT_SIM_SLOT_ID;
     result.append("\n*******************CellularCallInfo*********************\n");
-    result.append("SlotId                       : ").append(std::to_string(slotId)).append("\n");
-    result.append("CellularCallBindTime         : ")
+    result.append("CellularCallBindTime      : ")
         .append(DelayedSingleton<CellularCallService>::GetInstance()->GetBindTime())
         .append("\n");
-    result.append("CellularCallEndTime          : ")
+    result.append("CellularCallEndTime       : ")
         .append(DelayedSingleton<CellularCallService>::GetInstance()->GetEndTime())
         .append("\n");
-    result.append("CellularCallSpendTime        : ")
+    result.append("CellularCallSpendTime     : ")
         .append(DelayedSingleton<CellularCallService>::GetInstance()->GetSpendTime())
         .append("\n");
+    result.append("ServiceRunningState       : ")
+        .append(std::to_string(DelayedSingleton<CellularCallService>::GetInstance()->GetServiceRunningState()))
+        .append("\n");
+    result.append("SrvccState                : ")
+        .append(std::to_string(DelayedSingleton<CellularCallService>::GetInstance()->GetSrvccState()))
+        .append("\n");
+
+    for (int32_t i = 0; i < SIM_SLOT_COUNT; i++) {
+        if (WhetherHasSimCard(i)) {
+            result.append("SlotId                    : ")
+                .append(std::to_string(i))
+                .append("\n");
+            CellularCallConfig config;
+            result.append("ImsServiceRunningState    : ")
+                .append(std::to_string(config.GetSwitchStatus(i)))
+                .append("\n");
+            result.append("DomainPreferenceMode      : ")
+                .append(std::to_string(config.GetPreferenceMode(i)))
+                .append("\n");
+            result.append("VoiceActivationState      : ")
+                .append(std::to_string(config.GetForceVolteSwitchOnConfig(i)))
+                .append("\n");
+        }
+    }
 }
 } // namespace Telephony
 } // namespace OHOS

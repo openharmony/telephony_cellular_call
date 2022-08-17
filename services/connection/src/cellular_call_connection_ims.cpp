@@ -17,6 +17,7 @@
 
 #include "securec.h"
 
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "ims_call_client.h"
 #include "radio_event.h"
@@ -29,17 +30,23 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
     ImsCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
         TELEPHONY_LOGE("return, memset_s error.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(
+            slotId, INVALID_PARAMETER, dialRequest.videoState, TELEPHONY_ERR_MEMSET_FAIL, "memset_s error");
         return TELEPHONY_ERR_MEMSET_FAIL;
     }
     size_t cpyLen = strlen(dialRequest.phoneNum.c_str()) + 1;
     if (strcpy_s(callInfo.phoneNum, cpyLen, dialRequest.phoneNum.c_str()) != EOK) {
         TELEPHONY_LOGE("return, strcpy_s fail.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(
+            slotId, INVALID_PARAMETER, dialRequest.videoState, TELEPHONY_ERR_STRCPY_FAIL, "strcpy_s fail");
         return TELEPHONY_ERR_STRCPY_FAIL;
     }
     callInfo.videoState = dialRequest.videoState;
     callInfo.slotId = slotId;
     if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(slotId, INVALID_PARAMETER, dialRequest.videoState,
+            CALL_ERR_RESOURCE_UNAVAILABLE, "ims vendor service does not exist");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     return DelayedSingleton<ImsCallClient>::GetInstance()->Dial(callInfo, dialRequest.clirMode);
@@ -67,6 +74,9 @@ int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::stri
         return DelayedSingleton<ImsCallClient>::GetInstance()->HangUp(callInfo);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(slotId, INVALID_PARAMETER,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_IMS_SERVICE_NOT_EXIST),
+        "HangUpRequest ims vendor service does not exist");
     return TELEPHONY_ERROR;
 }
 
@@ -94,6 +104,8 @@ int32_t CellularCallConnectionIMS::AnswerRequest(
         return DelayedSingleton<ImsCallClient>::GetInstance()->Answer(callInfo);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
+    CellularCallHiSysEvent::WriteAnswerCallFaultEvent(slotId, INVALID_PARAMETER, INVALID_PARAMETER,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_IMS_SERVICE_NOT_EXIST), "ims vendor service does not exist");
     return TELEPHONY_ERROR;
 }
 
@@ -119,6 +131,9 @@ int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId, const std::stri
         return DelayedSingleton<ImsCallClient>::GetInstance()->Reject(callInfo);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(slotId, INVALID_PARAMETER,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_IMS_SERVICE_NOT_EXIST),
+        "RejectRequest ims vendor service does not exist");
     return TELEPHONY_ERROR;
 }
 

@@ -16,7 +16,9 @@
 #include "cellular_call_handler.h"
 
 #include "cellular_call_config.h"
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
+#include "hitrace_meter.h"
 #include "hril_call_parcel.h"
 #include "ims_call_client.h"
 #include "operator_config_types.h"
@@ -150,6 +152,7 @@ void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &e
         TELEPHONY_LOGE("GetCsCallData return, event is nullptr");
         return;
     }
+    StartAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     TELEPHONY_LOGI("GetCsCallData event id: %{public}d", event->GetInnerEventId());
     this->SendEvent(GET_CS_CALL_DATA_ID, delayTime_, Priority::HIGH);
 }
@@ -160,6 +163,7 @@ void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &
         TELEPHONY_LOGE("GetImsCallData return, event is nullptr");
         return;
     }
+    StartAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     TELEPHONY_LOGI("GetImsCallData event id: %{public}d", event->GetInnerEventId());
     this->SendEvent(GET_IMS_CALL_DATA_ID, delayTime_, Priority::HIGH);
 }
@@ -169,6 +173,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("ReportCsCallsData return, GetInstance is nullptr");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
     auto csControl = serviceInstance_->GetCsControl(slotId_);
@@ -176,9 +181,12 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         callType_ = CallType::TYPE_ERR_CALL;
         if (csControl == nullptr) {
             TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
+            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
             return;
         }
-        csControl->ReportCallsData(slotId_, callInfoList);
+        if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        }
         serviceInstance_->CleanControlMap();
         return;
     }
@@ -190,9 +198,12 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     if (csControl == nullptr) {
         TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
-    csControl->ReportCallsData(slotId_, callInfoList);
+    if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
 }
 
 void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList)
@@ -200,6 +211,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("ReportImsCallsData return, serviceInstance_ is nullptr");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
     TELEPHONY_LOGI("ReportImsCallsData, imsCallInfoList.callSize:%{public}d", imsCallInfoList.callSize);
@@ -208,9 +220,12 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         callType_ = CallType::TYPE_ERR_CALL;
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
+            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
             return;
         }
-        imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
+        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
+            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        }
         serviceInstance_->CleanControlMap();
         return;
     }
@@ -223,9 +238,12 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     }
     if (imsControl == nullptr) {
         TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
-    imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
+    if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
 }
 
 void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -304,6 +322,8 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
         TELEPHONY_LOGE("DialResponse return, result is nullptr");
         return;
     }
+    struct CallBehaviorParameterInfo info = { 0 };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallParameterInfo(info);
     if (result->error != HRilErrType::NONE) {
         TELEPHONY_LOGI("DialResponse, dial return error, report to call_manager");
         CellularCallEventInfo eventInfo;
@@ -324,6 +344,50 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
             return;
         }
         registerInstance_->ReportEventResultInfo(eventInfo);
+        CellularCallHiSysEvent::WriteDialCallBehaviorEvent(info, CallResponseResult::COMMAND_FAILURE);
+    } else {
+        CellularCallHiSysEvent::WriteDialCallBehaviorEvent(info, CallResponseResult::COMMAND_SUCCESS);
+    }
+}
+
+void CellularCallHandler::CommonResultEventHandling(
+    const AppExecFwk::InnerEvent::Pointer &event, CellularCallEventInfo &eventInfo)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("CommonResultResponse return, event is nullptr");
+        return;
+    }
+    eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+    switch (event->GetInnerEventId()) {
+        case RadioEvent::RADIO_HANGUP_CONNECT:
+            eventInfo.eventId = RequestResultEventId::RESULT_END_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_REJECT_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_REJECT_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_ACCEPT_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_ACCEPT_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_HOLD_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_HOLD_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_ACTIVE_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_ACTIVE_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_SWAP_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_SWAP_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_JOIN_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_JOIN_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_SPLIT_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_SPLIT_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_CALL_SUPPLEMENT:
+            eventInfo.eventId = RequestResultEventId::RESULT_SUPPLEMENT_SEND_FAILED;
+            break;
+        default:
+            break;
     }
 }
 
@@ -338,39 +402,18 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
         TELEPHONY_LOGE("CommonResultResponse return, result is nullptr");
         return;
     }
+    struct CallBehaviorParameterInfo info = { 0 };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallParameterInfo(info);
     if (result->error != HRilErrType::NONE) {
         CellularCallEventInfo eventInfo;
-        eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-        switch (event->GetInnerEventId()) {
-            case RadioEvent::RADIO_HANGUP_CONNECT:
-                eventInfo.eventId = RequestResultEventId::RESULT_END_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_REJECT_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_REJECT_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_ACCEPT_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_ACCEPT_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_HOLD_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_HOLD_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_ACTIVE_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_ACTIVE_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_SWAP_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_SWAP_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_JOIN_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_JOIN_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_SPLIT_CALL:
-                eventInfo.eventId = RequestResultEventId::RESULT_SPLIT_SEND_FAILED;
-                break;
-            case RadioEvent::RADIO_CALL_SUPPLEMENT:
-                eventInfo.eventId = RequestResultEventId::RESULT_SUPPLEMENT_SEND_FAILED;
-                break;
-            default:
-                break;
+        CommonResultEventHandling(event, eventInfo);
+        if (eventInfo.eventId == RequestResultEventId::RESULT_END_SEND_FAILED ||
+            eventInfo.eventId == RequestResultEventId::RESULT_REJECT_SEND_FAILED) {
+            CellularCallHiSysEvent::WriteHangUpCallBehaviorEvent(info, CallResponseResult::COMMAND_FAILURE);
+        } else if (eventInfo.eventId == RequestResultEventId::RESULT_ACCEPT_SEND_FAILED) {
+            CellularCallHiSysEvent::WriteAnswerCallBehaviorEvent(info, CallResponseResult::COMMAND_FAILURE);
+        } else {
+            TELEPHONY_LOGI("eventId is not within the scope of processing");
         }
         if (registerInstance_ == nullptr) {
             TELEPHONY_LOGE("CommonResultResponse return, registerInstance_ is nullptr");
@@ -378,6 +421,14 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
         }
         registerInstance_->ReportEventResultInfo(eventInfo);
         return;
+    }
+    uint32_t id = event->GetInnerEventId();
+    if (id == RadioEvent::RADIO_HANGUP_CONNECT || id == RadioEvent::RADIO_REJECT_CALL) {
+        CellularCallHiSysEvent::WriteHangUpCallBehaviorEvent(info, CallResponseResult::COMMAND_SUCCESS);
+    } else if (id == RadioEvent::RADIO_ACCEPT_CALL) {
+        CellularCallHiSysEvent::WriteAnswerCallBehaviorEvent(info, CallResponseResult::COMMAND_SUCCESS);
+    } else {
+        TELEPHONY_LOGI("id is not within the scope of processing");
     }
 }
 
@@ -500,20 +551,26 @@ void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Po
 {
     if (!IsCanRequestCallsData()) {
         TELEPHONY_LOGE("GetCsCallsDataRequest return, IsCanRequestCallsData false");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionCS connectionCs;
-    connectionCs.GetCsCallsDataRequest(slotId_, lastCallsDataFlag_);
+    if (connectionCs.GetCsCallsDataRequest(slotId_, lastCallsDataFlag_) != TELEPHONY_SUCCESS) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
 }
 
 void CellularCallHandler::GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (!IsCanRequestCallsData()) {
         TELEPHONY_LOGE("GetImsCallsDataRequest return, IsCanRequestCallsData false");
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionIMS connectionIms;
-    connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_);
+    if (connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_) != TELEPHONY_SUCCESS) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
 }
 
 void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event)
@@ -632,6 +689,7 @@ void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::P
         TELEPHONY_LOGE("CallStatusInfoResponse return, GetInstance is nullptr");
         return;
     }
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingStartTime();
     if (callType_ == CallType::TYPE_ERR_CALL) {
         TELEPHONY_LOGI("CallStatusInfoResponse, default call type");
         if (serviceInstance_->IsNeedIms(slotId_)) {
@@ -793,6 +851,7 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
         return;
     }
     TELEPHONY_LOGI("GetCallFailReasonResponse: %{public}d, report to call manager", *reason);
+    CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, *reason);
     registerInstance_->ReportCallFailReason(*reason);
 }
 

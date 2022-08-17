@@ -15,6 +15,7 @@
 
 #include "ims_call_proxy.h"
 
+#include "cellular_call_hisysevent.h"
 #include "message_option.h"
 #include "message_parcel.h"
 #include "telephony_errors.h"
@@ -28,19 +29,27 @@ int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsCallProxy::Dial return, write descriptor token fail!");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL, "ims call proxy write descriptor token fail");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
         TELEPHONY_LOGE("ImsCallProxy::Dial return, write data fail!");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_WRITE_DATA_FAIL, "ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(mode)) {
         TELEPHONY_LOGE("ImsCallProxy::Dial return, write data fail!");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_WRITE_DATA_FAIL, "ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         TELEPHONY_LOGE("ImsCallProxy::Dial return, remote is nullptr!");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_LOCAL_PTR_NULL, "ims call proxy remote is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     int32_t error = remote->SendRequest(IMS_DIAL, in, out, option);
@@ -48,6 +57,8 @@ int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
         TELEPHONY_LOGI("ImsCallProxy::Dial return, send request success!");
         return out.ReadInt32();
     }
+    CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_SEND_REQUEST_FAIL), "ims call proxy send request fail");
     return error;
 }
 
@@ -58,10 +69,14 @@ int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsCallProxy::HangUp return, write descriptor token fail!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+            TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL, "HangUp ims call proxy write descriptor token fail");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
         TELEPHONY_LOGE("ImsCallProxy::HangUp return, write data fail!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+            TELEPHONY_ERR_WRITE_DATA_FAIL, "HangUp ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
@@ -74,6 +89,8 @@ int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
         TELEPHONY_LOGI("ImsCallProxy::HangUp return, send request success!");
         return out.ReadInt32();
     }
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_SEND_REQUEST_FAIL), "HangUp ims call proxy send request fail");
     return error;
 }
 
@@ -84,10 +101,14 @@ int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRej
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsCallProxy::RejectWithReason return, write descriptor token fail!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+            TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL, "Reject ims call proxy write descriptor token fail");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
         TELEPHONY_LOGE("ImsCallProxy::RejectWithReason return, write callInfo fail!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+            TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "Reject ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(reason)) {
@@ -104,6 +125,8 @@ int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRej
         TELEPHONY_LOGI("ImsCallProxy::RejectWithReason return, send request success!");
         return out.ReadInt32();
     }
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_SEND_REQUEST_FAIL), "Reject ims call proxy send request fail");
     return error;
 }
 
@@ -114,10 +137,14 @@ int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
     MessageParcel out;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("ImsCallProxy::Answer return, write descriptor token fail!");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL, "ims call proxy write descriptor token fail");
         return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
         TELEPHONY_LOGE("ImsCallProxy::Answer return, write data fail!");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_WRITE_DATA_FAIL, "ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
@@ -130,6 +157,8 @@ int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
         TELEPHONY_LOGI("ImsCallProxy::Answer return, send request success!");
         return out.ReadInt32();
     }
+    CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+        static_cast<int32_t>(CallErrorCode::CALL_ERROR_SEND_REQUEST_FAIL), "ims call proxy send request fail");
     return error;
 }
 

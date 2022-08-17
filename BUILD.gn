@@ -19,6 +19,7 @@ SOURCE_DIR = "//base/telephony/cellular_call"
 ohos_shared_library("tel_cellular_call") {
   sources = [
     "$SOURCE_DIR/services/common/src/cellular_call_dump_helper.cpp",
+    "$SOURCE_DIR/services/common/src/cellular_call_hisysevent.cpp",
     "$SOURCE_DIR/services/common/src/emergency_utils.cpp",
     "$SOURCE_DIR/services/common/src/mmi_code_utils.cpp",
     "$SOURCE_DIR/services/common/src/module_service_utils.cpp",
@@ -73,6 +74,8 @@ ohos_shared_library("tel_cellular_call") {
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
+    "hisysevent_native:libhisysevent",
+    "hitrace_native:hitrace_meter",
     "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",

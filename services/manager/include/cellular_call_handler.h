@@ -20,13 +20,13 @@
 
 #include "cellular_call_config.h"
 #include "cellular_call_data_struct.h"
-#include "telephony_log_wrapper.h"
+#include "cellular_call_register.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "cs_control.h"
 #include "ims_control.h"
-#include "cellular_call_register.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -98,6 +98,14 @@ public:
      * @param code process
      */
     void DialResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * Handling quest result event id
+     *
+     * @param code process
+     * @param eventInfo cellularcall event info
+     */
+    void CommonResultEventHandling(const AppExecFwk::InnerEvent::Pointer &event, CellularCallEventInfo &eventInfo);
 
     /**
      * CommonResultResponse
