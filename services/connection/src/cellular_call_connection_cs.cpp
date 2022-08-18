@@ -15,6 +15,7 @@
 
 #include "cellular_call_connection_cs.h"
 
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "radio_event.h"
 
@@ -22,14 +23,18 @@ namespace OHOS {
 namespace Telephony {
 int32_t CellularCallConnectionCS::DialRequest(int32_t slotId, const DialRequestStruct &dialRequest)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::DialRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::DialRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: GetInstance() is nullptr.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(
+            slotId, INVALID_PARAMETER, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("DialRequest return, error type: handle is nullptr.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(slotId, INVALID_PARAMETER, INVALID_PARAMETER,
+            CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     CoreManagerInner::GetInstance().Dial(
@@ -39,14 +44,18 @@ int32_t CellularCallConnectionCS::DialRequest(int32_t slotId, const DialRequestS
 
 int32_t CellularCallConnectionCS::HangUpRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::HangUpRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::HangUpRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HangUpRequest return, error type: GetInstance() is nullptr.");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            slotId, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("HangUpRequest return, error type: handle is nullptr.");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            slotId, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     int32_t index = GetIndex();
@@ -56,14 +65,18 @@ int32_t CellularCallConnectionCS::HangUpRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::AnswerRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::AnswerRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: GetInstance() is nullptr.");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(
+            slotId, INVALID_PARAMETER, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("AnswerRequest return, error type: handle is nullptr.");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(slotId, INVALID_PARAMETER, INVALID_PARAMETER,
+            CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     CoreManagerInner::GetInstance().Answer(slotId, RadioEvent::RADIO_ACCEPT_CALL, handle);
@@ -72,14 +85,18 @@ int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::RejectRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::RejectRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: GetInstance() is nullptr.");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            slotId, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("RejectRequest return, error type: handle is nullptr.");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            slotId, INVALID_PARAMETER, CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     CoreManagerInner::GetInstance().Reject(slotId, RadioEvent::RADIO_REJECT_CALL, handle);
@@ -88,7 +105,7 @@ int32_t CellularCallConnectionCS::RejectRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::HoldRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::HoldRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("HoldRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -104,7 +121,7 @@ int32_t CellularCallConnectionCS::HoldRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::UnHoldCallRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::UnHoldCallRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("UnHoldCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -120,7 +137,7 @@ int32_t CellularCallConnectionCS::UnHoldCallRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::SwitchCallRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::SwitchCallRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::SwitchCallRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SwitchCallRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -136,7 +153,7 @@ int32_t CellularCallConnectionCS::SwitchCallRequest(int32_t slotId)
 
 int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32_t voiceCall)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::CombineConferenceRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::CombineConferenceRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CombineConferenceRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -152,7 +169,7 @@ int32_t CellularCallConnectionCS::CombineConferenceRequest(int32_t slotId, int32
 
 int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t slotId, int32_t index, int32_t voiceCall)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::SeparateConferenceRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::SeparateConferenceRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SeparateConferenceRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -168,7 +185,7 @@ int32_t CellularCallConnectionCS::SeparateConferenceRequest(int32_t slotId, int3
 
 int32_t CellularCallConnectionCS::CallSupplementRequest(int32_t slotId, CallSupplementType type)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::CallSupplementRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::CallSupplementRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("CallSupplementRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -184,13 +201,13 @@ int32_t CellularCallConnectionCS::CallSupplementRequest(int32_t slotId, CallSupp
 
 int32_t CellularCallConnectionCS::SendCDMAThreeWayDialRequest(int32_t slotId)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::SendCDMAThreeWayDialRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::SendCDMAThreeWayDialRequest start.");
     return TELEPHONY_SUCCESS;
 }
 
 int32_t CellularCallConnectionCS::SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::SendDtmfRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::SendDtmfRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("SendDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -206,7 +223,7 @@ int32_t CellularCallConnectionCS::SendDtmfRequest(int32_t slotId, char cDtmfCode
 
 int32_t CellularCallConnectionCS::StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::StartDtmfRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::StartDtmfRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StartDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -222,7 +239,7 @@ int32_t CellularCallConnectionCS::StartDtmfRequest(int32_t slotId, char cDtmfCod
 
 int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t slotId, int32_t index) const
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::StopDtmfRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::StopDtmfRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StopDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -238,7 +255,7 @@ int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t slotId, int32_t index)
 
 int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::GetCsCallsDataRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::GetCsCallsDataRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCsCallsDataRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -257,7 +274,7 @@ int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t 
 
 int32_t CellularCallConnectionCS::GetCallFailReasonRequest(int32_t slotId) const
 {
-    TELEPHONY_LOGE("CellularCallConnectionCS::GetCallFailReasonRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::GetCallFailReasonRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;

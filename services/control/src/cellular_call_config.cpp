@@ -27,7 +27,6 @@
 namespace OHOS {
 namespace Telephony {
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
-
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
 std::map<int32_t, bool> CellularCallConfig::imsSwitchOnByDefault_;
 std::map<int32_t, bool> CellularCallConfig::hideImsSwitch_;

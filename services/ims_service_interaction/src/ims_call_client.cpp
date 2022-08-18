@@ -15,6 +15,7 @@
 
 #include "ims_call_client.h"
 
+#include "cellular_call_hisysevent.h"
 #include "ims_call_callback_stub.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -157,6 +158,8 @@ int32_t ImsCallClient::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->Dial(callInfo, mode);
@@ -166,6 +169,8 @@ int32_t ImsCallClient::HangUp(const ImsCallInfo &callInfo)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "HangUp ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->HangUp(callInfo);
@@ -175,6 +180,8 @@ int32_t ImsCallClient::Reject(const ImsCallInfo &callInfo)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "Reject ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
@@ -193,6 +200,8 @@ int32_t ImsCallClient::Answer(const ImsCallInfo &callInfo)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
+            TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "answer ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     return imsCallProxy_->Answer(callInfo);

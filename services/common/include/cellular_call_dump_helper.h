@@ -31,8 +31,8 @@ public:
 
 private:
     void ShowHelp(std::string &result) const;
-
     void ShowCellularCallInfo(std::string &result) const;
+    bool WhetherHasSimCard(const int32_t slotId) const;
 };
 } // namespace Telephony
 } // namespace OHOS

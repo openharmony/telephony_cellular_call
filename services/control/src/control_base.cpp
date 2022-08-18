@@ -15,9 +15,10 @@
 
 #include "control_base.h"
 
-#include "standardize_utils.h"
-#include "module_service_utils.h"
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
+#include "module_service_utils.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -26,12 +27,16 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo)
     std::string dialString(callInfo.phoneNum);
     if (dialString.empty()) {
         TELEPHONY_LOGE("DialPreJudgment return, dialString is empty.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, CALL_ERR_PHONE_NUMBER_EMPTY, "dialString is empty");
         return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
 
     ModuleServiceUtils moduleServiceUtils;
     if (!moduleServiceUtils.GetRadioState(callInfo.slotId)) {
         TELEPHONY_LOGE("DialPreJudgment return, radio state error.");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, CALL_ERR_GET_RADIO_STATE_FAILED, "radio state error");
         return CALL_ERR_GET_RADIO_STATE_FAILED;
     }
     return TELEPHONY_SUCCESS;

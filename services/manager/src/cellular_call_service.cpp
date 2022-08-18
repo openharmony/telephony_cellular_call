@@ -17,6 +17,7 @@
 
 #include "cellular_call_callback.h"
 #include "cellular_call_dump_helper.h"
+#include "cellular_call_hisysevent.h"
 #include "common_event.h"
 #include "common_event_manager.h"
 #include "common_event_support.h"
@@ -78,6 +79,7 @@ void CellularCallService::OnStart()
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
+    SetServiceRunningState(static_cast<int32_t>(state_));
     if (eventLoop_ != nullptr) {
         eventLoop_->Run();
     }
@@ -99,6 +101,7 @@ void CellularCallService::OnStop()
     }
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     state_ = ServiceRunningState::STATE_STOPPED;
+    SetServiceRunningState(static_cast<int32_t>(state_));
     HandlerResetUnRegister();
 }
 
@@ -250,6 +253,16 @@ int32_t CellularCallService::Dump(int32_t fd, const std::vector<std::u16string> 
     return TELEPHONY_ERR_FAIL;
 }
 
+int32_t CellularCallService::GetServiceRunningState()
+{
+    return serviceRunningState_;
+}
+
+void CellularCallService::SetServiceRunningState(int32_t state)
+{
+    serviceRunningState_ = state;
+}
+
 std::string CellularCallService::GetBindTime()
 {
     std::ostringstream oss;
@@ -281,6 +294,8 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
 
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Dial return, invalid slot id");
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, CALL_ERR_INVALID_SLOT_ID, "invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     auto handler = GetHandler(callInfo.slotId);
@@ -289,6 +304,9 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     if (srvccState_ == SrvccState::STARTED) {
+        CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
+            callInfo.videoState, static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE),
+            "srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
     bool useImsForEmergency = UseImsForEmergency(callInfo);
@@ -322,17 +340,26 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
 
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
+    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::HangUp return, invalid slot id");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, callInfo.callId, CALL_ERR_INVALID_SLOT_ID, "HangUp invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     if (srvccState_ == SrvccState::STARTED) {
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, callInfo.callId,
+            static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "HangUp srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HangUp return, csControl is nullptr");
+            CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->HangUp(callInfo, type);
@@ -340,27 +367,40 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HangUp return, imsControl is nullptr");
+            CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->HangUp(callInfo, type);
     }
     TELEPHONY_LOGE("CellularCallService::HangUp return, call type error.");
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(
+        callInfo.slotId, callInfo.callId, TELEPHONY_ERR_ARGUMENT_INVALID, "HangUp call type error");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
 int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
 {
+    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Reject return, invalid slot id");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, callInfo.callId, TELEPHONY_ERR_ARGUMENT_INVALID, "Reject call type error");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     if (srvccState_ == SrvccState::STARTED) {
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, callInfo.callId,
+            static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "Reject srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Reject return, csControl is nullptr");
+            CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "Reject csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Reject(callInfo);
@@ -368,32 +408,47 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Reject return, imsControl is nullptr");
+            CellularCallHiSysEvent::WriteHangUpFaultEvent(
+                callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "Reject imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->Reject(callInfo);
     }
     TELEPHONY_LOGE("CellularCallService::Reject return, call type error.");
+    CellularCallHiSysEvent::WriteHangUpFaultEvent(
+        callInfo.slotId, callInfo.callId, TELEPHONY_ERR_ARGUMENT_INVALID, "Reject call type error");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
 int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
 {
+    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
+        callInfo.videoState };
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
     if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
         TELEPHONY_LOGE("Check permission failed, no ANSWER_CALL permisson.");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(
+            callInfo.slotId, callInfo.callId, callInfo.videoState, TELEPHONY_PERMISSION_ERROR, Permission::ANSWER_CALL);
         return TELEPHONY_PERMISSION_ERROR;
     }
 
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Answer return, invalid slot id");
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(
+            callInfo.slotId, callInfo.callId, callInfo.videoState, CALL_ERR_INVALID_SLOT_ID, "invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
     if (srvccState_ == SrvccState::STARTED) {
+        CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
+            static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
     if (CallType::TYPE_CS == callInfo.callType) {
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Answer return, csControl is nullptr");
+            CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
+                TELEPHONY_ERR_LOCAL_PTR_NULL, "csControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Answer(callInfo);
@@ -401,11 +456,15 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Answer return, imsControl is nullptr");
+            CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
+                TELEPHONY_ERR_LOCAL_PTR_NULL, "imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->Answer(callInfo);
     }
     TELEPHONY_LOGE("CellularCallService::Answer return, call type error.");
+    CellularCallHiSysEvent::WriteAnswerCallFaultEvent(
+        callInfo.slotId, callInfo.callId, callInfo.videoState, TELEPHONY_ERR_LOCAL_PTR_NULL, "call type error");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
@@ -1012,6 +1071,11 @@ int32_t CellularCallService::GetMute(int32_t slotId)
 void CellularCallService::SetSrvccState(int32_t srvccState)
 {
     srvccState_ = srvccState;
+}
+
+int32_t CellularCallService::GetSrvccState()
+{
+    return srvccState_;
 }
 
 bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo)

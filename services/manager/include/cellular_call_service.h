@@ -19,16 +19,14 @@
 #include <memory>
 
 #include "cellular_call_config.h"
-#include "cellular_call_supplement.h"
-
-#include "singleton.h"
-#include "event_runner.h"
-#include "iremote_broker.h"
-#include "system_ability.h"
-#include "system_ability_status_change_stub.h"
-
 #include "cellular_call_handler.h"
 #include "cellular_call_stub.h"
+#include "cellular_call_supplement.h"
+#include "event_runner.h"
+#include "iremote_broker.h"
+#include "singleton.h"
+#include "system_ability.h"
+#include "system_ability_status_change_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -59,6 +57,17 @@ public:
      * @return
      */
     int32_t Dump(std::int32_t fd, const std::vector<std::u16string> &args) override;
+
+    /**
+     * Get serviceRunningState_
+     * @return serviceRunningState_
+     */
+    int32_t GetServiceRunningState();
+
+    /**
+     * Set serviceRunningState_
+     */
+    void SetServiceRunningState(int32_t state);
 
     /**
      * RegisterHandler
@@ -533,6 +542,8 @@ public:
     std::shared_ptr<CellularCallHandler> GetHandler(int32_t slotId);
 
     void SetSrvccState(int32_t srvccState);
+    int32_t GetSrvccState();
+
 private:
     /**
      * Init service
@@ -583,6 +594,7 @@ private:
     int64_t bindTime_ = 0L;
     int64_t endTime_ = 0L;
     int64_t spendTime_ = 0L;
+    int32_t serviceRunningState_ = 0;
     ServiceRunningState state_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::map<int32_t, std::shared_ptr<CellularCallHandler>> handlerMap_;
