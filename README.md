@@ -28,10 +28,14 @@ The cellular call module consists of three layers:
 /base/telephony/cellular_call     # Cellular call module
 ├─ BUILD.gn                       # Build script (gn)
 ├─ README.md                      # Readme
+├─ interfaces
+|  ├─ innerkits
+|  |  ├─ ims                      # IMS module
 ├─ services
 │  ├─ common                      # Tools
 │  ├─ connection                  # Connection layer
 │  ├─ control                     # Control service layer
+|  ├─ ims_service_interaction     # IMS service interaction layer
 │  └─ manager                     # Management layer
 ├─ sa_profile                     # SA profile
 ├─ ohos.build                     # Build code
