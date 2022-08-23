@@ -18,7 +18,7 @@ CELLULAR_CALL_SOURCE_DIR = "//base/telephony/cellular_call"
 CELLULAR_CALL_INTERFACES_INNERKITS =
     "$CELLULAR_CALL_SOURCE_DIR/interfaces/innerkits"
 
-config("public_config_ims_call_callback_proxy") {
+config("public_config_ims_call_api") {
   # header file path
   include_dirs = [
     "$CELLULAR_CALL_INTERFACES_INNERKITS/ims",
@@ -26,10 +26,10 @@ config("public_config_ims_call_callback_proxy") {
   ]
 }
 
-ohos_shared_library("tel_ims_call_callback_proxy") {
+ohos_shared_library("tel_ims_call_api") {
   sources = [ "$CELLULAR_CALL_SOURCE_DIR/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
 
-  public_configs = [ ":public_config_ims_call_callback_proxy" ]
+  public_configs = [ ":public_config_ims_call_api" ]
 
   deps = [ "$CELLULAR_CALL_SOURCE_DIR:tel_cellular_call" ]
 
@@ -53,8 +53,8 @@ ohos_shared_library("tel_ims_call_callback_proxy") {
   }
 
   defines += [
-    "TELEPHONY_LOG_TAG = \"ImsCallbackProxy\"",
-    "LOG_DOMAIN = 0xD001F02",
+    "TELEPHONY_LOG_TAG = \"ImsCallApi\"",
+    "LOG_DOMAIN = 0xD001F09",
   ]
 
   part_name = "cellular_call"

@@ -932,7 +932,7 @@ int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_STATUS_INFO);
+    bool ret = handler->SendEvent(RadioEvent::RADIO_IMS_CALL_STATUS_INFO);
     if (!ret) {
         TELEPHONY_LOGE("SendEvent failed! status update failed, slotId:%{public}d", slotId);
         return TELEPHONY_ERR_FAIL;

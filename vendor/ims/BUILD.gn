@@ -45,7 +45,7 @@ ohos_shared_library("tel_ims") {
 
   defines += [
     "TELEPHONY_LOG_TAG = \"ImsService\"",
-    "LOG_DOMAIN = 0xD001F02",
+    "LOG_DOMAIN = 0xD001F09",
   ]
 
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
