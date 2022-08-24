@@ -150,11 +150,18 @@ public:
     void GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
-     * CallStatusInfoResponse
+     * CsCallStatusInfoReport
      *
-     * @param code process
+     * @param event
      */
-    void CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void CsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * ImsCallStatusInfoReport
+     *
+     * @param event
+     */
+    void ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event);
 
     void ReportEccChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
@@ -241,13 +248,6 @@ public:
      * @param code process
      */
     void GetCallFailReasonResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
-    /**
-     * Set CallType
-     *
-     * @param callType
-     */
-    void SetCallType(CallType callType);
 
     /**
      * Update Srvcc State Report
@@ -441,7 +441,6 @@ private:
     int64_t delayTime_ = 100;
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
-    CallType callType_ = CallType::TYPE_ERR_CALL;
     std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
 };
 } // namespace Telephony

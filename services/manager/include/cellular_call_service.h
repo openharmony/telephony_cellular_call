@@ -529,11 +529,6 @@ public:
     void SetImsControl(int32_t slotId, const std::shared_ptr<IMSControl> &imsControl);
 
     /**
-     * CleanControlMap
-     */
-    void CleanControlMap();
-
-    /**
      * Get Handler
      *
      * @param slotId

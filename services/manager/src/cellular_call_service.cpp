@@ -298,11 +298,6 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
             callInfo.videoState, CALL_ERR_INVALID_SLOT_ID, "invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
-    auto handler = GetHandler(callInfo.slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::Dial return, handler is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (srvccState_ == SrvccState::STARTED) {
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
             callInfo.videoState, static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE),
@@ -311,7 +306,6 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
     }
     bool useImsForEmergency = UseImsForEmergency(callInfo);
     if (IsNeedIms(callInfo.slotId) || useImsForEmergency) {
-        handler->SetCallType(CallType::TYPE_IMS);
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Dial ims dial");
@@ -325,7 +319,6 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
         return imsControl->Dial(callInfo);
     }
 
-    handler->SetCallType(CallType::TYPE_CS);
     auto csControl = GetCsControl(callInfo.slotId);
     if (csControl == nullptr) {
         csControl = std::make_shared<CSControl>();
@@ -814,12 +807,6 @@ void CellularCallService::SetCsControl(int32_t slotId, const std::shared_ptr<CSC
 void CellularCallService::SetImsControl(int32_t slotId, const std::shared_ptr<IMSControl> &imsControl)
 {
     imsControlMap_[slotId] = imsControl;
-}
-
-void CellularCallService::CleanControlMap()
-{
-    csControlMap_.clear();
-    imsControlMap_.clear();
 }
 
 int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)

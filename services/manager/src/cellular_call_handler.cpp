@@ -92,7 +92,8 @@ void CellularCallHandler::InitSupplementFuncMap()
 
 void CellularCallHandler::InitActiveReportFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &CellularCallHandler::CallStatusInfoResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &CellularCallHandler::CsCallStatusInfoReport;
+    requestFuncMap_[RadioEvent::RADIO_IMS_CALL_STATUS_INFO] = &CellularCallHandler::ImsCallStatusInfoReport;
     requestFuncMap_[RadioEvent::RADIO_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[RadioEvent::RADIO_NOT_AVAIL] = &CellularCallHandler::GetCsCallData;
     requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
@@ -178,16 +179,13 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     auto csControl = serviceInstance_->GetCsControl(slotId_);
     if (callInfoList.callSize == 0) {
-        callType_ = CallType::TYPE_ERR_CALL;
         if (csControl == nullptr) {
             TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
             FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
             return;
         }
-        if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
-            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
-        }
-        serviceInstance_->CleanControlMap();
+        csControl->ReportCallsData(slotId_, callInfoList);
+        serviceInstance_->SetCsControl(slotId_, nullptr);
         return;
     }
     if (callInfoList.callSize == 1) {
@@ -217,16 +215,13 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     TELEPHONY_LOGI("ReportImsCallsData, imsCallInfoList.callSize:%{public}d", imsCallInfoList.callSize);
     auto imsControl = serviceInstance_->GetImsControl(slotId_);
     if (imsCallInfoList.callSize == 0) {
-        callType_ = CallType::TYPE_ERR_CALL;
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
             FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
             return;
         }
-        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
-            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
-        }
-        serviceInstance_->CleanControlMap();
+        imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
+        serviceInstance_->SetImsControl(slotId_, nullptr);
         return;
     }
     if (imsCallInfoList.callSize == 1) {
@@ -674,39 +669,30 @@ void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEven
     registerInstance_->ReportGetImsSwitchResult(imsSwitch);
 }
 
-void CellularCallHandler::CallStatusInfoResponse(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (event == nullptr) {
-        TELEPHONY_LOGE("CallStatusInfoResponse return, event is nullptr");
+        TELEPHONY_LOGE("CsCallStatusInfoReport return, event is nullptr");
         return;
     }
     if (srvccState_ == SrvccState::STARTED) {
-        TELEPHONY_LOGI("CallStatusInfoResponse ignore, srvcc started");
+        TELEPHONY_LOGI("CsCallStatusInfoReport ignore, srvcc started");
         return;
     }
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CallStatusInfoResponse return, GetInstance is nullptr");
-        return;
-    }
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingStartTime();
-    if (callType_ == CallType::TYPE_ERR_CALL) {
-        TELEPHONY_LOGI("CallStatusInfoResponse, default call type");
-        if (serviceInstance_->IsNeedIms(slotId_)) {
-            GetImsCallData(event);
-        } else {
-            GetCsCallData(event);
-        }
-    } else if (callType_ == CallType::TYPE_CS) {
-        GetCsCallData(event);
-    } else if (callType_ == CallType::TYPE_IMS) {
-        GetImsCallData(event);
-    }
+    GetCsCallData(event);
 }
 
-void CellularCallHandler::SetCallType(CallType callType)
+void CellularCallHandler::ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    callType_ = callType;
+    if (event == nullptr) {
+        TELEPHONY_LOGE("ImsCallStatusInfoReport return, event is nullptr");
+        return;
+    }
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGI("ImsCallStatusInfoReport ignore, srvcc started");
+        return;
+    }
+    GetImsCallData(event);
 }
 
 void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -934,12 +920,7 @@ void CellularCallHandler::SrvccStateCompleted()
     } else {
         TELEPHONY_LOGE("SrvccStateCompleted imsControl is nullptr");
     }
-    auto event = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_STATUS_INFO);
-    CallStatusInfoResponse(event);
     srvccState_ = SrvccState::SRVCC_NONE;
-    if (callType_ == CallType::TYPE_IMS) {
-        callType_ = CallType::TYPE_CS;
-    }
 }
 
 void CellularCallHandler::GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event)
