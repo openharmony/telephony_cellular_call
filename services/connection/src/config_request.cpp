@@ -67,186 +67,132 @@ int32_t ConfigRequest::GetDomainPreferenceModeRequest(int32_t slotId)
 
 int32_t ConfigRequest::SetImsSwitchStatusRequest(int32_t slotId, bool active)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetImsSwitchStatusRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsSwitchStatus(slotId, active);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-
-    TELEPHONY_LOGI("SetImsSwitchStatusRequest, ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
+    return imsCallClient->SetImsSwitchStatus(slotId, active);
 }
 
 int32_t ConfigRequest::GetImsSwitchStatusRequest(int32_t slotId)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetImsSwitchStatusRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsSwitchStatus(slotId);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-
-    TELEPHONY_LOGI("GetImsSwitchStatusRequest, ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
+    return imsCallClient->GetImsSwitchStatus(slotId);
 }
 
 int32_t ConfigRequest::SetImsConfigRequest(ImsConfigItem item, const std::string &value)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetImsConfigRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsConfig(item, value);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetImsConfigRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetImsConfig(item, value);
 }
 
 int32_t ConfigRequest::SetImsConfigRequest(ImsConfigItem item, int32_t value)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetImsConfigRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsConfig(item, value);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetImsConfigRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetImsConfig(item, value);
 }
 
 int32_t ConfigRequest::GetImsConfigRequest(ImsConfigItem item)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("GetImsConfigRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsConfig(item);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("GetImsConfigRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->GetImsConfig(item);
 }
 
 int32_t ConfigRequest::SetImsFeatureValueRequest(FeatureType type, int32_t value)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetImsFeatureValueRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetImsFeatureValue(type, value);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetImsFeatureValueRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetImsFeatureValue(type, value);
 }
 
 int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type, int32_t &value)
 {
-    if (!moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGE("ims vendor service does not exist.");
-        return TELEPHONY_ERROR;
-    }
-    TELEPHONY_LOGI("call ims service");
-    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsFeatureValue(type, value);
+    return imsCallClient->GetImsFeatureValue(type, value);
 }
 
 int32_t ConfigRequest::CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("CtrlCameraRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->CtrlCamera(cameraId, callingUid, callingPid);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("CtrlCameraRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->CtrlCamera(cameraId, callingUid, callingPid);
 }
 
 int32_t ConfigRequest::SetPreviewWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetPreviewWindowRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetPreviewWindow(x, y, z, width, height);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetPreviewWindowRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetPreviewWindow(x, y, z, width, height);
 }
 
 int32_t ConfigRequest::SetDisplayWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetDisplayWindowRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetDisplayWindow(x, y, z, width, height);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetDisplayWindowRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetDisplayWindow(x, y, z, width, height);
 }
 
 int32_t ConfigRequest::SetCameraZoomRequest(float zoomRatio)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetCameraZoomRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetCameraZoom(zoomRatio);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetCameraZoomRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetCameraZoom(zoomRatio);
 }
 
 int32_t ConfigRequest::SetPauseImageRequest(const std::u16string &path)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetPauseImageRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetPauseImage(path);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetPauseImageRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetPauseImage(path);
 }
 
 int32_t ConfigRequest::SetDeviceDirectionRequest(int32_t rotation)
 {
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("SetDeviceDirectionRequest, call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SetDeviceDirection(rotation);
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    TELEPHONY_LOGI("SetDeviceDirectionRequest, ims vendor service does not exist.");
-    return TELEPHONY_SUCCESS;
+    return imsCallClient->SetDeviceDirection(rotation);
 }
 
 int32_t ConfigRequest::SetMuteRequest(int32_t slotId, int32_t mute)
@@ -319,20 +265,16 @@ int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<E
 
 int32_t ConfigRequest::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList)
 {
-    if (!moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGE("ims vendor service does not exist.");
-        return TELEPHONY_ERROR;
-    }
-    TELEPHONY_LOGI("call ims service");
-    if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr.");
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     for (auto it : imsCapabilityList.imsCapabilities) {
         TELEPHONY_LOGI("ImsCapabilityType:%{public}d imsRadioTech:%{public}d enable:%{public}d", it.imsCapabilityType,
             it.imsRadioTech, it.enable);
     }
-    return DelayedSingleton<ImsCallClient>::GetInstance()->UpdateImsCapabilities(slotId, imsCapabilityList);
+    return imsCallClient->UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 } // namespace Telephony
 } // namespace OHOS
