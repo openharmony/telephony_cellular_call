@@ -16,8 +16,6 @@
 #ifndef TELEPHONY_BASE_REQUEST_H
 #define TELEPHONY_BASE_REQUEST_H
 
-#include <memory>
-
 namespace OHOS {
 namespace Telephony {
 class BaseRequest {
