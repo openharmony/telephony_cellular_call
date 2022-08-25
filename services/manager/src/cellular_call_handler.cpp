@@ -913,7 +913,7 @@ void CellularCallHandler::SrvccStateCompleted()
         serviceInstance_->SetCsControl(slotId_, nullptr);
     } else {
         TELEPHONY_LOGI("SrvccStateCompleted CsControl is nullptr");
-        csControl = std::make_shared<CsControl>();
+        csControl = std::make_shared<CSControl>();
         serviceInstance_->SetCsControl(slotId_, csControl);
     }
     auto imsControl = serviceInstance_->GetImsControl(slotId_);
