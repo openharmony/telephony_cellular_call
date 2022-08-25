@@ -881,7 +881,7 @@ void CellularCallHandler::ReportEccChanged(const AppExecFwk::InnerEvent::Pointer
     }
     CellularCallConfig config;
     auto calls = emergencyInfoList->calls;
-    if (calls.size() > 0 && calls.back().total != calls.size()) {
+    if (calls.size() > 0 && static_cast<uint32_t>(calls.back().total) != calls.size()) {
         TELEPHONY_LOGE("ReportEccChanged data error");
         auto endCall = calls.back();
         if (endCall.index < endCall.total) {
