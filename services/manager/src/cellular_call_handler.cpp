@@ -910,15 +910,19 @@ void CellularCallHandler::SrvccStateCompleted()
     if (csControl != nullptr) {
         TELEPHONY_LOGI("SrvccStateCompleted CsControl ReleaseAllConnection");
         csControl->ReleaseAllConnection();
+        serviceInstance_->SetCsControl(slotId_, nullptr);
     } else {
-        TELEPHONY_LOGE("SrvccStateCompleted CsControl is nullptr");
+        TELEPHONY_LOGI("SrvccStateCompleted CsControl is nullptr");
+        csControl = std::make_shared<CSControl>();
+        serviceInstance_->SetCsControl(slotId_, csControl);
     }
     auto imsControl = serviceInstance_->GetImsControl(slotId_);
     if (imsControl != nullptr) {
         TELEPHONY_LOGI("SrvccStateCompleted ImsControl ReleaseAllConnection");
         imsControl->ReleaseAllConnection();
+        serviceInstance_->SetImsControl(slotId_, nullptr);
     } else {
-        TELEPHONY_LOGE("SrvccStateCompleted imsControl is nullptr");
+        TELEPHONY_LOGI("SrvccStateCompleted imsControl is nullptr");
     }
     srvccState_ = SrvccState::SRVCC_NONE;
 }
