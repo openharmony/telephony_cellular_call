@@ -431,6 +431,8 @@ private:
     void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
 private:
+    void CellularCallIncomingStartTrace(const int32_t state);
+    void CellularCallIncomingFinishTrace(const int32_t state);
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
     int64_t lastTime_ = 0L;
     const int64_t FAST_DELAY_TIME = 250;

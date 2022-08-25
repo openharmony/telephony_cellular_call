@@ -31,9 +31,8 @@ CSControl::~CSControl()
 int32_t CSControl::Dial(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("Dial start");
-    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
-        callInfo.videoState };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
     int32_t ret = DialPreJudgment(callInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;

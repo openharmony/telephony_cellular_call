@@ -65,11 +65,6 @@ public:
     int32_t GetServiceRunningState();
 
     /**
-     * Set serviceRunningState_
-     */
-    void SetServiceRunningState(int32_t state);
-
-    /**
      * RegisterHandler
      */
     void RegisterHandler();
@@ -589,7 +584,6 @@ private:
     int64_t bindTime_ = 0L;
     int64_t endTime_ = 0L;
     int64_t spendTime_ = 0L;
-    int32_t serviceRunningState_ = 0;
     ServiceRunningState state_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::map<int32_t, std::shared_ptr<CellularCallHandler>> handlerMap_;

@@ -29,31 +29,32 @@ CellularCallRegister::~CellularCallRegister() {}
 void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInfo)
 {
     TELEPHONY_LOGI("ReportCallsInfo entry.");
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportCallsInfo return, callManagerCallBack_ is nullptr, report fail!");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
-        return;
-    }
     CallsReportInfo callsInfo = callsReportInfo;
     CallDetailInfo detailInfo;
     std::vector<CallReportInfo>::iterator it = callsInfo.callVec.begin();
     for (; it != callsInfo.callVec.end(); ++it) {
         detailInfo.callType = (*it).callType;
         detailInfo.accountId = (*it).accountId;
-        detailInfo.index = (*it).index;
         detailInfo.state = (*it).state;
         detailInfo.callMode = (*it).callMode;
-        detailInfo.voiceDomain = (*it).voiceDomain;
     }
+
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportCallsInfo return, callManagerCallBack_ is nullptr, report fail!");
+        if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {
+            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        }
+        return;
+    }
+
     if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {
         DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->JudgingIncomingTimeOut(
             detailInfo.accountId, static_cast<int32_t>(detailInfo.callType), static_cast<int32_t>(detailInfo.callMode));
-        struct CallBehaviorParameterInfo info = { static_cast<int32_t>(detailInfo.callType),
-            static_cast<int32_t>(detailInfo.callMode) };
-        DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingCallParameterInfo(info);
+        DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingCallParameterInfo(
+            static_cast<int32_t>(detailInfo.callType), static_cast<int32_t>(detailInfo.callMode));
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     }
     callManagerCallBack_->UpdateCallsReportInfo(callsReportInfo);
-    FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
 }
 
 int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback)
