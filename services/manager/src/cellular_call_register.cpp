@@ -397,5 +397,10 @@ void CellularCallRegister::ReportSetEmergencyCallListResponse(const SetEccListRe
     TELEPHONY_LOGI("ReportSetEmergencyCallListResponse entry result:%{public}d, value:%{public}d",
         response.result, response.value);
 }
+
+bool CellularCallRegister::IsCallManagerCallBackRegistered()
+{
+    return callManagerCallBack_ != nullptr;
+}
 } // namespace Telephony
 } // namespace OHOS

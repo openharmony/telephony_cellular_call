@@ -58,6 +58,14 @@ bool CellularCallService::Init()
     }
     CreateHandler();
     SendEventRegisterHandler();
+    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    callManagerListener_ = new (std::nothrow) SystemAbilityStatusChangeListener();
+    if (samgrProxy == nullptr || callManagerListener_ == nullptr) {
+        TELEPHONY_LOGE("samgrProxy or callManagerListener_ is nullptr");
+    } else {
+        int32_t ret = samgrProxy->SubscribeSystemAbility(TELEPHONY_CALL_MANAGER_SYS_ABILITY_ID, callManagerListener_);
+        TELEPHONY_LOGI("SubscribeSystemAbility TELEPHONY_CALL_MANAGER_SYS_ABILITY_ID result:%{public}d", ret);
+    }
     // connect ims_service
     DelayedSingleton<ImsCallClient>::GetInstance()->Init();
     TELEPHONY_LOGI("CellularCallService::Init, init success");
@@ -140,7 +148,7 @@ void CellularCallService::CreateHandler()
             TELEPHONY_LOGE("samgrProxy or statusChangeListener_ is nullptr");
         } else {
             int32_t ret = samgrProxy->SubscribeSystemAbility(COMMON_EVENT_SERVICE_ID, statusChangeListener_);
-            TELEPHONY_LOGI("SubscribeSystemAbility result:%{public}d", ret);
+            TELEPHONY_LOGI("SubscribeSystemAbility COMMON_EVENT_SERVICE_ID result:%{public}d", ret);
         }
     }
 }
@@ -1067,6 +1075,24 @@ bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo)
     return false;
 }
 
+void CellularCallService::HandleCallManagerException()
+{
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (const auto &it : slotVector) {
+        auto csControl = GetCsControl(it);
+        if (csControl != nullptr) {
+            csControl->SetHangupReportIgnoredFlag(true);
+            csControl->HangUpAllConnection(it);
+        }
+        auto imsControl = GetImsControl(it);
+        if (imsControl != nullptr) {
+            imsControl->SetHangupReportIgnoredFlag(true);
+            imsControl->HangUpAllConnection(it);
+        }
+    }
+}
+
 CellularCallService::SystemAbilityStatusChangeListener::SystemAbilityStatusChangeListener(
     std::shared_ptr<CellularCallHandler> &cellularCallHandler)
     : cellularCallHandler_(cellularCallHandler)
@@ -1090,16 +1116,33 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnAddSystemAbility(
 void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbility(
     int32_t systemAbilityId, const std::string &deviceId)
 {
-    if (systemAbilityId != COMMON_EVENT_SERVICE_ID) {
-        TELEPHONY_LOGE("systemAbilityId is not COMMON_EVENT_SERVICE_ID");
-        return;
+    switch (systemAbilityId) {
+        case TELEPHONY_CALL_MANAGER_SYS_ABILITY_ID: {
+            auto cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+            if (cellularCallRegister != nullptr) {
+                cellularCallRegister->UnRegisterCallManagerCallBack();
+            }
+            auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
+            if (cellularCallService == nullptr) {
+                TELEPHONY_LOGE("cellularCallService is nullptr");
+                return;
+            }
+            cellularCallService->HandleCallManagerException();
+            break;
+        }
+        case COMMON_EVENT_SERVICE_ID: {
+            if (cellularCallHandler_ == nullptr) {
+                TELEPHONY_LOGE("cellularCallHandler_ is nullptr");
+                return;
+            }
+            bool unSubscribeResult = EventFwk::CommonEventManager::UnSubscribeCommonEvent(cellularCallHandler_);
+            TELEPHONY_LOGI("unSubscribeResult = %{public}d", unSubscribeResult);
+            break;
+        }
+        default:
+            TELEPHONY_LOGE("systemAbilityId is invalid");
+            break;
     }
-    if (cellularCallHandler_ == nullptr) {
-        TELEPHONY_LOGE("cellularCallHandler_ is nullptr");
-        return;
-    }
-    bool unSubscribeResult = EventFwk::CommonEventManager::UnSubscribeCommonEvent(cellularCallHandler_);
-    TELEPHONY_LOGI("unSubscribeResult = %{public}d", unSubscribeResult);
 }
 }  // namespace Telephony
 }  // namespace OHOS

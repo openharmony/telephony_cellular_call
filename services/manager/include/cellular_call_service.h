@@ -578,6 +578,11 @@ private:
      */
     bool UseImsForEmergency(const CellularCallInfo &callInfo);
 
+    /**
+     * Handle CallManager exception
+     */
+    void HandleCallManagerException();
+
 private:
     const uint32_t CONNECT_MAX_TRY_COUNT = 20;
     const uint32_t CONNECT_SERVICE_WAIT_TIME = 2000; // ms
@@ -592,10 +597,12 @@ private:
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
+    sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {
     public:
+        SystemAbilityStatusChangeListener() = default;
         explicit SystemAbilityStatusChangeListener(std::shared_ptr<CellularCallHandler> &cellularCallHandler);
         ~SystemAbilityStatusChangeListener() = default;
         virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;

@@ -284,6 +284,8 @@ public:
      */
     void ReportSetEmergencyCallListResponse(const SetEccListResponse &response);
 
+    bool IsCallManagerCallBackRegistered();
+
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;
 };

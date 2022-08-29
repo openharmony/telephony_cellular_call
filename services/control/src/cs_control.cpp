@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -433,7 +433,9 @@ int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfo
         TELEPHONY_LOGE("ReportUpdateInfo return, GetInstance() is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    if (!isIgnoredIncomingCall_) {
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    }
     return TELEPHONY_SUCCESS;
 }
 
@@ -512,7 +514,12 @@ int32_t CSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callIn
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     callsReportInfo.slotId = slotId;
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    if (!DelayedSingleton<CellularCallRegister>::GetInstance()->IsCallManagerCallBackRegistered() &&
+        callsReportInfo.callVec[0].state == TelCallState::CALL_STATUS_INCOMING) {
+        isIgnoredIncomingCall_ = true;
+    } else {
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    }
     return TELEPHONY_SUCCESS;
 }
 
@@ -532,7 +539,13 @@ int32_t CSControl::ReportHungUpInfo(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     callsReportInfo.slotId = slotId;
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    if (isIgnoredHangupReport_) {
+        SetHangupReportIgnoredFlag(false);
+    } else if (isIgnoredIncomingCall_) {
+        isIgnoredIncomingCall_ = false;
+    } else {
+        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    }
     ReleaseAllConnection();
     return TELEPHONY_SUCCESS;
 }
