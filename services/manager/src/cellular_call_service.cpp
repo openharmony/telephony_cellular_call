@@ -79,7 +79,6 @@ void CellularCallService::OnStart()
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
-    SetServiceRunningState(static_cast<int32_t>(state_));
     if (eventLoop_ != nullptr) {
         eventLoop_->Run();
     }
@@ -101,7 +100,6 @@ void CellularCallService::OnStop()
     }
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     state_ = ServiceRunningState::STATE_STOPPED;
-    SetServiceRunningState(static_cast<int32_t>(state_));
     HandlerResetUnRegister();
 }
 
@@ -255,12 +253,7 @@ int32_t CellularCallService::Dump(int32_t fd, const std::vector<std::u16string> 
 
 int32_t CellularCallService::GetServiceRunningState()
 {
-    return serviceRunningState_;
-}
-
-void CellularCallService::SetServiceRunningState(int32_t state)
-{
-    serviceRunningState_ = state;
+    return static_cast<int32_t>(state_);
 }
 
 std::string CellularCallService::GetBindTime()
@@ -333,9 +326,8 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
 
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
-    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
-        callInfo.videoState };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::HangUp return, invalid slot id");
         CellularCallHiSysEvent::WriteHangUpFaultEvent(
@@ -374,9 +366,8 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
 
 int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
 {
-    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
-        callInfo.videoState };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
     if (!IsValidSlotId(callInfo.slotId)) {
         TELEPHONY_LOGE("CellularCallService::Reject return, invalid slot id");
         CellularCallHiSysEvent::WriteHangUpFaultEvent(
@@ -415,9 +406,8 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
 
 int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
 {
-    struct CallBehaviorParameterInfo info = { callInfo.slotId, static_cast<int32_t>(callInfo.callType),
-        callInfo.videoState };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(info);
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
     if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
         TELEPHONY_LOGE("Check permission failed, no ANSWER_CALL permisson.");
         CellularCallHiSysEvent::WriteAnswerCallFaultEvent(

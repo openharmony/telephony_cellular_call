@@ -279,17 +279,19 @@ int32_t CellularCallHiSysEvent::CallInterfaceErrorCodeConversion(const int32_t e
     return true;
 }
 
-void CellularCallHiSysEvent::SetCallParameterInfo(CallBehaviorParameterInfo &info)
+void CellularCallHiSysEvent::SetCallParameterInfo(
+    const int32_t slotId, const int32_t callType, const int32_t videoState)
 {
-    dfxSlotId_ = info.slotId;
-    dfxCallType_ = info.callType;
-    dfxVideoState_ = info.videoState;
+    dfxSlotId_ = slotId;
+    dfxCallType_ = callType;
+    dfxVideoState_ = videoState;
 }
 
-void CellularCallHiSysEvent::SetIncomingCallParameterInfo(CallBehaviorParameterInfo &info)
+void CellularCallHiSysEvent::SetIncomingCallParameterInfo(
+    const int32_t incomingCallType, const int32_t incomingVideoState)
 {
-    dfxIncomingCallType_ = info.incomingCallType;
-    dfxIncomingVideoState_ = info.incomingVideoState;
+    dfxIncomingCallType_ = incomingCallType;
+    dfxIncomingVideoState_ = incomingVideoState;
 }
 
 void CellularCallHiSysEvent::GetCallParameterInfo(CallBehaviorParameterInfo &info)

@@ -153,7 +153,6 @@ void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &e
         TELEPHONY_LOGE("GetCsCallData return, event is nullptr");
         return;
     }
-    StartAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     TELEPHONY_LOGI("GetCsCallData event id: %{public}d", event->GetInnerEventId());
     this->SendEvent(GET_CS_CALL_DATA_ID, delayTime_, Priority::HIGH);
 }
@@ -164,9 +163,22 @@ void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &
         TELEPHONY_LOGE("GetImsCallData return, event is nullptr");
         return;
     }
-    StartAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     TELEPHONY_LOGI("GetImsCallData event id: %{public}d", event->GetInnerEventId());
     this->SendEvent(GET_IMS_CALL_DATA_ID, delayTime_, Priority::HIGH);
+}
+
+void CellularCallHandler::CellularCallIncomingStartTrace(const int32_t state)
+{
+    if (state == static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING)) {
+        StartAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
+}
+
+void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
+{
+    if (state == static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING)) {
+        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+    }
 }
 
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
@@ -174,18 +186,26 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("ReportCsCallsData return, GetInstance is nullptr");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
     auto csControl = serviceInstance_->GetCsControl(slotId_);
+    CallInfo callInfo;
+    std::vector<CallInfo>::const_iterator it = callInfoList.calls.begin();
+    for (; it != callInfoList.calls.end(); ++it) {
+        callInfo.state = (*it).state;
+    }
+    CellularCallIncomingStartTrace(callInfo.state);
     if (callInfoList.callSize == 0) {
         if (csControl == nullptr) {
             TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
-            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+            CellularCallIncomingFinishTrace(callInfo.state);
             return;
         }
         csControl->ReportCallsData(slotId_, callInfoList);
         serviceInstance_->SetCsControl(slotId_, nullptr);
+        if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+            CellularCallIncomingFinishTrace(callInfo.state);
+        }
         return;
     }
     if (callInfoList.callSize == 1) {
@@ -196,11 +216,11 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     if (csControl == nullptr) {
         TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        CellularCallIncomingFinishTrace(callInfo.state);
         return;
     }
     if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        CellularCallIncomingFinishTrace(callInfo.state);
     }
 }
 
@@ -209,19 +229,26 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("ReportImsCallsData return, serviceInstance_ is nullptr");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
         return;
     }
+    ImsCurrentCall imsCallInfo;
+    std::vector<ImsCurrentCall>::const_iterator it = imsCallInfoList.calls.begin();
+    for (; it != imsCallInfoList.calls.end(); ++it) {
+        imsCallInfo.state = (*it).state;
+    }
+    CellularCallIncomingStartTrace(imsCallInfo.state);
     TELEPHONY_LOGI("ReportImsCallsData, imsCallInfoList.callSize:%{public}d", imsCallInfoList.callSize);
     auto imsControl = serviceInstance_->GetImsControl(slotId_);
     if (imsCallInfoList.callSize == 0) {
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
-            FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
             return;
         }
         imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
         serviceInstance_->SetImsControl(slotId_, nullptr);
+        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
+            CellularCallIncomingFinishTrace(imsCallInfo.state);
+        }
         return;
     }
     if (imsCallInfoList.callSize == 1) {
@@ -233,11 +260,11 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     }
     if (imsControl == nullptr) {
         TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        CellularCallIncomingFinishTrace(imsCallInfo.state);
         return;
     }
     if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
+        CellularCallIncomingFinishTrace(imsCallInfo.state);
     }
 }
 
@@ -546,26 +573,20 @@ void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Po
 {
     if (!IsCanRequestCallsData()) {
         TELEPHONY_LOGE("GetCsCallsDataRequest return, IsCanRequestCallsData false");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionCS connectionCs;
-    if (connectionCs.GetCsCallsDataRequest(slotId_, lastCallsDataFlag_) != TELEPHONY_SUCCESS) {
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
-    }
+    connectionCs.GetCsCallsDataRequest(slotId_, lastCallsDataFlag_);
 }
 
 void CellularCallHandler::GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (!IsCanRequestCallsData()) {
         TELEPHONY_LOGE("GetImsCallsDataRequest return, IsCanRequestCallsData false");
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
     }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionIMS connectionIms;
-    if (connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_) != TELEPHONY_SUCCESS) {
-        FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
-    }
+    connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_);
 }
 
 void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event)
