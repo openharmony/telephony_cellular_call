@@ -26,11 +26,6 @@ class ImsCallCallbackStub : public IRemoteStub<ImsCallCallbackInterface> {
 public:
     ImsCallCallbackStub();
     virtual ~ImsCallCallbackStub();
-    void InitFuncMap();
-    void InitCallBasicFuncMap();
-    void InitConfigFuncMap();
-    void InitVedioFuncMap();
-    void InitSupplementFuncMap();
     int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
     /****************** call basic ******************/
@@ -101,6 +96,12 @@ public:
     int32_t GetColpResponse(int32_t slotId, const ColpResponse &response) override;
 
 private:
+    void InitFuncMap();
+    void InitCallBasicFuncMap();
+    void InitConfigFuncMap();
+    void InitVedioFuncMap();
+    void InitSupplementFuncMap();
+
     /****************** call basic ******************/
     int32_t OnDialResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnHangUpResponseInner(MessageParcel &data, MessageParcel &reply);

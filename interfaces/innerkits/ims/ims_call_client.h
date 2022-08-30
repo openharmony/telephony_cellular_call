@@ -37,15 +37,8 @@ public:
      */
     sptr<ImsCallInterface> GetImsCallProxy();
 
-    /**
-     * Is Connect ImsCall Remote Object
-     *
-     * @return bool
-     */
-    bool IsConnect() const;
     void Init();
     void UnInit();
-    int32_t RegisterImsCallCallback();
     int32_t RegisterImsCallCallbackHandler(int32_t slotId, const std::shared_ptr<AppExecFwk::EventHandler> &handler);
 
     /**
@@ -55,9 +48,6 @@ public:
      * @return AppExecFwk::EventHandler
      */
     std::shared_ptr<AppExecFwk::EventHandler> GetHandler(int32_t slotId);
-
-    int32_t ReConnectService();
-    void Clean();
 
     /****************** call basic ******************/
     int32_t Dial(const ImsCallInfo &callInfo, CLIRMode mode);
@@ -130,6 +120,16 @@ private:
         void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
         void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     };
+
+    /**
+     * Is Connect ImsCall Remote Object
+     *
+     * @return bool
+     */
+    bool IsConnect() const;
+    int32_t RegisterImsCallCallback();
+    int32_t ReConnectService();
+    void Clean();
 
 private:
     sptr<ImsCoreServiceInterface> imsCoreServiceProxy_ = nullptr;
