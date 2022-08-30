@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -189,6 +189,13 @@ public:
      * @returns bool
      */
     bool IsDtmfKey(char c) const;
+
+    /**
+     * Ignore the hangup report when the hangup is caused by CallManager crash.
+     *
+     * @param ignored which decides whether to ignore the hangup report
+     */
+    void SetHangupReportIgnoredFlag(bool ignored);
 
     /**
      * Determine whether the call can be initiated currently
@@ -446,6 +453,10 @@ public:
         decltype(t.begin()->second) connection;
         return connection.GetCallFailReasonRequest(slotId);
     }
+
+protected:
+    bool isIgnoredHangupReport_ = false;
+    bool isIgnoredIncomingCall_ = false;
 
 private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;

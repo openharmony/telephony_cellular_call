@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -90,6 +90,12 @@ bool ControlBase::IsDtmfKey(char c) const
      * whose duration is set by the +VTD command. NOTE 2:	In GSM this operates only in voice mode.
      */
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'D') || c == '*' || c == '#';
+}
+
+void ControlBase::SetHangupReportIgnoredFlag(bool ignored)
+{
+    TELEPHONY_LOGI("SetHangupReportIgnoredFlag ignored:%{public}d", ignored);
+    isIgnoredHangupReport_ = ignored;
 }
 } // namespace Telephony
 } // namespace OHOS
