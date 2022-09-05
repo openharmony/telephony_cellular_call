@@ -35,7 +35,6 @@ ohos_unittest("tel_cellular_call_cs_test") {
     "$SOURCE_DIR/interfaces/innerkits/ims",
     "$SOURCE_DIR/services/control/include",
     "$SOURCE_DIR/services/connection/include",
-    "$SOURCE_DIR/ims_interfaces/include",
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/call_manager/services/telephony_interaction/include",
     "//third_party/libphonenumber/cpp/src",
