@@ -26,20 +26,20 @@
 
 ```
 /base/telephony/cellular_call     # 蜂窝通话子组件
-├─ BUILD.gn                       # 编译gn脚本
-├─ README.md                      # Readme文档
-├─ interfaces
-|  ├─ innerkits
-|  |  ├─ ims                      # IMS处理接口
-├─ services
+├─ figures                        # Readme资源文件
+├─ interfaces                     # 接口目录
+│  └─ innerkits                   # IMS通话接口定义
+├─ sa_profile                     # sa文件
+├─ services                       # 服务内部代码
 │  ├─ common                      # 工具仓
 │  ├─ connection                  # 连接层
 │  ├─ control                     # 控制业务层
-|  ├─ ims_service_interaction     # IMS处理实现源文件
+│  ├─ ims_service_interaction     # IMS通话服务交互层
 │  └─ manager                     # 管理层
-├─ sa_profile                     # sa文件
-├─ ohos.build                     # 编译build
-└─ test                           # 测试相关
+├─ test                           # 测试相关代码
+│  └─ unittest                    # 单元测试相关代码
+└─  vendor                        # IMS通话服务实现层示例代码
+   └─ ims                         # IMS通话业务逻辑相关代码
 ```
 
 ## 约束<a name="section131mcpsimp"></a>

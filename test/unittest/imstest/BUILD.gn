@@ -27,7 +27,6 @@ ohos_unittest("tel_cellular_call_ims_test") {
   include_dirs = [
     "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/ims_interfaces/include",
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/call_manager/services/telephony_interaction/include",
   ]
