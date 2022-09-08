@@ -13,131 +13,75 @@
  * limitations under the License.
  */
 #include "ims_sms.h"
-#include "telephony_errors.h"
-#include "ims_ril_manager.h"
+
 #include "ims_radio_event.h"
+#include "telephony_errors.h"
 
 namespace OHOS {
 namespace Telephony {
-ImsSms::ImsSms()
-{
-}
+ImsSms::ImsSms() {}
 
-ImsSms::~ImsSms()
-{
-}
+ImsSms::~ImsSms() {}
 
 bool ImsSms::Init()
 {
     TELEPHONY_LOGI("ImsSms Init");
-    SetSlotIds();
 
     if (!CreateEventLoop("ImsSmsLoop")) {
         TELEPHONY_LOGE("ImsSms::CreateEventLoop failed");
         return false;
     }
-    if (!CreateHandler()) {
-        TELEPHONY_LOGE("ImsSms::CreateHandler failed");
-        return false;
-    }
-    if (!RegisterObserver()) {
-        TELEPHONY_LOGE("ImsSms::RegisterHandler failed");
-        return false;
-    }
-
     TELEPHONY_LOGI("ImsSms:Init success");
     return true;
 }
 
-void ImsSms::SetSlotIds()
-{
-    slotIds_.emplace_back(DEFAULT_SIM_SLOT_ID);
-}
-
 int32_t ImsSms::ImsSendMessage(int32_t slotId, const ImsMessageInfo &imsMessageInfo)
 {
-    AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_SENDMESSAGE);
-    auto handler = GetHandler(slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("Get handler failed");
+    // IMS demo send request info
+
+    // IMS demo callback response info
+    SendSmsResultInfo result;
+    if (imsSmsCallback_ == nullptr) {
+        TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    response->SetOwner(handler);
-
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-
-    return imsRilManager->ImsSendMessage(slotId, imsMessageInfo, response);
+    imsSmsCallback_->ImsSendMessageResponse(slotId, result);
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsSms::ImsSetSmsConfig(int32_t slotId, int32_t imsSmsConfig)
 {
-    AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_SET_SMS_CONFIG);
-    auto handler = GetHandler(slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("Get handler failed");
+    // IMS demo send request info
+
+    // IMS demo callback response info
+    HRilRadioResponseInfo info;
+    if (imsSmsCallback_ == nullptr) {
+        TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    response->SetOwner(handler);
-
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-
-    return imsRilManager->ImsSetSmsConfig(slotId, imsSmsConfig, response);
+    imsSmsCallback_->ImsSetSmsConfigResponse(slotId, info);
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsSms::ImsGetSmsConfig(int32_t slotId)
 {
-    AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_GET_SMS_CONFIG);
-    auto handler = GetHandler(slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("Get handler failed");
+    // IMS demo send request info
+
+    // IMS demo callback response info
+    int32_t imsSmsConfig = 0;
+    if (imsSmsCallback_ == nullptr) {
+        TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    response->SetOwner(handler);
-
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-
-    return imsRilManager->ImsGetSmsConfig(slotId, response);
+    imsSmsCallback_->ImsGetSmsConfigResponse(slotId, imsSmsConfig);
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsSms::RegisterImsSmsCallback(const sptr<ImsSmsCallbackInterface> &callback)
 {
-    auto imsSmsRegister = DelayedSingleton<ImsSmsRegister>::GetInstance();
-    if (imsSmsRegister == nullptr) {
-        TELEPHONY_LOGE("ImsSmsRegister is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    if (imsSmsRegister->RegisterImsSmsCallBack(callback) != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("Register IMS call callback faled");
-        return TELEPHONY_ERR_FAIL;
-    }
     TELEPHONY_LOGI("Register IMS call callback");
+    imsSmsCallback_ = callback;
     return TELEPHONY_SUCCESS;
 }
-
-bool ImsSms::RegisterObserver()
-{
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return false;
-    }
-    for (auto &entry : handlerMap_) {
-        auto &handler = entry.second;
-        imsRilManager->ImsRegisterObserver(handler->GetSlotId(), ImsRadioEvent::IMS_RAIDO_SERVICE_STATUS, handler);
-    }
-    return true;
-}
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS

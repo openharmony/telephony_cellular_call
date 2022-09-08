@@ -15,10 +15,11 @@
 
 #ifndef IMS_SMS_STUB_H
 #define IMS_SMS_STUB_H
+
 #include <unordered_map>
-#include "iremote_stub.h"
 
 #include "ims_sms_interface.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -44,18 +45,18 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+
 private:
     using ImsSmsFunc = int32_t (ImsSmsStub::*)(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsSendMessage(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsSetSmsConfig(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsGetSmsConfig(MessageParcel &data, MessageParcel &reply);
-
     int32_t OnRegisterSmsCallCallback(MessageParcel &data, MessageParcel &reply);
     void InitFuncMap();
 
+private:
     std::unordered_map<uint32_t, ImsSmsFunc> memberFuncMap_;
 };
-} // Telephony
-} // OHOS
-
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_SMS_STUB_H

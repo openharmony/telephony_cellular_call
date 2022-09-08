@@ -16,9 +16,9 @@
 #ifndef IMS_CALL_STUB_H
 #define IMS_CALL_STUB_H
 #include <unordered_map>
-#include "iremote_stub.h"
 
 #include "ims_call_interface.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -26,14 +26,12 @@ class ImsCallStub : public IRemoteStub<ImsCallInterface> {
 public:
     ImsCallStub();
     virtual ~ImsCallStub();
-    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
-        MessageOption &option);
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
 private:
     using ImsCallFunc = int32_t (ImsCallStub::*)(MessageParcel &data, MessageParcel &reply);
     int32_t OnDial(MessageParcel &data, MessageParcel &reply);
     int32_t OnHangUp(MessageParcel &data, MessageParcel &reply);
-    int32_t OnReject(MessageParcel &data, MessageParcel &reply);
     int32_t OnRejectWithReason(MessageParcel &data, MessageParcel &reply);
     int32_t OnAnswer(MessageParcel &data, MessageParcel &reply);
     int32_t OnHoldCall(MessageParcel &data, MessageParcel &reply);
@@ -43,7 +41,6 @@ private:
     int32_t OnInviteToConference(MessageParcel &data, MessageParcel &reply);
     int32_t OnKickOutFromConference(MessageParcel &data, MessageParcel &reply);
     int32_t OnUpdateImsCallMode(MessageParcel &data, MessageParcel &reply);
-    int32_t OnIsEmergencyPhoneNumber(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsCallsDataRequest(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetLastCallFailReason(MessageParcel &data, MessageParcel &reply);
     int32_t OnStartDtmf(MessageParcel &data, MessageParcel &reply);
@@ -55,21 +52,20 @@ private:
     int32_t OnGetDomainPreferenceMode(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsSwitchStatus(MessageParcel &data, MessageParcel &reply);
-    int32_t OnSetImsConfig(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsConfigInt(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetImsConfigString(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsConfig(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetImsFeatureValue(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsFeatureValue(MessageParcel &data, MessageParcel &reply);
-    int32_t OnSetImsSwitchEnhanceMode(MessageParcel &data, MessageParcel &reply);
-    int32_t OnGetImsSwitchEnhanceMode(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetMute(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetMute(MessageParcel &data, MessageParcel &reply);
-    int32_t OnGetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
     int32_t OnCtrlCamera(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetPreviewWindow(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetDisplayWindow(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetCameraZoom(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetPauseImage(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetDeviceDirection(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetClip(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetClip(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetClir(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetClir(MessageParcel &data, MessageParcel &reply);
@@ -79,12 +75,22 @@ private:
     int32_t OnGetCallRestriction(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetCallWaiting(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetCallWaiting(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetColr(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetColr(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetColp(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetColp(MessageParcel &data, MessageParcel &reply);
     int32_t OnRegisterImsCallCallback(MessageParcel &data, MessageParcel &reply);
+    int32_t OnUpdateImsCapabilities(MessageParcel &data, MessageParcel &reply);
     void InitFuncMap();
+    void InitDialFuncMap();
+    void InitDtmfFuncMap();
+    void InitConfigFuncMap();
+    void InitVideoFuncMap();
+    void InitSupplementFuncMap();
 
+private:
     std::unordered_map<uint32_t, ImsCallFunc> memberFuncMap_;
 };
-} // Telephony
-} // OHOS
-
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_CALL_STUB_H

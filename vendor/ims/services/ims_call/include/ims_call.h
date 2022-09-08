@@ -15,28 +15,14 @@
 
 #ifndef IMS_CALL_H
 #define IMS_CALL_H
-#include <map>
 
-#include "iremote_stub.h"
-#include "iservice_registry.h"
-#include "singleton.h"
-#include "system_ability.h"
-#include "system_ability_definition.h"
-#include "event_runner.h"
-
-#include "telephony_types.h"
-#include "ims_core_service_stub.h"
-#include "ims_call_interface.h"
-#include "ims_call_stub.h"
-#include "ims_call_handler.h"
-#include "ims_call_register.h"
 #include "ims_base.h"
+#include "ims_call_callback_interface.h"
+#include "ims_call_stub.h"
 
 namespace OHOS {
 namespace Telephony {
-class ImsCall : public ImsCallStub,
-    public ImsBase<ImsCallHandler>,
-    public std::enable_shared_from_this<ImsCall> {
+class ImsCall : public ImsCallStub, public ImsBase, public std::enable_shared_from_this<ImsCall> {
 public:
     ImsCall();
 
@@ -61,14 +47,6 @@ public:
     int32_t HangUp(const ImsCallInfo &callInfo) override;
 
     /**
-     * IMS Reject interface
-     *
-     * @param ImsCallInfo
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t Reject(const ImsCallInfo &callInfo) override;
-
-    /**
      * IMS Reject with reason interface
      *
      * @param ImsCallInfo
@@ -89,25 +67,28 @@ public:
      * IMS HoldCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HoldCall(int32_t slotId) override;
+    int32_t HoldCall(int32_t slotId, int32_t callType) override;
 
     /**
      * IMS UnHoldCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UnHoldCall(int32_t slotId) override;
+    int32_t UnHoldCall(int32_t slotId, int32_t callType) override;
 
     /**
      * IMS SwitchCall interface
      *
      * @param slotId
+     * @param callType
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SwitchCall(int32_t slotId) override;
+    int32_t SwitchCall(int32_t slotId, int32_t callType) override;
 
     /**
      * IMS CombineConference interface
@@ -143,15 +124,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
-
-    /**
-     * IMS IsEmergencyPhoneNumber interface
-     *
-     * @param slotId
-     * @param phoneNum
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum) override;
 
     /**
      * Get Ims Calls Data Request
@@ -198,7 +170,7 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
-    
+
     /**
      * IMS StartRtt interface
      *
@@ -288,25 +260,11 @@ public:
     /**
      * IMS GetImsFeatureValue interface
      *
-     * @param FeatureType
+     * @param FeatureType Indicate which feature type to query.
+     * @param value Indicate the return value of the query feature type.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetImsFeatureValue(FeatureType type) override;
-
-    /**
-     * IMS SetImsSwitchEnhanceMode interface
-     *
-     * @param value
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetImsSwitchEnhanceMode(bool value) override;
-
-    /**
-     * IMS GetImsSwitchEnhanceMode interface
-     *
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t GetImsSwitchEnhanceMode() override;
+    int32_t GetImsFeatureValue(FeatureType type, int32_t &value) override;
 
     /**
      * IMS SetMute interface
@@ -324,14 +282,6 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t GetMute(int32_t slotId) override;
-
-    /**
-     * IMS GetEmergencyCallList interface
-     *
-     * @param slotId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t GetEmergencyCallList(int32_t slotId) override;
 
     /**
      * IMS CtrlCamera interface
@@ -392,6 +342,15 @@ public:
     int32_t SetDeviceDirection(int32_t rotation) override;
 
     /**
+     * IMS SetClip interface
+     *
+     * @param slotId
+     * @param action
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetClip(int32_t slotId, int32_t action) override;
+
+    /**
      * IMS GetClip interface
      *
      * @param slotId
@@ -447,8 +406,7 @@ public:
      * @param pw
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallRestriction(
-        int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw) override;
+    int32_t SetCallRestriction(int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw) override;
 
     /**
      * IMS GetCallRestriction interface
@@ -460,13 +418,17 @@ public:
     int32_t GetCallRestriction(int32_t slotId, const std::string &fac) override;
 
     /**
-     * IMS SetCallWaiting interface
+     * @brief SetCallWaiting the result of set call waiting by IMS.
      *
-     * @param slotId
-     * @param activate 0: disabled, 1: enabled
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param activate Indicates the action for SetCallWaiting,
+     * true, means turn on CallWaiting; false, means turn off CallWaiting.
+     * @param classType Call waiting and conditions +CCWA,
+     * the value was {@code ServiceClassType}, See 3GPP TS 22.083.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCallWaiting(int32_t slotId, bool activate) override;
+    int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType) override;
 
     /**
      * IMS GetCallWaiting interface
@@ -477,6 +439,39 @@ public:
     int32_t GetCallWaiting(int32_t slotId) override;
 
     /**
+     * IMS SetColr interface
+     *
+     * @param slotId
+     * @param presentation
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetColr(int32_t slotId, int32_t presentation) override;
+
+    /**
+     * IMS GetColr interface
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetColr(int32_t slotId) override;
+
+    /**
+     * IMS SetColp interface
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetColp(int32_t slotId, int32_t action) override;
+
+    /**
+     * IMS GetColp interface
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetColp(int32_t slotId) override;
+
+    /**
      * Register CallBack
      *
      * @param sptr<ImsCallback>
@@ -484,10 +479,18 @@ public:
      */
     int32_t RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback) override;
 
+    /**
+     * Update Ims Capabilities
+     *
+     * @param slotId
+     * @param imsCapabilityList
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) override;
+
 private:
-    bool RegisterObserver() override;
-    void SetSlotIds() override;
+    sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
 };
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_CALL_H

@@ -17,9 +17,9 @@
 #define IMS_CORE_SERVICE_STUB_H
 
 #include <map>
-#include "iremote_stub.h"
 
 #include "ims_core_service_interface.h"
+#include "iremote_stub.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -46,16 +46,17 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
+
 private:
     using ImsServiceFunc = int32_t (ImsCoreServiceStub::*)(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsRegistrationStatus(MessageParcel &data, MessageParcel &reply);
     int32_t OnRegisterImsCoreServiceCallback(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetProxyObjectPtr(MessageParcel &data, MessageParcel &reply);
-
     void InitMemberFuncMap();
+
+private:
     std::unordered_map<uint32_t, ImsServiceFunc> memberFuncMap_;
 };
-}
-}
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_CORE_SERVICE_STUB_H
-

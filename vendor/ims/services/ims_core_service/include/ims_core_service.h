@@ -15,27 +15,25 @@
 
 #ifndef IMS_CORE_SERVICE_H
 #define IMS_CORE_SERVICE_H
-#include <memory>
 
-#include "iremote_stub.h"
-#include "iservice_registry.h"
+#include "ims_base.h"
+#include "ims_call.h"
+#include "ims_core_service_stub.h"
+#include "ims_sms.h"
 #include "singleton.h"
 #include "system_ability.h"
 #include "system_ability_definition.h"
-
-#include "ims_core_service_handler.h"
-#include "ims_core_service_stub.h"
-#include "ims_base.h"
 
 namespace OHOS {
 namespace Telephony {
 enum class ServiceRunningState { STATE_STOPPED, STATE_RUNNING };
 
-class ImsCoreService : public SystemAbility, public ImsCoreServiceStub,
-    public ImsBase<ImsCoreServiceHandler>,
-    public std::enable_shared_from_this<ImsCoreService> {
-DECLARE_DELAYED_SINGLETON(ImsCoreService)
-DECLARE_SYSTEM_ABILITY(ImsService)
+class ImsCoreService : public SystemAbility,
+                       public ImsCoreServiceStub,
+                       public ImsBase,
+                       public std::enable_shared_from_this<ImsCoreService> {
+    DECLARE_DELAYED_SINGLETON(ImsCoreService)
+    DECLARE_SYSTEM_ABILITY(ImsService)
 public:
     void OnStart() override;
 
@@ -67,11 +65,13 @@ public:
 
 private:
     bool InitSubService();
-    bool RegisterObserver() override;
-    void SetSlotIds() override;
+
+private:
     ServiceRunningState state_;
-    std::map<uint32_t, sptr<IRemoteObject>> proxyObjectPtrMap_;
+    sptr<ImsCall> imsCall_;
+    sptr<ImsSms> imsSms_;
+    sptr<ImsCoreServiceCallbackInterface> imsCoreServiceCallback_ = nullptr;
 };
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_CORE_SERVICE_H

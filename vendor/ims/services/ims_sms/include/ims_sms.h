@@ -15,26 +15,14 @@
 
 #ifndef IMS_SMS_H
 #define IMS_SMS_H
-#include <map>
 
-#include "iremote_stub.h"
-#include "iservice_registry.h"
-#include "system_ability.h"
-#include "system_ability_definition.h"
-#include "event_runner.h"
-
-#include "telephony_types.h"
-#include "ims_sms_interface.h"
-#include "ims_sms_stub.h"
-#include "ims_sms_handler.h"
-#include "ims_sms_register.h"
 #include "ims_base.h"
+#include "ims_sms_callback_interface.h"
+#include "ims_sms_stub.h"
 
 namespace OHOS {
 namespace Telephony {
-class ImsSms : public ImsSmsStub,
-    public ImsBase<ImsSmsHandler>,
-    public std::enable_shared_from_this<ImsSms> {
+class ImsSms : public ImsSmsStub, public ImsBase, public std::enable_shared_from_this<ImsSms> {
 public:
     ImsSms();
 
@@ -75,10 +63,8 @@ public:
     int32_t RegisterImsSmsCallback(const sptr<ImsSmsCallbackInterface> &callback) override;
 
 private:
-    bool RegisterObserver() override;
-
-    void SetSlotIds() override;
+    sptr<ImsSmsCallbackInterface> imsSmsCallback_ = nullptr;
 };
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_SMS_H

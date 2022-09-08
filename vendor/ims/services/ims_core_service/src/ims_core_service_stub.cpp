@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "ims_core_service_stub.h"
+
 #include "telephony_errors.h"
 
 namespace OHOS {
@@ -22,24 +23,21 @@ ImsCoreServiceStub::ImsCoreServiceStub()
     InitMemberFuncMap();
 }
 
-ImsCoreServiceStub::~ImsCoreServiceStub()
-{
-}
+ImsCoreServiceStub::~ImsCoreServiceStub() {}
 
 void ImsCoreServiceStub::InitMemberFuncMap()
 {
     memberFuncMap_[ImsCoreServiceInterface::IMS_GET_REGISTRATION_STATUS] =
-        &ImsCoreServiceStub::OnRegisterImsCoreServiceCallback;
+        &ImsCoreServiceStub::OnGetImsRegistrationStatus;
 
     /* ------------ callback ------------- */
     memberFuncMap_[ImsCoreServiceInterface::IMS_REGISTER_CALLBACK] =
         &ImsCoreServiceStub::OnRegisterImsCoreServiceCallback;
-    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_PROXY_OBJECT_PTR] =
-        &ImsCoreServiceStub::OnGetProxyObjectPtr;
+    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
 }
 
-int32_t ImsCoreServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
-                                            MessageOption &option)
+int32_t ImsCoreServiceStub::OnRemoteRequest(
+    uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     std::u16string descriptor = ImsCoreServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
@@ -92,6 +90,5 @@ int32_t ImsCoreServiceStub::OnGetProxyObjectPtr(MessageParcel &data, MessageParc
     }
     return TELEPHONY_SUCCESS;
 }
-} // Telephony
-} // OHOS
-
+} // namespace Telephony
+} // namespace OHOS
