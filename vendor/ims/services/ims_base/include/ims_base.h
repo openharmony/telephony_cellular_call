@@ -15,13 +15,16 @@
 
 #ifndef IMS_BASE_H
 #define IMS_BASE_H
+#include <map>
 #include <memory>
 #include <string>
-#include <vector>
+
+#include "event_runner.h"
+#include "telephony_log_wrapper.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
-template<typename ImsHandleType>
 class ImsBase {
 public:
     ImsBase() = default;
@@ -29,11 +32,6 @@ public:
     virtual ~ImsBase() = default;
 
     virtual bool Init() = 0;
-
-    virtual std::shared_ptr<ImsHandleType> GetHandler(int32_t slotId) final
-    {
-        return handlerMap_[slotId];
-    }
 
     virtual bool CreateEventLoop(std::string loopName)
     {
@@ -45,32 +43,9 @@ public:
         return true;
     }
 
-    virtual bool CreateHandler()
-    {
-        for (auto &slotId : slotIds_) {
-            auto handler = std::make_shared<ImsHandleType>(eventLoop_);
-            if (handler == nullptr) {
-                TELEPHONY_LOGE("Create handler failed, it's nullptr");
-                return false;
-            }
-            handlerMap_[slotId] = handler;
-        }
-        return true;
-    }
-
-    virtual bool RegisterObserver() = 0;
-
-    virtual void SetSlotIds() = 0;
-
-    virtual std::vector<int>& GetSlotIdVector() final
-    {
-        return slotIds_;
-    }
 protected:
-    std::vector<int32_t> slotIds_;
-    std::map<int32_t, std::shared_ptr<ImsHandleType>> handlerMap_;
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_ = nullptr;
 };
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS
 #endif // IMS_BASE_H

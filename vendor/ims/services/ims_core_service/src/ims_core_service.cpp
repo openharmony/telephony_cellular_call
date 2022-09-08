@@ -13,24 +13,29 @@
  * limitations under the License.
  */
 #include "ims_core_service.h"
-#include "ims_core_service_register.h"
-#include "ims_ril_manager.h"
-#include "ims_call.h"
-#include "ims_sms.h"
-#include "telephony_errors.h"
+
 #include "ims_radio_event.h"
+#include "telephony_errors.h"
 
 namespace OHOS {
 namespace Telephony {
 bool g_registerResult = SystemAbility::MakeAndRegisterAbility(DelayedSingleton<ImsCoreService>::GetInstance().get());
 
-ImsCoreService::ImsCoreService() : SystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID, true)
-{
-    state_ = ServiceRunningState::STATE_STOPPED;
-}
+ImsCoreService::ImsCoreService()
+    : SystemAbility(TELEPHONY_IMS_SYS_ABILITY_ID, true), state_(ServiceRunningState::STATE_STOPPED), imsCall_(nullptr),
+      imsSms_(nullptr)
+{}
 
 ImsCoreService::~ImsCoreService()
 {
+    if (imsCall_ != nullptr) {
+        delete imsCall_;
+        imsCall_ = nullptr;
+    }
+    if (imsSms_ != nullptr) {
+        delete imsSms_;
+        imsSms_ = nullptr;
+    }
     state_ = ServiceRunningState::STATE_STOPPED;
 }
 
@@ -62,18 +67,8 @@ void ImsCoreService::OnStop()
 
 bool ImsCoreService::Init()
 {
-    SetSlotIds();
-
     if (!CreateEventLoop("ImsCoreServiceLoop")) {
         TELEPHONY_LOGE("ImsCoreService::CreateEventLoop failed");
-        return false;
-    }
-    if (!CreateHandler()) {
-        TELEPHONY_LOGE("ImsCoreService::CreateHandler failed");
-        return false;
-    }
-    if (!RegisterObserver()) {
-        TELEPHONY_LOGE("ImsCoreService::RegisterHandler failed");
         return false;
     }
     if (!InitSubService()) {
@@ -84,97 +79,74 @@ bool ImsCoreService::Init()
     return true;
 }
 
-void ImsCoreService::SetSlotIds()
-{
-    slotIds_.emplace_back(DEFAULT_SIM_SLOT_ID);
-}
-
 bool ImsCoreService::InitSubService()
 {
-    sptr<ImsCall> imsCall = (std::make_unique<ImsCall>()).release();
-    if (imsCall == nullptr) {
+    imsCall_ = new ImsCall();
+    if (imsCall_ == nullptr) {
         TELEPHONY_LOGE("create ImsCall object failed!");
         return false;
     }
-    if (!imsCall->Init()) {
+    if (!imsCall_->Init()) {
         TELEPHONY_LOGE("Ims call service init failed");
         return false;
     }
-    proxyObjectPtrMap_[PROXY_IMS_CALL] = imsCall->AsObject().GetRefPtr();
 
-    sptr<ImsSms> imsSms = (std::make_unique<ImsSms>()).release();
-    if (imsSms == nullptr) {
+    imsSms_ = new ImsSms();
+    if (imsSms_ == nullptr) {
         TELEPHONY_LOGE("create ImsSms object failed!");
         return false;
     }
-    if (!imsSms->Init()) {
+    if (!imsSms_->Init()) {
         TELEPHONY_LOGE("Ims sms service init failed");
         return false;
     }
-    proxyObjectPtrMap_[PROXY_IMS_SMS] = imsSms->AsObject().GetRefPtr();
+
     TELEPHONY_LOGI("create ImsSms object success!");
     return true;
 }
 
 int32_t ImsCoreService::GetImsRegistrationStatus(int32_t slotId)
 {
-    AppExecFwk::InnerEvent::Pointer response =
-        AppExecFwk::InnerEvent::Get(ImsRadioEvent::IMS_RADIO_GET_CALL_WAITING);
-    auto handler = GetHandler(slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("Get handler failed, slotid = %{public}d", slotId);
+    // IMS demo send request info
+
+    // IMS demo callback response info
+    ImsRegistrationStatus imsRegStatus;
+    if (imsCoreServiceCallback_ == nullptr) {
+        TELEPHONY_LOGE("imsCoreServiceCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    response->SetOwner(handler);
-
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-
-    return imsRilManager->GetCallWaiting(slotId, response);
+    imsCoreServiceCallback_->GetImsRegistrationStatusResponse(slotId, imsRegStatus);
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCoreService::RegisterImsCoreServiceCallback(const sptr<ImsCoreServiceCallbackInterface> &callback)
 {
-    auto imsCoreServiceRegister = DelayedSingleton<ImsCoreServiceRegister>::GetInstance();
-    if (imsCoreServiceRegister == nullptr) {
-        TELEPHONY_LOGE("imsCoreRegister is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    if (imsCoreServiceRegister->RegisterImsCoreServiceCallback(callback) != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("Register IMS coreservice callback faled");
-        return TELEPHONY_ERR_FAIL;
-    }
     TELEPHONY_LOGI("Register IMS coreservice callback");
+    imsCoreServiceCallback_ = callback;
     return TELEPHONY_SUCCESS;
 }
 
 sptr<IRemoteObject> ImsCoreService::GetProxyObjectPtr(ImsServiceProxyType proxyType)
 {
-    auto it = proxyObjectPtrMap_.find(static_cast<uint32_t>(proxyType));
-    if (it != proxyObjectPtrMap_.end()) {
-        TELEPHONY_LOGI("GetProxyObjectPtr success! proxyType:%{public}d", proxyType);
-        return it->second;
+    switch (proxyType) {
+        case ImsServiceProxyType::PROXY_IMS_CALL:
+            if (imsCall_ == nullptr) {
+                break;
+            }
+            TELEPHONY_LOGI("GetProxyObjectPtr success! proxyType:%{public}d", proxyType);
+            return imsCall_->AsObject().GetRefPtr();
+        case ImsServiceProxyType::PROXY_IMS_SMS:
+            if (imsSms_ == nullptr) {
+                break;
+            }
+            TELEPHONY_LOGI("GetProxyObjectPtr success! proxyType:%{public}d", proxyType);
+            return imsSms_->AsObject().GetRefPtr();
+        default:
+            break;
     }
+
     TELEPHONY_LOGE("GetProxyObjectPtr failed! proxyType:%{public}d", proxyType);
     return nullptr;
 }
-
-bool ImsCoreService::RegisterObserver()
-{
-    auto imsRilManager = DelayedSingleton<ImsRilManager>::GetInstance();
-    if (imsRilManager == nullptr) {
-        TELEPHONY_LOGE("ImsRilManager nullptr");
-        return false;
-    }
-    for (auto &handler : handlerMap_) {
-        imsRilManager->ImsRegisterObserver(handler.second->GetSlotId(),
-                                           ImsRadioEvent::IMS_RAIDO_SERVICE_STATUS, handler.second);
-    }
-
-    return true;
-}
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS

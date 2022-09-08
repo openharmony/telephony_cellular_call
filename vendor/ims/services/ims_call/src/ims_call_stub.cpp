@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "ims_call_stub.h"
+
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -26,9 +27,17 @@ ImsCallStub::~ImsCallStub() {}
 
 void ImsCallStub::InitFuncMap()
 {
+    InitDialFuncMap();
+    InitDtmfFuncMap();
+    InitConfigFuncMap();
+    InitVideoFuncMap();
+    InitSupplementFuncMap();
+}
+
+void ImsCallStub::InitDialFuncMap()
+{
     memberFuncMap_[IMS_DIAL] = &ImsCallStub::OnDial;
     memberFuncMap_[IMS_HANG_UP] = &ImsCallStub::OnHangUp;
-    memberFuncMap_[IMS_REJECT] = &ImsCallStub::OnReject;
     memberFuncMap_[IMS_REJECT_WITH_REASON] = &ImsCallStub::OnRejectWithReason;
     memberFuncMap_[IMS_ANSWER] = &ImsCallStub::OnAnswer;
     memberFuncMap_[IMS_HOLD] = &ImsCallStub::OnHoldCall;
@@ -38,38 +47,48 @@ void ImsCallStub::InitFuncMap()
     memberFuncMap_[IMS_INVITE_TO_CONFERENCE] = &ImsCallStub::OnInviteToConference;
     memberFuncMap_[IMS_KICK_OUT_CONFERENCE] = &ImsCallStub::OnKickOutFromConference;
     memberFuncMap_[IMS_UPDATE_CALL_MEDIA_MODE] = &ImsCallStub::OnUpdateImsCallMode;
-    memberFuncMap_[IMS_EMERGENCY_CALL] = &ImsCallStub::OnIsEmergencyPhoneNumber;
     memberFuncMap_[IMS_GET_CALL_DATA] = &ImsCallStub::OnGetImsCallsDataRequest;
     memberFuncMap_[IMS_GET_LAST_CALL_FAIL_REASON] = &ImsCallStub::OnGetLastCallFailReason;
+}
 
+void ImsCallStub::InitDtmfFuncMap()
+{
     memberFuncMap_[IMS_START_DTMF] = &ImsCallStub::OnStartDtmf;
     memberFuncMap_[IMS_SEND_DTMF] = &ImsCallStub::OnSendDtmf;
     memberFuncMap_[IMS_STOP_DTMF] = &ImsCallStub::OnStopDtmf;
     memberFuncMap_[IMS_START_RTT] = &ImsCallStub::OnStartRtt;
     memberFuncMap_[IMS_STOP_RTT] = &ImsCallStub::OnStopRtt;
+}
 
+void ImsCallStub::InitConfigFuncMap()
+{
     memberFuncMap_[IMS_SET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnSetDomainPreferenceMode;
     memberFuncMap_[IMS_GET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnGetDomainPreferenceMode;
     memberFuncMap_[IMS_SET_SWITCH_STATUS] = &ImsCallStub::OnSetImsSwitchStatus;
     memberFuncMap_[IMS_GET_SWITCH_STATUS] = &ImsCallStub::OnGetImsSwitchStatus;
-    memberFuncMap_[IMS_SET_IMS_CONFIG_STRING] = &ImsCallStub::OnSetImsConfig;
-    memberFuncMap_[IMS_SET_IMS_CONFIG_INT] = &ImsCallStub::OnSetImsConfig;
+    memberFuncMap_[IMS_SET_IMS_CONFIG_STRING] = &ImsCallStub::OnSetImsConfigString;
+    memberFuncMap_[IMS_SET_IMS_CONFIG_INT] = &ImsCallStub::OnSetImsConfigInt;
     memberFuncMap_[IMS_GET_IMS_CONFIG] = &ImsCallStub::OnGetImsConfig;
     memberFuncMap_[IMS_SET_IMS_FEATURE] = &ImsCallStub::OnSetImsFeatureValue;
     memberFuncMap_[IMS_GET_IMS_FEATURE] = &ImsCallStub::OnGetImsFeatureValue;
-    memberFuncMap_[IMS_SET_LTE_SWITCH_ENHANCE_MODE_STATUS] = &ImsCallStub::OnSetImsSwitchEnhanceMode;
-    memberFuncMap_[IMS_GET_LTE_SWITCH_ENHANCE_MODE_STATUS] = &ImsCallStub::OnGetImsSwitchEnhanceMode;
     memberFuncMap_[IMS_SET_MUTE] = &ImsCallStub::OnSetMute;
     memberFuncMap_[IMS_GET_MUTE] = &ImsCallStub::OnGetMute;
-    memberFuncMap_[IMS_GET_EMERGENCY_CALL_LIST] = &ImsCallStub::OnGetEmergencyCallList;
+    memberFuncMap_[IMS_UPDATE_CAPABILITY] = &ImsCallStub::OnUpdateImsCapabilities;
+}
 
+void ImsCallStub::InitVideoFuncMap()
+{
     memberFuncMap_[IMS_CTRL_CAMERA] = &ImsCallStub::OnCtrlCamera;
     memberFuncMap_[IMS_SET_PREVIEW_WINDOW] = &ImsCallStub::OnSetPreviewWindow;
     memberFuncMap_[IMS_SET_DISPLAY_WINDOW] = &ImsCallStub::OnSetDisplayWindow;
     memberFuncMap_[IMS_SET_CAMERA_ZOOM] = &ImsCallStub::OnSetCameraZoom;
     memberFuncMap_[IMS_SET_PAUSE_IMAGE] = &ImsCallStub::OnSetPauseImage;
     memberFuncMap_[IMS_SET_DEVICE_DIRECTION] = &ImsCallStub::OnSetDeviceDirection;
+}
 
+void ImsCallStub::InitSupplementFuncMap()
+{
+    memberFuncMap_[IMS_SET_CLIP] = &ImsCallStub::OnGetClip;
     memberFuncMap_[IMS_GET_CLIP] = &ImsCallStub::OnGetClip;
     memberFuncMap_[IMS_SET_CLIR] = &ImsCallStub::OnSetClir;
     memberFuncMap_[IMS_GET_CLIR] = &ImsCallStub::OnGetClir;
@@ -79,12 +98,15 @@ void ImsCallStub::InitFuncMap()
     memberFuncMap_[IMS_GET_CALL_RESTRICTION] = &ImsCallStub::OnGetCallRestriction;
     memberFuncMap_[IMS_SET_CALL_WAITING] = &ImsCallStub::OnSetCallWaiting;
     memberFuncMap_[IMS_GET_CALL_WAITING] = &ImsCallStub::OnGetCallWaiting;
+    memberFuncMap_[IMS_SET_COLR] = &ImsCallStub::OnSetColr;
+    memberFuncMap_[IMS_GET_COLR] = &ImsCallStub::OnGetColr;
+    memberFuncMap_[IMS_SET_COLP] = &ImsCallStub::OnSetColp;
+    memberFuncMap_[IMS_GET_COLP] = &ImsCallStub::OnGetColp;
 
     memberFuncMap_[IMS_CALL_REGISTER_CALLBACK] = &ImsCallStub::OnRegisterImsCallCallback;
 }
 
-int32_t ImsCallStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
-                                     MessageOption &option)
+int32_t ImsCallStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     std::u16string descriptor = ImsCallStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
@@ -112,13 +134,9 @@ int32_t ImsCallStub::OnDial(MessageParcel &data, MessageParcel &reply)
         reply.WriteInt32(result);
         return result;
     }
-    CLIRMode *mode = (CLIRMode *)data.ReadRawData(sizeof(CLIRMode));
-    if (mode == nullptr) {
-        TELEPHONY_LOGE("CLIRMode is nullptr");
-        reply.WriteInt32(result);
-        return result;
-    }
-    reply.WriteInt32(Dial(*callInfo, *mode));
+    auto mode = static_cast<CLIRMode>(data.ReadInt32());
+
+    reply.WriteInt32(Dial(*callInfo, mode));
     return TELEPHONY_SUCCESS;
 }
 
@@ -135,19 +153,6 @@ int32_t ImsCallStub::OnHangUp(MessageParcel &data, MessageParcel &reply)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallStub::OnReject(MessageParcel &data, MessageParcel &reply)
-{
-    ImsCallInfo *callInfo = (ImsCallInfo *)data.ReadRawData(sizeof(ImsCallInfo));
-    int32_t result = TELEPHONY_ERR_LOCAL_PTR_NULL;
-    if (callInfo == nullptr) {
-        TELEPHONY_LOGE("ImsCallInfo is nullptr");
-        reply.WriteInt32(result);
-        return result;
-    }
-    reply.WriteInt32(Reject(*callInfo));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallStub::OnRejectWithReason(MessageParcel &data, MessageParcel &reply)
 {
     ImsCallInfo *callInfo = (ImsCallInfo *)data.ReadRawData(sizeof(ImsCallInfo));
@@ -157,13 +162,9 @@ int32_t ImsCallStub::OnRejectWithReason(MessageParcel &data, MessageParcel &repl
         reply.WriteInt32(result);
         return result;
     }
-    ImsRejectReason *imsRejectReason = (ImsRejectReason *)data.ReadRawData(sizeof(ImsRejectReason));
-    if (imsRejectReason == nullptr) {
-        TELEPHONY_LOGE("ImsCallInfo is nullptr");
-        reply.WriteInt32(result);
-        return result;
-    }
-    reply.WriteInt32(RejectWithReason(*callInfo, *imsRejectReason));
+    auto imsRejectReason = static_cast<ImsRejectReason>(data.ReadInt32());
+
+    reply.WriteInt32(RejectWithReason(*callInfo, imsRejectReason));
     return TELEPHONY_SUCCESS;
 }
 
@@ -183,21 +184,24 @@ int32_t ImsCallStub::OnAnswer(MessageParcel &data, MessageParcel &reply)
 int32_t ImsCallStub::OnHoldCall(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(HoldCall(slotId));
+    int32_t callType = data.ReadInt32();
+    reply.WriteInt32(HoldCall(slotId, callType));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnUnHoldCall(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(UnHoldCall(slotId));
+    int32_t callType = data.ReadInt32();
+    reply.WriteInt32(UnHoldCall(slotId, callType));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnSwitchCall(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(SwitchCall(slotId));
+    int32_t callType = data.ReadInt32();
+    reply.WriteInt32(SwitchCall(slotId, callType));
     return TELEPHONY_SUCCESS;
 }
 
@@ -242,21 +246,9 @@ int32_t ImsCallStub::OnUpdateImsCallMode(MessageParcel &data, MessageParcel &rep
         reply.WriteInt32(result);
         return result;
     }
-    ImsCallMode *callMode = (ImsCallMode *)data.ReadRawData(sizeof(ImsCallMode));
-    if (callMode == nullptr) {
-        TELEPHONY_LOGE("ImsCallMode is nullptr");
-        reply.WriteInt32(result);
-        return result;
-    }
-    reply.WriteInt32(UpdateImsCallMode(*callInfo, *callMode));
-    return TELEPHONY_SUCCESS;
-}
+    auto callMode = static_cast<ImsCallMode>(data.ReadInt32());
 
-int32_t ImsCallStub::OnIsEmergencyPhoneNumber(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    const std::string phoneNumber = data.ReadString();
-    reply.WriteInt32(IsEmergencyPhoneNumber(slotId, phoneNumber));
+    reply.WriteInt32(UpdateImsCallMode(*callInfo, callMode));
     return TELEPHONY_SUCCESS;
 }
 
@@ -365,73 +357,49 @@ int32_t ImsCallStub::OnGetImsSwitchStatus(MessageParcel &data, MessageParcel &re
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallStub::OnSetImsConfig(MessageParcel &data, MessageParcel &reply)
+int32_t ImsCallStub::OnSetImsConfigInt(MessageParcel &data, MessageParcel &reply)
 {
-    ImsConfigItem *item = (ImsConfigItem *)data.ReadRawData(sizeof(ImsConfigItem));
-    if (item == nullptr) {
-        TELEPHONY_LOGE("ImsConfigItem is nullptr");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    auto item = static_cast<ImsConfigItem>(data.ReadInt32());
     int32_t value = data.ReadInt32();
 
-    reply.WriteInt32(SetImsConfig(*item, value));
+    reply.WriteInt32(SetImsConfig(item, value));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnSetImsConfigString(MessageParcel &data, MessageParcel &reply)
+{
+    auto item = static_cast<ImsConfigItem>(data.ReadInt32());
+    std::string stringValue = data.ReadString();
+
+    reply.WriteInt32(SetImsConfig(item, stringValue));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnGetImsConfig(MessageParcel &data, MessageParcel &reply)
 {
-    ImsConfigItem *item = (ImsConfigItem *)data.ReadRawData(sizeof(ImsConfigItem));
-    if (item == nullptr) {
-        TELEPHONY_LOGE("ImsConfigItem is nullptr");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    auto item = static_cast<ImsConfigItem>(data.ReadInt32());
 
-    reply.WriteInt32(GetImsConfig(*item));
+    reply.WriteInt32(GetImsConfig(item));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnSetImsFeatureValue(MessageParcel &data, MessageParcel &reply)
 {
-    FeatureType *type = (FeatureType *)data.ReadRawData(sizeof(FeatureType));
-    if (type == nullptr) {
-        TELEPHONY_LOGE("FeatureType is nullptr");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    auto type = static_cast<FeatureType>(data.ReadInt32());
     int32_t value = data.ReadInt32();
 
-    reply.WriteInt32(SetImsFeatureValue(*type, value));
+    reply.WriteInt32(SetImsFeatureValue(type, value));
 
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnGetImsFeatureValue(MessageParcel &data, MessageParcel &reply)
 {
-    FeatureType *type = (FeatureType *)data.ReadRawData(sizeof(FeatureType));
-    if (type == nullptr) {
-        TELEPHONY_LOGE("FeatureType is nullptr");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    auto type = static_cast<FeatureType>(data.ReadInt32());
 
-    reply.WriteInt32(GetImsFeatureValue(*type));
-
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallStub::OnSetImsSwitchEnhanceMode(MessageParcel &data, MessageParcel &reply)
-{
-    bool value = data.ReadInt32();
-    reply.WriteInt32(SetImsSwitchEnhanceMode(value));
-
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallStub::OnGetImsSwitchEnhanceMode(MessageParcel &data, MessageParcel &reply)
-{
-    reply.WriteInt32(GetImsSwitchEnhanceMode());
+    int32_t value = ImsFeatureIntResult::IMS_FEATURE_INT_RESULT_UNKNOWN;
+    reply.WriteInt32(GetImsFeatureValue(type, value));
+    reply.WriteInt32(value);
 
     return TELEPHONY_SUCCESS;
 }
@@ -449,13 +417,6 @@ int32_t ImsCallStub::OnGetMute(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
     reply.WriteInt32(GetMute(slotId));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallStub::OnGetEmergencyCallList(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(GetEmergencyCallList(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -512,6 +473,14 @@ int32_t ImsCallStub::OnSetDeviceDirection(MessageParcel &data, MessageParcel &re
 {
     int32_t rotation = data.ReadInt32();
     reply.WriteInt32(SetDeviceDirection(rotation));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnSetClip(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    int32_t action = data.ReadInt32();
+    reply.WriteInt32(SetClip(slotId, action));
     return TELEPHONY_SUCCESS;
 }
 
@@ -580,8 +549,9 @@ int32_t ImsCallStub::OnGetCallRestriction(MessageParcel &data, MessageParcel &re
 int32_t ImsCallStub::OnSetCallWaiting(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    bool activate = data.ReadInt32();
-    reply.WriteInt32(SetCallWaiting(slotId, activate));
+    bool activate = data.ReadBool();
+    int32_t classType = data.ReadInt32();
+    reply.WriteInt32(SetCallWaiting(slotId, activate, classType));
     return TELEPHONY_SUCCESS;
 }
 
@@ -589,6 +559,36 @@ int32_t ImsCallStub::OnGetCallWaiting(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
     reply.WriteInt32(GetCallWaiting(slotId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnSetColr(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    int32_t presentation = data.ReadInt32();
+    reply.WriteInt32(SetColr(slotId, presentation));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnGetColr(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    reply.WriteInt32(GetColr(slotId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnSetColp(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    int32_t action = data.ReadInt32();
+    reply.WriteInt32(SetColp(slotId, action));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallStub::OnGetColp(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    reply.WriteInt32(GetColp(slotId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -605,5 +605,13 @@ int32_t ImsCallStub::OnRegisterImsCallCallback(MessageParcel &data, MessageParce
     reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;
 }
-} // Telephony
-} // OHOS
+
+int32_t ImsCallStub::OnUpdateImsCapabilities(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = (ImsCapabilityList *)data.ReadRawData(sizeof(ImsCapabilityList));
+    reply.WriteInt32(UpdateImsCapabilities(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+} // namespace Telephony
+} // namespace OHOS

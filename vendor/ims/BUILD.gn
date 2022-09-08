@@ -19,19 +19,11 @@ TELEPHONY_IMS_SERVICE_ROOT = "$TELEPHONY_CELLULAR_CALL_ROOT/vendor/ims"
 
 ohos_shared_library("tel_ims") {
   sources = [
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_base/src/ims_base_handler.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_handler.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_register.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_stub.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_handler.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_register.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_stub.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_ril/src/ims_ril_manager.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_handler.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_register.cpp",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_stub.cpp",
   ]
 
@@ -40,7 +32,6 @@ ohos_shared_library("tel_ims") {
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/include",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/include",
     "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/include",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_ril/include",
   ]
 
   defines += [
@@ -52,23 +43,20 @@ ohos_shared_library("tel_ims") {
 
   deps = [
     "$TELEPHONY_CELLULAR_CALL_ROOT:tel_cellular_call",
-    "$TELEPHONY_CELLULAR_CALL_ROOT/interfaces/innerkits/ims:tel_ims_call_callback_proxy",
+    "$TELEPHONY_CELLULAR_CALL_ROOT/interfaces/innerkits/ims:tel_ims_call_api",
   ]
 
   external_deps = [
-    "c_utils:utils",
     "call_manager:tel_call_manager_api",
-    "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
-    "hdf_core:libhdf_utils",
-    "hdf_core:libhdi",
-    "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
+    "samgr_standard:samgr_proxy",
     "sms_mms:tel_sms_mms_api",
+    "startup_l2:syspara",
+    "utils_base:utils",
   ]
 
   if (is_standard_system) {

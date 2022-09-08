@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 #include "ims_sms_stub.h"
-#include "telephony_log_wrapper.h"
+
 #include "telephony_errors.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -34,8 +35,7 @@ void ImsSmsStub::InitFuncMap()
     memberFuncMap_[IMS_SMS_REGISTER_CALLBACK] = &ImsSmsStub::OnRegisterSmsCallCallback;
 }
 
-int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
-                                    MessageOption &option)
+int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
     std::u16string descriptor = ImsSmsStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
@@ -98,5 +98,5 @@ int32_t ImsSmsStub::OnRegisterSmsCallCallback(MessageParcel &data, MessageParcel
     reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;
 }
-} // Telephony
-} // OHOS
+} // namespace Telephony
+} // namespace OHOS
