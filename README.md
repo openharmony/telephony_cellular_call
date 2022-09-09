@@ -1,9 +1,5 @@
 # Cellular Call<a name="EN-US_TOPIC_0000001105379632"></a>
 
--   [Introduction](#section117mcpsimp)
--   [Directory Structure](#section127mcpsimp)
--   [Constraints](#section131mcpsimp)
--   [Repositories Involved](#section204mcpsimp)
 
 ## Introduction<a name="section117mcpsimp"></a>
 
@@ -26,20 +22,20 @@ The cellular call module consists of three layers:
 
 ```
 /base/telephony/cellular_call     # Cellular call module
-├─ BUILD.gn                       # Build script (gn)
-├─ README.md                      # Readme
-├─ interfaces
-|  ├─ innerkits
-|  |  ├─ ims                      # IMS module
-├─ services
+├─ figures                        # Figures of readme files
+├─ interfaces                     # APIs
+│  └─ innerkits                   # IMS call service APIs
+├─ sa_profile                     # SA profile
+├─ services                       # Service code
 │  ├─ common                      # Tools
 │  ├─ connection                  # Connection layer
 │  ├─ control                     # Control service layer
-|  ├─ ims_service_interaction     # IMS service interaction layer
+│  ├─ ims_service_interaction     # IMS call service interaction layer
 │  └─ manager                     # Management layer
-├─ sa_profile                     # SA profile
-├─ ohos.build                     # Build code
-└─ test                           # Test code
+├─ test                           # Test code
+│  └─ unittest                    # Unit test
+└─  vendor                        # Sample code for IMS call service implementation
+   └─ ims                         # IMS call service logic
 ```
 
 ## Constraints<a name="section131mcpsimp"></a>
