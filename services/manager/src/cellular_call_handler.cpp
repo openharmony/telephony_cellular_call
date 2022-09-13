@@ -201,11 +201,10 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
             CellularCallIncomingFinishTrace(callInfo.state);
             return;
         }
-        csControl->ReportCallsData(slotId_, callInfoList);
-        serviceInstance_->SetCsControl(slotId_, nullptr);
         if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(callInfo.state);
         }
+        serviceInstance_->SetCsControl(slotId_, nullptr);
         return;
     }
     if (callInfoList.callSize == 1) {
@@ -244,11 +243,10 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
             return;
         }
-        imsControl->ReportImsCallsData(slotId_, imsCallInfoList);
-        serviceInstance_->SetImsControl(slotId_, nullptr);
         if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(imsCallInfo.state);
         }
+        serviceInstance_->SetImsControl(slotId_, nullptr);
         return;
     }
     if (imsCallInfoList.callSize == 1) {

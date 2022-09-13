@@ -48,8 +48,6 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
     }
 
     if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {
-        DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->JudgingIncomingTimeOut(
-            detailInfo.accountId, static_cast<int32_t>(detailInfo.callType), static_cast<int32_t>(detailInfo.callMode));
         DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingCallParameterInfo(
             static_cast<int32_t>(detailInfo.callType), static_cast<int32_t>(detailInfo.callMode));
         FinishAsyncTrace(HITRACE_TAG_OHOS, "CellularCallIncoming", getpid());
