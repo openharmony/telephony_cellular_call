@@ -35,10 +35,10 @@ ohos_executable("tel_vendor_ims_ui_test") {
     "//base/telephony/cellular_call:tel_cellular_call",
     "//base/telephony/core_service:tel_core_service",
     "//base/telephony/sms_mms:tel_sms_mms",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "c_utils:utils",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
