@@ -37,10 +37,10 @@ ohos_unittest("tel_vendor_ims_service_gtest") {
     "//base/telephony/core_service:tel_core_service",
     "//base/telephony/sms_mms:tel_sms_mms",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "c_utils:utils",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
