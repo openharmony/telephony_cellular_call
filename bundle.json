@@ -30,12 +30,20 @@
         "ram": "650KB",
         "deps": {
             "components": [
-                "appexecfwk_standard",
+                "ability_base",
+                "c_utils",
+                "call_manager",
+                "common_event_service",
+                "core_service",
+                "drivers_interface_ril",
+                "eventhandler",
+                "hisysevent_native",
+                "hitrace_native",
+                "hiviewdfx_hilog_native",
+                "init",
                 "ipc",
-                "ril_adapter",
                 "safwk",
-                "samgr",
-                "utils_base"
+                "samgr"
             ],
             "third_party": [
                 "libphonenumber"
