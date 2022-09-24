@@ -103,6 +103,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
+    requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
 }
 
 void CellularCallHandler::RegisterImsCallCallbackHandler()
@@ -183,12 +184,12 @@ void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
 
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 {
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("ReportCsCallsData return, GetInstance is nullptr");
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("ReportCsCallsData return, serviceInstance is nullptr");
         return;
     }
-    auto csControl = serviceInstance_->GetCsControl(slotId_);
+    auto csControl = serviceInstance->GetCsControl(slotId_);
     CallInfo callInfo;
     std::vector<CallInfo>::const_iterator it = callInfoList.calls.begin();
     for (; it != callInfoList.calls.end(); ++it) {
@@ -196,6 +197,11 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     CellularCallIncomingStartTrace(callInfo.state);
     if (callInfoList.callSize == 0) {
+        if (isInCsRedial_) {
+            TELEPHONY_LOGI("ReportCsCallsData return, ignore hangup during cs redial");
+            isInCsRedial_ = false;
+            return;
+        }
         if (csControl == nullptr) {
             TELEPHONY_LOGE("ReportCsCallsData return, cs_control is nullptr");
             CellularCallIncomingFinishTrace(callInfo.state);
@@ -204,13 +210,17 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(callInfo.state);
         }
-        serviceInstance_->SetCsControl(slotId_, nullptr);
+        serviceInstance->SetCsControl(slotId_, nullptr);
+        return;
+    }
+    if (isInCsRedial_) {
+        TELEPHONY_LOGI("ReportCsCallsData return, ignore cs call state change during cs redial");
         return;
     }
     if (callInfoList.callSize == 1) {
         if (csControl == nullptr) {
             csControl = std::make_shared<CSControl>();
-            serviceInstance_->SetCsControl(slotId_, csControl);
+            serviceInstance->SetCsControl(slotId_, csControl);
         }
     }
     if (csControl == nullptr) {
@@ -225,9 +235,9 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 
 void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList)
 {
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("ReportImsCallsData return, serviceInstance_ is nullptr");
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("ReportImsCallsData return, serviceInstance is nullptr");
         return;
     }
     ImsCurrentCall imsCallInfo;
@@ -237,7 +247,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     }
     CellularCallIncomingStartTrace(imsCallInfo.state);
     TELEPHONY_LOGI("ReportImsCallsData, imsCallInfoList.callSize:%{public}d", imsCallInfoList.callSize);
-    auto imsControl = serviceInstance_->GetImsControl(slotId_);
+    auto imsControl = serviceInstance->GetImsControl(slotId_);
     if (imsCallInfoList.callSize == 0) {
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("ReportImsCallsData return, ims_control is nullptr");
@@ -246,14 +256,14 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(imsCallInfo.state);
         }
-        serviceInstance_->SetImsControl(slotId_, nullptr);
+        serviceInstance->SetImsControl(slotId_, nullptr);
         return;
     }
     if (imsCallInfoList.callSize == 1) {
         if (imsControl == nullptr) {
             imsControl = std::make_shared<IMSControl>();
             TELEPHONY_LOGI("ReportImsCallsData, make control");
-            serviceInstance_->SetImsControl(slotId_, imsControl);
+            serviceInstance->SetImsControl(slotId_, imsControl);
         }
     }
     if (imsControl == nullptr) {
@@ -1160,5 +1170,21 @@ void CellularCallHandler::HandleOperatorConfigChanged(const AppExecFwk::InnerEve
     CellularCallConfig config;
     config.HandleOperatorConfigChanged(slotId_);
 }
-}  // namespace Telephony
-}  // namespace OHOS
+
+void CellularCallHandler::UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("event is nullptr");
+        return;
+    }
+
+    isInCsRedial_ = true;
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("ReportCsCallsData return, GetInstance is nullptr");
+        return;
+    }
+    serviceInstance->SetCsControl(slotId_, nullptr);
+}
+} // namespace Telephony
+} // namespace OHOS
