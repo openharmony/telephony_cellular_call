@@ -361,18 +361,18 @@ int32_t IMSControl::ReportHungUpInfo(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList &callInfoList)
+int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList &imsCurrentCallInfoList)
 {
     TELEPHONY_LOGI("ReportIncomingInfo entry");
     CallsReportInfo callsReportInfo;
-    for (int32_t i = 0; i < callInfoList.callSize; ++i) {
-        CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
+    for (int32_t i = 0; i < imsCurrentCallInfoList.callSize; ++i) {
+        CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, imsCurrentCallInfoList.calls[i]);
 
         CellularCallConnectionIMS connection;
-        connection.SetStatus(static_cast<TelCallState>(callInfoList.calls[i].state));
-        connection.SetIndex(callInfoList.calls[i].index);
+        connection.SetStatus(static_cast<TelCallState>(imsCurrentCallInfoList.calls[i].state));
+        connection.SetIndex(imsCurrentCallInfoList.calls[i].index);
         connection.SetOrUpdateCallReportInfo(reportInfo);
-        SetConnectionData(connectionMap_, callInfoList.calls[i].number, connection);
+        SetConnectionData(connectionMap_, imsCurrentCallInfoList.calls[i].number, connection);
 
         callsReportInfo.callVec.push_back(reportInfo);
     }
