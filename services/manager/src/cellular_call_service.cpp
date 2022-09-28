@@ -1128,6 +1128,8 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbili
                 return;
             }
             cellularCallService->HandleCallManagerException();
+            count_++;
+            CellularCallHiSysEvent::WriteFoundationRestartFaultEvent(count_);
             break;
         }
         case COMMON_EVENT_SERVICE_ID: {

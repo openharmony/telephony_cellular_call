@@ -610,6 +610,7 @@ private:
 
     private:
         std::shared_ptr<CellularCallHandler> cellularCallHandler_ = nullptr;
+        int32_t count_ = 0;
     };
 };
 } // namespace Telephony
