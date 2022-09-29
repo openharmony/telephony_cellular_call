@@ -172,6 +172,7 @@ void CellularCallService::HandlerResetUnRegister()
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler,
             RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -207,6 +208,8 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
         }
 
         CellularCallConfig config;

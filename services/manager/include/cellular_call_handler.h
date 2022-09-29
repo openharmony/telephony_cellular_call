@@ -430,6 +430,13 @@ private:
      */
     void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
+    /**
+     * Update Rsrvcc State Report
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);
+
 private:
     void CellularCallIncomingStartTrace(const int32_t state);
     void CellularCallIncomingFinishTrace(const int32_t state);
@@ -444,6 +451,7 @@ private:
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
+    bool isInCsRedial_ = false;
 };
 } // namespace Telephony
 } // namespace OHOS
