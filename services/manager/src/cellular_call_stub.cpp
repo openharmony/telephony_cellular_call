@@ -206,8 +206,12 @@ int32_t CellularCallStub::OnSetEmergencyCallList(MessageParcel &data, MessagePar
     }
     int32_t slotId = data.ReadInt32();
     int32_t len = data.ReadInt32();
-    std::vector<EmergencyCall>  eccVec;
-    for (int i = 0 ; i < len; i++) {
+    if (len <= 0 || len >= MAX_ECC_SIZE) {
+        TELEPHONY_LOGE("CellularCallStub::OnSetEmergencyCallList ecc size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    std::vector<EmergencyCall> eccVec;
+    for (int i = 0; i < len; i++) {
         eccVec.push_back(*((EmergencyCall *)data.ReadRawData(sizeof(EmergencyCall))));
     }
     for (auto ecc : eccVec) {
