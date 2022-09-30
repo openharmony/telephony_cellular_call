@@ -30,6 +30,7 @@ static constexpr const char *DIAL_EVENT = "DIAL";
 static constexpr const char *ANSWER_EVENT = "ANSWER";
 static constexpr const char *HANG_UP_EVENT = "HANG_UP";
 static constexpr const char *CALL_END_EXCEPTION_EVENT = "CALL_END_EXCEPTION";
+static constexpr const char *FOUNDATION_RESTART_EVENT = "FOUNDATION_RESTART";
 
 // KEY
 static constexpr const char *MODULE_NAME_KEY = "MODULE";
@@ -41,6 +42,7 @@ static constexpr const char *RESULT_KEY = "RESULT";
 static constexpr const char *FAIL_CAUSE_KEY = "FAIL_CAUSE";
 static constexpr const char *ERROR_TYPE_KEY = "ERROR_TYPE";
 static constexpr const char *ERROR_MSG_KEY = "ERROR_MSG";
+static constexpr const char *RESTART_COUNT_KEY = "RESTART_COUNT";
 
 // VALUE
 static constexpr const char *CELLULAR_CALL_MODULE = "CELLULAR_CALL";
@@ -48,6 +50,11 @@ static const int32_t CS_CALL_TYPE = 0;
 static const int32_t IMS_CALL_TYPE = 1;
 static const int32_t VOICE_TYPE = 0;
 static const int32_t VIDEO_TYPE = 1;
+
+void CellularCallHiSysEvent::WriteFoundationRestartFaultEvent(const int32_t count)
+{
+    HiWriteFaultEvent(FOUNDATION_RESTART_EVENT, RESTART_COUNT_KEY, count);
+}
 
 void CellularCallHiSysEvent::WriteCallEndBehaviorEvent(const int32_t slotId, const int32_t cause)
 {

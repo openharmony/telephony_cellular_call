@@ -58,6 +58,7 @@ struct CallBehaviorParameterInfo {
 
 class CellularCallHiSysEvent : public TelephonyHiSysEvent {
 public:
+    static void WriteFoundationRestartFaultEvent(const int32_t count);
     static void WriteCallEndBehaviorEvent(const int32_t slotId, const int32_t cause);
     static void WriteDialCallBehaviorEvent(const CallBehaviorParameterInfo &info, const CallResponseResult &result);
     static void WriteHangUpCallBehaviorEvent(const CallBehaviorParameterInfo &info, const CallResponseResult &result);
