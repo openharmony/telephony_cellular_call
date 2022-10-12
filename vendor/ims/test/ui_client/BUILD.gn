@@ -44,7 +44,7 @@ ohos_executable("tel_vendor_ims_ui_test") {
     "ipc:ipc_core",
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   defines = [
