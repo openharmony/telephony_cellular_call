@@ -14,7 +14,7 @@
     "author": {},
     "contributors": [],
     "segment": {
-        "destPath": "//base/telephony/cellular_call"
+        "destPath": "base/telephony/cellular_call"
     },
     "component": {
         "name": "cellular_call",
