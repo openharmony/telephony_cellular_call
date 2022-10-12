@@ -46,7 +46,7 @@ ohos_unittest("tel_vendor_ims_service_gtest") {
     "ipc:ipc_core",
     "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   defines = [
