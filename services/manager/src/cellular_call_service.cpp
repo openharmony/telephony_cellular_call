@@ -476,26 +476,26 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
 
 int32_t CellularCallService::RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback)
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::RegisterCallManagerCallBack return, instance is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::RegisterCallManagerCallBack return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("CellularCallService::RegisterCallManagerCallBack return, instance is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     return DelayedSingleton<CellularCallRegister>::GetInstance()->RegisterCallManagerCallBack(callback);
 }
 
 int32_t CellularCallService::UnRegisterCallManagerCallBack()
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::UnRegisterCallManagerCallBack return, instance is nullptr.");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::UnRegisterCallManagerCallBack return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("CellularCallService::UnRegisterCallManagerCallBack return, instance is nullptr.");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     return DelayedSingleton<CellularCallRegister>::GetInstance()->UnRegisterCallManagerCallBack();
 }
@@ -802,13 +802,13 @@ int32_t CellularCallService::StopRtt(int32_t slotId)
 
 int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cTInfo)
 {
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetCallTransferInfo return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::SetCallTransferInfo return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetCallTransferInfo return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.SetCallTransferInfo(slotId, cTInfo);
@@ -816,14 +816,14 @@ int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTrans
 
 int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferType type)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        TELEPHONY_LOGE("CellularCallService::GetCallTransferInfo return, Permission denied!");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
     TELEPHONY_LOGI("CellularCallService::GetCallTransferInfo");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallTransferInfo return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
-    }
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("CellularCallService::GetCallTransferInfo return, Permission denied!");
-        return TELEPHONY_PERMISSION_ERROR;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.GetCallTransferInfo(slotId, type);
@@ -851,13 +851,13 @@ void CellularCallService::SetImsControl(int32_t slotId, const std::shared_ptr<IM
 
 int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)
 {
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetCallWaiting return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::SetCallWaiting return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetCallWaiting return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.SetCallWaiting(slotId, activate);
@@ -865,14 +865,14 @@ int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)
 
 int32_t CellularCallService::GetCallWaiting(int32_t slotId)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        TELEPHONY_LOGE("CellularCallService::GetCallWaiting return, Permission denied!");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
     TELEPHONY_LOGI("CellularCallService::GetCallWaiting");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallWaiting return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
-    }
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("CellularCallService::GetCallWaiting return, Permission denied!");
-        return TELEPHONY_PERMISSION_ERROR;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.GetCallWaiting(slotId);
@@ -880,14 +880,14 @@ int32_t CellularCallService::GetCallWaiting(int32_t slotId)
 
 int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &crInfo)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
+        TELEPHONY_LOGE("CellularCallService::SetCallRestriction return, Permission denied!");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
     TELEPHONY_LOGI("CellularCallService::SetCallRestriction");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::SetCallRestriction return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
-    }
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("CellularCallService::SetCallRestriction return, Permission denied!");
-        return TELEPHONY_PERMISSION_ERROR;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.SetCallRestriction(slotId, crInfo);
@@ -895,14 +895,14 @@ int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestri
 
 int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
+        TELEPHONY_LOGE("CellularCallService::GetCallRestriction return, Permission denied!");
+        return TELEPHONY_PERMISSION_ERROR;
+    }
     TELEPHONY_LOGI("CellularCallService::GetCallRestriction");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallRestriction return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
-    }
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("CellularCallService::GetCallRestriction return, Permission denied!");
-        return TELEPHONY_PERMISSION_ERROR;
     }
     CellularCallSupplement cellularCallSupplement;
     return cellularCallSupplement.GetCallRestriction(slotId, facType);
@@ -933,13 +933,13 @@ int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<Em
 
 int32_t CellularCallService::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetDomainPreferenceMode return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::SetDomainPreferenceMode return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetDomainPreferenceMode return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
     return config.SetDomainPreferenceMode(slotId, mode);
@@ -957,13 +957,13 @@ int32_t CellularCallService::GetDomainPreferenceMode(int32_t slotId)
 
 int32_t CellularCallService::SetImsSwitchStatus(int32_t slotId, bool active)
 {
-    if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("CellularCallService::SetImsSwitchStatus return, invalid slot id");
-        return CALL_ERR_INVALID_SLOT_ID;
-    }
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("CellularCallService::SetImsSwitchStatus return, Permission denied!");
         return TELEPHONY_PERMISSION_ERROR;
+    }
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetImsSwitchStatus return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
     return config.SetImsSwitchStatus(slotId, active);
