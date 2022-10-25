@@ -78,6 +78,7 @@ ohos_shared_library("tel_cellular_call") {
     "hitrace_native:hitrace_meter",
     "init:libbegetutil",
     "ipc:ipc_core",
+    "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]

@@ -195,9 +195,9 @@ public:
     /**
      * ReportCallFailReason
      *
-     * @param int32_t
+     * @param DisconnectedDetails
      */
-    void ReportCallFailReason(int32_t reason);
+    void ReportCallFailReason(const DisconnectedDetails &details);
 
     /**
      * ReportInviteToConferenceResult

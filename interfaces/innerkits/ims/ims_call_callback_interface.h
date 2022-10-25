@@ -16,10 +16,10 @@
 #ifndef TELEPHONY_IMS_CALL_CALLBACK_INTERFACE_H
 #define TELEPHONY_IMS_CALL_CALLBACK_INTERFACE_H
 
-#include "iremote_broker.h"
-
+#include "call_manager_inner_type.h"
 #include "hril_call_parcel.h"
 #include "ims_call_types.h"
+#include "iremote_broker.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -523,11 +523,11 @@ public:
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
-     * @param reason Indicates the call fail reason the status was,
-     * ranging from {@code UNASSIGNED_NUMBER} to {@code UNKNOWN} which define at {@code DisconnectedDetails}
+     * @param details Indicates the call fail reason and the remaind message,
+     * reason ranging from {@code UNASSIGNED_NUMBER} to {@code UNKNOWN} which define at {@code DisconnectedReason}
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t LastCallFailReasonResponse(int32_t slotId, int32_t reason) = 0;
+    virtual int32_t LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details) = 0;
 
     /**
      * @brief SetClipResponse the result of set the clip by IMS.
