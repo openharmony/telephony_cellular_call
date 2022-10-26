@@ -86,6 +86,12 @@ public:
     int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) override;
 
 private:
+    int32_t WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId);
+    int32_t WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId, int32_t callType);
+    int32_t SendRequest(MessageParcel &in, int32_t eventId);
+    int32_t SendRequest(MessageParcel &in, int32_t slotId, int32_t eventId);
+
+private:
     static inline BrokerDelegator<ImsCallProxy> delegator_;
 };
 } // namespace Telephony
