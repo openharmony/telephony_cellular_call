@@ -1070,7 +1070,7 @@ int32_t ImsCallCallbackProxy::GetMuteResponse(int32_t slotId, const MuteControlR
     return error;
 }
 
-int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, int32_t reason)
+int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details)
 {
     MessageOption option;
     MessageParcel in;
@@ -1081,7 +1081,7 @@ int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, int32_t
     if (!in.WriteInt32(slotId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(reason)) {
+    if (!in.WriteRawData((const void *)&details, sizeof(DisconnectedDetails))) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();

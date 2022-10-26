@@ -282,13 +282,13 @@ void CellularCallRegister::ReportCallRingBackResult(int32_t status)
     callManagerCallBack_->UpdateRBTPlayInfo(static_cast<RBTPlayInfo>(status));
 }
 
-void CellularCallRegister::ReportCallFailReason(int32_t reason)
+void CellularCallRegister::ReportCallFailReason(const DisconnectedDetails &details)
 {
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCallFailReason return, callManagerCallBack_ is nullptr, report fail!");
         return;
     }
-    callManagerCallBack_->UpdateDisconnectedCause(static_cast<DisconnectedDetails>(reason));
+    callManagerCallBack_->UpdateDisconnectedCause(details);
 }
 
 void CellularCallRegister::ReportGetMuteResult(const MuteControlResponse &response)

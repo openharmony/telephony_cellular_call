@@ -23,6 +23,7 @@
 #include "ims_call_client.h"
 #include "operator_config_types.h"
 #include "radio_event.h"
+#include "resource_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -856,18 +857,37 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
         TELEPHONY_LOGE("GetCallFailReasonResponse return, event is nullptr");
         return;
     }
-    auto reason = event->GetSharedObject<int32_t>();
-    if (reason == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonResponse return, reason is nullptr");
-        return;
-    }
     if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonResponse return, registerInstance_ is nullptr");
         return;
     }
-    TELEPHONY_LOGI("GetCallFailReasonResponse: %{public}d, report to call manager", *reason);
+    auto reason = event->GetSharedObject<int32_t>();
+    DisconnectedDetails details;
+    if (reason == nullptr) {
+        auto info = event->GetSharedObject<DisconnectedDetails>();
+        if (info == nullptr) {
+            TELEPHONY_LOGE("GetCallFailReasonResponse return, info is nullptr");
+            return;
+        }
+        details.reason = static_cast<DisconnectedReason>(info->reason);
+        details.message = info->message;
+    } else {
+        details.reason = static_cast<DisconnectedReason>(*reason);
+        details.message = "";
+    }
+
+    if (details.message.empty()) {
+        std::string callFailedMessageName = "";
+        bool ret =
+            ResourceUtils::Get().GetCallFailedMessageName(static_cast<int32_t>(details.reason), callFailedMessageName);
+        if (!ret) {
+            TELEPHONY_LOGE("get call failed message failed!");
+            return;
+        }
+        ResourceUtils::Get().GetStringValueByName(callFailedMessageName, details.message);
+    }
     CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, *reason);
-    registerInstance_->ReportCallFailReason(*reason);
+    registerInstance_->ReportCallFailReason(details);
 }
 
 void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
