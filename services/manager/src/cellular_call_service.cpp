@@ -169,10 +169,11 @@ void CellularCallService::HandlerResetUnRegister()
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler,
-            RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
+            slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -210,6 +211,7 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
         }
 
         CellularCallConfig config;
@@ -920,7 +922,7 @@ int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::s
     return emergencyUtils.IsEmergencyCall(slotId, phoneNum);
 }
 
-int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec)
+int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec)
 {
     TELEPHONY_LOGE("CellularCallService::SetEmergencyCallList start");
     if (!IsValidSlotId(slotId)) {
@@ -1212,5 +1214,21 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbili
             break;
     }
 }
-}  // namespace Telephony
-}  // namespace OHOS
+
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+void CellularCallService::StartCallManagerService()
+{
+    sptr<ISystemAbilityManager> managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (managerPtr == nullptr) {
+        TELEPHONY_LOGE("GetSystemAbilityManager failed!");
+        return;
+    }
+
+    sptr<IRemoteObject> iRemoteObjectPtr = managerPtr->GetSystemAbility(TELEPHONY_CALL_MANAGER_SYS_ABILITY_ID);
+    if (iRemoteObjectPtr == nullptr) {
+        TELEPHONY_LOGE("GetSystemAbility failed!");
+    }
+}
+#endif
+} // namespace Telephony
+} // namespace OHOS
