@@ -67,7 +67,7 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
 
 void ImsCallCallbackStub::InitConfigFuncMap()
 {
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     requestFuncMap_[ImsCallCallbackInterface::IMS_START_DTMF] = &ImsCallCallbackStub::OnStartDtmfResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_SEND_DTMF] = &ImsCallCallbackStub::OnSendDtmfResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_STOP_DTMF] = &ImsCallCallbackStub::OnStopDtmfResponseInner;
@@ -741,7 +741,7 @@ int32_t ImsCallCallbackStub::OnSetCallRestrictionResponseInner(MessageParcel &da
     int32_t slotId = data.ReadInt32();
     auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
     if (info == nullptr) {
-        TELEPHONY_LOGE("OnGetClipResponseInner return, response is nullptr.");
+        TELEPHONY_LOGE("OnSetCallRestrictionResponseInner return, response is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     reply.WriteInt32(SetCallRestrictionResponse(slotId, *info));
@@ -1145,7 +1145,8 @@ int32_t ImsCallCallbackStub::LastCallFailReasonResponse(int32_t slotId, const Di
     CellularCallConfig config;
     auto vecReasonInfo = config.GetImsCallDisconnectResoninfoMappingConfig(slotId);
     for (auto reasonInfo : vecReasonInfo) {
-        char *ptr, *p;
+        char *p = nullptr;
+        char *ptr = nullptr;
         ptr = strtok_r((char *)(reasonInfo.c_str()), "|", &p);
         int32_t tmpReason = (int32_t)std::atoi(ptr);
         int flag = false;

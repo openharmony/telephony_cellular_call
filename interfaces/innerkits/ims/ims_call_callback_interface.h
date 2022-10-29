@@ -49,7 +49,7 @@ public:
         IMS_VT_OR_WFC,
         IMS_CALL_CRING,
 
-        /****************** dtmf、rtt ******************/
+        /****************** dtmf rtt ******************/
         IMS_START_DTMF,
         IMS_SEND_DTMF,
         IMS_STOP_DTMF,

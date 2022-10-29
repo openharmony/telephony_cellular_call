@@ -31,6 +31,8 @@
 
 namespace OHOS {
 namespace Telephony {
+const uint32_t CONNECT_MAX_TRY_COUNT = 20;
+const uint32_t CONNECT_CORE_SERVICE_WAIT_TIME = 2000; // ms
 bool g_registerResult =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<CellularCallService>::GetInstance().get());
 
@@ -116,7 +118,7 @@ void CellularCallService::RegisterHandler()
     TELEPHONY_LOGI("connect core service Register Handler start");
     networkSearchCallBack_ = (std::make_unique<CellularCallCallback>()).release();
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_SERVICE_WAIT_TIME));
+        std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_CORE_SERVICE_WAIT_TIME));
         if (CoreManagerInner::GetInstance().IsInitFinishedForTelRil()) {
             TELEPHONY_LOGI("connect core service Register Handler start");
             RegisterCoreServiceHandler();

@@ -26,6 +26,21 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t SIM_PRESENT = 1;
+const int32_t SIM_ABSENT = 0;
+const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
+const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
+const int32_t IMS_SWITCH_STATUS_OFF = 0;
+const int32_t IMS_SWITCH_STATUS_ON = 1;
+const int32_t SAVE_IMS_SWITCH_FAILED = 0;
+const int32_t SAVE_IMS_SWITCH_SUCCESS_CHANGED = 1;
+const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
+const int32_t INVALID_SIM_ID = 0;
+const int32_t IMS_GBA_BIT = 0x02;
+const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
+const int MCC_LEN = 3;
+const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
+
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
 std::map<int32_t, bool> CellularCallConfig::imsSwitchOnByDefault_;
@@ -46,8 +61,6 @@ std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListConfigM
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppHasSim_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::allEccList_;
-int32_t CellularCallConfig::SIM_PRESENT = 1;
-int32_t CellularCallConfig::SIM_ABSENT = 0;
 std::map<int32_t, int32_t> CellularCallConfig::simState_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
@@ -99,16 +112,6 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     TELEPHONY_LOGI(
         "CellularCallConfig::SetImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
-    /*
-     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
-     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
-     * terminating access domain selection by the network.
-     * -	Format: bool
-     * -	Access Types: Get, Replace
-     * -	Values: 0, 1
-     *      0 – Mobility Management for IMS Voice Termination disabled.
-     *      1 – Mobility Management for IMS Voice Termination enabled.
-     */
     if (!volteSupported_[slotId] || (active && !IsVolteProvisioned(slotId))) {
         TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled or volte is not supported.");
         return TELEPHONY_ERROR;
@@ -176,14 +179,12 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
-    TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry");
     int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 }
 
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 {
-    TELEPHONY_LOGI("entry");
     OperatorConfig operatorConfig;
     bool ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
     if (!ret) {
@@ -203,7 +204,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
 {
-    TELEPHONY_LOGI(" start %{public}d", slotId);
+    TELEPHONY_LOGI("CellularCallConfig::ParseAndCacheOperatorConfigs start. slotId %{public}d", slotId);
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return TELEPHONY_ERROR;
@@ -281,7 +282,7 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
         // then this function checks GBA bit in EF IST.
         // Format of EF IST is defined in 3GPP TS 31.103 (Section 4.2.7).
         if (!simistStr.empty() && simistStr.length() > 1) {
-            bool result = (0x02 & simistStr.at(1)) != 0;
+            bool result = (IMS_GBA_BIT & simistStr.at(1)) != 0;
             return result;
         }
     }
@@ -377,7 +378,7 @@ bool CellularCallConfig::IsNeedTurnOnIms(const ImsCapabilityList &imsCapabilityL
 
 bool CellularCallConfig::IsSimChanged(int32_t slotId, std::string iccid)
 {
-    const int32_t sysparaSize = 96;
+    const int32_t sysparaSize = SYSTEM_PARAMETER_LENGTH;
     char lastIccid[sysparaSize] = { 0 };
     std::string key = LAST_ICCID_KEY + std::to_string(slotId);
     GetParameter(key.c_str(), "", lastIccid, sysparaSize);
@@ -450,16 +451,6 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
 {
     TELEPHONY_LOGI("CellularCallConfig::GetSwitchStatus entry, slotId: %{public}d", slotId);
-    /*
-     * The Mobility_Management_IMS_Voice_Termination leaf indicates whether the UE mobility management performs
-     * additional procedures as specified in 3GPP TS 24.008 [17] and 3GPP TS 24.301 [15] to support
-     * terminating access domain selection by the network.
-     * -	Format: bool
-     * -	Access Types: Get, Replace
-     * -	Values: 0, 1
-     *      0 – Mobility Management for IMS Voice Termination disabled.
-     *      1 – Mobility Management for IMS Voice Termination enabled.
-     */
     int32_t imsSwitchStatus;
     int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
     if (ret != TELEPHONY_SUCCESS) {
@@ -638,7 +629,7 @@ void CellularCallConfig::UniqueEccCallList(int32_t slotId_)
 std::string CellularCallConfig::GetMcc(int32_t slotId_)
 {
     std::string imsi = Str16ToStr8(CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_));
-    int len = (int)imsi.length();
+    int len = static_cast<int>(imsi.length());
     std::string mcc = imsi;
     if (len >= MCC_LEN) {
         mcc = imsi.substr(0, MCC_LEN);
@@ -699,11 +690,11 @@ bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
     switch (simState) {
         case static_cast<int32_t>(SimState::SIM_STATE_READY):
         case static_cast<int32_t>(SimState::SIM_STATE_LOADED): {
-            simStateForEcc = CellularCallConfig::SIM_PRESENT;
+            simStateForEcc = SIM_PRESENT;
             break;
         }
         default: {
-            simStateForEcc = CellularCallConfig::SIM_ABSENT;
+            simStateForEcc = SIM_ABSENT;
             break;
         }
     }
@@ -771,7 +762,7 @@ std::vector<int32_t> CellularCallConfig::GetNrModeSupportedListConfig(int32_t sl
 {
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("invalid slot id");
-        return std::vector<int32_t> { 1, 2 };
+        return std::vector<int32_t> { CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA };
     }
     return nrModeSupportedList_[slotId];
 }

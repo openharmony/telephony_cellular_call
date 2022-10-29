@@ -31,6 +31,7 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
     TELEPHONY_LOGI("ReportCallsInfo entry.");
     CallsReportInfo callsInfo = callsReportInfo;
     CallDetailInfo detailInfo;
+    detailInfo.state = TelCallState::CALL_STATUS_UNKNOWN;
     std::vector<CallReportInfo>::iterator it = callsInfo.callVec.begin();
     for (; it != callsInfo.callVec.end(); ++it) {
         detailInfo.callType = (*it).callType;

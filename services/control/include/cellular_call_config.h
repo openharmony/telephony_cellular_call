@@ -457,26 +457,14 @@ private:
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
-    const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
-    const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListConfigMap_;
     static std::vector<EmergencyCall> eccList3gppHasSim_;
     static std::vector<EmergencyCall> eccList3gppNoSim_;
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
-    static int32_t SIM_PRESENT;
-    static int32_t SIM_ABSENT;
     std::mutex mutex_;
-    const int MCC_LEN = 3;
-    const int32_t IMS_SWITCH_STATUS_OFF = 0;
-    const int32_t IMS_SWITCH_STATUS_ON = 1;
-    const int32_t SAVE_IMS_SWITCH_FAILED = 0;
-    const int32_t SAVE_IMS_SWITCH_SUCCESS_CHANGED = 1;
-    const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
-    const int32_t INVALID_SIM_ID = 0;
     ConfigRequest configRequest_;
-    const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
     static std::map<int32_t, bool> imsSwitchOnByDefault_;
     static std::map<int32_t, bool> hideImsSwitch_;
     static std::map<int32_t, bool> volteSupported_;
