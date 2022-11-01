@@ -48,7 +48,7 @@ public:
     int32_t VtWfcReport(int32_t slotId, TransferState transferState) override;
     int32_t CallRingBackReport(int32_t slotId, const RingbackVoice &info) override;
 
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
@@ -121,7 +121,7 @@ private:
     int32_t OnCallRingBackReportInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnLastCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply);
 
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     int32_t OnStartDtmfResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSendDtmfResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnStopDtmfResponseInner(MessageParcel &data, MessageParcel &reply);
