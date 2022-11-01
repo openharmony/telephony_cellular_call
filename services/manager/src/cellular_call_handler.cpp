@@ -116,7 +116,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
 void CellularCallHandler::RegisterImsCallCallbackHandler()
 {
     // Register IMS
-    std::shared_ptr< ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    std::shared_ptr<ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
     if (imsCallClient != nullptr) {
         imsCallClient->RegisterImsCallCallbackHandler(slotId_, shared_from_this());
     }
@@ -124,13 +124,14 @@ void CellularCallHandler::RegisterImsCallCallbackHandler()
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    uint32_t eventId = event->GetInnerEventId();
-    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), eventId = %{public}d, slotId = %{public}d", eventId, slotId_);
-
     if (event == nullptr) {
         TELEPHONY_LOGE("CellularCallHandler::ProcessEvent, event is nullptr");
         return;
     }
+
+    uint32_t eventId = event->GetInnerEventId();
+    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), eventId = %{public}d, slotId = %{public}d", eventId, slotId_);
+
     auto itFunc = requestFuncMap_.find(event->GetInnerEventId());
     if (itFunc != requestFuncMap_.end()) {
         auto requestFunc = itFunc->second;
