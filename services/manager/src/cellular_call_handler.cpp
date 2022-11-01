@@ -23,9 +23,16 @@
 #include "ims_call_client.h"
 #include "operator_config_types.h"
 #include "radio_event.h"
+#include "resource_utils.h"
 
 namespace OHOS {
 namespace Telephony {
+const uint32_t GET_CS_CALL_DATA_ID = 10001;
+const uint32_t GET_IMS_CALL_DATA_ID = 10002;
+const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
+const int64_t DELAY_TIME = 100;
+const int64_t FAST_DELAY_TIME = 250;
+
 CellularCallHandler::CellularCallHandler(
     const std::shared_ptr<AppExecFwk::EventRunner> &runner, const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
     : AppExecFwk::EventHandler(runner), CommonEventSubscriber(subscriberInfo)
@@ -109,7 +116,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
 void CellularCallHandler::RegisterImsCallCallbackHandler()
 {
     // Register IMS
-    std::shared_ptr< ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    std::shared_ptr<ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
     if (imsCallClient != nullptr) {
         imsCallClient->RegisterImsCallCallbackHandler(slotId_, shared_from_this());
     }
@@ -117,13 +124,14 @@ void CellularCallHandler::RegisterImsCallCallbackHandler()
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    uint32_t eventId = event->GetInnerEventId();
-    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), eventId = %{public}d", eventId);
-    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), slotId_ = %{public}d", slotId_);
     if (event == nullptr) {
         TELEPHONY_LOGE("CellularCallHandler::ProcessEvent, event is nullptr");
         return;
     }
+
+    uint32_t eventId = event->GetInnerEventId();
+    TELEPHONY_LOGI("CellularCallHandler::ProcessEvent(), eventId = %{public}d, slotId = %{public}d", eventId, slotId_);
+
     auto itFunc = requestFuncMap_.find(event->GetInnerEventId());
     if (itFunc != requestFuncMap_.end()) {
         auto requestFunc = itFunc->second;
@@ -144,7 +152,7 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
         if (slotId_ != slotId) {
             return;
         }
-        this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, delayTime_, Priority::HIGH);
+        this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, DELAY_TIME, Priority::HIGH);
     }
 }
 
@@ -155,7 +163,7 @@ void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &e
         return;
     }
     TELEPHONY_LOGI("GetCsCallData event id: %{public}d", event->GetInnerEventId());
-    this->SendEvent(GET_CS_CALL_DATA_ID, delayTime_, Priority::HIGH);
+    this->SendEvent(GET_CS_CALL_DATA_ID, DELAY_TIME, Priority::HIGH);
 }
 
 void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -165,7 +173,7 @@ void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &
         return;
     }
     TELEPHONY_LOGI("GetImsCallData event id: %{public}d", event->GetInnerEventId());
-    this->SendEvent(GET_IMS_CALL_DATA_ID, delayTime_, Priority::HIGH);
+    this->SendEvent(GET_IMS_CALL_DATA_ID, DELAY_TIME, Priority::HIGH);
 }
 
 void CellularCallHandler::CellularCallIncomingStartTrace(const int32_t state)
@@ -436,6 +444,7 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallParameterInfo(info);
     if (result->error != HRilErrType::NONE) {
         CellularCallEventInfo eventInfo;
+        eventInfo.eventId = RequestResultEventId::INVALID_REQUEST_RESULT_EVENT_ID;
         CommonResultEventHandling(event, eventInfo);
         if (eventInfo.eventId == RequestResultEventId::RESULT_END_SEND_FAILED ||
             eventInfo.eventId == RequestResultEventId::RESULT_REJECT_SEND_FAILED) {
@@ -856,18 +865,37 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
         TELEPHONY_LOGE("GetCallFailReasonResponse return, event is nullptr");
         return;
     }
-    auto reason = event->GetSharedObject<int32_t>();
-    if (reason == nullptr) {
-        TELEPHONY_LOGE("GetCallFailReasonResponse return, reason is nullptr");
-        return;
-    }
     if (registerInstance_ == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonResponse return, registerInstance_ is nullptr");
         return;
     }
-    TELEPHONY_LOGI("GetCallFailReasonResponse: %{public}d, report to call manager", *reason);
+    auto reason = event->GetSharedObject<int32_t>();
+    DisconnectedDetails details;
+    if (reason == nullptr) {
+        auto info = event->GetSharedObject<DisconnectedDetails>();
+        if (info == nullptr) {
+            TELEPHONY_LOGE("GetCallFailReasonResponse return, info is nullptr");
+            return;
+        }
+        details.reason = static_cast<DisconnectedReason>(info->reason);
+        details.message = info->message;
+    } else {
+        details.reason = static_cast<DisconnectedReason>(*reason);
+        details.message = "";
+    }
+
+    if (details.message.empty()) {
+        std::string callFailedMessageName = "";
+        bool ret =
+            ResourceUtils::Get().GetCallFailedMessageName(static_cast<int32_t>(details.reason), callFailedMessageName);
+        if (!ret) {
+            TELEPHONY_LOGE("get call failed message failed!");
+            return;
+        }
+        ResourceUtils::Get().GetStringValueByName(callFailedMessageName, details.message);
+    }
     CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, *reason);
-    registerInstance_->ReportCallFailReason(*reason);
+    registerInstance_->ReportCallFailReason(details);
 }
 
 void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)

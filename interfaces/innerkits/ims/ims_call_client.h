@@ -65,7 +65,7 @@ public:
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag);
     int32_t GetLastCallFailReason(int32_t slotId);
 
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     int32_t StartDtmf(int32_t slotId, char cDtmfCode, int32_t index);
     int32_t SendDtmf(int32_t slotId, char cDtmfCode, int32_t index);
     int32_t StopDtmf(int32_t slotId, int32_t index);

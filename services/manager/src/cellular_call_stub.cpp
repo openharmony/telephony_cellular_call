@@ -21,6 +21,9 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t MAX_SIZE = 10;
+const int32_t MAX_ECC_SIZE = 1000;
+
 int32_t CellularCallStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {

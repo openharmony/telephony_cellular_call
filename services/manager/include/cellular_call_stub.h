@@ -448,8 +448,6 @@ private:
     int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
 private:
-    const int32_t MAX_SIZE = 10;
-    const int32_t MAX_ECC_SIZE = 1000;
     using RequestFuncType = int32_t (CellularCallStub::*)(MessageParcel &data, MessageParcel &reply);
     std::map<OperationType, RequestFuncType> requestFuncMap_;
 };

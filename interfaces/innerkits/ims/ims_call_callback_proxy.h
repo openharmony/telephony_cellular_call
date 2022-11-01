@@ -42,12 +42,12 @@ public:
     int32_t CallStateChangeReport(int32_t slotId) override;
     int32_t GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
-    int32_t LastCallFailReasonResponse(int32_t slotId, int32_t reason) override;
+    int32_t LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details) override;
     int32_t SrvccStateReport(int32_t slotId, SrvccState srvccState) override;
     int32_t VtWfcReport(int32_t slotId, TransferState transferState) override;
     int32_t CallRingBackReport(int32_t slotId, const RingbackVoice &info) override;
 
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;

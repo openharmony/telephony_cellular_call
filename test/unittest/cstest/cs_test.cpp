@@ -27,6 +27,12 @@ namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 const int32_t CELLULAR_CALL_SUCCESS = 0;
+
+bool CsTest::HasSimCard(int32_t slotId)
+{
+    return DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId);
+}
+
 void CsTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
