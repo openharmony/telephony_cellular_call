@@ -22,7 +22,6 @@
 #include "ims_feature.h"
 #include "iremote_broker.h"
 
-
 namespace OHOS {
 namespace Telephony {
 class ImsCallInterface : public IRemoteBroker {
@@ -44,7 +43,7 @@ public:
         IMS_GET_CALL_DATA,
         IMS_GET_LAST_CALL_FAIL_REASON,
 
-        /****************** dtmf、rtt ******************/
+        /****************** dtmf rtt ******************/
         IMS_START_DTMF = 5100,
         IMS_SEND_DTMF,
         IMS_STOP_DTMF,
@@ -235,7 +234,7 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t StopDtmf(int32_t slotId, int32_t index) = 0;
-    
+
     /**
      * IMS StartRtt interface
      *

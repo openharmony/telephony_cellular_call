@@ -60,8 +60,8 @@ public:
     int32_t SetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
-    const int32_t SLEEP_1000_MS = 1000;
-    
+    bool HasSimCard(int32_t slotId);
+
 private:
     using RequestFuncType = int32_t (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
     std::map<int32_t, RequestFuncType> requestFuncMap_;

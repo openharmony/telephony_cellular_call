@@ -36,7 +36,7 @@ enum ImsRadioEvent {
     IMS_RADIO_MT_STATUS_REPORT,
     IMS_RADIO_GET_IMS_DOMAIN,
 
-    /****************** dtmf、rtt ******************/
+    /****************** dtmf rtt ******************/
     IMS_RADIO_START_DTMF = 100,
     IMS_RADIO_SEND_DTMF,
     IMS_RADIO_STOP_DTMF,

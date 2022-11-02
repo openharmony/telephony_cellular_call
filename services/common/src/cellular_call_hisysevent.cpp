@@ -323,7 +323,7 @@ void CellularCallHiSysEvent::JudgingIncomingTimeOut(
     int64_t incomingEndTime =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
             .count();
-    if (incomingEndTime - incomingStartTime_ > NORMAL_INCOMING_TIME) {
+    if ((incomingEndTime - incomingStartTime_) > NORMAL_INCOMING_TIME) {
         WriteIncomingCallFaultEvent(slotId, callType, videoState,
             static_cast<int32_t>(CallErrorCode::CALL_ERROR_INCOMING_TIME_OUT),
             "incoming time out " + std::to_string(incomingStartTime_ - incomingEndTime));
