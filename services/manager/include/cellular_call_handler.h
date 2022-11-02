@@ -188,6 +188,15 @@ private:
 
     void UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    /**
+     * If radio state change get call manager service
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void RadioStateChangeProcess(const AppExecFwk::InnerEvent::Pointer &event);
+#endif
+
 private:
     void CellularCallIncomingStartTrace(const int32_t state);
     void CellularCallIncomingFinishTrace(const int32_t state);

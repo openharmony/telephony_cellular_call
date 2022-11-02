@@ -111,6 +111,9 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
     requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
+#endif
 }
 
 void CellularCallHandler::RegisterImsCallCallbackHandler()
@@ -1214,5 +1217,30 @@ void CellularCallHandler::UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::
     }
     serviceInstance->SetCsControl(slotId_, nullptr);
 }
+
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("event is nullptr");
+        return;
+    }
+
+    std::shared_ptr<HRilInt32Parcel> object = event->GetSharedObject<HRilInt32Parcel>();
+    if (object == nullptr) {
+        TELEPHONY_LOGE("Slot%{public}d: HandleRadioStateChanged object is nullptr!", slotId_);
+        return;
+    }
+    TELEPHONY_LOGI("Slot%{public}d: Radio changed with state: %{public}d", slotId_, object->data);
+    if (object->data == CORE_SERVICE_POWER_ON) {
+        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+        if (serviceInstance == nullptr) {
+            TELEPHONY_LOGE("serviceInstance is nullptr");
+            return;
+        }
+        serviceInstance->StartCallManagerService();
+    }
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS
