@@ -52,11 +52,11 @@ ohos_shared_library("tel_ims") {
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
+    "init:libbegetutil",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "sms_mms:tel_sms_mms_api",
-    "startup_l2:syspara",
   ]
 
   if (is_standard_system) {
