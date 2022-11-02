@@ -82,6 +82,10 @@ ohos_shared_library("tel_cellular_call") {
     "samgr:samgr_proxy",
   ]
 
+  if (device_name == "rk3568") {
+    defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
+  }
+
   if (is_standard_system) {
     external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
   } else {

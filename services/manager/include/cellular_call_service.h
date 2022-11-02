@@ -532,7 +532,15 @@ public:
     std::shared_ptr<CellularCallHandler> GetHandler(int32_t slotId);
 
     void SetSrvccState(int32_t srvccState);
+
     int32_t GetSrvccState();
+
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    /**
+     * Get call manager service
+     */
+    void StartCallManagerService();
+#endif
 
 private:
     /**
