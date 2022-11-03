@@ -881,7 +881,7 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
             return;
         }
         details.reason = static_cast<DisconnectedReason>(info->reason);
-        details.message = info->message;
+        details.message = (info->message.c_str() == nullptr) ? "" : info->message;
     } else {
         details.reason = static_cast<DisconnectedReason>(*reason);
         details.message = "";
@@ -897,7 +897,7 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
         }
         ResourceUtils::Get().GetStringValueByName(callFailedMessageName, details.message);
     }
-    CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, *reason);
+    CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, static_cast<int32_t>(details.reason));
     registerInstance_->ReportCallFailReason(details);
 }
 
