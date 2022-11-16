@@ -78,7 +78,8 @@
                 }
             ],
             "test": [
-                "//base/telephony/cellular_call/test:unittest"
+                "//base/telephony/cellular_call/test:unittest",
+                "//base/telephony/cellular_call/test/fuzztest:fuzztest"
             ]
         }
     }
