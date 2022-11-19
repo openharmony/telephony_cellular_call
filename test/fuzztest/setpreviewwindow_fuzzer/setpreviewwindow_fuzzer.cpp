@@ -17,15 +17,20 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <string_ex.h>
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "securec.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
 constexpr int32_t INT_NUM = 6;
+constexpr int32_t BOOL_NUM = 2;
+constexpr int32_t VEDIO_STATE_NUM = 2;
+constexpr size_t MAX_NUMBER_LEN = 100;
 
 bool IsServiceInited()
 {
@@ -153,6 +158,77 @@ void GetMute(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetMuteInner(dataMessageParcel, reply);
 }
 
+void StartDtmf(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t callId = static_cast<int32_t>(size);
+    int32_t accountId = static_cast<int32_t>(size);
+    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
+    int32_t index = static_cast<int32_t>(size);
+    char cDtmfCode = static_cast<char>(size);
+    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
+    std::string telNum(reinterpret_cast<const char *>(data), size);
+    CellularCallInfo callInfo;
+    callInfo.slotId = slotId;
+    callInfo.callId = callId;
+    callInfo.accountId = accountId;
+    callInfo.videoState = videoState;
+    callInfo.index = index;
+    if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
+        return;
+    }
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteCString(&cDtmfCode);
+    dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnStartDtmfInner(dataMessageParcel, reply);
+}
+
+void CtrlCamera(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t callingUid = static_cast<int32_t>(size);
+    int32_t callingPid = static_cast<int32_t>(size);
+    std::string cameraId(reinterpret_cast<const char *>(data), size);
+    auto cameraIdU16 = Str8ToStr16(cameraId);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteInt32(callingUid);
+    dataMessageParcel.WriteInt32(callingPid);
+    dataMessageParcel.WriteString16(cameraIdU16);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnCtrlCameraInner(dataMessageParcel, reply);
+}
+
+void SetPauseImage(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    std::string path(reinterpret_cast<const char *>(data), size);
+    auto pathU16 = Str8ToStr16(path);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteString16(pathU16);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnSetPauseImageInner(dataMessageParcel, reply);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -165,6 +241,9 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     SetCameraZoom(data, size);
     SetMute(data, size);
     GetMute(data, size);
+    StartDtmf(data, size);
+    CtrlCamera(data, size);
+    SetPauseImage(data, size);
     return;
 }
 } // namespace OHOS
