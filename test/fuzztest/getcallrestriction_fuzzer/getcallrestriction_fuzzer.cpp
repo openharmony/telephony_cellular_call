@@ -20,12 +20,16 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "securec.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
+constexpr int32_t SLOT_NUM = 2;
+constexpr int32_t VEDIO_STATE_NUM = 2;
 constexpr int32_t BOOL_NUM = 2;
+constexpr size_t MAX_NUMBER_LEN = 100;
 
 bool IsServiceInited()
 {
@@ -190,6 +194,69 @@ void GetCallRestriction(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetCallRestrictionInner(dataMessageParcel, reply);
 }
 
+void Dial(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t callId = static_cast<int32_t>(size);
+    int32_t accountId = static_cast<int32_t>(size);
+    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
+    int32_t index = static_cast<int32_t>(size);
+    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
+    std::string telNum(reinterpret_cast<const char *>(data), size);
+    CellularCallInfo callInfo;
+    callInfo.slotId = slotId;
+    callInfo.callId = callId;
+    callInfo.accountId = accountId;
+    callInfo.videoState = videoState;
+    callInfo.index = index;
+    if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
+        return;
+    }
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnDialInner(dataMessageParcel, reply);
+}
+
+void InviteToConference(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::string number(reinterpret_cast<const char *>(data), size);
+    std::vector<std::string> numberList;
+    numberList.push_back(number);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteStringVector(numberList);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnInviteToConferenceInner(dataMessageParcel, reply);
+}
+
+void KickOutFromConference(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::string number(reinterpret_cast<const char *>(data), size);
+    std::vector<std::string> numberList;
+    numberList.push_back(number);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteStringVector(numberList);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnKickOutFromConferenceInner(dataMessageParcel, reply);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -206,6 +273,9 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     GetCallWaiting(data, size);
     SetCallWaiting(data, size);
     GetCallRestriction(data, size);
+    Dial(data, size);
+    InviteToConference(data, size);
+    KickOutFromConference(data, size);
     return;
 }
 } // namespace OHOS
