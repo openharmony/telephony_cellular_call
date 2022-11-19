@@ -20,6 +20,7 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "securec.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::Telephony;
@@ -27,6 +28,8 @@ namespace OHOS {
 static bool g_isInited = false;
 constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t INT_NUM = 2;
+constexpr int32_t VEDIO_STATE_NUM = 2;
+constexpr size_t MAX_NUMBER_LEN = 100;
 
 bool IsServiceInited()
 {
@@ -179,6 +182,70 @@ void SetImsFeatureValue(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetImsFeatureValueInner(dataMessageParcel, reply);
 }
 
+void Reject(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t callId = static_cast<int32_t>(size);
+    int32_t accountId = static_cast<int32_t>(size);
+    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
+    int32_t index = static_cast<int32_t>(size);
+    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
+    std::string telNum(reinterpret_cast<const char *>(data), size);
+    CellularCallInfo callInfo;
+    callInfo.slotId = slotId;
+    callInfo.callId = callId;
+    callInfo.accountId = accountId;
+    callInfo.videoState = videoState;
+    callInfo.index = index;
+    if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
+        return;
+    }
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnRejectInner(dataMessageParcel, reply);
+}
+
+void HangUp(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t type = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t callId = static_cast<int32_t>(size);
+    int32_t accountId = static_cast<int32_t>(size);
+    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
+    int32_t index = static_cast<int32_t>(size);
+    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
+    std::string telNum(reinterpret_cast<const char *>(data), size);
+    CellularCallInfo callInfo;
+    callInfo.slotId = slotId;
+    callInfo.callId = callId;
+    callInfo.accountId = accountId;
+    callInfo.videoState = videoState;
+    callInfo.index = index;
+    if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
+        return;
+    }
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteInt32(type);
+    dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnHangUpInner(dataMessageParcel, reply);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -194,6 +261,8 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     SetImsConfig(data, size);
     GetImsFeatureValue(data, size);
     SetImsFeatureValue(data, size);
+    Reject(data, size);
+    HangUp(data, size);
     return;
 }
 } // namespace OHOS
