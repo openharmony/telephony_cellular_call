@@ -34,7 +34,6 @@ void ImsCallCallbackStub::InitFuncMap()
 {
     InitCallBasicFuncMap();
     InitConfigFuncMap();
-    InitVedioFuncMap();
     InitSupplementFuncMap();
 }
 
@@ -48,20 +47,10 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
     requestFuncMap_[ImsCallCallbackInterface::IMS_HOLD] = &ImsCallCallbackStub::OnHoldCallResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_UN_HOLD] = &ImsCallCallbackStub::OnUnHoldCallResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_SWITCH] = &ImsCallCallbackStub::OnSwitchCallResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_COMBINE_CONFERENCE] =
-        &ImsCallCallbackStub::OnCombineConferenceResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_INVITE_TO_CONFERENCE] =
-        &ImsCallCallbackStub::OnInviteToConferenceResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_KICK_OUT_CONFERENCE] =
-        &ImsCallCallbackStub::OnKickOutFromConferenceResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_UPDATE_CALL_MEDIA_MODE] =
-        &ImsCallCallbackStub::OnCallMediaModeResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_CALL_STATE_CHANGE] =
         &ImsCallCallbackStub::OnCallStateChangeReportInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_LAST_CALL_FAIL_REASON] =
         &ImsCallCallbackStub::OnLastCallFailReasonResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SRVCC_STATE] = &ImsCallCallbackStub::OnSrvccStateReportInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_VT_OR_WFC] = &ImsCallCallbackStub::OnVtWfcReportInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_CALL_CRING] = &ImsCallCallbackStub::OnCallRingBackReportInner;
 }
 
@@ -71,38 +60,15 @@ void ImsCallCallbackStub::InitConfigFuncMap()
     requestFuncMap_[ImsCallCallbackInterface::IMS_START_DTMF] = &ImsCallCallbackStub::OnStartDtmfResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_SEND_DTMF] = &ImsCallCallbackStub::OnSendDtmfResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_STOP_DTMF] = &ImsCallCallbackStub::OnStopDtmfResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_START_RTT] = &ImsCallCallbackStub::OnStartRttResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_STOP_RTT] = &ImsCallCallbackStub::OnStopRttResponseInner;
 
     /****************** ims config ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_PRE_MODE] = &ImsCallCallbackStub::OnSetPreModeResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_PRE_MODE] = &ImsCallCallbackStub::OnGetPreModeResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_SET_SWITCH_STATUS] =
         &ImsCallCallbackStub::OnSetImsSwitchResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_GET_SWITCH_STATUS] =
         &ImsCallCallbackStub::OnGetImsSwitchResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALLS_DATA] =
         &ImsCallCallbackStub::OnGetImsCallsDataResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CONFIG] = &ImsCallCallbackStub::OnSetImsConfigResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CONFIG] = &ImsCallCallbackStub::OnGetImsConfigResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_FEATURE] = &ImsCallCallbackStub::OnSetImsFeatureResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_FEATURE] = &ImsCallCallbackStub::OnGetImsFeatureResponseInner;
     requestFuncMap_[ImsCallCallbackInterface::IMS_SET_MUTE] = &ImsCallCallbackStub::OnSetMuteResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_MUTE] = &ImsCallCallbackStub::OnGetMuteResponseInner;
-}
-
-void ImsCallCallbackStub::InitVedioFuncMap()
-{
-    /****************** video settings ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_CONTROL_CAMERA] = &ImsCallCallbackStub::OnCtrlCameraResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_PREVIEW_WINDOW] =
-        &ImsCallCallbackStub::OnSetPreviewWindowResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_DISPLAY_WINDOW] =
-        &ImsCallCallbackStub::OnSetDisplayWindowResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CAMERA_ZOOM] = &ImsCallCallbackStub::OnSetCameraZoomResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_PAUSE_IMAGE] = &ImsCallCallbackStub::OnSetPauseImageResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_DEVICE_DIRECTION] =
-        &ImsCallCallbackStub::OnSetDeviceDirectionResponseInner;
 }
 
 void ImsCallCallbackStub::InitSupplementFuncMap()
@@ -244,58 +210,6 @@ int32_t ImsCallCallbackStub::OnSwitchCallResponseInner(MessageParcel &data, Mess
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnCombineConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnCombineConferenceResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnCombineConferenceResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(CombineConferenceResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnInviteToConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnInviteToConferenceResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnInviteToConferenceResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(InviteToConferenceResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnKickOutFromConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnKickOutFromConferenceResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnKickOutFromConferenceResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(KickOutFromConferenceResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnCallMediaModeResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnCallMediaModeResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(CallMediaModeResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::OnStartDtmfResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::OnStartDtmfResponseInner entry");
@@ -335,65 +249,11 @@ int32_t ImsCallCallbackStub::OnStopDtmfResponseInner(MessageParcel &data, Messag
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnStartRttResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnStartRttResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnStartRttResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(StartRttResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnStopRttResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnStopRttResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnStopRttResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(StopRttResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::OnCallStateChangeReportInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::OnCallStateChangeReportInner entry");
     int32_t slotId = data.ReadInt32();
     reply.WriteInt32(CallStateChangeReport(slotId));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetPreModeResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetPreModeResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetPreModeResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetPreModeResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnGetPreModeResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnGetPreModeResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnGetPreModeResponseInner, info is nullptr.");
-        int32_t mode = data.ReadInt32();
-        reply.WriteInt32(GetPreModeResponse(slotId, mode));
-        return TELEPHONY_SUCCESS;
-    }
-    reply.WriteInt32(GetPreModeResponse(slotId, *info));
     return TELEPHONY_SUCCESS;
 }
 
@@ -444,158 +304,6 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnSetImsConfigResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetImsConfigResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetImsConfigResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetImsConfigResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnGetImsConfigResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnGetImsConfigResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnGetImsConfigResponseInner, info is nullptr.");
-        int32_t value = data.ReadInt32();
-        reply.WriteInt32(GetImsConfigResponse(slotId, value));
-        return TELEPHONY_SUCCESS;
-    }
-    reply.WriteInt32(GetImsConfigResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetImsFeatureResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetImsFeatureResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetImsFeatureResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetImsFeatureValueResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnGetImsFeatureResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnGetImsFeatureResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnGetImsFeatureResponseInner, info is nullptr.");
-        int32_t value = data.ReadInt32();
-        reply.WriteInt32(GetImsFeatureValueResponse(slotId, value));
-        return TELEPHONY_SUCCESS;
-    }
-    reply.WriteInt32(GetImsFeatureValueResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnCtrlCameraResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnCtrlCameraResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnCtrlCameraResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(CtrlCameraResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetPreviewWindowResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetPreviewWindowResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetPreviewWindowResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetPreviewWindowResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetDisplayWindowResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetDisplayWindowResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetDisplayWindowResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetDisplayWindowResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetCameraZoomResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetCameraZoomResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetCameraZoomResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetCameraZoomResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetPauseImageResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetPauseImageResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetPauseImageResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetPauseImageResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSetDeviceDirectionResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSetDeviceDirectionResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (HRilRadioResponseInfo *)data.ReadRawData(sizeof(HRilRadioResponseInfo));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnSetDeviceDirectionResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(SetDeviceDirectionResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnSrvccStateReportInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnSrvccStateReportInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto srvccState = static_cast<SrvccState>(data.ReadInt32());
-    reply.WriteInt32(SrvccStateReport(slotId, srvccState));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnVtWfcReportInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnVtWfcReportInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto transferState = static_cast<TransferState>(data.ReadInt32());
-    reply.WriteInt32(VtWfcReport(slotId, transferState));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::OnSetMuteResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::OnSetMuteResponseInner entry");
@@ -606,19 +314,6 @@ int32_t ImsCallCallbackStub::OnSetMuteResponseInner(MessageParcel &data, Message
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     reply.WriteInt32(SetMuteResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnGetMuteResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::OnGetMuteResponseInner entry");
-    int32_t slotId = data.ReadInt32();
-    auto info = (MuteControlResponse *)data.ReadRawData(sizeof(MuteControlResponse));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("OnGetMuteResponseInner return, info is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(GetMuteResponse(slotId, *info));
     return TELEPHONY_SUCCESS;
 }
 
@@ -868,30 +563,6 @@ int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const HRilRadioR
     return SendEvent(slotId, RadioEvent::RADIO_SWAP_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::CombineConferenceResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::InviteToConferenceResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::KickOutFromConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::KickOutFromConferenceResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::CallMediaModeResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::CallMediaModeResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::StartDtmfResponse entry");
@@ -908,18 +579,6 @@ int32_t ImsCallCallbackStub::StopDtmfResponse(int32_t slotId, const HRilRadioRes
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::StopDtmfResponse entry");
     return SendEvent(slotId, RadioEvent::RADIO_STOP_DTMF, info);
-}
-
-int32_t ImsCallCallbackStub::StartRttResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::StartRttResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::StopRttResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::StopRttResponse entry");
-    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
@@ -969,24 +628,6 @@ int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const ImsCu
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::SetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetPreModeResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetPreModeResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetPreModeResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetPreModeResponse(int32_t slotId, int32_t mode)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetPreModeResponse entry mode:%{public}d", mode);
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::SetImsSwitchResponse entry");
@@ -1007,99 +648,9 @@ int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, int32_t active
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::SetImsConfigResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetImsConfigResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetImsConfigResponse(int32_t slotId, int32_t value)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetImsConfigResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetImsConfigResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetImsConfigResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetImsFeatureValueResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetImsFeatureValueResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetImsFeatureValueResponse(int32_t slotId, int32_t value)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetImsFeatureValueResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetImsFeatureValueResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetImsFeatureValueResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::CtrlCameraResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::CtrlCameraResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetPreviewWindowResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetPreviewWindowResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetDisplayWindowResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetDisplayWindowResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetCameraZoomResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetCameraZoomResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetPauseImageResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetPauseImageResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SetDeviceDirectionResponse(int32_t slotId, const HRilRadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SetDeviceDirectionResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::SrvccStateReport(int32_t slotId, SrvccState srvccState)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::SrvccStateReport entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::VtWfcReport(int32_t slotId, TransferState transferState)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::VtWfcReport entry");
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::SetMuteResponse(int32_t slotId, const MuteControlResponse &response)
 {
     TELEPHONY_LOGI("ImsCallCallbackStub::SetMuteResponse entry");
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::GetMuteResponse(int32_t slotId, const MuteControlResponse &response)
-{
-    TELEPHONY_LOGI("ImsCallCallbackStub::GetMuteResponse entry");
     return TELEPHONY_SUCCESS;
 }
 
