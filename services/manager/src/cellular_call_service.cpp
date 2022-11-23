@@ -181,7 +181,6 @@ void CellularCallService::HandlerResetUnRegister()
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
-
         if (GetImsControl(slot) != nullptr) {
             GetImsControl(slot)->ReleaseAllConnection();
         }
@@ -219,7 +218,6 @@ void CellularCallService::RegisterCoreServiceHandler()
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
 #endif
         }
-
         CellularCallConfig config;
         config.InitModeActive();
         if (config.GetDomainPreferenceMode(slot) != TELEPHONY_SUCCESS) {
