@@ -213,7 +213,12 @@ int32_t CellularCallStub::OnSetEmergencyCallList(MessageParcel &data, MessagePar
     }
     std::vector<EmergencyCall> eccVec;
     for (int i = 0; i < len; i++) {
-        eccVec.push_back(*((EmergencyCall *)data.ReadRawData(sizeof(EmergencyCall))));
+        auto value = reinterpret_cast<const EmergencyCall *>(data.ReadRawData(sizeof(EmergencyCall)));
+        if (value == nullptr) {
+            TELEPHONY_LOGE("CellularCallStub::OnSetEmergencyCallList call data error");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        eccVec.push_back(*value);
     }
     for (auto ecc : eccVec) {
         TELEPHONY_LOGE("OnSetEmergencyCallList, data: eccNum %{public}s mcc %{public}s",
