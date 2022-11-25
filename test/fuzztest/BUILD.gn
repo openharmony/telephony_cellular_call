@@ -21,4 +21,8 @@ group("fuzztest") {
   deps += [ "getcallrestriction_fuzzer:fuzztest" ]
   deps += [ "setimsfeaturevalue_fuzzer:fuzztest" ]
   deps += [ "setpreviewwindow_fuzzer:fuzztest" ]
+  deps += [ "answerrequest_fuzzer:fuzztest" ]
+  deps += [ "dialrequest_fuzzer:fuzztest" ]
+  deps += [ "getcscalldata_fuzzer:fuzztest" ]
+  deps += [ "registercallmanagercallback_fuzzer:fuzztest" ]
 }
