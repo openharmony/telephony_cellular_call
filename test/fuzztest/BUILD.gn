@@ -25,4 +25,5 @@ group("fuzztest") {
   deps += [ "dialrequest_fuzzer:fuzztest" ]
   deps += [ "getcscalldata_fuzzer:fuzztest" ]
   deps += [ "registercallmanagercallback_fuzzer:fuzztest" ]
+  deps += [ "imsclient_fuzzer:fuzztest" ]
 }
