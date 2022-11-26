@@ -610,6 +610,10 @@ int32_t ImsCallStub::OnUpdateImsCapabilities(MessageParcel &data, MessageParcel 
 {
     int32_t slotId = data.ReadInt32();
     auto info = (ImsCapabilityList *)data.ReadRawData(sizeof(ImsCapabilityList));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("data error");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
     reply.WriteInt32(UpdateImsCapabilities(slotId, *info));
     return TELEPHONY_SUCCESS;
 }
