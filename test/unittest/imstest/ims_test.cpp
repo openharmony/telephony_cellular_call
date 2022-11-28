@@ -279,19 +279,14 @@ int32_t ImsTest::InputNumForInterface(const sptr<CellularCallInterface> &telepho
  *              GetCallPreferenceMode, etc
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ims_test_001, TestSize.Level0)
+HWTEST_F(ImsTest, cellular_call_ims_test_001, Function | MediumTest | Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
     std::cout << "HWTEST_F cellular_call_ims_test_001";
 }
 
@@ -301,19 +296,14 @@ HWTEST_F(ImsTest, cellular_call_ims_test_001, TestSize.Level0)
  *              GetCallPreferenceMode, etc
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ims_test_002, TestSize.Level1)
+HWTEST_F(ImsTest, cellular_call_ims_test_002, Function | MediumTest | Level1)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
     std::cout << "HWTEST_F cellular_call_ims_test_002";
 }
 } // namespace Telephony
