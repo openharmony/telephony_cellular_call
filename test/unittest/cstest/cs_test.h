@@ -16,10 +16,9 @@
 #ifndef TELEPHONY_CS_TEST_H
 #define TELEPHONY_CS_TEST_H
 
-#include "gtest/gtest.h"
-
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
+#include "gtest/gtest.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -60,6 +59,7 @@ public:
     int32_t SetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
+    void JudgeIsEmergencyPhoneNumber();
     bool HasSimCard(int32_t slotId);
 
 private:
