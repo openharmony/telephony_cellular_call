@@ -26,6 +26,8 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+const int32_t SIM1_SLOTID = 0;
+const int32_t SIM2_SLOTID = 1;
 const int32_t CELLULAR_CALL_SUCCESS = 0;
 
 bool CsTest::HasSimCard(int32_t slotId)
@@ -589,6 +591,38 @@ int32_t CsTest::GetMute(const sptr<CellularCallInterface> &telephonyService) con
     return telephonyService->GetMute(slotId);
 }
 
+void CsTest::JudgeIsEmergencyPhoneNumber()
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    int32_t errorCode = 0;
+    int32_t successCode = 1;
+    if (HasSimCard(SIM1_SLOTID)) {
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "499", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "443", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "356", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "975", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "783", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "350", errorCode), successCode);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "499", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "443", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "356", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "975", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "783", errorCode), successCode);
+        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "350", errorCode), successCode);
+    }
+}
+
 int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const
 {
     int32_t ret = -1;
@@ -633,19 +667,14 @@ int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephon
  * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_cs_test_001, TestSize.Level0)
+HWTEST_F(CsTest, cellular_call_cs_test_001, Function | MediumTest | Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
     std::cout << "HWTEST_F cellular_call_cs_test_001";
 }
 
@@ -654,19 +683,14 @@ HWTEST_F(CsTest, cellular_call_cs_test_001, TestSize.Level0)
  * @tc.name     Test the corresponding functions by entering commands, such as 1 -- Dial, 2 -- Hangup, 3 -- Reject, etc
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_cs_test_002, TestSize.Level1)
+HWTEST_F(CsTest, cellular_call_cs_test_002, Function | MediumTest | Level1)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
     std::cout << "HWTEST_F cellular_call_cs_test_002";
 }
 
@@ -678,19 +702,16 @@ HWTEST_F(CsTest, cellular_call_cs_test_002, TestSize.Level1)
 HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest | Level3)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
-    int32_t slotId = 0;
-    if (!DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId)) {
+    ASSERT_TRUE(telephonyService != nullptr);
+
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
-    int32_t errorCode = 0;
+
     std::vector<EmergencyCall>  eccVec;
     EmergencyCall temp0 = {
     "499", "460", EccType::TYPE_CATEGORY, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
@@ -716,39 +737,46 @@ HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest 
     eccVec.push_back(temp3);
     eccVec.push_back(temp4);
     eccVec.push_back(temp5);
-    EXPECT_EQ(telephonyService->SetEmergencyCallList(slotId, eccVec), 0);
-    int32_t successCode = 1;
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "499", errorCode), successCode);
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "443", errorCode), successCode);
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "356", errorCode), successCode);
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "975", errorCode), successCode);
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "783", errorCode), successCode);
-    EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(slotId, "350", errorCode), successCode);
+    if (HasSimCard(SIM1_SLOTID)) {
+        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM1_SLOTID, eccVec), 0);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM2_SLOTID, eccVec), 0);
+    }
+    JudgeIsEmergencyPhoneNumber();
 }
 
 HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function | MediumTest | Level3)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        std::cout << "CellularCallService Get ISystemAbilityManager failed.\n";
-        return;
-    }
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        std::cout << "CellularCallService Remote service not exists.\n";
-        return;
-    }
+    ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
-    int32_t slotId = 0;
-    if (!DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId)) {
+    ASSERT_TRUE(telephonyService != nullptr);
+
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
     OperatorConfig opc;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(slotId, opc);
-    if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
-        for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
-            int32_t errorCode = 0;
-            telephonyService->IsEmergencyPhoneNumber(slotId, number, errorCode);
+    if (HasSimCard(SIM1_SLOTID)) {
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM1_SLOTID, opc);
+        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
+            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
+                int32_t errorCode = 0;
+                telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, number, errorCode);
+                EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
+            }
+        }
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM2_SLOTID, opc);
+        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
+            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
+                int32_t errorCode = 0;
+                telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, number, errorCode);
+                EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
+            }
         }
     }
 }
