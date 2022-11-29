@@ -270,30 +270,20 @@ int32_t ImsCallStub::OnGetLastCallFailReason(MessageParcel &data, MessageParcel 
 int32_t ImsCallStub::OnStartDtmf(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    const char *cDtmfCode = data.ReadCString();
-    if (cDtmfCode == nullptr) {
-        TELEPHONY_LOGE("cDtmfCode get fail");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    const char cDtmfCode = data.ReadInt8();
     int32_t index = data.ReadInt32();
 
-    reply.WriteInt32(StartDtmf(slotId, *cDtmfCode, index));
+    reply.WriteInt32(StartDtmf(slotId, cDtmfCode, index));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallStub::OnSendDtmf(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    const char *cDtmfCode = data.ReadCString();
-    if (cDtmfCode == nullptr) {
-        TELEPHONY_LOGE("cDtmfCode get fail");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
+    const char cDtmfCode = data.ReadInt8();
     int32_t index = data.ReadInt32();
 
-    reply.WriteInt32(SendDtmf(slotId, *cDtmfCode, index));
+    reply.WriteInt32(SendDtmf(slotId, cDtmfCode, index));
     return TELEPHONY_SUCCESS;
 }
 
