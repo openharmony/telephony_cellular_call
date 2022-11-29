@@ -308,7 +308,7 @@ int32_t ImsCallProxy::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteCString(&cDtmfCode)) {
+    if (!in.WriteInt8(cDtmfCode)) {
         TELEPHONY_LOGE("[slot%{public}d]Write cDtmfCode fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
@@ -326,7 +326,7 @@ int32_t ImsCallProxy::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteCString(&cDtmfCode)) {
+    if (!in.WriteInt8(cDtmfCode)) {
         TELEPHONY_LOGE("[slot%{public}d]Write cDtmfCode fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }

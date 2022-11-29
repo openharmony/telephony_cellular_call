@@ -184,7 +184,7 @@ void StartDtmf(const uint8_t *data, size_t size)
     }
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
-    dataMessageParcel.WriteCString(&cDtmfCode);
+    dataMessageParcel.WriteInt8(cDtmfCode);
     dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;

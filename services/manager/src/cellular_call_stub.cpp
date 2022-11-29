@@ -448,18 +448,14 @@ int32_t CellularCallStub::OnStartDtmfInner(MessageParcel &data, MessageParcel &r
         return TELEPHONY_ERR_FAIL;
     }
 
-    char *pDtmf = (char *)(data.ReadCString());
-    if (pDtmf == nullptr) {
-        TELEPHONY_LOGE("OnStartDtmfInner return, pDtmf is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
+    char pDtmf = data.ReadInt8();
     auto pCallInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
     if (pCallInfo == nullptr) {
         TELEPHONY_LOGE("OnStartDtmfInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
-    reply.WriteInt32(StartDtmf(*pDtmf, *pCallInfo));
+    reply.WriteInt32(StartDtmf(pDtmf, *pCallInfo));
     return TELEPHONY_SUCCESS;
 }
 
@@ -493,18 +489,14 @@ int32_t CellularCallStub::OnSendDtmfInner(MessageParcel &data, MessageParcel &re
         return TELEPHONY_ERR_FAIL;
     }
 
-    char *pDtmf = (char *)(data.ReadCString());
-    if (pDtmf == nullptr) {
-        TELEPHONY_LOGE("OnSendDtmfInner return, pDtmf is nullptr.");
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
+    char pDtmf = data.ReadInt8();
     auto pCallInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
     if (pCallInfo == nullptr) {
         TELEPHONY_LOGE("OnSendDtmfInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
-    reply.WriteInt32(SendDtmf(*pDtmf, *pCallInfo));
+    reply.WriteInt32(SendDtmf(pDtmf, *pCallInfo));
     return TELEPHONY_SUCCESS;
 }
 
