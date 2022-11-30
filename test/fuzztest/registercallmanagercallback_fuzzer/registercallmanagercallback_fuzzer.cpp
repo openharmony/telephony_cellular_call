@@ -112,9 +112,6 @@ void ReportSetRestrictionResult(const uint8_t *data, size_t size)
     clirResponse.clirStat = static_cast<int32_t>(size);
     clirResponse.action = static_cast<int32_t>(size);
     clirResponse.result = static_cast<int32_t>(size);
-    ImsSwitchResponse imsSwitch;
-    imsSwitch.active = static_cast<int32_t>(size);
-    imsSwitch.result = static_cast<int32_t>(size);
     GetImsConfigResponse getImsConfigResponse;
     getImsConfigResponse.result = static_cast<int32_t>(size);
     getImsConfigResponse.value = static_cast<int32_t>(size);
@@ -125,8 +122,6 @@ void ReportSetRestrictionResult(const uint8_t *data, size_t size)
     cellularCallRegister->ReportGetClipResult(clipResponse);
     cellularCallRegister->ReportGetClirResult(clirResponse);
     cellularCallRegister->ReportSetClirResult(result);
-    cellularCallRegister->ReportGetImsSwitchResult(imsSwitch);
-    cellularCallRegister->ReportSetImsSwitchResult(result);
     cellularCallRegister->ReportGetImsConfigResult(getImsConfigResponse);
     cellularCallRegister->ReportSetImsConfigResult(result);
     cellularCallRegister->ReportSetImsFeatureResult(result);
@@ -164,8 +159,6 @@ void ReportSetImsConfigResult(const uint8_t *data, size_t size)
     }
 
     cellularCallRegister->ReportGetImsFeatureResult(getImsFeatureValueResponse);
-    cellularCallRegister->ReportSetImsSwitchEnhanceModeResult(result);
-    cellularCallRegister->ReportGetImsSwitchEnhanceModeResult(getLteEnhanceModeResponse);
     cellularCallRegister->ReportCallRingBackResult(result);
     cellularCallRegister->ReportCallFailReason(details);
     cellularCallRegister->ReportGetMuteResult(muteControlResponse);

@@ -53,10 +53,6 @@ public:
 
     void ReportSetClirResult(int32_t result);
 
-    void ReportGetImsSwitchResult(const ImsSwitchResponse &imsSwitch);
-
-    void ReportSetImsSwitchResult(int32_t result);
-
     void ReportGetImsConfigResult(const GetImsConfigResponse &response);
 
     void ReportSetImsConfigResult(int32_t result);
@@ -64,10 +60,6 @@ public:
     void ReportGetImsFeatureResult(const GetImsFeatureValueResponse &response);
 
     void ReportSetImsFeatureResult(int32_t result);
-
-    void ReportGetImsSwitchEnhanceModeResult(const GetLteEnhanceModeResponse &response);
-
-    void ReportSetImsSwitchEnhanceModeResult(int32_t result);
 
     void ReportCallRingBackResult(int32_t status);
 
