@@ -74,9 +74,10 @@ public:
      * 3GPP TS 24.167 V17.1.0 (2020-12) 5.31 /<X>/Mobility_Management_IMS_Voice_Termination
      *
      * @param slotId
+     * @param enabled
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t GetImsSwitchStatus(int32_t slotId);
+    int32_t GetImsSwitchStatus(int32_t slotId, bool &enabled);
 
     /**
      * Get Domain Preference Mode Response

@@ -683,31 +683,6 @@ void CellularCallHandler::SetImsSwitchStatusResponse(const AppExecFwk::InnerEven
 void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     TELEPHONY_LOGI("GetImsSwitchStatusResponse entry");
-    if (event == nullptr) {
-        TELEPHONY_LOGE("GetImsSwitchStatusResponse return, event is nullptr");
-        return;
-    }
-    ImsSwitchResponse imsSwitch;
-    auto active = event->GetSharedObject<int32_t>();
-    if (active == nullptr) {
-        TELEPHONY_LOGI("GetImsSwitchStatusResponse, Cannot get the active, need to get rilResponseInfo");
-        auto info = event->GetSharedObject<HRilRadioResponseInfo>();
-        if (info == nullptr) {
-            TELEPHONY_LOGE("GetImsSwitchStatusResponse return, info is nullptr");
-            return;
-        }
-        imsSwitch.result = static_cast<int32_t>(info->error);
-    } else {
-        CellularCallConfig config;
-        config.GetImsSwitchStatusResponse(slotId_, *active);
-        imsSwitch.result = static_cast<int32_t>(HRilErrType::NONE);
-        imsSwitch.active = *active;
-    }
-    if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("GetImsSwitchStatusResponse return, GetInstance is nullptr");
-        return;
-    }
-    registerInstance_->ReportGetImsSwitchResult(imsSwitch);
 }
 
 void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)

@@ -127,7 +127,6 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
     if (ret == SAVE_IMS_SWITCH_FAILED) {
         return TELEPHONY_ERROR;
     } else if (ret == SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED) {
-        DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(ImsErrType::IMS_SUCCESS);
         return TELEPHONY_SUCCESS;
     }
 
@@ -137,34 +136,28 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
             || simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
         UpdateImsCapabilities(slotId, !active);
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetImsSwitchResult(ImsErrType::IMS_SUCCESS);
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId)
+int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
 {
     TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
-    ImsSwitchResponse response;
-    response.result = ImsErrType::IMS_SUCCESS;
-
     auto itorHide = hideImsSwitch_.find(slotId);
     if (itorHide != hideImsSwitch_.end()) {
         if (itorHide->second) {
             auto itorSwitch = imsSwitchOnByDefault_.find(slotId);
             if (itorSwitch != imsSwitchOnByDefault_.end()) {
-                response.active = imsSwitchOnByDefault_[slotId];
+                enabled = imsSwitchOnByDefault_[slotId];
             }
         } else {
             int32_t imsSwitchStatus = GetSwitchStatus(slotId);
-            response.active = imsSwitchStatus;
+            enabled = imsSwitchStatus;
         }
     } else {
         TELEPHONY_LOGE("do not find hideImsSwitch");
         int32_t imsSwitchStatus = GetSwitchStatus(slotId);
-        response.active = imsSwitchStatus;
+        enabled = imsSwitchStatus;
     }
-
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetImsSwitchResult(response);
     return TELEPHONY_SUCCESS;
 }
 
