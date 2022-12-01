@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,13 +15,94 @@
 
 #ifndef TELEPHONY_CS_TEST_H
 #define TELEPHONY_CS_TEST_H
+#include <securec.h>
 
+#include "accesstoken_kit.h"
+#include "call_manager_errors.h"
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
 #include "gtest/gtest.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "token_setproc.h"
 
 namespace OHOS {
 namespace Telephony {
+using namespace Security::AccessToken;
+using Security::AccessToken::AccessTokenID;
+
+HapInfoParams testInfoParams = {
+    .bundleName = "tel_cellular_call_cs_gtest",
+    .userID = 1,
+    .instIndex = 0,
+    .appIDDesc = "test",
+};
+
+PermissionDef testPermPlaceCallDef = {
+    .permissionName = "ohos.permission.PLACE_CALL",
+    .bundleName = "tel_cellular_call_cs_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test cellular call",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testPlaceCallState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.PLACE_CALL",
+    .resDeviceID = { "local" },
+};
+
+PermissionDef testPermSetTelephonyStateDef = {
+    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
+    .bundleName = "tel_cellular_call_cs_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test cellular call",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testSetTelephonyState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
+    .resDeviceID = { "local" },
+};
+
+HapPolicyParams testPolicyParams = {
+    .apl = APL_SYSTEM_BASIC,
+    .domain = "test.domain",
+    .permList = { testPermPlaceCallDef, testPermSetTelephonyStateDef },
+    .permStateList = { testPlaceCallState, testSetTelephonyState },
+};
+
+class AccessToken {
+public:
+    AccessToken()
+    {
+        currentID_ = GetSelfTokenID();
+        AccessTokenIDEx tokenIdEx = AccessTokenKit::AllocHapToken(testInfoParams, testPolicyParams);
+        accessID_ = tokenIdEx.tokenIdExStruct.tokenID;
+        SetSelfTokenID(accessID_);
+    }
+    ~AccessToken()
+    {
+        AccessTokenKit::DeleteToken(accessID_);
+        SetSelfTokenID(currentID_);
+    }
+
+private:
+    AccessTokenID currentID_ = 0;
+    AccessTokenID accessID_ = 0;
+};
+
 class CsTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -61,6 +142,54 @@ public:
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
     void JudgeIsEmergencyPhoneNumber();
     bool HasSimCard(int32_t slotId);
+    int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
+    {
+        callInfo.accountId = accountId;
+        callInfo.slotId = accountId;
+        callInfo.index = accountId;
+        callInfo.callType = CallType::TYPE_CS;
+        callInfo.videoState = 0; // 0 means audio
+        if (memset_s(callInfo.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
+            return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (phonenumber.length() > static_cast<size_t>(kMaxNumberLen)) {
+            return CALL_ERR_NUMBER_OUT_OF_RANGE;
+        }
+        if (memcpy_s(callInfo.phoneNum, kMaxNumberLen, phonenumber.c_str(), phonenumber.length()) != EOK) {
+            return TELEPHONY_ERR_MEMCPY_FAIL;
+        }
+        return TELEPHONY_SUCCESS;
+    };
+
+    int32_t TestDialCallByCs(int32_t slotId, std::string code)
+    {
+        AccessToken token;
+        auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (systemAbilityMgr == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+        if (remote == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        auto telephonyService = iface_cast<CellularCallInterface>(remote);
+        if (telephonyService == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        CellularCallInfo callInfo;
+        int32_t ret = TELEPHONY_SUCCESS;
+        ret = InitCellularCallInfo(slotId, code, callInfo);
+        if (ret != TELEPHONY_SUCCESS) {
+            return ret;
+        }
+        // close ims, make this time use cs to test
+        ret = telephonyService->SetImsSwitchStatus(slotId, false);
+        if (ret != TELEPHONY_SUCCESS) {
+            return ret;
+        }
+        ret = telephonyService->Dial(callInfo);
+        return ret;
+    };
 
 private:
     using RequestFuncType = int32_t (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
