@@ -29,7 +29,7 @@ static bool g_isInited = false;
 constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t INT_NUM = 2;
 constexpr int32_t VEDIO_STATE_NUM = 2;
-constexpr size_t MAX_NUMBER_LEN = 100;
+constexpr size_t MAX_NUMBER_LEN = 99;
 
 bool IsServiceInited()
 {
@@ -194,8 +194,12 @@ void Reject(const uint8_t *data, size_t size)
     int32_t accountId = static_cast<int32_t>(size);
     int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
     int32_t index = static_cast<int32_t>(size);
-    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
-    std::string telNum(reinterpret_cast<const char *>(data), size);
+    std::string telNum = "000000000";
+    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
+        telNum = tempNum;
+    }
+    size_t length = strlen(telNum.c_str()) + 1;
     CellularCallInfo callInfo;
     callInfo.slotId = slotId;
     callInfo.callId = callId;
@@ -226,8 +230,12 @@ void HangUp(const uint8_t *data, size_t size)
     int32_t accountId = static_cast<int32_t>(size);
     int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
     int32_t index = static_cast<int32_t>(size);
-    size_t length = size > MAX_NUMBER_LEN ? MAX_NUMBER_LEN : size;
-    std::string telNum(reinterpret_cast<const char *>(data), size);
+    std::string telNum = "000000000";
+    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
+        telNum = tempNum;
+    }
+    size_t length = strlen(telNum.c_str()) + 1;
     CellularCallInfo callInfo;
     callInfo.slotId = slotId;
     callInfo.callId = callId;
