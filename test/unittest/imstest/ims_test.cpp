@@ -112,7 +112,8 @@ int32_t ImsTest::GetImsSwitchStatus(const sptr<CellularCallInterface> &telephony
     int32_t slotId = 0;
     std::cout << "please enter the slotId:(0   1)";
     std::cin >> slotId;
-    return telephonyService->GetImsSwitchStatus(slotId);
+    bool enabled;
+    return telephonyService->GetImsSwitchStatus(slotId, enabled);
 }
 
 int32_t ImsTest::SetImsConfigString(const sptr<CellularCallInterface> &telephonyService) const

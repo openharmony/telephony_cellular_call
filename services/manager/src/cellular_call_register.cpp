@@ -196,26 +196,6 @@ void CellularCallRegister::ReportSetClirResult(int32_t result)
     callManagerCallBack_->UpdateSetCallClirResult(result);
 }
 
-void CellularCallRegister::ReportGetImsSwitchResult(const ImsSwitchResponse &imsSwitch)
-{
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportGetImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
-        return;
-    }
-    callManagerCallBack_->GetImsSwitchStatusResult(imsSwitch);
-}
-
-void CellularCallRegister::ReportSetImsSwitchResult(int32_t result)
-{
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportSetImsSwitchResult return, callManagerCallBack_ is nullptr, report fail!");
-        return;
-    }
-    ImsSwitchResponse response;
-    response.result = result;
-    callManagerCallBack_->SetImsSwitchStatusResult(response);
-}
-
 void CellularCallRegister::ReportGetImsConfigResult(const GetImsConfigResponse &response)
 {
     TELEPHONY_LOGI("ReportGetImsConfigResult entry, value:%{public}d", response.value);
@@ -252,25 +232,6 @@ void CellularCallRegister::ReportGetImsFeatureResult(const GetImsFeatureValueRes
         return;
     }
     callManagerCallBack_->GetImsFeatureValueResult(response);
-}
-
-void CellularCallRegister::ReportSetImsSwitchEnhanceModeResult(int32_t result)
-{
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportSetImsSwitchEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
-        return;
-    }
-    callManagerCallBack_->SetLteEnhanceModeResult(result);
-}
-
-void CellularCallRegister::ReportGetImsSwitchEnhanceModeResult(const GetLteEnhanceModeResponse &response)
-{
-    TELEPHONY_LOGI("ReportGetImsSwitchEnhanceModeResult entry, value:%{public}d", response.value);
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportGetImsSwitchEnhanceModeResult return, callManagerCallBack_ is nullptr, report fail!");
-        return;
-    }
-    callManagerCallBack_->GetLteEnhanceModeResult(response);
 }
 
 void CellularCallRegister::ReportCallRingBackResult(int32_t status)

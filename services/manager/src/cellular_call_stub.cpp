@@ -691,8 +691,10 @@ int32_t CellularCallStub::OnGetImsSwitchStatusInner(MessageParcel &data, Message
         return TELEPHONY_ERR_FAIL;
     }
     int32_t slotId = data.ReadInt32();
-
-    reply.WriteInt32(GetImsSwitchStatus(slotId));
+    bool enabled;
+    int32_t result = GetImsSwitchStatus(slotId, enabled);
+    reply.WriteBool(enabled);
+    reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;
 }
 
