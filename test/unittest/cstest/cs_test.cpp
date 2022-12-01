@@ -15,19 +15,17 @@
 
 #include "cs_test.h"
 
-#include "call_manager_errors.h"
 #include "core_service_client.h"
-#include "iservice_registry.h"
 #include "operator_config_types.h"
 #include "securec.h"
 #include "sim_state_type.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
+const int32_t INVALID_SLOTID = -1;
 const int32_t CELLULAR_CALL_SUCCESS = 0;
 
 bool CsTest::HasSimCard(int32_t slotId)
@@ -712,25 +710,19 @@ HWTEST_F(CsTest, cellular_call_SetEmergencyCallList_0101, Function | MediumTest 
         return;
     }
 
-    std::vector<EmergencyCall>  eccVec;
-    EmergencyCall temp0 = {
-    "499", "460", EccType::TYPE_CATEGORY, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
-    };
-    EmergencyCall temp1 = {
-    "443", "460", EccType::TYPE_POLICE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
-    };
-    EmergencyCall temp2 = {
-    "356", "460", EccType::TYPE_AMBULANCE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
-    };
-    EmergencyCall temp3 = {
-    "783", "460", EccType::TYPE_FIRE, SimpresentType::TYPE_NO_CARD, AbnormalServiceType::TYPE_ALL
-    };
-    EmergencyCall temp4 = {
-    "975", "460", EccType::TYPE_SEA, SimpresentType::TYPE_HAS_CARD, AbnormalServiceType::TYPE_ONLY_CS
-    };
-    EmergencyCall temp5 = {
-    "350", "460", EccType::TYPE_MOUNTAIN, SimpresentType::TYPE_HAS_CARD, AbnormalServiceType::TYPE_ALL
-    };
+    std::vector<EmergencyCall> eccVec;
+    EmergencyCall temp0 = { "499", "460", EccType::TYPE_CATEGORY, SimpresentType::TYPE_NO_CARD,
+        AbnormalServiceType::TYPE_ALL };
+    EmergencyCall temp1 = { "443", "460", EccType::TYPE_POLICE, SimpresentType::TYPE_NO_CARD,
+        AbnormalServiceType::TYPE_ALL };
+    EmergencyCall temp2 = { "356", "460", EccType::TYPE_AMBULANCE, SimpresentType::TYPE_NO_CARD,
+        AbnormalServiceType::TYPE_ALL };
+    EmergencyCall temp3 = { "783", "460", EccType::TYPE_FIRE, SimpresentType::TYPE_NO_CARD,
+        AbnormalServiceType::TYPE_ALL };
+    EmergencyCall temp4 = { "975", "460", EccType::TYPE_SEA, SimpresentType::TYPE_HAS_CARD,
+        AbnormalServiceType::TYPE_ONLY_CS };
+    EmergencyCall temp5 = { "350", "460", EccType::TYPE_MOUNTAIN, SimpresentType::TYPE_HAS_CARD,
+        AbnormalServiceType::TYPE_ALL };
     eccVec.push_back(temp0);
     eccVec.push_back(temp1);
     eccVec.push_back(temp2);
@@ -778,6 +770,510 @@ HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function 
                 EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
             }
         }
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0001
+ * @tc.name     Test for SetClip function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0001, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0002
+ * @tc.name     Test for SetClip function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0002, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0003
+ * @tc.name     Test for getClip function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0003, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#30#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0004
+ * @tc.name     Test for SetClir function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0004, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0005
+ * @tc.name     Test for SetClir function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0005, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0006
+ * @tc.name     Test for GetClir function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0006, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#31#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0007
+ * @tc.name     Test for SetCallTransfer function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0007, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0008
+ * @tc.name     Test for SetCallTransfer function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0008, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0009
+ * @tc.name     Test for GetCallTransfer function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0009, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#21#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0010
+ * @tc.name     Test for SetCallRestriction function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0010, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0011
+ * @tc.name     Test for SetCallRestriction function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0011, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0012
+ * @tc.name     Test for GetCallRestriction function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0012, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#33#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0013
+ * @tc.name     Test for SetCallWaiting function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0013, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0014
+ * @tc.name     Test for SetCallWaiting function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0014, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0015
+ * @tc.name     Test for GetCallWaiting function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0015, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#43#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0016
+ * @tc.name     Test for AlterPinPassword function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0016, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*04#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*04#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0017
+ * @tc.name     Test for UnlockPuk function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0017, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*05#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*05#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0018
+ * @tc.name     Test for AlterPin2Password function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0018, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*042#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*042#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0019
+ * @tc.name     Test for UnlockPuk2 function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0019, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*052#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*052#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_DialCall_0020
+ * @tc.name     Test for SendUssd function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_DialCall_0020, Function | MediumTest | Level2)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*4444#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*4444#");
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_GetDomainPreferenceMode_0001
+ * @tc.name     Test for GetDomainPreferenceMode function by invalid slotId
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->GetDomainPreferenceMode(INVALID_SLOTID);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->GetDomainPreferenceMode(INVALID_SLOTID);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_GetDomainPreferenceMode_0002
+ * @tc.name     Test for GetDomainPreferenceMode function by valid slotId
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0002, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->GetDomainPreferenceMode(SIM1_SLOTID);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->GetDomainPreferenceMode(SIM2_SLOTID);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_GetMute_0001
+ * @tc.name     Test for GetMute function by invalid slotId
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_GetMute_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->GetMute(INVALID_SLOTID);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->GetMute(INVALID_SLOTID);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_GetMute_0002
+ * @tc.name     Test for GetMute function by valid slotId
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_GetMute_0002, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->GetMute(SIM1_SLOTID);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->GetMute(SIM2_SLOTID);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
 } // namespace Telephony
