@@ -57,6 +57,25 @@ PermissionStateFull testPlaceCallState = {
     .resDeviceID = { "local" },
 };
 
+PermissionDef testPermAnswerCallDef = {
+    .permissionName = "ohos.permission.ANSWER_CALL",
+    .bundleName = "tel_cellular_call_cs_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test cellular call",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testAnswerCallState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.ANSWER_CALL",
+    .resDeviceID = { "local" },
+};
+
 PermissionDef testPermSetTelephonyStateDef = {
     .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
     .bundleName = "tel_cellular_call_cs_gtest",
@@ -79,8 +98,8 @@ PermissionStateFull testSetTelephonyState = {
 HapPolicyParams testPolicyParams = {
     .apl = APL_SYSTEM_BASIC,
     .domain = "test.domain",
-    .permList = { testPermPlaceCallDef, testPermSetTelephonyStateDef },
-    .permStateList = { testPlaceCallState, testSetTelephonyState },
+    .permList = { testPermPlaceCallDef, testPermAnswerCallDef, testPermSetTelephonyStateDef },
+    .permStateList = { testPlaceCallState, testAnswerCallState, testSetTelephonyState },
 };
 
 class AccessToken {
