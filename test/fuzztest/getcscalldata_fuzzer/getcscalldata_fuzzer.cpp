@@ -134,11 +134,12 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     RadioEvent radioEvent = static_cast<RadioEvent>(size);
     std::shared_ptr<CellularCallHandler> handle =
         DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
-    AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(radioEvent);
     if (handle == nullptr) {
         return;
     }
+    AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(radioEvent);
     GetCsCallData(handle, std::move(event), data, size);
+    event = AppExecFwk::InnerEvent::Get(radioEvent);
     RegisterHandler(handle, std::move(event), data, size);
 }
 } // namespace OHOS
