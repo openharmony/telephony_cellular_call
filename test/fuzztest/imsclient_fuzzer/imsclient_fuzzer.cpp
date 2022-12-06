@@ -28,7 +28,6 @@
 using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
-constexpr size_t MAX_NUMBER_LEN = 100;
 constexpr int32_t SERVICE_STATE_RUNNING = 1;
 
 bool IsServiceInited()
@@ -49,14 +48,18 @@ bool IsServiceInited()
 void TestImsCallClientWithCallInfo(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    std::string number(reinterpret_cast<const char *>(data), size);
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t videoState = static_cast<int32_t>(size % 3);
     int32_t index = static_cast<int32_t>(size % 3);
     const char *cDtmfCode = number.c_str();
-    ImsCallInfo callInfo;
-    if (strcpy_s(callInfo.phoneNum, MAX_NUMBER_LEN, number.c_str()) != EOK) {
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
     callInfo.slotId = slotId;
@@ -123,7 +126,12 @@ void TestImsCallClientWithSlotAndType(
 void TestImsCallClientWithSettingFunction(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    std::string number(reinterpret_cast<const char *>(data), size);
+    CallTransferInfo transferInfo;
+    if (memset_s(&transferInfo, sizeof(struct CallTransferInfo), 0x00, sizeof(struct CallTransferInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t item = static_cast<int32_t>(size % 3);
@@ -144,8 +152,7 @@ void TestImsCallClientWithSettingFunction(
     imsCallClient->GetColr(slotId);
     imsCallClient->SetColp(slotId, mode);
     imsCallClient->GetColp(slotId);
-    CallTransferInfo transferInfo;
-    if (strcpy_s(transferInfo.transferNum, MAX_NUMBER_LEN, number.c_str()) != EOK) {
+    if (strcpy_s(transferInfo.transferNum, sizeof(transferInfo.transferNum), number.c_str()) != EOK) {
         return;
     }
     transferInfo.settingType = static_cast<CallTransferSettingType>(type);
@@ -158,14 +165,18 @@ void TestImsCallClientWithSettingFunction(
 
 void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    std::string number(reinterpret_cast<const char *>(data), size);
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t videoState = static_cast<int32_t>(size % 3);
     int32_t index = static_cast<int32_t>(size % 3);
     const char *cDtmfCode = number.c_str();
-    ImsCallInfo callInfo;
-    if (strcpy_s(callInfo.phoneNum, MAX_NUMBER_LEN, number.c_str()) != EOK) {
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
     callInfo.slotId = slotId;
@@ -229,7 +240,12 @@ void TestImsCallProxyWithSlotAndType(const uint8_t *data, size_t size, const spt
 
 void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    std::string number(reinterpret_cast<const char *>(data), size);
+    CallTransferInfo transferInfo;
+    if (memset_s(&transferInfo, sizeof(struct CallTransferInfo), 0x00, sizeof(struct CallTransferInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t item = static_cast<int32_t>(size % 3);
@@ -250,8 +266,7 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     proxy->GetColr(slotId);
     proxy->SetColp(slotId, mode);
     proxy->GetColp(slotId);
-    CallTransferInfo transferInfo;
-    if (strcpy_s(transferInfo.transferNum, MAX_NUMBER_LEN, number.c_str()) != EOK) {
+    if (strcpy_s(transferInfo.transferNum, sizeof(transferInfo.transferNum), number.c_str()) != EOK) {
         return;
     }
     transferInfo.settingType = static_cast<CallTransferSettingType>(type);
