@@ -23,6 +23,8 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t DEFAULT_SLOT_ID = 0;
+
 void ImsTestHandler::RegisterImsCall()
 {
     std::shared_ptr<ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();

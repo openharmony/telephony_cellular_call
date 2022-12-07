@@ -28,6 +28,19 @@ using namespace testing::ext;
 
 namespace OHOS {
 namespace Telephony {
+const char PHONE_NUMBER[6] = "00000";
+const int32_t DEFAULT_SLOTID = 0;
+const int32_t SIM_SLOT_ID_1 = 1;
+const int32_t DEFAULT_STATE = 0;
+const int32_t DEFAULT_INDEX = 0;
+const int32_t CALL_TYPE_IMS = 1;
+const int32_t DEFAULT_MODE = 0;
+const int32_t DEFAULT_TRANSFER_TYPE = 0;
+const bool DEFAULT_ACTIVE = true;
+const ImsConfigItem DEFAULT_ITEM = ITEM_VIDEO_QUALITY;
+const FeatureType DEFAULT_FEATURE_TYPE = TYPE_VOICE_OVER_LTE;
+const std::string RTT_MSG = "000";
+
 sptr<ImsCallInterface> ImsServiceTest::imsCallPtr_ = nullptr;
 sptr<ImsSmsInterface> ImsServiceTest::imsSmsPtr_ = nullptr;
 sptr<ImsCoreServiceInterface> ImsServiceTest::imsCoreServicePtr_ = nullptr;
