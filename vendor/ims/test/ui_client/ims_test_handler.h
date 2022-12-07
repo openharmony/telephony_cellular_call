@@ -28,9 +28,6 @@ public:
     void RegisterImsSms();
     void RegisterImsCoreService();
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
-
-public:
-    static const int32_t DEFAULT_SLOT_ID = 0;
 };
 } // namespace Telephony
 } // namespace OHOS

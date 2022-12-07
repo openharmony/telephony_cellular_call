@@ -709,7 +709,7 @@ int32_t ImsUnitTest::ImsCallTest() const
     std::shared_ptr<ImsTestHandler> handler = std::make_shared<ImsTestHandler>();
     handler->RegisterImsCall();
     int32_t ret = -1;
-    int32_t InputNum = 0;
+    int32_t inputNum = 0;
     int32_t returnNum = 1000; //  end loop variable value
     bool loopFlag = true;
     while (loopFlag) {
@@ -730,12 +730,12 @@ int32_t ImsUnitTest::ImsCallTest() const
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> InputNum;
-        if (InputNum == returnNum) {
+        std::cin >> inputNum;
+        if (inputNum == returnNum) {
             std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestCallFuncMap_.find(InputNum);
+        auto itFunc = requestCallFuncMap_.find(inputNum);
         if (itFunc != requestCallFuncMap_.end()) {
             auto requestFunc = itFunc->second;
             if (requestFunc != nullptr) {
@@ -760,7 +760,7 @@ int32_t ImsUnitTest::ImsSmsTest() const
     std::shared_ptr<ImsTestHandler> handler = std::make_shared<ImsTestHandler>();
     handler->RegisterImsSms();
     int32_t ret = -1;
-    int32_t InputNum = 0;
+    int32_t inputNum = 0;
     int32_t returnNum = 1000; //  end loop variable value
     bool loopFlag = true;
     while (loopFlag) {
@@ -772,12 +772,12 @@ int32_t ImsUnitTest::ImsSmsTest() const
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> InputNum;
-        if (InputNum == returnNum) {
+        std::cin >> inputNum;
+        if (inputNum == returnNum) {
             std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestSmsFuncMap_.find(InputNum);
+        auto itFunc = requestSmsFuncMap_.find(inputNum);
         if (itFunc != requestSmsFuncMap_.end()) {
             auto requestFunc = itFunc->second;
             if (requestFunc != nullptr) {
@@ -802,7 +802,7 @@ int32_t ImsUnitTest::ImsCoreServiceTest() const
     std::shared_ptr<ImsTestHandler> handler = std::make_shared<ImsTestHandler>();
     handler->RegisterImsCoreService();
     int32_t ret = -1;
-    int32_t InputNum = 0;
+    int32_t inputNum = 0;
     int32_t returnNum = 1000; //  end loop variable value
     bool loopFlag = true;
     while (loopFlag) {
@@ -812,12 +812,12 @@ int32_t ImsUnitTest::ImsCoreServiceTest() const
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> InputNum;
-        if (InputNum == returnNum) {
+        std::cin >> inputNum;
+        if (inputNum == returnNum) {
             std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestCoreServiceFuncMap_.find(InputNum);
+        auto itFunc = requestCoreServiceFuncMap_.find(inputNum);
         if (itFunc != requestCoreServiceFuncMap_.end()) {
             auto requestFunc = itFunc->second;
             if (requestFunc != nullptr) {
@@ -847,9 +847,9 @@ int32_t main()
     std::cout << "Please select interface type...." << std::endl;
     while (true) {
         std::cout << "\n1:ims call interface\n"
-                  << "2:ims sms interface\n"
-                  << "3:ims core service interface\n"
-                  << "1000:exit\n";
+                     "2:ims sms interface\n"
+                     "3:ims core service interface\n"
+                     "1000:exit\n";
         std::cin >> code;
         switch (code) {
             case callTest:
