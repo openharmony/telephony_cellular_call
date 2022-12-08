@@ -35,6 +35,9 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
         return TELEPHONY_ERR_MEMSET_FAIL;
     }
     size_t cpyLen = strlen(dialRequest.phoneNum.c_str()) + 1;
+    if (cpyLen > static_cast<size_t>(kMaxNumberLength)) {
+        return TELEPHONY_ERR_STRCPY_FAIL;
+    }
     if (strcpy_s(callInfo.phoneNum, cpyLen, dialRequest.phoneNum.c_str()) != EOK) {
         TELEPHONY_LOGE("return, strcpy_s fail.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(
@@ -60,6 +63,9 @@ int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::stri
         if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");
             return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (static_cast<int32_t>(phoneNum.length() + 1) > kMaxNumberLength) {
+            return TELEPHONY_ERR_STRCPY_FAIL;
         }
         if (strcpy_s(callInfo.phoneNum, strlen(phoneNum.c_str()) + 1, phoneNum.c_str()) != EOK) {
             TELEPHONY_LOGE("return, strcpy_s fail.");
@@ -90,6 +96,9 @@ int32_t CellularCallConnectionIMS::AnswerRequest(
             TELEPHONY_LOGE("return, memset_s error.");
             return TELEPHONY_ERR_MEMSET_FAIL;
         }
+        if (static_cast<int32_t>(phoneNum.length() + 1) > kMaxNumberLength) {
+            return TELEPHONY_ERR_STRCPY_FAIL;
+        }
         if (strcpy_s(callInfo.phoneNum, strlen(phoneNum.c_str()) + 1, phoneNum.c_str()) != EOK) {
             TELEPHONY_LOGE("return, strcpy_s fail.");
             return TELEPHONY_ERR_STRCPY_FAIL;
@@ -117,6 +126,9 @@ int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId, const std::stri
         if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");
             return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (static_cast<int32_t>(phoneNum.length() + 1) > kMaxNumberLength) {
+            return TELEPHONY_ERR_STRCPY_FAIL;
         }
         if (strcpy_s(callInfo.phoneNum, strlen(phoneNum.c_str()) + 1, phoneNum.c_str()) != EOK) {
             TELEPHONY_LOGE("return, strcpy_s fail.");
@@ -250,6 +262,9 @@ int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCall
         if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");
             return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (static_cast<int32_t>(strlen(callInfo.phoneNum) + 1) > kMaxNumberLength) {
+            return TELEPHONY_ERR_STRCPY_FAIL;
         }
         errno_t result = strcpy_s(imsCallInfo.phoneNum, strlen(callInfo.phoneNum) + 1,
                                   callInfo.phoneNum);
