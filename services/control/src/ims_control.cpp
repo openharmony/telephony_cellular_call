@@ -436,6 +436,10 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     }
 
     size_t cpyLen = strlen(callInfo.number.c_str()) + 1;
+    if (cpyLen > static_cast<size_t>(kMaxNumberLen + 1)) {
+        TELEPHONY_LOGE("EncapsulationCallReportInfo return, strcpy_s fail.");
+        return callReportInfo;
+    }
     if (strcpy_s(callReportInfo.accountNum, cpyLen, callInfo.number.c_str()) != EOK) {
         TELEPHONY_LOGE("EncapsulationCallReportInfo return, strcpy_s fail.");
         return callReportInfo;
