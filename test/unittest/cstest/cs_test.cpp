@@ -15,7 +15,12 @@
 
 #include "cs_test.h"
 
+#define private public
+#define protected public
+#include "cellular_call_register.h"
 #include "core_service_client.h"
+#include "cs_control.h"
+#include "hril_call_parcel.h"
 #include "operator_config_types.h"
 #include "securec.h"
 #include "sim_state_type.h"
@@ -26,7 +31,11 @@ using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t INVALID_SLOTID = -1;
+const int32_t INVALID_HANG_UP_TYPE = -1;
+const int32_t RESULT = 1;
 const std::string PHONE_NUMBER = "0000000";
+const std::string PHONE_NUMBER_SECOND = "1111111";
+const std::string PHONE_NUMBER_THIRD = "2222222";
 const int32_t CELLULAR_CALL_SUCCESS = 0;
 
 bool CsTest::HasSimCard(int32_t slotId)
@@ -1691,7 +1700,7 @@ HWTEST_F(CsTest, cellular_call_SeparateConference_0001, Function | MediumTest | 
 }
 
 /**
- * @tc.number   cellular_call_CombineConference_0002
+ * @tc.number   cellular_call_SeparateConference_0002
  * @tc.name     Test for separateConference function with invalid slot by cs
  * @tc.desc     Function test
  */
@@ -2056,6 +2065,183 @@ HWTEST_F(CsTest, cellular_call_GetMute_0002, Function | MediumTest | Level3)
         int32_t ret = telephonyService->GetMute(SIM2_SLOTID);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
+}
+
+/**
+ * @tc.number   cellular_call_CsControl_0001
+ * @tc.name     Test for CsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    auto csControl = std::make_shared<CSControl>();
+    CellularCallInfo cellularCallInfo;
+    EXPECT_EQ(InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
+    EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_GET_RADIO_STATE_FAILED);
+    EXPECT_EQ(InitCellularCallInfo(INVALID_SLOTID, "", cellularCallInfo), TELEPHONY_SUCCESS);
+    EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_PHONE_NUMBER_EMPTY);
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        EXPECT_EQ(InitCellularCallInfo(slotId, "*30#", cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, "#30#", cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_GET_RADIO_STATE_FAILED);
+        ASSERT_FALSE(csControl->CalculateInternationalRoaming(slotId));
+        CallInfoList callList;
+        callList.callSize = 0;
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_ERROR);
+        CallInfo callInfo;
+        callList.callSize = 1;
+        callInfo.number = PHONE_NUMBER;
+        callInfo.index = 1;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING);
+        callList.calls.push_back(callInfo);
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        callList.callSize = 2;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ACTIVE);
+        callInfo.number = PHONE_NUMBER_SECOND;
+        callInfo.index = 2;
+        callList.calls.push_back(callInfo);
+        callList.callSize = 3;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED);
+        callInfo.number = PHONE_NUMBER_THIRD;
+        callInfo.index = 3;
+        callList.calls.push_back(callInfo);
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_SECOND, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_THIRD, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(csControl->SwitchCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(csControl->SeparateConference(slotId, PHONE_NUMBER, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->SeparateConference(slotId, "", 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
+            CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(
+            csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
+            TELEPHONY_ERR_ARGUMENT_INVALID);
+        callList.callSize = 0;
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallConnectionCS_0001
+ * @tc.name     Test for CellularCallConnectionCS
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallConnectionCS_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CellularCallConnectionCS csConnection;
+        EXPECT_EQ(csConnection.SendDtmfRequest(slotId, '1', 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csConnection.StartDtmfRequest(slotId, '1', 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csConnection.StopDtmfRequest(slotId, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csConnection.GetCsCallsDataRequest(slotId, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csConnection.GetCallFailReasonRequest(slotId), CALL_ERR_RESOURCE_UNAVAILABLE);
+        MMICodeUtils utils;
+        ASSERT_FALSE(utils.IsNeedExecuteMmi(""));
+        ASSERT_FALSE(utils.ExecuteMmiCode(slotId));
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallRegister_0001
+ * @tc.name     Test for CellularCallRegister
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ASSERT_TRUE(callRegister != nullptr);
+    CallReportInfo callRepotInfo;
+    callRepotInfo.callType = CallType::TYPE_CS;
+    callRepotInfo.accountId = INVALID_SLOTID;
+    callRepotInfo.state = TelCallState::CALL_STATUS_INCOMING;
+    callRepotInfo.callMode = VideoStateType::TYPE_VOICE;
+    CallsReportInfo calls;
+    calls.slotId = INVALID_SLOTID;
+    calls.callVec.push_back(callRepotInfo);
+    callRegister->ReportCallsInfo(calls);
+    callRegister->ReportSingleCallInfo(callRepotInfo, TelCallState::CALL_STATUS_INCOMING);
+    CellularCallEventInfo callEvent;
+    callRegister->ReportEventResultInfo(callEvent);
+    CallWaitResponse waitResponse;
+    callRegister->ReportGetWaitingResult(waitResponse);
+    callRegister->ReportSetWaitingResult(RESULT);
+    CallRestrictionResponse restrictionResponse;
+    callRegister->ReportGetRestrictionResult(restrictionResponse);
+    callRegister->ReportSetRestrictionResult(RESULT);
+    CallTransferResponse transferResponse;
+    callRegister->ReportGetTransferResult(transferResponse);
+    callRegister->ReportSetTransferResult(RESULT);
+    ClipResponse clipResponse;
+    callRegister->ReportGetClipResult(clipResponse);
+    ClirResponse clirResponse;
+    callRegister->ReportGetClirResult(clirResponse);
+    callRegister->ReportSetClirResult(RESULT);
+    callRegister->ReportCallRingBackResult(RESULT);
+    DisconnectedDetails details;
+    callRegister->ReportCallFailReason(details);
+    MuteControlResponse muteResponse;
+    callRegister->ReportSetMuteResult(muteResponse);
+    callRegister->ReportGetMuteResult(muteResponse);
+    callRegister->ReportInviteToConferenceResult(RESULT);
+    callRegister->ReportGetCallDataResult(RESULT);
+    callRegister->ReportStartDtmfResult(RESULT);
+    callRegister->ReportStopDtmfResult(RESULT);
+    callRegister->ReportStartRttResult(RESULT);
+    callRegister->ReportStopRttResult(RESULT);
+    callRegister->ReportSendUssdResult(RESULT);
+    SetEccListResponse eccListResponse;
+    callRegister->ReportSetEmergencyCallListResponse(eccListResponse);
+    MmiCodeInfo mmiInfo;
+    callRegister->ReportMmiCodeResult(mmiInfo);
+    EXPECT_EQ(callRegister->RegisterCallManagerCallBack(nullptr), TELEPHONY_SUCCESS);
+    EXPECT_EQ(callRegister->UnRegisterCallManagerCallBack(), TELEPHONY_SUCCESS);
+    ASSERT_FALSE(callRegister->IsCallManagerCallBackRegistered());
 }
 } // namespace Telephony
 } // namespace OHOS

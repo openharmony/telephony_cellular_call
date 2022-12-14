@@ -20,6 +20,7 @@
 #include "accesstoken_kit.h"
 #include "call_manager_errors.h"
 #include "cellular_call_interface.h"
+#include "core_manager_inner.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
@@ -149,6 +150,12 @@ public:
     bool HasSimCard(int32_t slotId)
     {
         return DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId);
+    }
+    bool CanUseImsService(int32_t slotId, ImsServiceType type)
+    {
+        ImsRegInfo info;
+        CoreManagerInner::GetInstance().GetImsRegStatus(slotId, type, info);
+        return info.imsRegState == ImsRegState::IMS_REGISTERED;
     }
 
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
