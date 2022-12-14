@@ -27,14 +27,11 @@ ohos_unittest("tel_cellular_call_cs_test") {
   ]
 
   include_dirs = [
-    "//base/telephony/cellular_call/services/manager/include",
-    "//base/telephony/cellular_call/services/common/include",
     "$SOURCE_DIR/interfaces/innerkits/ims",
     "$SOURCE_DIR/services/common/include",
-    "$SOURCE_DIR/services/manager/include",
-    "$SOURCE_DIR/interfaces/innerkits/ims",
-    "$SOURCE_DIR/services/control/include",
     "$SOURCE_DIR/services/connection/include",
+    "$SOURCE_DIR/services/control/include",
+    "$SOURCE_DIR/services/manager/include",
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/call_manager/services/telephony_interaction/include",
     "//third_party/libphonenumber/cpp/src",
@@ -44,6 +41,7 @@ ohos_unittest("tel_cellular_call_cs_test") {
   configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
 
   deps = [
+    "//base/telephony/cellular_call:tel_cellular_call",
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
     "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",

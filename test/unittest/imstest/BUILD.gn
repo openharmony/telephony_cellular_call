@@ -25,13 +25,17 @@ ohos_unittest("tel_cellular_call_ims_test") {
   ]
 
   include_dirs = [
-    "//base/telephony/cellular_call/services/manager/include",
+    "//base/telephony/cellular_call/interfaces/innerkits/ims",
     "//base/telephony/cellular_call/services/common/include",
+    "//base/telephony/cellular_call/services/connection/include",
+    "//base/telephony/cellular_call/services/control/include",
+    "//base/telephony/cellular_call/services/manager/include",
     "//base/telephony/call_manager/interfaces/innerkits",
     "//base/telephony/call_manager/services/telephony_interaction/include",
   ]
 
   deps = [
+    "//base/telephony/cellular_call:tel_cellular_call",
     "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
     "//base/telephony/core_service/utils:libtel_common",
     "//third_party/googletest:gtest_main",
