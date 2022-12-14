@@ -42,7 +42,7 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo)
     return TELEPHONY_SUCCESS;
 }
 
-bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode)
+bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode, bool isNeedUseIms)
 {
     TELEPHONY_LOGI("IsNeedExecuteMMI start");
     // Also supplementary services may be controlled using dial command according to 3GPP TS 22.030 [19].
@@ -55,7 +55,7 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
         TELEPHONY_LOGE("IsNeedExecuteMMI return, mmiCodeUtils is nullptr");
         return false;
     }
-    if (!mmiCodeUtils->IsNeedExecuteMmi(phoneString)) {
+    if (!mmiCodeUtils->IsNeedExecuteMmi(phoneString, isNeedUseIms)) {
         TELEPHONY_LOGI("IsNeedExecuteMMI return, isn't need to execute mmi");
         return false;
     }

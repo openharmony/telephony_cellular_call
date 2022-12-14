@@ -134,6 +134,7 @@ void TestImsCallClientWithSettingFunction(
     std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
+    int32_t index = static_cast<int32_t>(size % 3);
     int32_t item = static_cast<int32_t>(size % 3);
     int32_t value = static_cast<int32_t>(size % 4);
     int32_t type = static_cast<int32_t>(size % 4);
@@ -142,25 +143,25 @@ void TestImsCallClientWithSettingFunction(
     imsCallClient->GetImsConfig(static_cast<ImsConfigItem>(item));
     imsCallClient->SetImsFeatureValue(static_cast<FeatureType>(type), value);
     imsCallClient->GetImsFeatureValue(static_cast<FeatureType>(type), value);
-    imsCallClient->SetClip(slotId, mode);
-    imsCallClient->GetClip(slotId);
-    imsCallClient->SetClir(slotId, mode);
-    imsCallClient->GetClir(slotId);
-    imsCallClient->SetCallWaiting(slotId, mode, type);
-    imsCallClient->GetCallWaiting(slotId);
-    imsCallClient->SetColr(slotId, mode);
-    imsCallClient->GetColr(slotId);
-    imsCallClient->SetColp(slotId, mode);
-    imsCallClient->GetColp(slotId);
+    imsCallClient->SetClip(slotId, mode, index);
+    imsCallClient->GetClip(slotId, index);
+    imsCallClient->SetClir(slotId, mode, index);
+    imsCallClient->GetClir(slotId, index);
+    imsCallClient->SetCallWaiting(slotId, mode, type, index);
+    imsCallClient->GetCallWaiting(slotId, index);
+    imsCallClient->SetColr(slotId, mode, index);
+    imsCallClient->GetColr(slotId, index);
+    imsCallClient->SetColp(slotId, mode, index);
+    imsCallClient->GetColp(slotId, index);
     if (strcpy_s(transferInfo.transferNum, sizeof(transferInfo.transferNum), number.c_str()) != EOK) {
         return;
     }
     transferInfo.settingType = static_cast<CallTransferSettingType>(type);
     transferInfo.type = static_cast<CallTransferType>(type);
-    imsCallClient->SetCallTransfer(slotId, type, mode, number, type);
-    imsCallClient->GetCallTransfer(slotId, type);
-    imsCallClient->SetCallRestriction(slotId, number, mode, number);
-    imsCallClient->GetCallRestriction(slotId, number);
+    imsCallClient->SetCallTransfer(slotId, transferInfo, type, index);
+    imsCallClient->GetCallTransfer(slotId, type, index);
+    imsCallClient->SetCallRestriction(slotId, number, mode, number, index);
+    imsCallClient->GetCallRestriction(slotId, number, index);
 }
 
 void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
@@ -248,6 +249,7 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     std::string number(reinterpret_cast<const char *>(data), length);
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
+    int32_t index = static_cast<int32_t>(size % 3);
     int32_t item = static_cast<int32_t>(size % 3);
     int32_t value = static_cast<int32_t>(size % 4);
     int32_t type = static_cast<int32_t>(size % 4);
@@ -256,25 +258,25 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     proxy->GetImsConfig(static_cast<ImsConfigItem>(item));
     proxy->SetImsFeatureValue(static_cast<FeatureType>(type), value);
     proxy->GetImsFeatureValue(static_cast<FeatureType>(type), value);
-    proxy->SetClip(slotId, mode);
-    proxy->GetClip(slotId);
-    proxy->SetClir(slotId, mode);
-    proxy->GetClir(slotId);
-    proxy->SetCallWaiting(slotId, mode, type);
-    proxy->GetCallWaiting(slotId);
-    proxy->SetColr(slotId, mode);
-    proxy->GetColr(slotId);
-    proxy->SetColp(slotId, mode);
-    proxy->GetColp(slotId);
+    proxy->SetClip(slotId, mode, index);
+    proxy->GetClip(slotId, index);
+    proxy->SetClir(slotId, mode, index);
+    proxy->GetClir(slotId, index);
+    proxy->SetCallWaiting(slotId, mode, type, index);
+    proxy->GetCallWaiting(slotId, index);
+    proxy->SetColr(slotId, mode, index);
+    proxy->GetColr(slotId, index);
+    proxy->SetColp(slotId, mode, index);
+    proxy->GetColp(slotId, index);
     if (strcpy_s(transferInfo.transferNum, sizeof(transferInfo.transferNum), number.c_str()) != EOK) {
         return;
     }
     transferInfo.settingType = static_cast<CallTransferSettingType>(type);
     transferInfo.type = static_cast<CallTransferType>(type);
-    proxy->SetCallTransfer(slotId, type, mode, number, type);
-    proxy->GetCallTransfer(slotId, type);
-    proxy->SetCallRestriction(slotId, number, mode, number);
-    proxy->GetCallRestriction(slotId, number);
+    proxy->SetCallTransfer(slotId, transferInfo, type, index);
+    proxy->GetCallTransfer(slotId, type, index);
+    proxy->SetCallRestriction(slotId, number, mode, number, index);
+    proxy->GetCallRestriction(slotId, number, index);
 }
 
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)

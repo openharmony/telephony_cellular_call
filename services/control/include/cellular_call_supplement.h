@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,10 +19,12 @@
 #include <string>
 
 #include "cellular_call_data_struct.h"
-#include "hril_types.h"
 #include "hril_call_parcel.h"
+#include "hril_types.h"
+#include "ims_call_types.h"
 #include "module_service_utils.h"
-#include "supplement_request.h"
+#include "supplement_request_cs.h"
+#include "supplement_request_ims.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -30,7 +32,7 @@ namespace Telephony {
 class CellularCallSupplement {
 public:
     /**
-     * Deal Clip
+     * Handle Clip mmi code
      *
      * 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.6.2	Calling Line Identification Presentation (CLIP)
      * The CLIP Supplementary Service is defined in GSM 02.81[12]
@@ -39,10 +41,10 @@ public:
      * @param slotId
      * @param MMIData
      */
-    void GetClip(int32_t slotId, const MMIData &mmiData);
+    void HandleClip(int32_t slotId, const MMIData &mmiData);
 
     /**
-     * Deal Clir
+     * Handle Clir mmi code
      *
      * 3GPP TS 22.081 V4.0.0 (2001-03) 2 Calling Line Identification Restriction (CLIR)
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
@@ -50,10 +52,32 @@ public:
      * @param slotId
      * @param MMIData
      */
-    void GetClir(int32_t slotId, const MMIData &mmiData);
+    void HandleClir(int32_t slotId, const MMIData &mmiData);
 
     /**
-     * Deal Call Transfer
+     * Handle Colr mmi code
+     *
+     * 3GPP TS 22.081 V4.0.0 (2001-03) 4 Connected Line Identification Restriction (COLR)
+     * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+     *
+     * @param slotId
+     * @param MMIData
+     */
+    void HandleColr(int32_t slotId, const MMIData &mmiData);
+
+    /**
+     * Handle Colp mmi code
+     *
+     * 3GPP TS 22.081 V4.0.0 (2001-03) 3 Connected Line Identification Presentation (COLP)
+     * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
+     *
+     * @param slotId
+     * @param MMIData
+     */
+    void HandleColp(int32_t slotId, const MMIData &mmiData);
+
+    /**
+     * Handle Call Transfer mmi code
      *
      * 3GPP TS 22.030 V4.0.0 (2001-03)
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative):Codes for defined Supplementary Services
@@ -61,7 +85,7 @@ public:
      * @param slotId
      * @param MMIData
      */
-    void DealCallTransfer(int32_t slotId, const MMIData &mmiData);
+    void HandleCallTransfer(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Transfer
@@ -77,6 +101,15 @@ public:
     int32_t SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cTInfo);
 
     /**
+     * Confirm whether IMS support call transfer due to time.
+     *
+     * @param slotId[in], The slot id
+     * @param result[out], The result of support or not
+     * @return Returns true on support, others on unsupport.
+     */
+    int32_t IsSupportCallTransferTime(int32_t slotId, bool &result);
+
+    /**
      * Inquire Call Transfer
      *
      * 27007-430_2001 7.11 Call forwarding number and conditions +CCFC
@@ -90,7 +123,7 @@ public:
     int32_t GetCallTransferInfo(int32_t slotId, CallTransferType type);
 
     /**
-     * Deal Call Restriction
+     * Handle Call Restriction mmi code
      *
      * 3GPP TS 22.088 [6] 1	Barring of outgoing calls
      * 3GPP TS 22.088 [6] 2	Barring of incoming calls
@@ -98,7 +131,7 @@ public:
      * @param slotId
      * @param MMIData
      */
-    void DealCallRestriction(int32_t slotId, const MMIData &mmiData);
+    void HandleCallRestriction(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Restriction
@@ -131,16 +164,15 @@ public:
     int32_t GetCallRestriction(int32_t slotId, CallRestrictionType facType);
 
     /**
-     * Deal Call Waiting
+     * Handle Call Waiting mmi code
      *
      * 27007-430_2001 7.12	Call waiting +CCWA
      * 3GPP TS 22.083 [5] 1	Call waiting (CW)
      *
      * @param slotId
-     * Deal Call Waiting
      * @param MMIData
      */
-    void DealCallWaiting(int32_t slotId, const MMIData &mmiData);
+    void HandleCallWaiting(int32_t slotId, const MMIData &mmiData);
 
     /**
      * Set Call Waiting
@@ -227,105 +259,193 @@ public:
     void UnlockPuk2(int32_t slotId, const MMIData &mmiData);
 
     /**
-     * Event Deal clip Mmi
+     * Get clip result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.6	Calling line identification presentation +CLIP
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.6 Calling line identification presentation +CLIP
      *
      * @param GetClipResult
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventGetClip(GetClipResult &getClipResult);
+    void EventGetClip(const GetClipResult &getClipResult, const std::string &message, int32_t flag);
 
     /**
-     * Event Deal Clir Mmi
+     * Set clip result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.7	Calling line identification restriction +CLIR
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.6 Calling line identification presentation +CLIP
+     *
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventSetClip(int32_t result, const std::string &message, int32_t flag);
+
+    /**
+     * Get clir result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.7 Calling line identification restriction +CLIR
      *
      * @param GetClirResult
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventGetClir(GetClirResult &result);
+    void EventGetClir(const GetClirResult &result, const std::string &message, int32_t flag);
 
     /**
-     * Event set Clir Mmi
+     * Set clir result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.7	Calling line identification restriction +CLIR
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.7 Calling line identification restriction +CLIR
      *
-     * @param HRilRadioResponseInfo
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetClir(HRilRadioResponseInfo &info);
+    void EventSetClir(int32_t result, const std::string &message, int32_t flag);
 
     /**
-     * GetCallRestriction result
+     * Get colr result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.4	Facility lock +CLCK
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.31 Connected line identification restriction status +COLR
+     *
+     * @param GetColrResult
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventGetColr(const GetColrResult &result, const std::string &message, int32_t flag);
+
+    /**
+     * Set colr result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.31 Connected line identification restriction status +COLR
+     *
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventSetColr(int32_t result, const std::string &message, int32_t flag);
+
+    /**
+     * Get colp result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.8 Connected line identification presentation +COLP
+     *
+     * @param GetColpResult
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventGetColp(const GetColpResult &result, const std::string &message, int32_t flag);
+
+    /**
+     * Set colp result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.8 Connected line identification presentation +COLP
+     *
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventSetColp(int32_t result, const std::string &message, int32_t flag);
+
+    /**
+     * Get call restriction result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.4 Facility lock +CLCK
      *
      * @param CallRestrictionResult
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventGetCallRestriction(const CallRestrictionResult &result);
+    void EventGetCallRestriction(const CallRestrictionResult &result, const std::string &message, int32_t flag);
 
     /**
-     * SetCallRestriction result
+     * Set call restriction result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.4	Facility lock +CLCK
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.4 Facility lock +CLCK
      *
-     * @param HRilRadioResponseInfo
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallRestriction(HRilRadioResponseInfo &info);
+    void EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag);
 
     /**
-     * Call Waiting result
+     * Get call waiting result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12	Call waiting +CCWA
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12 Call waiting +CCWA
      * status: 0	not active;  1	active
      *
      * @param CallWaitResult waitingInfo
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventGetCallWaiting(CallWaitResult &waitingInfo);
+    void EventGetCallWaiting(const CallWaitResult &waitingInfo, const std::string &message, int32_t flag);
 
     /**
-     * Event Set CallWaiting
+     * Set call waiting result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12	Call waiting +CCWA
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.12 Call waiting +CCWA
      *
-     * @param HRilRadioResponseInfo
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallWaiting(HRilRadioResponseInfo &responseInfo);
+    void EventSetCallWaiting(int32_t result, const std::string &message, int32_t flag);
 
     /**
-     * Event Inquire Call Transfer
+     * Get call transfer result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.11 Call forwarding number and conditions +CCFC
      *
      * @param CallForwardQueryInfoList
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventGetCallTransferInfo(CallForwardQueryInfoList &cFQueryList);
+    void EventGetCallTransferInfo(
+        const CallForwardQueryInfoList &cFQueryList, const std::string &message, int32_t flag);
 
     /**
-     * Event Set Call Transfer
+     * Set call transfer result
      *
-     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.11 Call forwarding number and conditions +CCFC
+     *
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag);
+
+    /**
+     * Send ussd result
+     *
+     * 3GPP TS 3GPP TS 22.030 V16.0.0 (2020-07) 6.5 Supplementary Services Control
      *
      * @param HRilRadioResponseInfo
      */
-    void EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo);
+    void EventSendUssd(const HRilRadioResponseInfo &responseInfo);
 
     /**
-     * Event Send Ussd
-     *
-     * 3GPP TS 3GPP TS 22.030 V16.0.0 (2020-07) 6.5	Supplementary Services Control
-     *
-     * @param HRilRadioResponseInfo
-     */
-    void EventSendUssd(HRilRadioResponseInfo &responseInfo);
-
-    /**
-     * Event Ss Notify
+     * Ss notify
      *
      * @param SsNoticeInfo
      */
     void EventSsNotify(SsNoticeInfo &ssNoticeInfo);
 
     /**
-     * Event Ussd Notify
+     * Ussd notify
      *
      * @param UssdNoticeInfo
      */
@@ -341,6 +461,17 @@ private:
     int32_t ObtainServiceCode(const std::string &serviceInfoB);
 
     /**
+     * Obtain ServiceCode
+     *
+     * @param actionString
+     * @param phoneNumber
+     * @param callTransferAction
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t ObtainCallTrasferAction(
+        const char *actionString, const std::string &phoneNumber, CallTransferSettingType &callTransferAction);
+
+    /**
      * Obtain Cause
      *
      * 3GPP TS 22.030 V4.0.0 (2001-03) Annex B (normative): Codes for defined Supplementary Services
@@ -349,6 +480,33 @@ private:
      * @return CallTransferType
      */
     int32_t ObtainCause(const std::string &serviceInfoC);
+
+    /**
+     * Handle get call transfer action which come from mmi code
+     *
+     * @param slotId
+     * @param cause the call transfer type
+     */
+    void HandleGetCallTransfer(int32_t slotId, int32_t cause);
+
+    /**
+     * Handle set call transfer action which come from mmi code
+     *
+     * @param slotId
+     * @param serviceCode the service class type
+     * @param cause the call transfer type
+     * @param phoneNumber the call transfer number
+     * @param callTransferAction
+     */
+    void HandleSetCallTransfer(int32_t slotId, int32_t serviceCode, int32_t cause, const std::string &phoneNumber,
+        CallTransferSettingType callTransferAction);
+
+    int32_t CheckSetCallTransferInfo(const CallTransferInfo &cfInfo);
+    int32_t SetCallTransferInfoByIms(
+        int32_t slotId, const CallTransferInfo &cfInfo, const std::shared_ptr<SsRequestCommand> &command);
+    int32_t CheckCallRestrictionType(std::string &fac, const CallRestrictionType &facType);
+    int32_t SetCallRestrictionByIms(int32_t slotId, std::string &fac, int32_t mode, std::string &pw,
+        const std::shared_ptr<SsRequestCommand> &command);
 
     /**
      * Obtain Barring Installation
@@ -371,6 +529,14 @@ private:
     bool PhoneTypeGsmOrNot(int32_t slotId);
 
     /**
+     * Confirm if need use IMS handle first
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool NeedUseImsToHandle(int32_t slotId);
+
+    /**
      * Get Message
      *
      * @param MmiCodeInfo
@@ -379,12 +545,13 @@ private:
     void GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNoticeInfo &ssNoticeInfo);
 
 private:
-    void BuildCallForwardQueryInfo(const CallForwardQueryResult &queryResult);
+    void BuildCallForwardQueryInfo(const CallForwardQueryResult &queryResult, const std::string &message, int32_t flag);
     void ReportMmiCodeMessage(int32_t result, const std::string successMsg, const std::string failedMsg);
     bool IsVaildPinOrPuk(std::string newPinOrPuk, std::string newPinOrPukCheck);
 
 private:
-    SupplementRequest supplementRequest_;
+    SupplementRequestCs supplementRequestCs_;
+    SupplementRequestIms supplementRequestIms_;
     ModuleServiceUtils moduleServiceUtils_;
 };
 } // namespace Telephony

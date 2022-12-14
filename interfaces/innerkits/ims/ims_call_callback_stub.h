@@ -17,8 +17,10 @@
 #define TELEPHONY_IMS_CALL_CALLBACK_STUB_H
 
 #include <map>
-#include "iremote_stub.h"
+
+#include "cellular_call_data_struct.h"
 #include "ims_call_callback_interface.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -54,20 +56,20 @@ public:
     int32_t SetMuteResponse(int32_t slotId, const MuteControlResponse &response) override;
 
     /****************** supplement ******************/
-    int32_t SetClipResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetClipResponse(int32_t slotId, const ClipResponse &response) override;
-    int32_t GetClirResponse(int32_t slotId, const ClirResponse &response) override;
-    int32_t SetClirResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetCallTransferResponse(int32_t slotId, const CallTransferResponse &response) override;
-    int32_t SetCallTransferResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResponse &response) override;
-    int32_t SetCallRestrictionResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetCallWaitingResponse(int32_t slotId, const CallWaitResponse &response) override;
-    int32_t SetCallWaitingResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t SetColrResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetColrResponse(int32_t slotId, const ColrResponse &response) override;
-    int32_t SetColpResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetColpResponse(int32_t slotId, const ColpResponse &response) override;
+    int32_t SetClipResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetClipResponse(int32_t slotId, const GetClipResult &result) override;
+    int32_t GetClirResponse(int32_t slotId, const GetClirResult &result) override;
+    int32_t SetClirResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetCallTransferResponse(int32_t slotId, const CallForwardQueryInfoList &cFQueryList) override;
+    int32_t SetCallTransferResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResult &result) override;
+    int32_t SetCallRestrictionResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetCallWaitingResponse(int32_t slotId, const CallWaitResult &result) override;
+    int32_t SetCallWaitingResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t SetColrResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetColrResponse(int32_t slotId, const GetColrResult &result) override;
+    int32_t SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
+    int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
 
 private:
     void InitFuncMap();
@@ -113,8 +115,11 @@ private:
     int32_t OnGetColrResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetColpResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetColpResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t GetSsRequestCommand(int32_t slotId, int32_t index, SsRequestCommand &ss);
+    void BuildCallForwardInfo(const CallForwardQueryInfoList &cFQueryList, CallForwardQueryInfoList &cFQueryResultList);
 
     int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
+    int32_t SendEvent(int32_t slotId, int32_t eventId, const SsBaseResult &resultInfo);
 
 private:
     using RequestFuncType = int32_t (ImsCallCallbackStub::*)(MessageParcel &data, MessageParcel &reply);

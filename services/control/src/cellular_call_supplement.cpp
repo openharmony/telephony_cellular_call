@@ -17,6 +17,7 @@
 
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
+#include "ims_error.h"
 #include "securec.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
@@ -80,86 +81,213 @@ const std::string SET_COLP_FAILED = "Set colp failed";
 const std::string MIS_MATCH_PIN_PUK = "PIN or PUK don\'t match";
 const std::string INVAILD_PIN_PUK = "Invaild PIN or PUK numbers";
 const std::string SEND_USSD_SUCCESS = "Send ussd success";
+const std::string GENERIC_FAILURE = "Generic fail, please retry";
 
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
     return StandardizeUtils::HashCompileTime(p);
 }
 
-void CellularCallSupplement::GetClip(int32_t slotId, const MMIData &mmiData)
-{
-    const std::string interrogate = "*#";
-    if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.GetClipRequest(slotId);
-    }
-}
-
-void CellularCallSupplement::GetClir(int32_t slotId, const MMIData &mmiData)
+void CellularCallSupplement::HandleClip(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     const std::string activate = "*";
     const std::string deactivate = "#";
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("GetClir return, actionString is empty!");
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
     if (mmiData.actionString == activate) {
-        supplementRequest_.SetClirRequest(slotId, ACTIVATE_ACTION);
+        utCommand->action = ACTIVATE_ACTION;
+        result = supplementRequestIms_.SetClipRequest(slotId, ACTIVATE_ACTION, index);
     } else if (mmiData.actionString == deactivate) {
-        supplementRequest_.SetClirRequest(slotId, DEACTIVATE_ACTION);
+        utCommand->action = DEACTIVATE_ACTION;
+        result = supplementRequestIms_.SetClipRequest(slotId, DEACTIVATE_ACTION, index);
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest_.GetClirRequest(slotId);
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetClipRequest(slotId, index);
+        } else {
+            result = supplementRequestCs_.GetClipRequest(slotId, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
     }
 }
 
-void CellularCallSupplement::DealCallTransfer(int32_t slotId, const MMIData &mmiData)
+void CellularCallSupplement::HandleClir(int32_t slotId, const MMIData &mmiData)
+{
+    const std::string interrogate = "*#";
+    const std::string activate = "*";
+    const std::string deactivate = "#";
+    if (mmiData.actionString.empty()) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
+        return;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    if (mmiData.actionString == activate) {
+        utCommand->action = ACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetClirRequest(slotId, ACTIVATE_ACTION, index);
+        } else {
+            result = supplementRequestCs_.SetClirRequest(slotId, ACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == deactivate) {
+        utCommand->action = DEACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetClirRequest(slotId, DEACTIVATE_ACTION, index);
+        } else {
+            result = supplementRequestCs_.SetClirRequest(slotId, DEACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == interrogate) {
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetClirRequest(slotId, index);
+        } else {
+            result = supplementRequestCs_.GetClirRequest(slotId, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+}
+
+void CellularCallSupplement::HandleColr(int32_t slotId, const MMIData &mmiData)
+{
+    const std::string interrogate = "*#";
+    const std::string activate = "*";
+    const std::string deactivate = "#";
+    if (mmiData.actionString.empty()) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
+        return;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    if (mmiData.actionString == activate) {
+        utCommand->action = ACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetColrRequest(slotId, ACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == deactivate) {
+        utCommand->action = DEACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetColrRequest(slotId, DEACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == interrogate) {
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetColrRequest(slotId, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+}
+
+void CellularCallSupplement::HandleColp(int32_t slotId, const MMIData &mmiData)
+{
+    const std::string interrogate = "*#";
+    const std::string activate = "*";
+    const std::string deactivate = "#";
+    if (mmiData.actionString.empty()) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
+        return;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    if (mmiData.actionString == deactivate) {
+        utCommand->action = ACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetColpRequest(slotId, ACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == deactivate) {
+        utCommand->action = DEACTIVATE_ACTION;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetColpRequest(slotId, DEACTIVATE_ACTION, index);
+        }
+    } else if (mmiData.actionString == interrogate) {
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetColpRequest(slotId, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+}
+
+void CellularCallSupplement::HandleCallTransfer(int32_t slotId, const MMIData &mmiData)
 {
     const std::string interrogate = "*#";
     int32_t serviceCode = ObtainServiceCode(mmiData.serviceInfoB);
     int32_t cause = ObtainCause(mmiData.serviceCode);
     if (!mmiData.actionString.empty() && mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallTransferRequest(slotId, cause);
+        HandleGetCallTransfer(slotId, cause);
         return;
     }
     std::string phoneNumber = mmiData.serviceInfoA;
-    int32_t callForwardAction;
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("DealCallTransfer return, actionString is empty!");
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
-
-    // 3GPP TS 24.082 V4.0.0 (2001-03) 1 Call Forwarding Unconditional (CFU)
-    // 3GPP TS 24.082 V4.0.0 (2001-03) 2 Call Forwarding on mobile subscriber Busy (CFB)
-    // 3GPP TS 24.082 V4.0.0 (2001-03) 3 Call Forwarding on No Reply (CFNRy)
-    // 3GPP TS 24.082 V4.0.0 (2001-03) 4 Call Forwarding on mobile subscriber Not Reachable (CFNRc)
-    switch (StandardizeUtils::Hash_(mmiData.actionString.c_str())) {
-        case "*"_hash:
-            if (phoneNumber.empty()) {
-                callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_ENABLE;
-            } else {
-                callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
-            }
-            break;
-        case "#"_hash:
-            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_DISABLE;
-            break;
-        case "**"_hash:
-            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
-            break;
-        case "##"_hash:
-            callForwardAction = (int32_t)CallTransferSettingType::CALL_TRANSFER_ERASURE;
-            break;
-        default:
-            TELEPHONY_LOGE("DealCallTransfer return, actionString out of range, please check!");
-            return;
+    CallTransferSettingType callTransferAction;
+    int32_t result = ObtainCallTrasferAction(mmiData.actionString.c_str(), phoneNumber, callTransferAction);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        return;
     }
-    supplementRequest_.SetCallTransferRequest(slotId, callForwardAction, cause, phoneNumber, serviceCode);
+    HandleSetCallTransfer(slotId, serviceCode, cause, phoneNumber, callTransferAction);
 }
 
 int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
 {
     if (serviceInfoB.empty()) {
-        TELEPHONY_LOGE("ObtainServiceCode return, serviceInfoB is empty!");
+        TELEPHONY_LOGE("serviceInfoB is empty!");
         return NONE;
     }
     int32_t intServiceInfoB = atoi(serviceInfoB.c_str());
@@ -189,15 +317,46 @@ int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfo
         case ALL_GPRS_BEARER_SERVICES:
             return DEDICATED_PACKET_ACCESS;
         default:
-            TELEPHONY_LOGE("ObtainServiceCode return, serviceInfoB out of range, please check!");
+            TELEPHONY_LOGE("serviceInfoB out of range, please check!");
             return NONE;
     }
+}
+
+int32_t CellularCallSupplement::ObtainCallTrasferAction(
+    const char *actionString, const std::string &phoneNumber, CallTransferSettingType &callTransferAction)
+{
+    // 3GPP TS 24.082 V4.0.0 (2001-03) 1 Call Forwarding Unconditional (CFU)
+    // 3GPP TS 24.082 V4.0.0 (2001-03) 2 Call Forwarding on mobile subscriber Busy (CFB)
+    // 3GPP TS 24.082 V4.0.0 (2001-03) 3 Call Forwarding on No Reply (CFNRy)
+    // 3GPP TS 24.082 V4.0.0 (2001-03) 4 Call Forwarding on mobile subscriber Not Reachable (CFNRc)
+    switch (StandardizeUtils::Hash_(actionString)) {
+        case "*"_hash:
+            if (phoneNumber.empty()) {
+                callTransferAction = CallTransferSettingType::CALL_TRANSFER_ENABLE;
+            } else {
+                callTransferAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+            }
+            break;
+        case "#"_hash:
+            callTransferAction = CallTransferSettingType::CALL_TRANSFER_DISABLE;
+            break;
+        case "**"_hash:
+            callTransferAction = CallTransferSettingType::CALL_TRANSFER_REGISTRATION;
+            break;
+        case "##"_hash:
+            callTransferAction = CallTransferSettingType::CALL_TRANSFER_ERASURE;
+            break;
+        default:
+            TELEPHONY_LOGE("actionString out of range, please check!");
+            return TELEPHONY_ERR_ARGUMENT_MISMATCH;
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
 {
     if (actionStr.empty()) {
-        TELEPHONY_LOGE("ObtainCause return, actionStr is empty!");
+        TELEPHONY_LOGE("actionStr is empty!");
         return TELEPHONY_ERROR;
     }
 
@@ -212,20 +371,91 @@ int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
      */
     switch (StandardizeUtils::Hash_(actionStr.c_str())) {
         case "21"_hash:
-            return (int32_t)CallTransferType::TRANSFER_TYPE_UNCONDITIONAL;
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
         case "67"_hash:
-            return (int32_t)CallTransferType::TRANSFER_TYPE_BUSY;
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_BUSY);
         case "62"_hash:
-            return (int32_t)CallTransferType::TRANSFER_TYPE_NO_REPLY;
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
         case "61"_hash:
-            return (int32_t)CallTransferType::TRANSFER_TYPE_NOT_REACHABLE;
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
         default:
-            TELEPHONY_LOGE("ObtainCause return, actionStr out of range!");
+            TELEPHONY_LOGE("actionStr out of range!");
             return TELEPHONY_ERROR;
     }
 }
 
-void CellularCallSupplement::DealCallRestriction(int32_t slotId, const MMIData &mmiData)
+void CellularCallSupplement::HandleGetCallTransfer(int32_t slotId, int32_t cause)
+{
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->cfReason = cause;
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    int32_t result = TELEPHONY_ERROR;
+    if (NeedUseImsToHandle(slotId)) {
+        result = supplementRequestIms_.GetCallTransferRequest(slotId, cause, index);
+    } else {
+        result = supplementRequestCs_.GetCallTransferRequest(slotId, cause, index);
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+}
+
+void CellularCallSupplement::HandleSetCallTransfer(int32_t slotId, int32_t serviceCode, int32_t cause,
+    const std::string &phoneNumber, CallTransferSettingType callTransferAction)
+{
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->cfReason = cause;
+    utCommand->cfAction = static_cast<int32_t>(callTransferAction);
+    utCommand->number = phoneNumber;
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    int32_t result = TELEPHONY_ERROR;
+    if (NeedUseImsToHandle(slotId)) {
+        CallTransferInfo cfInfo;
+        if (memcpy_s(cfInfo.transferNum, kMaxNumberLen, phoneNumber.c_str(), phoneNumber.length()) != EOK) {
+            TELEPHONY_LOGE("[slot%{public}d] memcpy_s failed!", slotId);
+            ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+            return;
+        }
+        cfInfo.settingType = callTransferAction;
+        cfInfo.type = static_cast<CallTransferType>(cause);
+        // set the time as default min, this mean the time will not use at IMS
+        cfInfo.startHour = MIN_HOUR;
+        cfInfo.startMinute = MIN_MINUTE;
+        cfInfo.endHour = MIN_HOUR;
+        cfInfo.endMinute = MIN_MINUTE;
+        result = supplementRequestIms_.SetCallTransferRequest(slotId, cfInfo, serviceCode, index);
+    } else {
+        CallTransferParam callTransferParam;
+        callTransferParam.mode = static_cast<int32_t>(callTransferAction);
+        callTransferParam.reason = cause;
+        callTransferParam.number = phoneNumber;
+        callTransferParam.classx = serviceCode;
+        result = supplementRequestCs_.SetCallTransferRequest(slotId, callTransferParam, index);
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+}
+
+void CellularCallSupplement::HandleCallRestriction(int32_t slotId, const MMIData &mmiData)
 {
     std::string infoA = mmiData.serviceInfoA;
     std::string facType = ObtainBarringInstallation(mmiData.serviceInfoC);
@@ -233,20 +463,49 @@ void CellularCallSupplement::DealCallRestriction(int32_t slotId, const MMIData &
     const std::string activate = "*";
     const std::string deactivate = "#";
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("DealCallRestriction return, actionString is empty!");
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return;
+    }
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->facility = facType;
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    int32_t result = TELEPHONY_ERROR;
     if (mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallRestrictionRequest(slotId, facType);
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetCallRestrictionRequest(slotId, facType, index);
+        } else {
+            result = supplementRequestCs_.GetCallRestrictionRequest(slotId, facType, index);
+        }
     } else if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest_.SetCallRestrictionRequest(slotId, facType, mmiData.actionString == activate, infoA);
+        utCommand->enable = mmiData.actionString == activate;
+        utCommand->pw = infoA;
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.SetCallRestrictionRequest(
+                slotId, facType, mmiData.actionString == activate, infoA, index);
+        } else {
+            result = supplementRequestCs_.SetCallRestrictionRequest(
+                slotId, facType, mmiData.actionString == activate, infoA, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
     }
 }
 
 std::string CellularCallSupplement::ObtainBarringInstallation(const std::string &serviceInfoC)
 {
     if (serviceInfoC.empty()) {
-        TELEPHONY_LOGE("ObtainBarringInstallation return, serviceInfoC is empty!");
+        TELEPHONY_LOGE("serviceInfoC is empty!");
         return std::string();
     }
 
@@ -291,32 +550,64 @@ std::string CellularCallSupplement::ObtainBarringInstallation(const std::string 
             // "AC"	All inComing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
             return ALL_INCOMING_BARRING_SERVICES;
         default:
-            TELEPHONY_LOGE("ObtainBarringInstallation return, serviceInfoC out of range!");
+            TELEPHONY_LOGE("serviceInfoC out of range!");
             return std::string();
     }
 }
 
-void CellularCallSupplement::DealCallWaiting(int32_t slotId, const MMIData &mmiData)
+void CellularCallSupplement::HandleCallWaiting(int32_t slotId, const MMIData &mmiData)
 {
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("DealCallWaiting return, actionString is empty!");
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", INVALID_MMI_CODE);
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
+        return;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
         return;
     }
     const std::string activate = "*";
     const std::string deactivate = "#";
     const std::string interrogate = "*#";
+    int32_t result = TELEPHONY_ERROR;
     int32_t classType = ObtainServiceCode(mmiData.serviceInfoA);
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->classType = classType;
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
     if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
-        supplementRequest_.SetCallWaitingRequest(slotId, mmiData.actionString == activate, classType);
+        utCommand->enable = mmiData.actionString == activate;
+        if (NeedUseImsToHandle(slotId)) {
+            result =
+                supplementRequestIms_.SetCallWaitingRequest(slotId, mmiData.actionString == activate, classType, index);
+        } else {
+            result =
+                supplementRequestCs_.SetCallWaitingRequest(slotId, mmiData.actionString == activate, classType, index);
+        }
     } else if (mmiData.actionString == interrogate) {
-        supplementRequest_.GetCallWaitingRequest(slotId);
+        if (NeedUseImsToHandle(slotId)) {
+            result = supplementRequestIms_.GetCallWaitingRequest(slotId, index);
+        } else {
+            result = supplementRequestCs_.GetCallWaitingRequest(slotId, index);
+        }
+    }
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    } else {
+        handler->SaveSsRequestCommand(utCommand, index);
     }
 }
 
-void CellularCallSupplement::EventGetCallWaiting(CallWaitResult &waitingInfo)
+void CellularCallSupplement::EventGetCallWaiting(
+    const CallWaitResult &waitingInfo, const std::string &message, int32_t flag)
 {
     CallWaitResponse callWaitResponse;
-    callWaitResponse.result = waitingInfo.result;
+    callWaitResponse.result = waitingInfo.result.result;
+    if (callWaitResponse.result == IMS_ERROR_UT_NO_CONNECTION) {
+        callWaitResponse.result = CALL_ERR_UT_NO_CONNECTION;
+    }
 
     /*
      * <n> (sets/shows the result code presentation status in the TA):
@@ -325,65 +616,63 @@ void CellularCallSupplement::EventGetCallWaiting(CallWaitResult &waitingInfo)
      */
     callWaitResponse.status = waitingInfo.status;
     callWaitResponse.classCw = waitingInfo.classCw;
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventGetCallWaiting return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetWaitingResult(callWaitResponse);
-
-    ReportMmiCodeMessage(waitingInfo.result, GET_CALL_WAITING_SUCCESS, GET_CALL_WAITING_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(
+            callWaitResponse.result, GET_CALL_WAITING_SUCCESS, message.empty() ? GET_CALL_WAITING_FAILED : message);
+    } else {
+        callRegister->ReportGetWaitingResult(callWaitResponse);
+    }
 }
 
-void CellularCallSupplement::EventSetCallWaiting(HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSetCallWaiting(int32_t result, const std::string &message, int32_t flag)
 {
-    CallWaitResponse callWaitResponse;
-    callWaitResponse.result = static_cast<int32_t>(responseInfo.error);
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetCallWaiting return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult((int32_t)responseInfo.error);
-
-    ReportMmiCodeMessage((int32_t)(responseInfo.error), SET_CALL_WAITING_SUCCESS, SET_CALL_WAITING_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_CALL_WAITING_SUCCESS, message.empty() ? SET_CALL_WAITING_FAILED : message);
+    } else {
+        callRegister->ReportSetWaitingResult(result);
+    }
 }
 
-void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryInfoList &cFQueryList)
+void CellularCallSupplement::EventGetCallTransferInfo(
+    const CallForwardQueryInfoList &cFQueryList, const std::string &message, int32_t flag)
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventGetCallTransferInfo return, GetInstance is nullptr.");
-        return;
-    }
-
     for (auto queryResult : cFQueryList.calls) {
-        TELEPHONY_LOGI("EventGetCallTransferInfo , data: status %{public}d, classx %{public}d, type %{public}d",
-            queryResult.status, queryResult.classx, queryResult.type);
-        BuildCallForwardQueryInfo(queryResult);
+        TELEPHONY_LOGI("data: status %{public}d, classx %{public}d, type %{public}d", queryResult.status,
+            queryResult.classx, queryResult.type);
+        BuildCallForwardQueryInfo(queryResult, message, flag);
     }
 }
 
-void CellularCallSupplement::BuildCallForwardQueryInfo(const CallForwardQueryResult &queryResult)
+void CellularCallSupplement::BuildCallForwardQueryInfo(
+    const CallForwardQueryResult &queryResult, const std::string &message, int32_t flag)
 {
     // 3GPP TS 27.007 V3.9.0 (2001-06) 7.11	Call forwarding number and conditions +CCFC
     CallTransferResponse response;
     if (memset_s(&response, sizeof(response), 0, sizeof(response)) != EOK) {
-        TELEPHONY_LOGE("EventGetCallTransferInfo return, memset_s fail.");
+        TELEPHONY_LOGE("memset_s fail.");
         return;
     }
-
     // <number>: string type phone number of forwarding address in format specified by <type>
     size_t cpyLen = strlen(queryResult.number.c_str()) + 1;
     if (strcpy_s(response.number, cpyLen, queryResult.number.c_str()) != EOK) {
-        TELEPHONY_LOGE("EventGetCallTransferInfo return, strcpy_s fail.");
+        TELEPHONY_LOGE(" strcpy_s fail.");
         return;
     }
-
     response.result = queryResult.result;
-
     /*
      * <status>:0	not active;    1	  active
      * */
     response.status = queryResult.status;
-
     /*
      * <classx> is a sum of integers each representing a class of information (default 7):
      * 1	voice (telephony)
@@ -399,34 +688,53 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(const CallForwardQueryRes
     // <type>: type of address octet in integer format (refer GSM 04.08 [8] subclause 10.5.4.7);
     // default 145 when dialling string includes international access code character "+", otherwise 129
     response.type = queryResult.type;
-
     response.reason = queryResult.reason;
     response.time = queryResult.time;
-
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetTransferResult(response);
-
-    ReportMmiCodeMessage(queryResult.result, GET_CALL_TRANSFER_SUCCESS, GET_CALL_TRANSFER_FAILED);
+    response.startHour = queryResult.startHour;
+    response.startMinute = queryResult.startMinute;
+    response.endHour = queryResult.endHour;
+    response.endMinute = queryResult.endMinute;
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(
+            queryResult.result, GET_CALL_TRANSFER_SUCCESS, message.empty() ? GET_CALL_TRANSFER_FAILED : message);
+    } else {
+        auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+        if (callRegister == nullptr) {
+            TELEPHONY_LOGE("callRegister is null.");
+            return;
+        }
+        callRegister->ReportGetTransferResult(response);
+    }
 }
 
-void CellularCallSupplement::EventSetCallTransferInfo(HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag)
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetCallTransferInfo return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetTransferResult((int32_t)responseInfo.error);
 
-    ReportMmiCodeMessage((int32_t)(responseInfo.error), SET_CALL_TRANSFER_SUCCESS, SET_CALL_TRANSFER_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_CALL_TRANSFER_SUCCESS, message.empty() ? SET_CALL_TRANSFER_FAILED : message);
+    } else {
+        callRegister->ReportSetTransferResult(result);
+    }
 }
 
-void CellularCallSupplement::EventGetCallRestriction(const CallRestrictionResult &result)
+void CellularCallSupplement::EventGetCallRestriction(
+    const CallRestrictionResult &result, const std::string &message, int32_t flag)
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventGetCallRestriction return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
     CallRestrictionResponse response;
-    response.result = result.result;
+    response.result = result.result.result;
+    if (response.result == IMS_ERROR_UT_NO_CONNECTION) {
+        response.result = CALL_ERR_UT_NO_CONNECTION;
+    }
 
     /*
      * <status>:0	not active    1	  active
@@ -434,30 +742,77 @@ void CellularCallSupplement::EventGetCallRestriction(const CallRestrictionResult
     response.status = result.status;
     response.classCw = result.classCw;
 
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetRestrictionResult(response);
-
-    ReportMmiCodeMessage(result.result, GET_CALL_RESTRICTION_SUCCESS, GET_CALL_RESTRICTION_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result.result.result, GET_CALL_RESTRICTION_SUCCESS,
+            message.empty() ? GET_CALL_RESTRICTION_FAILED : message);
+    } else {
+        callRegister->ReportGetRestrictionResult(response);
+    }
 }
 
-void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info)
+void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag)
 {
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetCallRestriction return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult((int32_t)info.error);
-
-    ReportMmiCodeMessage((int32_t)(info.error), SET_CALL_RESTRICTION_SUCCESS, SET_CALL_RESTRICTION_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(
+            result, SET_CALL_RESTRICTION_SUCCESS, message.empty() ? SET_CALL_RESTRICTION_FAILED : message);
+    } else {
+        callRegister->ReportSetRestrictionResult(result);
+    }
 }
 
 int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cfInfo)
 {
+    int32_t result = CheckSetCallTransferInfo(cfInfo);
+    HRilRadioResponseInfo responseInfo;
+    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    if (result != TELEPHONY_SUCCESS) {
+        return result;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+
+    std::string dialString(cfInfo.transferNum);
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->number = dialString;
+    utCommand->cfAction = static_cast<int32_t>(cfInfo.settingType);
+    utCommand->cfReason = static_cast<int32_t>(cfInfo.type);
+    utCommand->classType = ServiceClassType::VOICE;
+    if (NeedUseImsToHandle(slotId)) {
+        return SetCallTransferInfoByIms(slotId, cfInfo, utCommand);
+    }
+
     if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("SetCallTransferInfo return, network type is not supported!");
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
+
+    CallTransferParam callTransferParam;
+    callTransferParam.mode = static_cast<int32_t>(cfInfo.settingType);
+    callTransferParam.reason = static_cast<int32_t>(cfInfo.type);
+    callTransferParam.number = dialString;
+    callTransferParam.classx = ServiceClassType::VOICE;
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.SetCallTransferRequest(slotId, callTransferParam, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::CheckSetCallTransferInfo(const CallTransferInfo &cfInfo)
+{
     if (strlen(cfInfo.transferNum) == 0) {
-        TELEPHONY_LOGE("SetCallTransferInfo return, transferNum is empty!");
+        TELEPHONY_LOGE("transferNum is empty!");
         return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
 
@@ -480,19 +835,64 @@ int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTr
         cfInfo.type < CallTransferType::TRANSFER_TYPE_UNCONDITIONAL ||
         cfInfo.settingType > CallTransferSettingType::CALL_TRANSFER_ERASURE ||
         cfInfo.settingType < CallTransferSettingType::CALL_TRANSFER_DISABLE) {
-        TELEPHONY_LOGE("SetCallTransferInfo return, parameter out of range!");
+        TELEPHONY_LOGE("parameter out of range!");
         return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
+    return TELEPHONY_SUCCESS;
+}
 
+int32_t CellularCallSupplement::SetCallTransferInfoByIms(
+    int32_t slotId, const CallTransferInfo &cfInfo, const std::shared_ptr<SsRequestCommand> &command)
+{
     std::string dialString(cfInfo.transferNum);
-    return supplementRequest_.SetCallTransferRequest(
-        slotId, static_cast<int32_t>(cfInfo.settingType), static_cast<int32_t>(cfInfo.type), dialString, 1);
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    HRilRadioResponseInfo responseInfo;
+    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    int32_t result = supplementRequestIms_.SetCallTransferRequest(slotId, cfInfo, ServiceClassType::VOICE, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(command, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::IsSupportCallTransferTime(int32_t slotId, bool &result)
+{
+    if (!moduleServiceUtils_.NeedCallImsService()) {
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    int32_t ret = TELEPHONY_SUCCESS;
+    ret = supplementRequestIms_.IsSupportCallTransferTime(slotId, result);
+    return ret;
 }
 
 int32_t CellularCallSupplement::GetCallTransferInfo(int32_t slotId, CallTransferType type)
 {
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->cfReason = static_cast<int32_t>(type);
+    int32_t index;
+    if (NeedUseImsToHandle(slotId)) {
+        handler->RequestSsRequestCommandIndex(index);
+        result = supplementRequestIms_.GetCallTransferRequest(slotId, static_cast<int32_t>(type), index);
+        if (result == TELEPHONY_SUCCESS) {
+            handler->SaveSsRequestCommand(utCommand, index);
+        }
+        return result;
+    }
     if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("GetCallTransferInfo return, network type is not supported!");
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
 
@@ -500,7 +900,12 @@ int32_t CellularCallSupplement::GetCallTransferInfo(int32_t slotId, CallTransfer
      * When querying the status of a network service (<mode>=2) the response line for 'not active' case
      * (<status>=0) should be returned only if service is not active for any <class>
      */
-    return supplementRequest_.GetCallTransferRequest(slotId, (int32_t)type);
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.GetCallTransferRequest(slotId, static_cast<int32_t>(type), index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
 }
 
 bool CellularCallSupplement::PhoneTypeGsmOrNot(int32_t slotId)
@@ -508,33 +913,183 @@ bool CellularCallSupplement::PhoneTypeGsmOrNot(int32_t slotId)
     return moduleServiceUtils_.GetNetworkStatus(slotId) == PhoneType::PHONE_TYPE_IS_GSM;
 }
 
+bool CellularCallSupplement::NeedUseImsToHandle(int32_t slotId)
+{
+    return moduleServiceUtils_.NeedCallImsService() && moduleServiceUtils_.GetImsUtSupportState(slotId);
+}
+
 int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
 {
+    HRilRadioResponseInfo responseInfo;
+    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t classType = ServiceClassType::VOICE;
+    CellularCallConfig config;
+    classType = config.GetCallWaitingServiceClassConfig(slotId);
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->classType = classType;
+    utCommand->enable = activate;
+    int32_t index;
+    if (NeedUseImsToHandle(slotId)) {
+        handler->RequestSsRequestCommandIndex(index);
+        result = supplementRequestIms_.SetCallWaitingRequest(slotId, activate, classType, index);
+        if (result == TELEPHONY_SUCCESS) {
+            handler->SaveSsRequestCommand(utCommand, index);
+        }
+        return result;
+    }
     /*
      * <n> (sets/shows the result code presentation status in the TA):
      * 0	disable
      * 1	enable
      */
     if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("SetCallWaiting return, network type is not supported!");
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    int32_t classType = ServiceClassType::VOICE;
-    CellularCallConfig config;
-    classType = config.GetCallWaitingServiceClassConfig(slotId);
-    return supplementRequest_.SetCallWaitingRequest(slotId, activate, classType);
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.SetCallWaitingRequest(slotId, activate, classType, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
 }
 
 int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)
 {
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t result = TELEPHONY_ERROR;
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    int32_t index;
+    if (NeedUseImsToHandle(slotId)) {
+        handler->RequestSsRequestCommandIndex(index);
+        result = supplementRequestIms_.GetCallWaitingRequest(slotId, index);
+        if (result == TELEPHONY_SUCCESS) {
+            handler->SaveSsRequestCommand(utCommand, index);
+        }
+        return result;
+    }
     if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("GetCallWaiting return, network type is not supported!");
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.GetCallWaitingRequest(slotId);
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.GetCallWaitingRequest(slotId, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
 }
 
 int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &cRInfo)
+{
+    HRilRadioResponseInfo responseInfo;
+    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    std::string fac;
+    int32_t result = CheckCallRestrictionType(fac, cRInfo.fac);
+    if (result != TELEPHONY_SUCCESS) {
+        return result;
+    }
+    if (cRInfo.mode < CallRestrictionMode::RESTRICTION_MODE_DEACTIVATION ||
+        cRInfo.mode > CallRestrictionMode::RESTRICTION_MODE_ACTIVATION) {
+        TELEPHONY_LOGE("[slot%{public}d] mode parameter out of range!", slotId);
+        return CALL_ERR_PARAMETER_OUT_OF_RANGE;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::string info(cRInfo.password);
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->facility = fac;
+    utCommand->enable = static_cast<int32_t>(cRInfo.mode);
+    utCommand->pw = info;
+    int32_t index;
+    if (NeedUseImsToHandle(slotId)) {
+        return SetCallRestrictionByIms(slotId, fac, static_cast<int32_t>(cRInfo.mode), info, utCommand);
+    }
+    if (!PhoneTypeGsmOrNot(slotId)) {
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
+    }
+    handler->RequestSsRequestCommandIndex(index);
+    result =
+        supplementRequestCs_.SetCallRestrictionRequest(slotId, fac, static_cast<int32_t>(cRInfo.mode), info, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::SetCallRestrictionByIms(
+    int32_t slotId, std::string &fac, int32_t mode, std::string &pw, const std::shared_ptr<SsRequestCommand> &command)
+{
+    HRilRadioResponseInfo responseInfo;
+    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    int32_t result = supplementRequestIms_.SetCallRestrictionRequest(slotId, fac, mode, pw, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(command, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
+{
+    std::string fac;
+    int32_t result = CheckCallRestrictionType(fac, facType);
+    if (result != TELEPHONY_SUCCESS) {
+        return result;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->facility = fac;
+    int32_t index;
+    if (NeedUseImsToHandle(slotId)) {
+        handler->RequestSsRequestCommandIndex(index);
+        result = supplementRequestIms_.GetCallRestrictionRequest(slotId, fac, index);
+        if (result == TELEPHONY_SUCCESS) {
+            handler->SaveSsRequestCommand(utCommand, index);
+        }
+        return result;
+    }
+    if (!PhoneTypeGsmOrNot(slotId)) {
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
+    }
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.GetCallRestrictionRequest(slotId, fac, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::CheckCallRestrictionType(std::string &fac, const CallRestrictionType &facType)
 {
     /*
      * <fac> values reserved by the present document:
@@ -548,57 +1103,6 @@ int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRes
      * "AG"	All outGoing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
      * "AC"	All inComing barring services (refer 3GPP TS 22.030 [19]) (applicable only for <mode>=0)
      */
-    if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("SetCallRestriction return, network type is not supported!");
-        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
-    }
-
-    std::string fac;
-    switch (cRInfo.fac) {
-        case CallRestrictionType::RESTRICTION_TYPE_ALL_OUTGOING:
-            fac = BARR_ALL_OUTGOING_CALLS;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL:
-            fac = BARR_OUTGOING_INTERNATIONAL_CALLS;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME:
-            fac = BARR_OUTGOING_INTERNATIONAL_CALLS_EXCLUDING_HOME;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING:
-            fac = BARR_ALL_INCOMING_CALLS;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_ROAMING_INCOMING:
-            fac = BARR_INCOMING_CALLS_OUTSIDE_HOME;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_ALL_CALLS:
-            fac = ALL_BARRING_SERVICES;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_OUTGOING_SERVICES:
-            fac = ALL_OUTGOING_BARRING_SERVICES;
-            break;
-        case CallRestrictionType::RESTRICTION_TYPE_INCOMING_SERVICES:
-            fac = ALL_INCOMING_BARRING_SERVICES;
-            break;
-        default:
-            TELEPHONY_LOGE("SetCallRestriction return, fac parameter out of range!");
-            return CALL_ERR_PARAMETER_OUT_OF_RANGE;
-    }
-    if (cRInfo.mode < CallRestrictionMode::RESTRICTION_MODE_DEACTIVATION ||
-        cRInfo.mode > CallRestrictionMode::RESTRICTION_MODE_ACTIVATION) {
-        TELEPHONY_LOGE("SetCallRestriction return, mode parameter out of range!");
-        return CALL_ERR_PARAMETER_OUT_OF_RANGE;
-    }
-    std::string info(cRInfo.password);
-    return supplementRequest_.SetCallRestrictionRequest(slotId, fac, (int32_t)cRInfo.mode, info);
-}
-
-int32_t CellularCallSupplement::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
-{
-    if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("GetCallRestriction return, network type is not supported!");
-        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
-    }
-    std::string fac;
     switch (facType) {
         case CallRestrictionType::RESTRICTION_TYPE_ALL_OUTGOING:
             fac = BARR_ALL_OUTGOING_CALLS;
@@ -625,80 +1129,157 @@ int32_t CellularCallSupplement::GetCallRestriction(int32_t slotId, CallRestricti
             fac = ALL_INCOMING_BARRING_SERVICES;
             break;
         default:
-            TELEPHONY_LOGE("GetCallRestriction return, parameter out of range!");
+            TELEPHONY_LOGE("parameter out of range!");
             return CALL_ERR_PARAMETER_OUT_OF_RANGE;
     }
-    return supplementRequest_.GetCallRestrictionRequest(slotId, fac);
+    return TELEPHONY_SUCCESS;
 }
 
-void CellularCallSupplement::EventGetClip(GetClipResult &getClipResult)
+void CellularCallSupplement::EventGetClip(const GetClipResult &getClipResult, const std::string &message, int32_t flag)
 {
     ClipResponse clipResponse;
-    clipResponse.result = getClipResult.result;
+    clipResponse.result = getClipResult.result.result;
+    if (clipResponse.result == IMS_ERROR_UT_NO_CONNECTION) {
+        clipResponse.result = CALL_ERR_UT_NO_CONNECTION;
+    }
     clipResponse.action = getClipResult.action;
     clipResponse.clipStat = getClipResult.clipStat;
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventGetClip return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetClipResult(clipResponse);
 
-    ReportMmiCodeMessage(getClipResult.result, GET_CLIP_SUCCESS, GET_CLIP_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(clipResponse.result, GET_CLIP_SUCCESS, message.empty() ? GET_CLIP_FAILED : message);
+    } else {
+        callRegister->ReportGetClipResult(clipResponse);
+    }
 }
 
-void CellularCallSupplement::EventGetClir(GetClirResult &result)
+void CellularCallSupplement::EventSetClip(int32_t result, const std::string &message, int32_t flag)
+{
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_CLIP_SUCCESS, message.empty() ? SET_CLIP_FAILED : message);
+    } else {
+        TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
+    }
+}
+
+void CellularCallSupplement::EventGetClir(const GetClirResult &result, const std::string &message, int32_t flag)
 {
     ClirResponse response;
     // 3GPP TS 27.007 V3.9.0 (2001-06) 7.7	Calling line identification restriction +CLIR
-    response.result = result.result;
+    response.result = result.result.result;
+    if (response.result == IMS_ERROR_UT_NO_CONNECTION) {
+        response.result = CALL_ERR_UT_NO_CONNECTION;
+    }
     response.action = result.action;
     response.clirStat = result.clirStat;
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventGetClir return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportGetClirResult(response);
-
-    ReportMmiCodeMessage(result.result, GET_CLIR_SUCCESS, GET_CLIR_FAILED);
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(response.result, GET_CLIR_SUCCESS, message.empty() ? GET_CLIR_FAILED : message);
+    } else {
+        callRegister->ReportGetClirResult(response);
+    }
 }
 
-void CellularCallSupplement::EventSetClir(HRilRadioResponseInfo &info)
+void CellularCallSupplement::EventSetClir(int32_t result, const std::string &message, int32_t flag)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::EventSetClir entry");
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetClir return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetClirResult(static_cast<int32_t>(info.error));
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_CLIR_SUCCESS, message.empty() ? SET_CLIR_FAILED : message);
+    } else {
+        callRegister->ReportSetClirResult(result);
+    }
+}
 
-    ReportMmiCodeMessage(static_cast<int32_t>(info.error), SET_CLIR_SUCCESS, SET_CLIR_FAILED);
+void CellularCallSupplement::EventGetColr(const GetColrResult &result, const std::string &message, int32_t flag)
+{
+    ColrResponse response;
+    response.result = result.result.result;
+    if (response.result == IMS_ERROR_UT_NO_CONNECTION) {
+        response.result = CALL_ERR_UT_NO_CONNECTION;
+    }
+    response.action = result.action;
+    response.colrStat = result.colrStat;
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(response.result, GET_COLR_SUCCESS, message.empty() ? GET_COLR_FAILED : message);
+    } else {
+        TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
+    }
+}
+
+void CellularCallSupplement::EventSetColr(int32_t result, const std::string &message, int32_t flag)
+{
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_COLR_SUCCESS, message.empty() ? SET_COLR_FAILED : message);
+    } else {
+        TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
+    }
+}
+
+void CellularCallSupplement::EventGetColp(const GetColpResult &result, const std::string &message, int32_t flag)
+{
+    ColpResponse response;
+    response.result = result.result.result;
+    if (response.result == IMS_ERROR_UT_NO_CONNECTION) {
+        response.result = CALL_ERR_UT_NO_CONNECTION;
+    }
+    response.action = result.action;
+    response.colpStat = result.colpStat;
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(response.result, GET_COLP_SUCCESS, message.empty() ? GET_COLP_FAILED : message);
+    } else {
+        TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
+    }
+}
+
+void CellularCallSupplement::EventSetColp(int32_t result, const std::string &message, int32_t flag)
+{
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(result, SET_COLP_SUCCESS, message.empty() ? SET_COLP_FAILED : message);
+    } else {
+        TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
+    }
 }
 
 int32_t CellularCallSupplement::SendUssd(int32_t slotId, const std::string &msg)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::SendUssd entry");
     if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("SendUssd return, network type is not supported!");
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
-    return supplementRequest_.SendUssdRequest(slotId, msg);
+    int32_t result = TELEPHONY_SUCCESS;
+    result = supplementRequestCs_.SendUssdRequest(slotId, msg);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    }
+    return result;
 }
 
-void CellularCallSupplement::EventSendUssd(HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSendUssd(const HRilRadioResponseInfo &responseInfo)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::EventSendUssd entry");
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSendUssd return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSendUssdResult(
-        static_cast<int32_t>(responseInfo.error));
+    callRegister->ReportSendUssdResult(static_cast<int32_t>(responseInfo.error));
     ReportMmiCodeMessage(static_cast<int32_t>(responseInfo.error), SEND_USSD_SUCCESS, INVALID_MMI_CODE);
 }
 
 void CellularCallSupplement::EventSsNotify(SsNoticeInfo &ssNoticeInfo)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::EventSsNotify entry");
     MmiCodeInfo mmiCodeInfo;
     mmiCodeInfo.result = ssNoticeInfo.result;
     switch (ssNoticeInfo.requestType) {
@@ -714,11 +1295,12 @@ void CellularCallSupplement::EventSsNotify(SsNoticeInfo &ssNoticeInfo)
             return;
     }
 
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSsNotify return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportMmiCodeResult(mmiCodeInfo);
+    callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
 
 void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNoticeInfo &ssNoticeInfo)
@@ -726,7 +1308,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
     if (ssNoticeInfo.result != 0) {
         size_t cpyLen = strlen(QUERY_SS_FAILED.c_str()) + 1;
         if (strcpy_s(mmiCodeInfo.message, cpyLen, QUERY_SS_FAILED.c_str()) != EOK) {
-            TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s QUERY_SS_FAILED fail.");
+            TELEPHONY_LOGE("strcpy_s QUERY_SS_FAILED fail.");
         }
         return;
     }
@@ -734,7 +1316,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
         case (unsigned int)CallTransferType::TRANSFER_TYPE_UNCONDITIONAL: {
             size_t cpyLen = strlen(TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) + 1;
             if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) != EOK) {
-                TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s TRANSFER_UNCONDITIONAL_SUCCESS fail.");
+                TELEPHONY_LOGE("strcpy_s TRANSFER_UNCONDITIONAL_SUCCESS fail.");
                 return;
             }
             break;
@@ -742,7 +1324,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
         case (unsigned int)CallTransferType::TRANSFER_TYPE_BUSY: {
             size_t cpyLen = strlen(TRANSFER_BUSY_SUCCESS.c_str()) + 1;
             if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_BUSY_SUCCESS.c_str()) != EOK) {
-                TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s TRANSFER_BUSY_SUCCESS fail.");
+                TELEPHONY_LOGE("strcpy_s TRANSFER_BUSY_SUCCESS fail.");
                 return;
             }
             break;
@@ -750,7 +1332,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
         case (unsigned int)CallTransferType::TRANSFER_TYPE_NO_REPLY: {
             size_t cpyLen = strlen(TRANSFER_NO_REPLYL_SUCCESS.c_str()) + 1;
             if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_NO_REPLYL_SUCCESS.c_str()) != EOK) {
-                TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s TRANSFER_NO_REPLYL_SUCCESS fail.");
+                TELEPHONY_LOGE("strcpy_s TRANSFER_NO_REPLYL_SUCCESS fail.");
                 return;
             }
             break;
@@ -758,7 +1340,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
         case (unsigned int)CallTransferType::TRANSFER_TYPE_NOT_REACHABLE: {
             size_t cpyLen = strlen(TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) + 1;
             if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) != EOK) {
-                TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s TRANSFER_NOT_REACHABLE_SUCCESS fail.");
+                TELEPHONY_LOGE("strcpy_s TRANSFER_NOT_REACHABLE_SUCCESS fail.");
                 return;
             }
             break;
@@ -766,7 +1348,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
         default: {
             size_t cpyLen = strlen(QUERY_SS_SUCCESS.c_str()) + 1;
             if (strcpy_s(mmiCodeInfo.message, cpyLen, QUERY_SS_SUCCESS.c_str()) != EOK) {
-                TELEPHONY_LOGE("ReportGetClirResult return, strcpy_s QUERY_SS_SUCCESS fail.");
+                TELEPHONY_LOGE("strcpy_s QUERY_SS_SUCCESS fail.");
                 return;
             }
         }
@@ -775,62 +1357,55 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
 
 void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::EventUssdNotify entry");
     MmiCodeInfo mmiCodeInfo;
     bool isUssdError = ussdNoticeInfo.m != USSD_MODE_NOTIFY && ussdNoticeInfo.m != USSD_MODE_REQUEST;
     if (!isUssdError && !ussdNoticeInfo.str.empty()) {
         mmiCodeInfo.result = USSD_SUCCESS;
         size_t cpyLen = strlen(ussdNoticeInfo.str.c_str()) + 1;
         if (strcpy_s(mmiCodeInfo.message, cpyLen, ussdNoticeInfo.str.c_str()) != EOK) {
-            TELEPHONY_LOGE("EventUssdNotify return, strcpy_s ussdNoticeInfo.str fail.");
+            TELEPHONY_LOGE("strcpy_s ussdNoticeInfo.str fail.");
             return;
         }
     } else if (isUssdError && !(ussdNoticeInfo.m == USSD_MODE_NW_RELEASE)) {
         mmiCodeInfo.result = USSD_FAILED;
         size_t cpyLen = strlen(INVALID_MMI_CODE.c_str()) + 1;
         if (strcpy_s(mmiCodeInfo.message, cpyLen, INVALID_MMI_CODE.c_str()) != EOK) {
-            TELEPHONY_LOGE("EventUssdNotify return, strcpy_s INVALID_MMI_CODE fail.");
+            TELEPHONY_LOGE("strcpy_s INVALID_MMI_CODE fail.");
             return;
         }
     } else {
         TELEPHONY_LOGE("Invaild ussd notify.");
     }
 
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventUssdNotify return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportMmiCodeResult(mmiCodeInfo);
+    callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
 
 void CellularCallSupplement::EventSetPinPuk(const PinPukResponse &pinPukResponse)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::EventSetPinPuk entry");
     MmiCodeInfo mmiCodeInfo;
     mmiCodeInfo.result = pinPukResponse.result;
     std::string messageTemp = std::to_string(pinPukResponse.remain);
     size_t cpyLen = strlen(messageTemp.c_str()) + 1;
     if (strcpy_s(mmiCodeInfo.message, cpyLen, messageTemp.c_str()) != EOK) {
-        TELEPHONY_LOGE("EventUssdNotify return, strcpy_s messageTemp fail.");
+        TELEPHONY_LOGE("strcpy_s messageTemp fail.");
     }
-    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("EventSetPinPuk return, GetInstance is nullptr.");
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportMmiCodeResult(mmiCodeInfo);
+    callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
 
 void CellularCallSupplement::AlterPinPassword(int32_t slotId, const MMIData &mmiData)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::AlterPinPassword entry");
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CellularCallSupplement::AlterPinPassword return, GetInstance is nullptr");
-        return;
-    }
-
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("AlterPinPassword return, actionString is empty!");
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
 
@@ -840,20 +1415,17 @@ void CellularCallSupplement::AlterPinPassword(int32_t slotId, const MMIData &mmi
     if (!IsVaildPinOrPuk(newPin, newPinCheck)) {
         return;
     }
-    supplementRequest_.AlterPinPassword(slotId, newPin, oldPin);
+    int32_t result = TELEPHONY_SUCCESS;
+    result = supplementRequestCs_.AlterPinPassword(slotId, newPin, oldPin);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    }
 }
 
 void CellularCallSupplement::UnlockPuk(int32_t slotId, const MMIData &mmiData)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::UnlockPuk entry");
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CellularCallSupplement::UnlockPuk return, GetInstance is nullptr");
-        return;
-    }
-
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("UnlockPuk return, actionString is empty!");
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
     std::string puk = mmiData.serviceInfoA;
@@ -862,20 +1434,17 @@ void CellularCallSupplement::UnlockPuk(int32_t slotId, const MMIData &mmiData)
     if (!IsVaildPinOrPuk(newPin, newPinCheck)) {
         return;
     }
-    supplementRequest_.UnlockPuk(slotId, newPin, puk);
+    int32_t result = TELEPHONY_SUCCESS;
+    result = supplementRequestCs_.UnlockPuk(slotId, newPin, puk);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    }
 }
 
 void CellularCallSupplement::AlterPin2Password(int32_t slotId, const MMIData &mmiData)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::AlterPin2Password entry");
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CellularCallSupplement::AlterPin2Password return, GetInstance is nullptr");
-        return;
-    }
-
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("AlterPin2Password return, actionString is empty!");
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
 
@@ -885,20 +1454,17 @@ void CellularCallSupplement::AlterPin2Password(int32_t slotId, const MMIData &mm
     if (!IsVaildPinOrPuk(newPin2, newPin2Check)) {
         return;
     }
-    supplementRequest_.AlterPin2Password(slotId, newPin2, oldPin2);
+    int32_t result = TELEPHONY_SUCCESS;
+    result = supplementRequestCs_.AlterPin2Password(slotId, newPin2, oldPin2);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    }
 }
 
 void CellularCallSupplement::UnlockPuk2(int32_t slotId, const MMIData &mmiData)
 {
-    TELEPHONY_LOGI("CellularCallSupplement::UnlockPuk2 entry");
-    auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("CellularCallSupplement::UnlockPuk2 return, GetInstance is nullptr");
-        return;
-    }
-
     if (mmiData.actionString.empty()) {
-        TELEPHONY_LOGE("UnlockPuk2 return, actionString is empty!");
+        TELEPHONY_LOGE("[slot%{public}d] actionString is empty!", slotId);
         return;
     }
 
@@ -908,7 +1474,11 @@ void CellularCallSupplement::UnlockPuk2(int32_t slotId, const MMIData &mmiData)
     if (!IsVaildPinOrPuk(newPin2, newPin2Check)) {
         return;
     }
-    supplementRequest_.UnlockPuk2(slotId, newPin2, puk2);
+    int32_t result = TELEPHONY_SUCCESS;
+    result = supplementRequestCs_.UnlockPuk2(slotId, newPin2, puk2);
+    if (result != TELEPHONY_SUCCESS) {
+        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+    }
 }
 
 bool CellularCallSupplement::IsVaildPinOrPuk(std::string newPinOrPuk, std::string newPinOrPukCheck)
@@ -934,17 +1504,22 @@ void CellularCallSupplement::ReportMmiCodeMessage(
     if (result == RESULT_SUCCESS) {
         size_t cpyLen = strlen(successMsg.c_str()) + 1;
         if (strcpy_s(mmiCodeInfo.message, cpyLen, successMsg.c_str()) != EOK) {
-            TELEPHONY_LOGE("ReportSetRestrictionResult return, strcpy_s fail.");
+            TELEPHONY_LOGE("strcpy_s fail.");
             return;
         }
     } else {
         size_t cpyLen = strlen(failedMsg.c_str()) + 1;
         if (strcpy_s(mmiCodeInfo.message, cpyLen, failedMsg.c_str()) != EOK) {
-            TELEPHONY_LOGE("ReportSetRestrictionResult return, strcpy_s fail.");
+            TELEPHONY_LOGE("strcpy_s fail.");
             return;
         }
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportMmiCodeResult(mmiCodeInfo);
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
+        return;
+    }
+    callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
 } // namespace Telephony
 } // namespace OHOS

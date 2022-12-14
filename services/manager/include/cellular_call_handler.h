@@ -25,6 +25,7 @@
 #include "common_event_manager.h"
 #include "common_event_support.h"
 #include "cs_control.h"
+#include "ims_call_types.h"
 #include "ims_control.h"
 #include "telephony_log_wrapper.h"
 
@@ -129,63 +130,62 @@ public:
 
     void SrvccStateCompleted();
 
+    /**
+     * request the ut command index which will be used to report the result
+     *
+     * @param index
+     */
+    void RequestSsRequestCommandIndex(int32_t &index);
+
+    /**
+     * save the ut command which will be used to report the result
+     *
+     * @param SsRequestCommand
+     * @param index
+     */
+    void SaveSsRequestCommand(const std::shared_ptr<SsRequestCommand> &utCommand, int32_t index);
+
+    int32_t GetSsRequestCommand(int32_t index, SsRequestCommand &ss);
+
 public:
     const uint32_t REGISTER_HANDLER_ID = 10003;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
 
 private:
     bool IsCanRequestCallsData();
-
     int64_t CurrentTimeMillis();
-
     void GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
-
     void RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void SetClirResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetClipResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
+    void SetClipResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetColrResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetColrResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void GetColpResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetColpResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void SetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
+    int32_t ConfirmAndRemoveSsRequestCommand(int32_t index, int32_t &flag);
     void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
-
     void SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void InitBasicFuncMap();
-
     void InitConfigFuncMap();
-
     void InitSupplementFuncMap();
-
     void InitActiveReportFuncMap();
 
     void ReportCsCallsData(const CallInfoList &callInfoList);
-
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
-
     void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
-
     void UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -209,6 +209,8 @@ private:
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
     bool isInCsRedial_ = false;
+    int32_t indexCommand_ = 0;
+    std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
 };
 } // namespace Telephony
 } // namespace OHOS

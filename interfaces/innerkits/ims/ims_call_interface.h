@@ -64,6 +64,7 @@ public:
         IMS_GET_MUTE,
         IMS_SET_IMS_REG_ERROR_REPORT,
         IMS_UPDATE_CAPABILITY,
+        IMS_GET_IMPU_FROM_NETWORK,
 
         /****************** video settings ******************/
         IMS_CTRL_CAMERA = 5300,
@@ -80,6 +81,7 @@ public:
         IMS_GET_CLIR,
         IMS_SET_CALL_TRANSFER,
         IMS_GET_CALL_TRANSFER,
+        IMS_IS_SUPPORT_CALL_TRANSFER_TIME,
         IMS_SET_CALL_RESTRICTION,
         IMS_GET_CALL_RESTRICTION,
         IMS_SET_CALL_WAITING,
@@ -412,18 +414,20 @@ public:
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param action Indicates the action for SetClip,
      * 1, means turn on clip; 0, means turn off clip.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetClip(int32_t slotId, int32_t action) = 0;
+    virtual int32_t SetClip(int32_t slotId, int32_t action, int32_t index) = 0;
 
     /**
      * @brief GetClip IMS GetClip interface
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetClip(int32_t slotId) = 0;
+    virtual int32_t GetClip(int32_t slotId, int32_t index) = 0;
 
     /**
      * @brief SetClir IMS SetClir interface
@@ -432,32 +436,43 @@ public:
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param action Indicates the action for SetClir,
      * 1, means turn on clir; 0, means turn off clir.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetClir(int32_t slotId, int32_t action) = 0;
+    virtual int32_t SetClir(int32_t slotId, int32_t action, int32_t index) = 0;
 
     /**
      * @brief GetClir IMS GetClir interface
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetClir(int32_t slotId) = 0;
+    virtual int32_t GetClir(int32_t slotId, int32_t index) = 0;
 
     /**
-     * @brief SetCallTransfer IMS SetCallTransfer interface
+     * @brief SetCallTransfer Set Call Transfer Request
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
-     * @param reason Indicates the reason of the set call transfer.
-     * @param mode Indicates the mode of the set call transfer.
-     * @param transferNum Indicates the target phone number to transfer calls to.
+     * @param cfInfo Indicates the reason/mode/transferNum/timer of the set call transfer.
      * @param classType Indicates a sum of service class for setting call transfer.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     virtual int32_t SetCallTransfer(
-        int32_t slotId, int32_t reason, int32_t mode, const std::string &transferNum, int32_t classType) = 0;
+        int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index) = 0;
+
+    /**
+     * @brief confirm whether IMS support call transfer due to time.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param result, The result of support or not
+     * @return Returns true on support, others on unsupport.
+     */
+    virtual int32_t IsSupportCallTransferTime(int32_t slotId, bool &result) = 0;
 
     /**
      * @brief GetCallTransfer IMS GetCallTransfer interface
@@ -465,9 +480,10 @@ public:
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param reason Indicates the reason of the get call transfer.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallTransfer(int32_t slotId, int32_t reason) = 0;
+    virtual int32_t GetCallTransfer(int32_t slotId, int32_t reason, int32_t index) = 0;
 
     /**
      * @brief SetCallRestriction IMS SetCallRestriction interface
@@ -477,10 +493,11 @@ public:
      * @param fac Indicates the facility of the set call restriction.
      * @param mode Indicates the mode of the set call restriction.
      * @param pw Indicates password or "" if not required.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     virtual int32_t SetCallRestriction(
-        int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw) = 0;
+        int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index) = 0;
 
     /**
      * @brief GetCallRestriction IMS GetCallRestriction interface
@@ -488,9 +505,10 @@ public:
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param fac Indicates the facility of the get call restriction.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallRestriction(int32_t slotId, const std::string &fac) = 0;
+    virtual int32_t GetCallRestriction(int32_t slotId, const std::string &fac, int32_t index) = 0;
 
     /**
      * @brief SetCallWaiting IMS SetCallWaiting interface
@@ -501,18 +519,20 @@ public:
      * true, means turn on CallWaiting; false, means turn off CallWaiting.
      * @param classType Call waiting and conditions +CCWA,
      * the value was {@code ServiceClassType}, See 3GPP TS 22.083.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType) = 0;
+    virtual int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index) = 0;
 
     /**
      * @brief GetCallWaiting IMS GetCallWaiting interface
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetCallWaiting(int32_t slotId) = 0;
+    virtual int32_t GetCallWaiting(int32_t slotId, int32_t index) = 0;
 
     /**
      * @brief SetColr IMS SetColr interface
@@ -521,18 +541,20 @@ public:
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param presentation Indicates the action for SetColr,
      * 1, means turn on colr; 0, means turn off colr.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetColr(int32_t slotId, int32_t presentation) = 0;
+    virtual int32_t SetColr(int32_t slotId, int32_t presentation, int32_t index) = 0;
 
     /**
      * @brief GetColr IMS GetColr interface
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetColr(int32_t slotId) = 0;
+    virtual int32_t GetColr(int32_t slotId, int32_t index) = 0;
 
     /**
      * @brief SetColp IMS SetColp interface
@@ -541,18 +563,20 @@ public:
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param action Indicates the action for SetColp,
      * 1, means turn on colp; 0, means turn off colp.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetColp(int32_t slotId, int32_t action) = 0;
+    virtual int32_t SetColp(int32_t slotId, int32_t action, int32_t index) = 0;
 
     /**
      * @brief GetColp IMS GetColp interface
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetColp(int32_t slotId) = 0;
+    virtual int32_t GetColp(int32_t slotId, int32_t index) = 0;
 
     /**
      * Register CallBack
@@ -571,6 +595,16 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     virtual int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) = 0;
+
+    /**
+     * Get impu which come form network
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param impu the result of impu
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t GetUtImpuFromNetwork(int32_t slotId, std::string &impu) = 0;
 
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallInterface");

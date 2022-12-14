@@ -48,7 +48,7 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo)
     }
 
     CLIRMode clirMode = CLIRMode::DEFAULT;
-    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode)) {
+    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode, true)) {
         TELEPHONY_LOGI("Dial return, mmi code type.");
         return RETURN_TYPE_MMI;
     }

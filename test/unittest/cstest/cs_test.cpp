@@ -2175,7 +2175,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallConnectionCS_0001, Function | MediumT
         EXPECT_EQ(csConnection.GetCsCallsDataRequest(slotId, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csConnection.GetCallFailReasonRequest(slotId), CALL_ERR_RESOURCE_UNAVAILABLE);
         MMICodeUtils utils;
-        ASSERT_FALSE(utils.IsNeedExecuteMmi(""));
+        ASSERT_FALSE(utils.IsNeedExecuteMmi("",false));
         ASSERT_FALSE(utils.ExecuteMmiCode(slotId));
     }
 }

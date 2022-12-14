@@ -36,6 +36,7 @@ ohos_shared_library("tel_ims_call_api") {
     "call_manager:tel_call_manager_api",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
+    "init:libbegetutil",
     "ipc:ipc_core",
   ]
 

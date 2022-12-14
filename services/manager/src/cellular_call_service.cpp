@@ -817,6 +817,16 @@ int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTrans
     return cellularCallSupplement.SetCallTransferInfo(slotId, cTInfo);
 }
 
+int32_t CellularCallService::IsSupportCallTransferTime(int32_t slotId, bool &result)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallSupplement cellularCallSupplement;
+    return cellularCallSupplement.IsSupportCallTransferTime(slotId, result);
+}
+
 int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferType type)
 {
     if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {

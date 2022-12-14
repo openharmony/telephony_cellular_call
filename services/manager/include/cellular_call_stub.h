@@ -248,6 +248,15 @@ private:
     int32_t OnSetCallTransferInner(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * confirm whether IMS support call transfer due to time.
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnIsSupportCallTransferTimeInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * On Inquire Call Transfer Inner
      *
      * @param data send data
