@@ -382,7 +382,7 @@ int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList 
     }
     callsReportInfo.slotId = slotId;
     if (!DelayedSingleton<CellularCallRegister>::GetInstance()->IsCallManagerCallBackRegistered() &&
-        callsReportInfo.callVec[0].state == TelCallState::CALL_STATUS_INCOMING) {
+        callsReportInfo.callVec.size() != 0 && callsReportInfo.callVec[0].state == TelCallState::CALL_STATUS_INCOMING) {
         isIgnoredIncomingCall_ = true;
     } else {
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);

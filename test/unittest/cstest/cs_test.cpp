@@ -18,6 +18,7 @@
 #define private public
 #define protected public
 #include "cellular_call_register.h"
+#include "cellular_call_service.h"
 #include "core_service_client.h"
 #include "cs_control.h"
 #include "hril_call_parcel.h"
@@ -2242,6 +2243,20 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     EXPECT_EQ(callRegister->RegisterCallManagerCallBack(nullptr), TELEPHONY_SUCCESS);
     EXPECT_EQ(callRegister->UnRegisterCallManagerCallBack(), TELEPHONY_SUCCESS);
     ASSERT_FALSE(callRegister->IsCallManagerCallBackRegistered());
+}
+
+/**
+ * @tc.number   cellular_call_TestDump_0001
+ * @tc.name    TestDump
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_TestDump_0001, Function | MediumTest | Level3)
+{
+    std::vector<std::u16string> emptyArgs = {};
+    std::vector<std::u16string> args = { u"test", u"test1" };
+    EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(-1, args), TELEPHONY_ERR_FAIL);
+    EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(0, emptyArgs), 0);
+    EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(0, args), 0);
 }
 } // namespace Telephony
 } // namespace OHOS
