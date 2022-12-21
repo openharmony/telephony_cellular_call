@@ -16,9 +16,10 @@
 #ifndef TELEPHONY_IMS_CALL_TYPES_H
 #define TELEPHONY_IMS_CALL_TYPES_H
 
-#include "ims_core_service_types.h"
 #include "call_manager_errors.h"
 #include "call_manager_inner_type.h"
+#include "hril_call_parcel.h"
+#include "ims_core_service_types.h"
 
 namespace OHOS {
 namespace Telephony {

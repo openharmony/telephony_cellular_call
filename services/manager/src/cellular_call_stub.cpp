@@ -72,6 +72,7 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::STOP_RTT] = &CellularCallStub::OnStopRttInner;
     requestFuncMap_[OperationType::SET_CALL_TRANSFER] = &CellularCallStub::OnSetCallTransferInner;
     requestFuncMap_[OperationType::GET_CALL_TRANSFER] = &CellularCallStub::OnGetCallTransferInner;
+    requestFuncMap_[OperationType::IS_SUPPORT_CALL_TRANSFER_TIME] = &CellularCallStub::OnIsSupportCallTransferTimeInner;
     requestFuncMap_[OperationType::SET_CALL_WAITING] = &CellularCallStub::OnSetCallWaitingInner;
     requestFuncMap_[OperationType::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
     requestFuncMap_[OperationType::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
@@ -548,6 +549,22 @@ int32_t CellularCallStub::OnSetCallTransferInner(MessageParcel &data, MessagePar
     }
 
     reply.WriteInt32(SetCallTransferInfo(slotId, *pCTInfo));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnIsSupportCallTransferTimeInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    bool result = data.ReadBool();
+
+    reply.WriteInt32(IsSupportCallTransferTime(slotId, result));
     return TELEPHONY_SUCCESS;
 }
 

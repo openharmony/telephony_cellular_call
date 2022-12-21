@@ -60,7 +60,7 @@ int32_t CSControl::DialCdma(const CellularCallInfo &callInfo)
     std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
 
     CLIRMode clirMode = CLIRMode::DEFAULT;
-    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode)) {
+    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode, false)) {
         TELEPHONY_LOGI("DialCdma return, mmi code type.");
         return RETURN_TYPE_MMI;
     }
@@ -89,7 +89,7 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo)
     std::string newPhoneNum = standardizeUtils.RemoveSeparatorsPhoneNumber(callInfo.phoneNum);
 
     CLIRMode clirMode = CLIRMode::DEFAULT;
-    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode)) {
+    if (IsNeedExecuteMMI(callInfo.slotId, newPhoneNum, clirMode, false)) {
         TELEPHONY_LOGI("DialGsm return, mmi code type.");
         return RETURN_TYPE_MMI;
     }

@@ -52,7 +52,7 @@ int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
     if (remote == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d]Remote is null", callInfo.slotId);
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, INVALID_PARAMETER, callInfo.videoState,
-            TELEPHONY_ERR_LOCAL_PTR_NULL, "ims call proxy remote is nullptr");
+            TELEPHONY_ERR_LOCAL_PTR_NULL, "ims call proxy remote is null");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     MessageParcel out;
@@ -82,8 +82,8 @@ int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
     }
     if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
         TELEPHONY_LOGE("[slot%{public}d]Write callInfo fail!", callInfo.slotId);
-        CellularCallHiSysEvent::WriteHangUpFaultEvent(callInfo.slotId, INVALID_PARAMETER,
-            TELEPHONY_ERR_WRITE_DATA_FAIL, "HangUp ims call proxy write data fail");
+        CellularCallHiSysEvent::WriteHangUpFaultEvent(
+            callInfo.slotId, INVALID_PARAMETER, TELEPHONY_ERR_WRITE_DATA_FAIL, "HangUp ims call proxy write data fail");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     sptr<IRemoteObject> remote = Remote();
@@ -186,11 +186,11 @@ int32_t ImsCallProxy::HoldCall(int32_t slotId, int32_t callType)
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId, callType);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_HOLD);
+    return SendRequest(slotId, in, IMS_HOLD);
 }
 
 int32_t ImsCallProxy::UnHoldCall(int32_t slotId, int32_t callType)
@@ -200,11 +200,11 @@ int32_t ImsCallProxy::UnHoldCall(int32_t slotId, int32_t callType)
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId, callType);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_UN_HOLD);
+    return SendRequest(slotId, in, IMS_UN_HOLD);
 }
 
 int32_t ImsCallProxy::SwitchCall(int32_t slotId, int32_t callType)
@@ -214,27 +214,27 @@ int32_t ImsCallProxy::SwitchCall(int32_t slotId, int32_t callType)
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId, callType);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_SWITCH);
+    return SendRequest(slotId, in, IMS_SWITCH);
 }
 
 int32_t ImsCallProxy::CombineConference(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_COMBINE_CONFERENCE);
+    return SendRequest(slotId, in, IMS_COMBINE_CONFERENCE);
 }
 
 int32_t ImsCallProxy::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -242,13 +242,13 @@ int32_t ImsCallProxy::InviteToConference(int32_t slotId, const std::vector<std::
         TELEPHONY_LOGE("[slot%{public}d]Write numberList fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_INVITE_TO_CONFERENCE);
+    return SendRequest(slotId, in, IMS_INVITE_TO_CONFERENCE);
 }
 
 int32_t ImsCallProxy::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -256,7 +256,7 @@ int32_t ImsCallProxy::KickOutFromConference(int32_t slotId, const std::vector<st
         TELEPHONY_LOGE("[slot%{public}d]Write numberList fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_KICK_OUT_CONFERENCE);
+    return SendRequest(slotId, in, IMS_KICK_OUT_CONFERENCE);
 }
 
 int32_t ImsCallProxy::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
@@ -274,13 +274,13 @@ int32_t ImsCallProxy::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode
         TELEPHONY_LOGE("[slot%{public}d]Write mode fail!", callInfo.slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, callInfo.slotId, IMS_UPDATE_CALL_MEDIA_MODE);
+    return SendRequest(callInfo.slotId, in, IMS_UPDATE_CALL_MEDIA_MODE);
 }
 
 int32_t ImsCallProxy::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -288,23 +288,23 @@ int32_t ImsCallProxy::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDa
         TELEPHONY_LOGE("[slot%{public}d]Write lastCallsDataFlag fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_GET_CALL_DATA);
+    return SendRequest(slotId, in, IMS_GET_CALL_DATA);
 }
 
 int32_t ImsCallProxy::GetLastCallFailReason(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_LAST_CALL_FAIL_REASON);
+    return SendRequest(slotId, in, IMS_GET_LAST_CALL_FAIL_REASON);
 }
 
 int32_t ImsCallProxy::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -316,13 +316,13 @@ int32_t ImsCallProxy::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
         TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_START_DTMF);
+    return SendRequest(slotId, in, IMS_START_DTMF);
 }
 
 int32_t ImsCallProxy::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -334,13 +334,13 @@ int32_t ImsCallProxy::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
         TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SEND_DTMF);
+    return SendRequest(slotId, in, IMS_SEND_DTMF);
 }
 
 int32_t ImsCallProxy::StopDtmf(int32_t slotId, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -348,13 +348,13 @@ int32_t ImsCallProxy::StopDtmf(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_STOP_DTMF);
+    return SendRequest(slotId, in, IMS_STOP_DTMF);
 }
 
 int32_t ImsCallProxy::StartRtt(int32_t slotId, const std::string &msg)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -362,17 +362,17 @@ int32_t ImsCallProxy::StartRtt(int32_t slotId, const std::string &msg)
         TELEPHONY_LOGE("[slot%{public}d]Write msg fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_START_RTT);
+    return SendRequest(slotId, in, IMS_START_RTT);
 }
 
 int32_t ImsCallProxy::StopRtt(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_STOP_RTT);
+    return SendRequest(slotId, in, IMS_STOP_RTT);
 }
 
 int32_t ImsCallProxy::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
@@ -382,7 +382,7 @@ int32_t ImsCallProxy::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -390,23 +390,23 @@ int32_t ImsCallProxy::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
         TELEPHONY_LOGE("[slot%{public}d]Write mode fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_DOMAIN_PREFERENCE_MODE);
+    return SendRequest(slotId, in, IMS_SET_DOMAIN_PREFERENCE_MODE);
 }
 
 int32_t ImsCallProxy::GetDomainPreferenceMode(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_DOMAIN_PREFERENCE_MODE);
+    return SendRequest(slotId, in, IMS_GET_DOMAIN_PREFERENCE_MODE);
 }
 
 int32_t ImsCallProxy::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -414,17 +414,17 @@ int32_t ImsCallProxy::SetImsSwitchStatus(int32_t slotId, int32_t active)
         TELEPHONY_LOGE("[slot%{public}d]Write active fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_SWITCH_STATUS);
+    return SendRequest(slotId, in, IMS_SET_SWITCH_STATUS);
 }
 
 int32_t ImsCallProxy::GetImsSwitchStatus(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_SWITCH_STATUS);
+    return SendRequest(slotId, in, IMS_GET_SWITCH_STATUS);
 }
 
 int32_t ImsCallProxy::SetImsConfig(ImsConfigItem item, const std::string &value)
@@ -512,7 +512,7 @@ int32_t ImsCallProxy::GetImsFeatureValue(FeatureType type, int32_t &value)
 int32_t ImsCallProxy::SetMute(int32_t slotId, int32_t mute)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -520,17 +520,17 @@ int32_t ImsCallProxy::SetMute(int32_t slotId, int32_t mute)
         TELEPHONY_LOGE("[slot%{public}d]Write mute fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_MUTE);
+    return SendRequest(slotId, in, IMS_SET_MUTE);
 }
 
 int32_t ImsCallProxy::GetMute(int32_t slotId)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_MUTE);
+    return SendRequest(slotId, in, IMS_GET_MUTE);
 }
 
 int32_t ImsCallProxy::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
@@ -657,10 +657,10 @@ int32_t ImsCallProxy::SetDeviceDirection(int32_t rotation)
     return SendRequest(in, IMS_SET_DEVICE_DIRECTION);
 }
 
-int32_t ImsCallProxy::SetClip(int32_t slotId, int32_t action)
+int32_t ImsCallProxy::SetClip(int32_t slotId, int32_t action, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -668,23 +668,31 @@ int32_t ImsCallProxy::SetClip(int32_t slotId, int32_t action)
         TELEPHONY_LOGE("[slot%{public}d]Write action fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_CLIP);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_CLIP);
 }
 
-int32_t ImsCallProxy::GetClip(int32_t slotId)
+int32_t ImsCallProxy::GetClip(int32_t slotId, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_CLIP);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_CLIP);
 }
 
-int32_t ImsCallProxy::SetClir(int32_t slotId, int32_t action)
+int32_t ImsCallProxy::SetClir(int32_t slotId, int32_t action, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -692,58 +700,75 @@ int32_t ImsCallProxy::SetClir(int32_t slotId, int32_t action)
         TELEPHONY_LOGE("[slot%{public}d]Write action fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_CLIR);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_CLIR);
 }
 
-int32_t ImsCallProxy::GetClir(int32_t slotId)
+int32_t ImsCallProxy::GetClir(int32_t slotId, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_CLIR);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_CLIR);
 }
 
-int32_t ImsCallProxy::SetCallTransfer(
-    int32_t slotId, int32_t reason, int32_t mode, const std::string &transferNum, int32_t classType)
+int32_t ImsCallProxy::SetCallTransfer(int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteInt32(reason)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write reason fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteInt32(mode)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write mode fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteString(transferNum)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write transferNum fail!", slotId);
+    if (!in.WriteRawData((const void *)&cfInfo, sizeof(CallTransferInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write cfInfo fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(classType)) {
         TELEPHONY_LOGE("[slot%{public}d]Write classType fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_CALL_TRANSFER);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_CALL_TRANSFER);
 }
 
-int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason)
+int32_t ImsCallProxy::IsSupportCallTransferTime(int32_t slotId, bool &result)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteBool(result)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write classType fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_IS_SUPPORT_CALL_TRANSFER_TIME);
+}
+
+int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -751,17 +776,22 @@ int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason)
         TELEPHONY_LOGE("[slot%{public}d]Write reason fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_GET_CALL_TRANSFER);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_CALL_TRANSFER);
 }
 
-int32_t ImsCallProxy::SetCallRestriction(int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw)
+int32_t ImsCallProxy::SetCallRestriction(
+    int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -777,17 +807,21 @@ int32_t ImsCallProxy::SetCallRestriction(int32_t slotId, const std::string &fac,
         TELEPHONY_LOGE("[slot%{public}d]Write pw fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_CALL_RESTRICTION);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_CALL_RESTRICTION);
 }
 
-int32_t ImsCallProxy::GetCallRestriction(int32_t slotId, const std::string &fac)
+int32_t ImsCallProxy::GetCallRestriction(int32_t slotId, const std::string &fac, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -795,17 +829,21 @@ int32_t ImsCallProxy::GetCallRestriction(int32_t slotId, const std::string &fac)
         TELEPHONY_LOGE("[slot%{public}d]Write fac fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_GET_CALL_RESTRICTION);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_CALL_RESTRICTION);
 }
 
-int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t classType)
+int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -817,27 +855,35 @@ int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t clas
         TELEPHONY_LOGE("[slot%{public}d]Write classType fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_CALL_WAITING);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_CALL_WAITING);
 }
 
-int32_t ImsCallProxy::GetCallWaiting(int32_t slotId)
+int32_t ImsCallProxy::GetCallWaiting(int32_t slotId, int32_t index)
 {
     if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
         TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_CALL_WAITING);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_CALL_WAITING);
 }
 
-int32_t ImsCallProxy::SetColr(int32_t slotId, int32_t presentation)
+int32_t ImsCallProxy::SetColr(int32_t slotId, int32_t presentation, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -845,23 +891,31 @@ int32_t ImsCallProxy::SetColr(int32_t slotId, int32_t presentation)
         TELEPHONY_LOGE("[slot%{public}d]Write presentation fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_COLR);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_COLR);
 }
 
-int32_t ImsCallProxy::GetColr(int32_t slotId)
+int32_t ImsCallProxy::GetColr(int32_t slotId, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_COLR);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_COLR);
 }
 
-int32_t ImsCallProxy::SetColp(int32_t slotId, int32_t action)
+int32_t ImsCallProxy::SetColp(int32_t slotId, int32_t action, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -869,17 +923,25 @@ int32_t ImsCallProxy::SetColp(int32_t slotId, int32_t action)
         TELEPHONY_LOGE("[slot%{public}d]Write action fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_SET_COLP);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_SET_COLP);
 }
 
-int32_t ImsCallProxy::GetColp(int32_t slotId)
+int32_t ImsCallProxy::GetColp(int32_t slotId, int32_t index)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendRequest(in, slotId, IMS_GET_COLP);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_COLP);
 }
 
 int32_t ImsCallProxy::RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback)
@@ -889,7 +951,7 @@ int32_t ImsCallProxy::RegisterImsCallCallback(const sptr<ImsCallCallbackInterfac
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
     if (callback == nullptr) {
-        TELEPHONY_LOGE("callback is nullptr!");
+        TELEPHONY_LOGE("callback is null!");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     MessageParcel in;
@@ -907,7 +969,7 @@ int32_t ImsCallProxy::RegisterImsCallCallback(const sptr<ImsCallCallbackInterfac
 int32_t ImsCallProxy::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(__FUNCTION__, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -915,10 +977,24 @@ int32_t ImsCallProxy::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityL
         TELEPHONY_LOGE("[slot%{public}d]Write imsCapabilityList fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, slotId, IMS_UPDATE_CAPABILITY);
+    return SendRequest(slotId, in, IMS_UPDATE_CAPABILITY);
 }
 
-int32_t ImsCallProxy::WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId)
+int32_t ImsCallProxy::GetUtImpuFromNetwork(int32_t slotId, std::string &impu)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteString(impu)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write impu fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, IMS_GET_IMPU_FROM_NETWORK);
+}
+
+int32_t ImsCallProxy::WriteCommonInfo(int32_t slotId, std::string funcName, MessageParcel &in)
 {
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("[slot%{public}d] %{public}s Write descriptor token fail!", slotId, funcName.c_str());
@@ -931,9 +1007,9 @@ int32_t ImsCallProxy::WriteCommonInfo(std::string funcName, MessageParcel &in, i
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallProxy::WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId, int32_t callType)
+int32_t ImsCallProxy::WriteCommonInfo(int32_t slotId, std::string funcName, MessageParcel &in, int32_t callType)
 {
-    int32_t ret = WriteCommonInfo(funcName, in, slotId);
+    int32_t ret = WriteCommonInfo(slotId, funcName, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -946,15 +1022,14 @@ int32_t ImsCallProxy::WriteCommonInfo(std::string funcName, MessageParcel &in, i
 
 int32_t ImsCallProxy::SendRequest(MessageParcel &in, int32_t eventId)
 {
-    MessageParcel out;
-    MessageOption option;
-
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         TELEPHONY_LOGE("Remote is null, eventId:%{public}d", eventId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
 
+    MessageParcel out;
+    MessageOption option;
     int32_t error = remote->SendRequest(eventId, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
@@ -963,17 +1038,16 @@ int32_t ImsCallProxy::SendRequest(MessageParcel &in, int32_t eventId)
     return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
 }
 
-int32_t ImsCallProxy::SendRequest(MessageParcel &in, int32_t slotId, int32_t eventId)
+int32_t ImsCallProxy::SendRequest(int32_t slotId, MessageParcel &in, int32_t eventId)
 {
-    MessageParcel out;
-    MessageOption option;
-
     sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d]Remote is null, eventId:%{public}d", slotId, eventId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
 
+    MessageParcel out;
+    MessageOption option;
     int32_t error = remote->SendRequest(eventId, in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();

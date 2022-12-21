@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,10 +29,11 @@ constexpr unsigned long long operator"" _hash(char const *p, size_t s)
     return StandardizeUtils::HashCompileTime(p);
 }
 
-bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
+bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNeedUseIms)
 {
+    isNeedUseIms_ = isNeedUseIms;
     if (analyseString.empty()) {
-        TELEPHONY_LOGE("IsNeedExecuteMmi return, analyseString is empty.");
+        TELEPHONY_LOGE("analyseString is empty.");
         return false;
     }
     if (RegexMatchMmi(analyseString)) {
@@ -41,7 +42,7 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString)
 
     // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
     if (analyseString.back() == '#') {
-        TELEPHONY_LOGI("IsNeedExecuteMmi, analyseString is end of #");
+        TELEPHONY_LOGI("analyseString is end of #");
         mmiData_.fullString = analyseString;
         return true;
     }
@@ -66,41 +67,58 @@ void InitMmiCodeFunc(std::map<std::uint64_t,
      * "331" Processing limits all international calls
      * "332" Handling international outgoing calls belonging to foreign countries when roaming is
      * restricted
+     * "333" Processing limits outgoing calls
      * "35" Processing limits all incoming calls
      * "351" Handle all incoming calls when roaming is restricted
+     * "353" Processing limits incoming calls
      * "43" Handling call waiting
      * "04" Change pin password
      * "05" Use puk unlock sim and change pin password
      * "042" Change pin2 password
      * "052" Use puk2 unlock sim and change pin2 password
      */
-    mmiCodeFunc["30"_hash] = &CellularCallSupplement::GetClip;
-    mmiCodeFunc["31"_hash] = &CellularCallSupplement::GetClir;
-    mmiCodeFunc["21"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["61"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["62"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["67"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["002"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["004"_hash] = &CellularCallSupplement::DealCallTransfer;
-    mmiCodeFunc["33"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["330"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["331"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["332"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["35"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["351"_hash] = &CellularCallSupplement::DealCallRestriction;
-    mmiCodeFunc["43"_hash] = &CellularCallSupplement::DealCallWaiting;
+    mmiCodeFunc["30"_hash] = &CellularCallSupplement::HandleClip;
+    mmiCodeFunc["31"_hash] = &CellularCallSupplement::HandleClir;
+    mmiCodeFunc["21"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["61"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["62"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["67"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["002"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["004"_hash] = &CellularCallSupplement::HandleCallTransfer;
+    mmiCodeFunc["33"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["330"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["331"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["332"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["333"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["35"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["351"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["353"_hash] = &CellularCallSupplement::HandleCallRestriction;
+    mmiCodeFunc["43"_hash] = &CellularCallSupplement::HandleCallWaiting;
     mmiCodeFunc["04"_hash] = &CellularCallSupplement::AlterPinPassword;
     mmiCodeFunc["05"_hash] = &CellularCallSupplement::UnlockPuk;
     mmiCodeFunc["042"_hash] = &CellularCallSupplement::AlterPin2Password;
     mmiCodeFunc["052"_hash] = &CellularCallSupplement::UnlockPuk2;
 }
 
+void InitImsMmiCodeFunc(
+    std::map<std::uint64_t, void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData)> &mmiCodeFunc)
+{
+    /**
+     * "76" Connected line identification presentation
+     * "77" Connected line identification restriction
+     */
+    mmiCodeFunc["76"_hash] = &CellularCallSupplement::HandleColp;
+    mmiCodeFunc["77"_hash] = &CellularCallSupplement::HandleColr;
+}
+
 bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 {
-    TELEPHONY_LOGI("ExecuteMmiCode entry.");
     using MmiCodeFunc = void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData);
     std::map<std::uint64_t, MmiCodeFunc> mmiCodeFunc;
     InitMmiCodeFunc(mmiCodeFunc);
+    if (isNeedUseIms_) {
+        InitImsMmiCodeFunc(mmiCodeFunc);
+    }
 
     CellularCallSupplement supplement;
     if (!mmiData_.serviceCode.empty()) {
@@ -117,16 +135,16 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
                 return true;
             }
         }
-        TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
+        TELEPHONY_LOGI("Function not found, need check serviceCode.");
     }
 
     if (!mmiData_.fullString.empty()) {
-        TELEPHONY_LOGI("ExecuteMmiCode, fullString is not empty.");
+        TELEPHONY_LOGI("fullString is not empty.");
         supplement.SendUssd(slotId, mmiData_.fullString);
         return true;
     }
 
-    TELEPHONY_LOGW("ExecuteMmiCode, default case, need check.");
+    TELEPHONY_LOGW("default case, need check.");
     return false;
 }
 
@@ -137,7 +155,7 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
     std::regex pattern(symbols);
     std::smatch results;
     if (regex_match(analyseString, results, pattern)) {
-        TELEPHONY_LOGI("MMICodeUtils::RegexMatchMmi, regex_match ture");
+        TELEPHONY_LOGI("regex_match ture");
 
         /**
          * The following sequence of functions shall be used for the control of Supplementary Services:

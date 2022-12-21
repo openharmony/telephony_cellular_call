@@ -175,9 +175,10 @@ public:
      * @param slotId
      * @param std::string phoneString
      * @param CLIRMode
+     * @param isNeedUseIms
      * @returns bool
      */
-    bool IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode);
+    bool IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode, bool isNeedUseIms);
 
     /**
      * Is Dtmf Key

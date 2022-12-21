@@ -57,6 +57,13 @@ bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
     return info.imsRegState == ImsRegState::IMS_REGISTERED;
 }
 
+bool ModuleServiceUtils::GetImsUtSupportState(int32_t slotId)
+{
+    ImsRegInfo info;
+    CoreManagerInner::GetInstance().GetImsRegStatus(slotId, ImsServiceType::TYPE_UT, info);
+    return info.imsRegState == ImsRegState::IMS_REGISTERED;
+}
+
 std::vector<int32_t> ModuleServiceUtils::GetSlotInfo()
 {
     const int32_t slotSingle = 1;

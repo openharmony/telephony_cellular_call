@@ -92,7 +92,6 @@ void CellularCallRegister::ReportEventResultInfo(const CellularCallEventInfo &in
 
 void CellularCallRegister::ReportGetWaitingResult(const CallWaitResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetWaitingResult entry");
     TELEPHONY_LOGI("ReportGetWaitingResult result:%{public}d, status:%{public}d, class:%{public}d", response.result,
         response.status, response.classCw);
     if (callManagerCallBack_ == nullptr) {
@@ -104,7 +103,6 @@ void CellularCallRegister::ReportGetWaitingResult(const CallWaitResponse &respon
 
 void CellularCallRegister::ReportSetWaitingResult(int32_t result)
 {
-    TELEPHONY_LOGI("ReportSetWaitingResult entry");
     TELEPHONY_LOGI("ReportSetWaitingResult result:%{public}d", result);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetWaitingResult return, callManagerCallBack_ is nullptr, report fail!");
@@ -115,7 +113,6 @@ void CellularCallRegister::ReportSetWaitingResult(int32_t result)
 
 void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetRestrictionResult entry");
     TELEPHONY_LOGI("ReportGetRestrictionResult result:%{public}d, status:%{public}d, class:%{public}d",
         response.result, response.status, response.classCw);
     if (callManagerCallBack_ == nullptr) {
@@ -127,7 +124,6 @@ void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionRespo
 
 void CellularCallRegister::ReportSetRestrictionResult(int32_t result)
 {
-    TELEPHONY_LOGI("ReportSetRestrictionResult entry");
     TELEPHONY_LOGI("ReportSetRestrictionResult result:%{public}d", result);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
@@ -138,7 +134,6 @@ void CellularCallRegister::ReportSetRestrictionResult(int32_t result)
 
 void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetTransferResult entry");
     TELEPHONY_LOGI("ReportGetTransferResult result:%{public}d, status:%{public}d, class:%{public}d", response.result,
         response.status, response.classx);
     TELEPHONY_LOGI("ReportGetTransferResult type:%{public}d, reason:%{public}d, time:%{public}d",
@@ -152,7 +147,6 @@ void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &r
 
 void CellularCallRegister::ReportSetTransferResult(int32_t result)
 {
-    TELEPHONY_LOGI("ReportSetTransferResult entry");
     TELEPHONY_LOGI("ReportSetTransferResult result:%{public}d", result);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
@@ -163,7 +157,6 @@ void CellularCallRegister::ReportSetTransferResult(int32_t result)
 
 void CellularCallRegister::ReportGetClipResult(const ClipResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetClipResult entry");
     TELEPHONY_LOGI("ReportGetClipResult result:%{public}d, action:%{public}d, stat:%{public}d", response.result,
         response.action, response.clipStat);
     if (callManagerCallBack_ == nullptr) {
@@ -175,7 +168,6 @@ void CellularCallRegister::ReportGetClipResult(const ClipResponse &response)
 
 void CellularCallRegister::ReportGetClirResult(const ClirResponse &response)
 {
-    TELEPHONY_LOGI("ReportGetClirResult entry");
     TELEPHONY_LOGI("ReportGetClirResult result:%{public}d, action:%{public}d, stat:%{public}d", response.result,
         response.action, response.clirStat);
     if (callManagerCallBack_ == nullptr) {
@@ -187,7 +179,6 @@ void CellularCallRegister::ReportGetClirResult(const ClirResponse &response)
 
 void CellularCallRegister::ReportSetClirResult(int32_t result)
 {
-    TELEPHONY_LOGI("ReportSetClirResult entry");
     TELEPHONY_LOGI("ReportSetClirResult result:%{public}d", result);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetClirResult return, callManagerCallBack_ is nullptr, report fail!");

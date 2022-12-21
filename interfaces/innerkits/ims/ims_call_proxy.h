@@ -66,30 +66,32 @@ public:
     int32_t SetPauseImage(const std::u16string &path) override;
     int32_t SetDeviceDirection(int32_t rotation) override;
 
-    int32_t SetClip(int32_t slotId, int32_t action) override;
-    int32_t GetClip(int32_t slotId) override;
-    int32_t SetClir(int32_t slotId, int32_t action) override;
-    int32_t GetClir(int32_t slotId) override;
-    int32_t SetCallTransfer(
-        int32_t slotId, int32_t reason, int32_t mode, const std::string &transferNum, int32_t classType) override;
-    int32_t GetCallTransfer(int32_t slotId, int32_t reason) override;
-    int32_t SetCallRestriction(int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw) override;
-    int32_t GetCallRestriction(int32_t slotId, const std::string &fac) override;
-    int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType) override;
-    int32_t GetCallWaiting(int32_t slotId) override;
-    int32_t SetColr(int32_t slotId, int32_t presentation) override;
-    int32_t GetColr(int32_t slotId) override;
-    int32_t SetColp(int32_t slotId, int32_t action) override;
-    int32_t GetColp(int32_t slotId) override;
+    int32_t SetClip(int32_t slotId, int32_t action, int32_t index) override;
+    int32_t GetClip(int32_t slotId, int32_t index) override;
+    int32_t SetClir(int32_t slotId, int32_t action, int32_t index) override;
+    int32_t GetClir(int32_t slotId, int32_t index) override;
+    int32_t SetCallTransfer(int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index) override;
+    int32_t IsSupportCallTransferTime(int32_t slotId, bool &result) override;
+    int32_t GetCallTransfer(int32_t slotId, int32_t reason, int32_t index) override;
+    int32_t SetCallRestriction(
+        int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index) override;
+    int32_t GetCallRestriction(int32_t slotId, const std::string &fac, int32_t index) override;
+    int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index) override;
+    int32_t GetCallWaiting(int32_t slotId, int32_t index) override;
+    int32_t SetColr(int32_t slotId, int32_t presentation, int32_t index) override;
+    int32_t GetColr(int32_t slotId, int32_t index) override;
+    int32_t SetColp(int32_t slotId, int32_t action, int32_t index) override;
+    int32_t GetColp(int32_t slotId, int32_t index) override;
 
     int32_t RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback) override;
     int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) override;
+    int32_t GetUtImpuFromNetwork(int32_t slotId, std::string &impu) override;
 
 private:
-    int32_t WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId);
-    int32_t WriteCommonInfo(std::string funcName, MessageParcel &in, int32_t slotId, int32_t callType);
+    int32_t WriteCommonInfo(int32_t slotId, std::string funcName, MessageParcel &in);
+    int32_t WriteCommonInfo(int32_t slotId, std::string funcName, MessageParcel &in, int32_t callType);
     int32_t SendRequest(MessageParcel &in, int32_t eventId);
-    int32_t SendRequest(MessageParcel &in, int32_t slotId, int32_t eventId);
+    int32_t SendRequest(int32_t slotId, MessageParcel &in, int32_t eventId);
 
 private:
     static inline BrokerDelegator<ImsCallProxy> delegator_;

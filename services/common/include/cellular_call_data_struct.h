@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,13 @@
 
 namespace OHOS {
 namespace Telephony {
+// This use for ims ss command, -1 mean this command index wasn't come from app
+const int32_t INVALID_INDEX = -1;
+// mean the request action come from dial api
+const int32_t SS_FROM_MMI_CODE = 0;
+// means the request action come from setting app
+const int32_t SS_FROM_SETTING_MENU = 1;
+
 enum CLIRMode {
     DEFAULT = 0,
     TRANSFER = 1,
@@ -295,6 +302,19 @@ enum ImsHandleId {
     IMS_RADIO_AVAIL,
     IMS_RADIO_NOT_AVAIL,
     IMS_RADIO_CURRENT_CALLS,
+};
+
+struct SsRequestCommand {
+    int32_t cfAction = 0;
+    int32_t cfReason = 0;
+    std::string number = "";
+    bool enable = false;
+    int32_t clirAction = 0;
+    std::string facility = "";
+    std::string pw = "";
+    int32_t classType = 0;
+    int32_t action = 0;
+    int32_t flag = SS_FROM_MMI_CODE; // 0: command come from dialer; 1: command come from JS api which called by setting
 };
 } // namespace Telephony
 } // namespace OHOS
