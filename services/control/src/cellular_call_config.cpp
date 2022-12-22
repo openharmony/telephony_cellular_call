@@ -112,20 +112,24 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     TELEPHONY_LOGI(
         "CellularCallConfig::SetImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
-    if (!volteSupported_[slotId] || (active && !IsVolteProvisioned(slotId))) {
-        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled or volte is not supported.");
-        return TELEPHONY_ERROR;
+    if (!volteSupported_[slotId]) {
+        TELEPHONY_LOGE("Enable ims switch failed due to volte is not supported.");
+        return CALL_ERR_VOLTE_NOT_SUPPORT;
+    }
+    if (active && !IsVolteProvisioned(slotId)) {
+        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled.");
+        return CALL_ERR_VOLTE_PROVISIONING_DISABLED;
     }
     int32_t simId = CoreManagerInner::GetInstance().GetSimId(slotId);
     if (simId <= INVALID_SIM_ID) {
         TELEPHONY_LOGE("failed due to invalid sim id %{public}d", simId);
-        return TELEPHONY_ERROR;
+        return TELEPHONY_ERR_SLOTID_INVALID;
     }
 
     active = ChangeImsSwitchWithOperatorConfig(slotId, active);
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(active));
     if (ret == SAVE_IMS_SWITCH_FAILED) {
-        return TELEPHONY_ERROR;
+        return TELEPHONY_ERR_DATABASE_WRITE_FAIL;
     } else if (ret == SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED) {
         return TELEPHONY_SUCCESS;
     }
@@ -544,7 +548,7 @@ void CellularCallConfig::InitModeActive()
 
 EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number)
 {
-    EmergencyCall  emergencyCall;
+    EmergencyCall emergencyCall;
     emergencyCall.eccNum = number;
     emergencyCall.eccType = EccType::TYPE_CATEGORY;
     emergencyCall.simpresent = SimpresentType::TYPE_HAS_CARD;
@@ -712,7 +716,7 @@ std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
     TELEPHONY_LOGI("GetEccCallList  start %{publiic}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
-    TELEPHONY_LOGI("GetEccCallList  size %{publiic}zu",  allEccList_[slotId].size());
+    TELEPHONY_LOGI("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
         TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }

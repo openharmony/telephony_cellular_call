@@ -15,12 +15,11 @@
 
 #include "cellular_call_connection_ims.h"
 
-#include "securec.h"
-
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "ims_call_client.h"
 #include "radio_event.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace Telephony {

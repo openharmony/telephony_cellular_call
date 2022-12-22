@@ -164,8 +164,8 @@ public:
      * @param eccVec
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall>  &eccVec) override;
-    
+    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec) override;
+
     /**
      * Merge into multiple calls
      *

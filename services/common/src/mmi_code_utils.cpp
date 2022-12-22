@@ -137,7 +137,6 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
         }
         TELEPHONY_LOGI("Function not found, need check serviceCode.");
     }
-
     if (!mmiData_.fullString.empty()) {
         TELEPHONY_LOGI("fullString is not empty.");
         supplement.SendUssd(slotId, mmiData_.fullString);
