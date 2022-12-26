@@ -24,6 +24,7 @@
 #include "operator_config_types.h"
 #include "radio_event.h"
 #include "resource_utils.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -1174,7 +1175,10 @@ int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand
     ss.enable = itor->second->enable;
     ss.clirAction = itor->second->clirAction;
     ss.facility = itor->second->facility;
-    ss.pw = itor->second->pw;
+    if (strcpy_s(ss.password, sizeof(ss.password), itor->second->password) != EOK) {
+        TELEPHONY_LOGE("password strcpy_s fail.");
+        return TELEPHONY_ERR_STRCPY_FAIL;
+    }
     ss.classType = itor->second->classType;
     ss.action = itor->second->action;
     ss.flag = itor->second->flag;

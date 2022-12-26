@@ -921,7 +921,8 @@ int32_t ImsCallCallbackStub::SetCallRestrictionResponse(int32_t slotId, const Ss
             return ret;
         }
         SupplementRequestCs supplementRequest;
-        return supplementRequest.SetCallRestrictionRequest(slotId, ss.facility, ss.enable, ss.pw, resultInfo.index);
+        return supplementRequest.SetCallRestrictionRequest(
+            slotId, ss.facility, ss.enable, ss.password, resultInfo.index);
     }
     return SendEvent(slotId, RadioEvent::RADIO_SET_CALL_RESTRICTION, resultInfo);
 }

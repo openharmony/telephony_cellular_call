@@ -99,7 +99,8 @@ public:
      * @param index Indicates the index of command.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    int32_t SetCallRestrictionRequest(int32_t slotId, std::string &fac, int32_t mode, std::string &pw, int32_t index);
+    int32_t SetCallRestrictionRequest(
+        int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index);
 
     /**
      * @brief SetCallWaitingRequest Set CallWaiting Request

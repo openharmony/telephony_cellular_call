@@ -486,7 +486,12 @@ void CellularCallSupplement::HandleCallRestriction(int32_t slotId, const MMIData
         }
     } else if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
         utCommand->enable = mmiData.actionString == activate;
-        utCommand->pw = infoA;
+        size_t cpyLen = strlen(infoA.c_str()) + 1;
+        size_t maxCpyLen = sizeof(utCommand->password);
+        if (strcpy_s(utCommand->password, cpyLen > maxCpyLen ? maxCpyLen : cpyLen, infoA.c_str()) != EOK) {
+            TELEPHONY_LOGE("[slot%{public}d] strcpy_s fail.", slotId);
+            return;
+        }
         if (NeedUseImsToHandle(slotId)) {
             result = supplementRequestIms_.SetCallRestrictionRequest(
                 slotId, facType, mmiData.actionString == activate, infoA, index);
@@ -1016,7 +1021,12 @@ int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRes
     utCommand->flag = SS_FROM_SETTING_MENU;
     utCommand->facility = fac;
     utCommand->enable = static_cast<int32_t>(cRInfo.mode);
-    utCommand->pw = info;
+    size_t cpyLen = strlen(info.c_str()) + 1;
+    size_t maxCpyLen = sizeof(utCommand->password);
+    if (strcpy_s(utCommand->password, cpyLen > maxCpyLen ? maxCpyLen : cpyLen, info.c_str()) != EOK) {
+        TELEPHONY_LOGE("[slot%{public}d] strcpy_s fail.", slotId);
+        return TELEPHONY_ERR_STRCPY_FAIL;
+    }
     int32_t index;
     if (NeedUseImsToHandle(slotId)) {
         return SetCallRestrictionByIms(slotId, fac, static_cast<int32_t>(cRInfo.mode), info, utCommand);
