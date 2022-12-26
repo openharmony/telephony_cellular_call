@@ -16,6 +16,7 @@
 
 #include "cellular_call_service.h"
 #include "radio_event.h"
+#include "securec.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_types.h"
 
@@ -96,13 +97,18 @@ int32_t SupplementRequestCs::GetCallRestrictionRequest(int32_t slotId, const std
 }
 
 int32_t SupplementRequestCs::SetCallRestrictionRequest(
-    int32_t slotId, std::string &fac, int32_t mode, std::string &pw, int32_t index)
+    int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     CallRestrictionParam callRestrictionParam;
     callRestrictionParam.mode = mode;
     callRestrictionParam.fac = fac;
-    callRestrictionParam.pw = pw;
+    size_t cpyLen = strlen(pw.c_str()) + 1;
+    size_t maxCpyLen = sizeof(callRestrictionParam.password);
+    if (strcpy_s(callRestrictionParam.password, cpyLen > maxCpyLen ? maxCpyLen : cpyLen, pw.c_str()) != EOK) {
+        TELEPHONY_LOGE("[slot%{public}d] strcpy_s fail.", slotId);
+        return TELEPHONY_ERR_STRCPY_FAIL;
+    }
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SET_CALL_RESTRICTION, index);
     if (response == nullptr) {

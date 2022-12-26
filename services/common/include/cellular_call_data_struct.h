@@ -311,7 +311,7 @@ struct SsRequestCommand {
     bool enable = false;
     int32_t clirAction = 0;
     std::string facility = "";
-    std::string pw = "";
+    char password[kMaxNumberLen + 1];
     int32_t classType = 0;
     int32_t action = 0;
     int32_t flag = SS_FROM_MMI_CODE; // 0: command come from dialer; 1: command come from JS api which called by setting
