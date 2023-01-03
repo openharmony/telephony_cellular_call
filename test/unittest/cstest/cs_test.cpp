@@ -646,8 +646,8 @@ int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephon
                      "12:KickOutFromConference\n13:HangUpAllConnection\n14:UpdateImsCallMode\n"
                      "15:RegisterCallBack\n16:UnRegisterCallBack\n100:StartDtmf\n101:StopDtmf\n102:SendDtmf\n"
                      "103:StartRtt\n104:StopRtt\n200:SetCallTransferInfo\n201:GetCallTransferInfo\n"
-                     "203:SetCallWaiting\n204:GetCallWaiting\n"
-                     "205:SetCallRestriction\n206:GetCallRestriction\n311:SetMute\n312:GetMute\n"
+                     "202:SetCallWaiting\n203:GetCallWaiting\n"
+                     "204:SetCallRestriction\n205:GetCallRestriction\n311:SetMute\n312:GetMute\n"
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";

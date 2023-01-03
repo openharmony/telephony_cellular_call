@@ -747,7 +747,7 @@ int32_t ImsCallProxy::SetCallTransfer(int32_t slotId, const CallTransferInfo &cf
     return SendRequest(slotId, in, IMS_SET_CALL_TRANSFER);
 }
 
-int32_t ImsCallProxy::CanSetCallTransferTime(int32_t slotId, bool &result)
+int32_t ImsCallProxy::IsSupportCallTransferTime(int32_t slotId, bool &result)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
@@ -758,21 +758,7 @@ int32_t ImsCallProxy::CanSetCallTransferTime(int32_t slotId, bool &result)
         TELEPHONY_LOGE("[slot%{public}d]Write classType fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    MessageParcel out;
-    MessageOption option;
-
-    sptr<IRemoteObject> remote = Remote();
-    if (remote == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d]Remote is null", slotId);
-        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
-    }
-
-    int32_t error = remote->SendRequest(IMS_CAN_SET_CALL_TRANSFER_TIME, in, out, option);
-    if (error == ERR_NONE) {
-        result = out.ReadBool();
-        return out.ReadInt32();
-    }
-    return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    return SendRequest(slotId, in, IMS_IS_SUPPORT_CALL_TRANSFER_TIME);
 }
 
 int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason, int32_t index)

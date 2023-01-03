@@ -993,35 +993,6 @@ HWTEST_F(ImsTest, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 }
 
 /**
- * @tc.number   cellular_call_CanSetCallTransferTime_0001
- * @tc.name     Test for CanSetCallTransferTime function by ims
- * @tc.desc     Function test
- */
-HWTEST_F(ImsTest, cellular_call_CanSetCallTransferTime_0001, Function | MediumTest | Level2)
-{
-    AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(remote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(remote);
-    ASSERT_TRUE(telephonyService != nullptr);
-    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
-        return;
-    }
-    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_UT)) {
-        bool result;
-        int32_t ret = telephonyService->CanSetCallTransferTime(SIM1_SLOTID, result);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-    }
-    if (HasSimCard(SIM2_SLOTID)) {
-        bool result;
-        int32_t ret = telephonyService->CanSetCallTransferTime(SIM2_SLOTID, result);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-    }
-}
-
-/**
  * @tc.number   cellular_call_ImsControl_0001
  * @tc.name     Test for ImsControl
  * @tc.desc     Function test
