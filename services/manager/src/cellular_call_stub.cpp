@@ -72,7 +72,7 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::STOP_RTT] = &CellularCallStub::OnStopRttInner;
     requestFuncMap_[OperationType::SET_CALL_TRANSFER] = &CellularCallStub::OnSetCallTransferInner;
     requestFuncMap_[OperationType::GET_CALL_TRANSFER] = &CellularCallStub::OnGetCallTransferInner;
-    requestFuncMap_[OperationType::CAN_SET_CALL_TRANSFER_TIME] = &CellularCallStub::OnCanSetCallTransferTimeInner;
+    requestFuncMap_[OperationType::IS_SUPPORT_CALL_TRANSFER_TIME] = &CellularCallStub::OnIsSupportCallTransferTimeInner;
     requestFuncMap_[OperationType::SET_CALL_WAITING] = &CellularCallStub::OnSetCallWaitingInner;
     requestFuncMap_[OperationType::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
     requestFuncMap_[OperationType::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
@@ -552,7 +552,7 @@ int32_t CellularCallStub::OnSetCallTransferInner(MessageParcel &data, MessagePar
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnCanSetCallTransferTimeInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnIsSupportCallTransferTimeInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("entry");
     int32_t size = data.ReadInt32();
@@ -564,9 +564,7 @@ int32_t CellularCallStub::OnCanSetCallTransferTimeInner(MessageParcel &data, Mes
     int32_t slotId = data.ReadInt32();
     bool result = data.ReadBool();
 
-    int32_t callResult = CanSetCallTransferTime(slotId, result);
-    reply.WriteBool(result);
-    reply.WriteInt32(callResult);
+    reply.WriteInt32(IsSupportCallTransferTime(slotId, result));
     return TELEPHONY_SUCCESS;
 }
 

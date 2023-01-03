@@ -99,7 +99,7 @@ public:
     int32_t SetClir(int32_t slotId, int32_t action, int32_t index);
     int32_t GetClir(int32_t slotId, int32_t index);
     int32_t SetCallTransfer(int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index);
-    int32_t CanSetCallTransferTime(int32_t slotId, bool &result);
+    int32_t IsSupportCallTransferTime(int32_t slotId, bool &result);
     int32_t GetCallTransfer(int32_t slotId, int32_t reason, int32_t index);
     int32_t SetCallRestriction(
         int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index);
