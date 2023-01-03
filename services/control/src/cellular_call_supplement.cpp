@@ -866,13 +866,13 @@ int32_t CellularCallSupplement::SetCallTransferInfoByIms(
     return result;
 }
 
-int32_t CellularCallSupplement::CanSetCallTransferTime(int32_t slotId, bool &result)
+int32_t CellularCallSupplement::IsSupportCallTransferTime(int32_t slotId, bool &result)
 {
     if (!moduleServiceUtils_.NeedCallImsService()) {
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
     int32_t ret = TELEPHONY_SUCCESS;
-    ret = supplementRequestIms_.CanSetCallTransferTime(slotId, result);
+    ret = supplementRequestIms_.IsSupportCallTransferTime(slotId, result);
     return ret;
 }
 

@@ -81,7 +81,7 @@ public:
         IMS_GET_CLIR,
         IMS_SET_CALL_TRANSFER,
         IMS_GET_CALL_TRANSFER,
-        IMS_CAN_SET_CALL_TRANSFER_TIME,
+        IMS_IS_SUPPORT_CALL_TRANSFER_TIME,
         IMS_SET_CALL_RESTRICTION,
         IMS_GET_CALL_RESTRICTION,
         IMS_SET_CALL_WAITING,
@@ -465,14 +465,14 @@ public:
         int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index) = 0;
 
     /**
-     * @brief confirm whether IMS can set call transfer time.
+     * @brief confirm whether IMS support call transfer due to time.
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
-     * @param result, The result of can set or not
-     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     * @param result, The result of support or not
+     * @return Returns true on support, others on unsupport.
      */
-    virtual int32_t CanSetCallTransferTime(int32_t slotId, bool &result) = 0;
+    virtual int32_t IsSupportCallTransferTime(int32_t slotId, bool &result) = 0;
 
     /**
      * @brief GetCallTransfer IMS GetCallTransfer interface
