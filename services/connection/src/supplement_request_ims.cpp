@@ -90,7 +90,7 @@ int32_t SupplementRequestIms::SetCallTransferRequest(
     return imsCallClient->SetCallTransfer(slotId, cfInfo, classType, index);
 }
 
-int32_t SupplementRequestIms::CanSetCallTransferTime(int32_t slotId, bool &result)
+int32_t SupplementRequestIms::IsSupportCallTransferTime(int32_t slotId, bool &result)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
@@ -98,7 +98,7 @@ int32_t SupplementRequestIms::CanSetCallTransferTime(int32_t slotId, bool &resul
         TELEPHONY_LOGE("[slot%{public}d] ImsCallClient is nullptr.", slotId);
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
-    return imsCallClient->CanSetCallTransferTime(slotId, result);
+    return imsCallClient->IsSupportCallTransferTime(slotId, result);
 }
 
 int32_t SupplementRequestIms::GetCallRestrictionRequest(int32_t slotId, const std::string &fac, int32_t index)

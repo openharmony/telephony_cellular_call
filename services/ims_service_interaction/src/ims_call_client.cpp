@@ -530,13 +530,13 @@ int32_t ImsCallClient::SetCallTransfer(int32_t slotId, const CallTransferInfo &c
     return imsCallProxy_->SetCallTransfer(slotId, cfInfo, classType, index);
 }
 
-int32_t ImsCallClient::CanSetCallTransferTime(int32_t slotId, bool &result)
+int32_t ImsCallClient::IsSupportCallTransferTime(int32_t slotId, bool &result)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("[slot%{public}d] ipc reconnect failed!", slotId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->CanSetCallTransferTime(slotId, result);
+    return imsCallProxy_->IsSupportCallTransferTime(slotId, result);
 }
 
 int32_t ImsCallClient::GetCallTransfer(int32_t slotId, int32_t reason, int32_t index)
