@@ -183,8 +183,8 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 {
     OperatorConfig operatorConfig;
-    bool ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
-    if (!ret) {
+    int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
+    if (ret != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("failed due to get operator config");
         return;
     }
@@ -247,7 +247,8 @@ void CellularCallConfig::ResetImsSwitch(int32_t slotId)
         TELEPHONY_LOGE("return due to no sim card");
         return;
     }
-    std::u16string iccId = CoreManagerInner::GetInstance().GetSimIccId(slotId);
+    std::u16string iccId;
+    CoreManagerInner::GetInstance().GetSimIccId(slotId, iccId);
     if (IsSimChanged(slotId, Str16ToStr8(iccId)) && forceVolteSwitchOn_[slotId]) {
         int32_t ret = CoreManagerInner::GetInstance().SaveImsSwitch(
             slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
