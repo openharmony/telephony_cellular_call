@@ -68,8 +68,10 @@ void CellularCallDumpHelper::ShowCellularCallInfo(std::string &result) const
                 .append(std::to_string(i))
                 .append("\n");
             CellularCallConfig config;
+            bool imsSwitchStatus = false;
+            config.GetImsSwitchStatus(i, imsSwitchStatus);
             result.append("ImsServiceRunningState    : ")
-                .append(std::to_string(config.GetSwitchStatus(i)))
+                .append(std::to_string(imsSwitchStatus))
                 .append("\n");
             result.append("DomainPreferenceMode      : ")
                 .append(std::to_string(config.GetPreferenceMode(i)))

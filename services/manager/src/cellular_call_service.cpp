@@ -1061,7 +1061,8 @@ bool CellularCallService::IsNeedIms(int32_t slotId) const
     bool imsRegState = moduleUtils.GetImsRegistrationState(slotId);
     bool imsServiceConnected = moduleUtils.NeedCallImsService();
     int32_t preferenceMode = config.GetPreferenceMode(slotId);
-    bool imsSwitchStatus = config.GetSwitchStatus(slotId);
+    bool imsSwitchStatus = false;
+    config.GetImsSwitchStatus(slotId, imsSwitchStatus);
     TELEPHONY_LOGI("IsNeedIms state:%{public}d, mode:%{public}d, status:%{public}d, connected:%{public}d", imsRegState,
         preferenceMode, imsSwitchStatus, imsServiceConnected);
     if (imsRegState && preferenceMode != DomainPreferenceMode::CS_VOICE_ONLY && imsSwitchStatus &&

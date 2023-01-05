@@ -104,14 +104,6 @@ public:
     int32_t GetPreferenceMode(int32_t slotId) const;
 
     /**
-     * Get Switch Status
-     *
-     * @param slotId
-     * @return active
-     */
-    int32_t GetSwitchStatus(int32_t slotId) const;
-
-    /**
      * Set Ims Config
      *
      * @param ImsConfigItem
@@ -454,6 +446,7 @@ private:
     bool IsSimChanged(int32_t slotId, std::string iccid);
     bool ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active);
     int32_t SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue);
+    int32_t GetSwitchStatus(int32_t slotId) const;
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
