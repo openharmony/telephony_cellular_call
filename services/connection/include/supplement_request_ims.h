@@ -91,14 +91,14 @@ public:
     int32_t SetCallTransferRequest(int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index);
 
     /**
-     * @brief confirm whether IMS support call transfer due to time.
+     * @brief confirm whether IMS can set call transfer time.
      *
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
-     * @param result, The result of support or not
-     * @return Returns true on support, others on unsupport.
+     * @param result, The result of can set or not
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    int32_t IsSupportCallTransferTime(int32_t slotId, bool &result);
+    int32_t CanSetCallTransferTime(int32_t slotId, bool &result);
 
     /**
      * @brief GetCallRestrictionRequest Get Call Restriction Request
