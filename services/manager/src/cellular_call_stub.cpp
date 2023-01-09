@@ -190,10 +190,19 @@ int32_t CellularCallStub::OnIsEmergencyPhoneNumberInner(MessageParcel &data, Mes
     }
     int32_t slotId = data.ReadInt32();
     std::string phoneNum = data.ReadString();
-    int32_t errorCode = data.ReadInt32();
-    reply.WriteInt32(IsEmergencyPhoneNumber(slotId, phoneNum, errorCode));
-
-    reply.WriteInt32(errorCode);
+    bool enabled = false;
+    int32_t ret = IsEmergencyPhoneNumber(slotId, phoneNum, enabled);
+    if (!reply.WriteInt32(ret)) {
+        TELEPHONY_LOGE("fail to write ret");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!reply.WriteBool(enabled)) {
+        TELEPHONY_LOGE("fail to write enabled");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
     return TELEPHONY_SUCCESS;
 }
 

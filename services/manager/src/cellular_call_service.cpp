@@ -921,16 +921,14 @@ int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionT
     return cellularCallSupplement.GetCallRestriction(slotId, facType);
 }
 
-int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum, int32_t &errorCode)
+int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum, bool &enabled)
 {
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::IsEmergencyPhoneNumber return, invalid slot id");
-        errorCode = CALL_ERR_INVALID_SLOT_ID;
-        return false;
+        return CALL_ERR_INVALID_SLOT_ID;
     }
     EmergencyUtils emergencyUtils;
-    errorCode = TELEPHONY_SUCCESS;
-    return emergencyUtils.IsEmergencyCall(slotId, phoneNum);
+    return emergencyUtils.IsEmergencyCall(slotId, phoneNum, enabled);
 }
 
 int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec)
@@ -1146,9 +1144,11 @@ bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo)
 {
     ModuleServiceUtils moduleUtils;
     CellularCallConfig config;
-    int32_t errorCode = TELEPHONY_ERROR;
-    if (IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, errorCode) && moduleUtils.NeedCallImsService() &&
-        config.GetImsPreferForEmergencyConfig(callInfo.slotId)) {
+    bool enabled = false;
+    if (IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, enabled) != TELEPHONY_SUCCESS) {
+        return false;
+    }
+    if (enabled && moduleUtils.NeedCallImsService() && config.GetImsPreferForEmergencyConfig(callInfo.slotId)) {
         return true;
     }
     return false;

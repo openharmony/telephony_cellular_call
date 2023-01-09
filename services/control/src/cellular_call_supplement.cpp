@@ -818,7 +818,7 @@ int32_t CellularCallSupplement::CheckSetCallTransferInfo(const CallTransferInfo 
 {
     if (strlen(cfInfo.transferNum) == 0) {
         TELEPHONY_LOGE("transferNum is empty!");
-        return CALL_ERR_PHONE_NUMBER_EMPTY;
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
     /*
