@@ -47,7 +47,9 @@ const int32_t USSD_MODE_NOTIFY = 0;
 
 bool CsTest::HasSimCard(int32_t slotId)
 {
-    return DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId);
+    bool hasSimCard = false;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    return hasSimCard;
 }
 
 void CsTest::SetUpTestCase(void)

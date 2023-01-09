@@ -134,10 +134,10 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
         return TELEPHONY_SUCCESS;
     }
 
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
-    if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)
-            || simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
+    if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
         UpdateImsCapabilities(slotId, !active);
     }
     return TELEPHONY_SUCCESS;
@@ -176,7 +176,8 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 }
 
@@ -243,7 +244,9 @@ void CellularCallConfig::ParseBoolOperatorConfigs(
 
 void CellularCallConfig::ResetImsSwitch(int32_t slotId)
 {
-    if (!CoreManagerInner::GetInstance().HasSimCard(slotId)) {
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
         TELEPHONY_LOGE("return due to no sim card");
         return;
     }
@@ -594,7 +597,9 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId_)
     }
     TELEPHONY_LOGI("MergeEccCallList merge config slotId  %{public}d size  %{public}zu", slotId_,
         eccListConfigMap_[slotId_].size());
-    if (CoreManagerInner::GetInstance().GetSimState(slotId_) != static_cast<int32_t>(SimState::SIM_STATE_NOT_PRESENT)) {
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId_, simState);
+    if (simState != SimState::SIM_STATE_NOT_PRESENT) {
         std::string mcc = GetMcc(slotId_);
         if (mcc.empty()) {
             TELEPHONY_LOGE("MergeEccCallList  countryCode is null");
@@ -626,7 +631,9 @@ void CellularCallConfig::UniqueEccCallList(int32_t slotId_)
 
 std::string CellularCallConfig::GetMcc(int32_t slotId_)
 {
-    std::string imsi = Str16ToStr8(CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_));
+    std::u16string operatorNumeric;
+    CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_, operatorNumeric);
+    std::string imsi = Str16ToStr8(operatorNumeric);
     int len = static_cast<int>(imsi.length());
     std::string mcc = imsi;
     if (len >= MCC_LEN) {
@@ -683,11 +690,12 @@ int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, const std::vect
 
 bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
 {
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     int32_t simStateForEcc;
     switch (simState) {
-        case static_cast<int32_t>(SimState::SIM_STATE_READY):
-        case static_cast<int32_t>(SimState::SIM_STATE_LOADED): {
+        case SimState::SIM_STATE_READY:
+        case SimState::SIM_STATE_LOADED: {
             simStateForEcc = SIM_PRESENT;
             break;
         }
