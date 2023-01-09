@@ -17,12 +17,16 @@
 
 #define private public
 #define protected public
+#include "cellular_call_handler.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
+#include "cellular_call_supplement.h"
+#include "config_request.h"
 #include "core_service_client.h"
 #include "cs_control.h"
 #include "hril_call_parcel.h"
 #include "operator_config_types.h"
+#include "radio_event.h"
 #include "securec.h"
 #include "sim_state_type.h"
 
@@ -33,11 +37,13 @@ const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t INVALID_SLOTID = -1;
 const int32_t INVALID_HANG_UP_TYPE = -1;
-const int32_t RESULT = 1;
+const int32_t SUCCESS_RESULT = 0;
+const int32_t ERROR_RESULT = 1;
 const std::string PHONE_NUMBER = "0000000";
 const std::string PHONE_NUMBER_SECOND = "1111111";
 const std::string PHONE_NUMBER_THIRD = "2222222";
 const int32_t CELLULAR_CALL_SUCCESS = 0;
+const int32_t USSD_MODE_NOTIFY = 0;
 
 bool CsTest::HasSimCard(int32_t slotId)
 {
@@ -2211,31 +2217,31 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     callRegister->ReportEventResultInfo(callEvent);
     CallWaitResponse waitResponse;
     callRegister->ReportGetWaitingResult(waitResponse);
-    callRegister->ReportSetWaitingResult(RESULT);
+    callRegister->ReportSetWaitingResult(ERROR_RESULT);
     CallRestrictionResponse restrictionResponse;
     callRegister->ReportGetRestrictionResult(restrictionResponse);
-    callRegister->ReportSetRestrictionResult(RESULT);
+    callRegister->ReportSetRestrictionResult(ERROR_RESULT);
     CallTransferResponse transferResponse;
     callRegister->ReportGetTransferResult(transferResponse);
-    callRegister->ReportSetTransferResult(RESULT);
+    callRegister->ReportSetTransferResult(ERROR_RESULT);
     ClipResponse clipResponse;
     callRegister->ReportGetClipResult(clipResponse);
     ClirResponse clirResponse;
     callRegister->ReportGetClirResult(clirResponse);
-    callRegister->ReportSetClirResult(RESULT);
-    callRegister->ReportCallRingBackResult(RESULT);
+    callRegister->ReportSetClirResult(ERROR_RESULT);
+    callRegister->ReportCallRingBackResult(ERROR_RESULT);
     DisconnectedDetails details;
     callRegister->ReportCallFailReason(details);
     MuteControlResponse muteResponse;
     callRegister->ReportSetMuteResult(muteResponse);
     callRegister->ReportGetMuteResult(muteResponse);
-    callRegister->ReportInviteToConferenceResult(RESULT);
-    callRegister->ReportGetCallDataResult(RESULT);
-    callRegister->ReportStartDtmfResult(RESULT);
-    callRegister->ReportStopDtmfResult(RESULT);
-    callRegister->ReportStartRttResult(RESULT);
-    callRegister->ReportStopRttResult(RESULT);
-    callRegister->ReportSendUssdResult(RESULT);
+    callRegister->ReportInviteToConferenceResult(ERROR_RESULT);
+    callRegister->ReportGetCallDataResult(ERROR_RESULT);
+    callRegister->ReportStartDtmfResult(ERROR_RESULT);
+    callRegister->ReportStopDtmfResult(ERROR_RESULT);
+    callRegister->ReportStartRttResult(ERROR_RESULT);
+    callRegister->ReportStopRttResult(ERROR_RESULT);
+    callRegister->ReportSendUssdResult(ERROR_RESULT);
     SetEccListResponse eccListResponse;
     callRegister->ReportSetEmergencyCallListResponse(eccListResponse);
     MmiCodeInfo mmiInfo;
@@ -2243,6 +2249,355 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     EXPECT_EQ(callRegister->RegisterCallManagerCallBack(nullptr), TELEPHONY_SUCCESS);
     EXPECT_EQ(callRegister->UnRegisterCallManagerCallBack(), TELEPHONY_SUCCESS);
     ASSERT_FALSE(callRegister->IsCallManagerCallBackRegistered());
+}
+
+/**
+ * @tc.number   cellular_call_SupplementRequestCs_0001
+ * @tc.name     Test for SupplementRequestCs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_SupplementRequestCs_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        SupplementRequestCs request;
+        std::string fac = "fac";
+        std::string pw = "test";
+        int32_t index = 1;
+        int32_t mode = 1;
+        int32_t classType = 1;
+        bool active = true;
+        CallTransferParam param;
+        EXPECT_NE(request.GetCallRestrictionRequest(slotId, fac, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.SetCallRestrictionRequest(slotId, fac, mode, pw, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.GetCallWaitingRequest(slotId, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.SetCallWaitingRequest(slotId, active, classType, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.GetClipRequest(slotId, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.GetClirRequest(slotId, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.SetClirRequest(slotId, mode, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.GetCallTransferRequest(slotId, mode, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.SetCallTransferRequest(slotId, param, index), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ConfigRequest_0001
+ * @tc.name     Test for ConfigRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_ConfigRequest_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        ConfigRequest config;
+        int32_t mode = 1;
+        EXPECT_NE(config.SetDomainPreferenceModeRequest(slotId, mode), TELEPHONY_SUCCESS);
+        EXPECT_NE(config.GetDomainPreferenceModeRequest(slotId), TELEPHONY_SUCCESS);
+        EXPECT_NE(config.SetMuteRequest(slotId, mode), TELEPHONY_SUCCESS);
+        EXPECT_NE(config.GetMuteRequest(slotId), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallSupplement_0001
+ * @tc.name     Test for CellularCallSupplement
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        MMIData mmiData;
+        CellularCallSupplement supplement;
+        mmiData.actionString = "";
+        supplement.AlterPinPassword(slotId, mmiData);
+        supplement.AlterPin2Password(slotId, mmiData);
+        supplement.UnlockPuk(slotId, mmiData);
+        supplement.UnlockPuk2(slotId, mmiData);
+        mmiData.actionString = "test";
+        mmiData.serviceInfoA = "infoA";
+        mmiData.serviceInfoB = "infoB";
+        mmiData.serviceInfoC = "infoC";
+        supplement.AlterPinPassword(slotId, mmiData);
+        supplement.AlterPin2Password(slotId, mmiData);
+        supplement.UnlockPuk(slotId, mmiData);
+        supplement.UnlockPuk2(slotId, mmiData);
+        mmiData.serviceInfoC = "infoB";
+        supplement.AlterPinPassword(slotId, mmiData);
+        supplement.AlterPin2Password(slotId, mmiData);
+        supplement.UnlockPuk(slotId, mmiData);
+        supplement.UnlockPuk2(slotId, mmiData);
+        ASSERT_FALSE(supplement.IsVaildPinOrPuk("B", "B"));
+        EXPECT_NE(supplement.SendUssd(slotId, "test"), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallSupplement_0002
+ * @tc.name     Test for CellularCallSupplement
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0002, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CellularCallSupplement supplement;
+        supplement.ObtainBarringInstallation("33");
+        supplement.ObtainBarringInstallation("331");
+        supplement.ObtainBarringInstallation("332");
+        supplement.ObtainBarringInstallation("351");
+        supplement.ObtainBarringInstallation("35");
+        supplement.ObtainBarringInstallation("330");
+        supplement.ObtainBarringInstallation("333");
+        supplement.ObtainBarringInstallation("353");
+        supplement.ObtainBarringInstallation("1000");
+
+        EXPECT_NE(supplement.ObtainServiceCode("10"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("11"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("12"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("13"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("16"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("19"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("20"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("21"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("22"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("24"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("25"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainServiceCode("99"), TELEPHONY_SUCCESS);
+        EXPECT_EQ(supplement.ObtainServiceCode("100"), TELEPHONY_SUCCESS);
+
+        EXPECT_EQ(supplement.ObtainCause("21"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainCause("61"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainCause("62"), TELEPHONY_SUCCESS);
+        EXPECT_NE(supplement.ObtainCause("67"), TELEPHONY_SUCCESS);
+        EXPECT_EQ(supplement.ObtainCause("99"), TELEPHONY_ERROR);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallSupplement_0003
+ * @tc.name     Test for CellularCallSupplement
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0003, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CellularCallSupplement supplement;
+        std::string action = "*";
+        std::string number = "";
+        CallTransferSettingType type;
+        EXPECT_EQ(supplement.ObtainCallTrasferAction(action.c_str(), number, type), TELEPHONY_SUCCESS);
+        EXPECT_EQ(supplement.ObtainCallTrasferAction(action.c_str(), PHONE_NUMBER, type), TELEPHONY_SUCCESS);
+        action = "#";
+        EXPECT_EQ(supplement.ObtainCallTrasferAction(action.c_str(), number, type), TELEPHONY_SUCCESS);
+        action = "**";
+        EXPECT_EQ(supplement.ObtainCallTrasferAction(action.c_str(), number, type), TELEPHONY_SUCCESS);
+        action = "##";
+        EXPECT_EQ(supplement.ObtainCallTrasferAction(action.c_str(), number, type), TELEPHONY_SUCCESS);
+        action = "*#";
+        EXPECT_NE(supplement.ObtainCallTrasferAction(action.c_str(), number, type), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0001
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { runner, subscriberInfo };
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        handler.CellularCallIncomingStartTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
+        handler.CellularCallIncomingFinishTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
+        handler.GetCsCallsDataResponse(event);
+        handler.GetCsCallsDataRequest(event);
+        handler.GetMMIResponse(event);
+        auto ringbackResponse = std::make_shared<RingbackVoice>();
+        ringbackResponse->status = ERROR_RESULT;
+        auto ringbackEvent = AppExecFwk::InnerEvent::Get(0, ringbackResponse);
+        handler.CallRingBackVoiceResponse(event);
+        handler.CallRingBackVoiceResponse(ringbackEvent);
+        auto srvccStatus = std::make_shared<SrvccStatus>();
+        srvccStatus->status = SrvccState::SRVCC_NONE;
+        auto srvccEvent1 = AppExecFwk::InnerEvent::Get(0, srvccStatus);
+        handler.UpdateSrvccStateReport(event);
+        handler.UpdateSrvccStateReport(srvccEvent1);
+        srvccStatus->status = SrvccState::COMPLETED;
+        auto srvccEvent2 = AppExecFwk::InnerEvent::Get(0, srvccStatus);
+        handler.UpdateSrvccStateReport(srvccEvent2);
+        handler.UpdateRsrvccStateReport(event);
+        handler.GetCallFailReasonResponse(event);
+        handler.GetEmergencyCallListResponse(event);
+        handler.ReportEccChanged(event);
+        handler.SetEmergencyCallListResponse(event);
+        handler.SendUssdResponse(event);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0002
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { runner, subscriberInfo };
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        handler.CommonResultResponse(event);
+        auto rejectEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_REJECT_CALL, rilRadioResponse);
+        handler.CommonResultResponse(rejectEvent);
+        auto supplementEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_SUPPLEMENT, rilRadioResponse);
+        handler.CommonResultResponse(supplementEvent);
+
+        rilRadioResponse->error = HRilErrType::NONE;
+        auto hangupConnectEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_HANGUP_CONNECT, rilRadioResponse);
+        handler.CommonResultResponse(hangupConnectEvent);
+        auto acceptEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_ACCEPT_CALL, rilRadioResponse);
+        handler.CommonResultResponse(acceptEvent);
+        auto splitNoErrorEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SPLIT_CALL, rilRadioResponse);
+        handler.CommonResultResponse(splitNoErrorEvent);
+
+        auto ssResult = std::make_shared<SsBaseResult>();
+        ssResult->index = INVALID_INDEX;
+        ssResult->result = SUCCESS_RESULT;
+        auto errorEvent = AppExecFwk::InnerEvent::Get(0, ssResult);
+        handler.SetCallRestrictionResponse(event);
+        handler.SetCallRestrictionResponse(errorEvent);
+        handler.SetCallTransferInfoResponse(event);
+        handler.SetCallWaitingResponse(event);
+        handler.SetClipResponse(event);
+        handler.SetClirResponse(event);
+        handler.SetColpResponse(event);
+        handler.SetColrResponse(event);
+
+        auto responseEvent = AppExecFwk::InnerEvent::Get(0, rilRadioResponse);
+        handler.SetMuteResponse(event);
+        handler.SetMuteResponse(responseEvent);
+        handler.GetMuteResponse(event);
+        handler.GetMuteResponse(responseEvent);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0003
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { runner, subscriberInfo };
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        auto ussdNoticeResponse = std::make_shared<UssdNoticeInfo>();
+        ussdNoticeResponse->m = USSD_MODE_NOTIFY;
+        ussdNoticeResponse->str = "tdd test";
+        auto successEvent = AppExecFwk::InnerEvent::Get(0, ussdNoticeResponse);
+        handler.UssdNotifyResponse(event);
+        handler.UssdNotifyResponse(successEvent);
+        ussdNoticeResponse->str = "";
+        auto errorEvent = AppExecFwk::InnerEvent::Get(0, ussdNoticeResponse);
+        handler.UssdNotifyResponse(errorEvent);
+
+        auto ssNoticeResponse = std::make_shared<SsNoticeInfo>();
+        ssNoticeResponse->result = ERROR_RESULT;
+        auto defaultEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(event);
+        handler.SsNotifyResponse(defaultEvent);
+        ssNoticeResponse->requestType = SUCCESS_RESULT;
+        auto noticeErrorEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeErrorEvent);
+        ssNoticeResponse->result = SUCCESS_RESULT;
+        auto noticeDefaultEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeDefaultEvent);
+        ssNoticeResponse->serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
+        auto noticeUnconditinalEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeUnconditinalEvent);
+        ssNoticeResponse->serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_BUSY);
+        auto noticeBusyEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeBusyEvent);
+        ssNoticeResponse->serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
+        auto noticeNoReplyEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeNoReplyEvent);
+        ssNoticeResponse->serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
+        auto noticeNotReachableEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);
+        handler.SsNotifyResponse(noticeNotReachableEvent);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
+    }
 }
 
 /**

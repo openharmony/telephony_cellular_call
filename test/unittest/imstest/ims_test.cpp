@@ -17,9 +17,13 @@
 
 #define private public
 #define protected public
+#include "cellular_call_config.h"
+#include "cellular_call_handler.h"
 #include "cellular_call_register.h"
 #include "hril_call_parcel.h"
+#include "ims_call_callback_stub.h"
 #include "ims_control.h"
+#include "ims_error.h"
 #include "securec.h"
 
 namespace OHOS {
@@ -27,6 +31,7 @@ namespace Telephony {
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
+const int32_t INVALID_SLOTID = -1;
 const int32_t INVALID_HANG_UP_TYPE = -1;
 const int32_t RESULT = 1;
 const std::string PHONE_NUMBER = "0000000";
@@ -34,6 +39,7 @@ const std::string PHONE_NUMBER_SECOND = "1111111";
 const std::string PHONE_NUMBER_THIRD = "2222222";
 const std::string PHONE_NUMBER_FOUR = "3333333";
 const int32_t CELLULAR_CALL_SUCCESS = 0;
+const int32_t DEFAULT_INDEX = 1;
 
 void ImsTest::SetUpTestCase(void)
 {
@@ -1156,6 +1162,577 @@ HWTEST_F(ImsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest
     callRegister->ReportGetImsFeatureResult(imsFeatureValueResponse);
     callRegister->ReportSetImsFeatureResult(RESULT);
     callRegister->ReportUpdateCallMediaModeResult(RESULT);
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallConfig_0001
+ * @tc.name     Test for CellularCallConfig
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CellularCallConfig config;
+        ASSERT_TRUE(config.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
+        ASSERT_TRUE(config.GetImsSwitchOnByDefaultConfig(slotId));
+        ASSERT_FALSE(config.GethideImsSwitchConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GethideImsSwitchConfig(slotId));
+        ASSERT_FALSE(config.GetvolteSupportedConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetvolteSupportedConfig(slotId));
+        config.GetNrModeSupportedListConfig(INVALID_SLOTID);
+        config.GetNrModeSupportedListConfig(slotId);
+        ASSERT_FALSE(config.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetVolteProvisioningSupportedConfig(slotId));
+        ASSERT_FALSE(config.GetSsOverUtSupportedConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetSsOverUtSupportedConfig(slotId));
+        ASSERT_FALSE(config.GetImsGbaRequiredConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetImsGbaRequiredConfig(slotId));
+        ASSERT_FALSE(config.GetUtProvisioningSupportedConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetUtProvisioningSupportedConfig(slotId));
+        ASSERT_TRUE(config.GetImsPreferForEmergencyConfig(INVALID_SLOTID));
+        ASSERT_TRUE(config.GetImsPreferForEmergencyConfig(slotId));
+        config.GetCallWaitingServiceClassConfig(INVALID_SLOTID);
+        config.GetCallWaitingServiceClassConfig(slotId);
+        config.GetImsCallDisconnectResoninfoMappingConfig(INVALID_SLOTID);
+        config.GetImsCallDisconnectResoninfoMappingConfig(slotId);
+        ASSERT_FALSE(config.GetForceVolteSwitchOnConfig(INVALID_SLOTID));
+        ASSERT_FALSE(config.GetForceVolteSwitchOnConfig(slotId));
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0001
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("ims_test");
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { runner, subscriberInfo };
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        handler.GetImsCallsDataResponse(event);
+        handler.GetImsCallsDataRequest(event);
+        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        auto responseEvent = AppExecFwk::InnerEvent::Get(0, rilRadioResponse);
+        handler.SetDomainPreferenceModeResponse(responseEvent);
+        handler.GetDomainPreferenceModeResponse(event);
+        handler.SetDomainPreferenceModeResponse(event);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0001
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        HRilRadioResponseInfo rilRadioResponse;
+        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        MessageParcel answerData;
+        MessageParcel answerReply;
+        ASSERT_TRUE(answerData.WriteInt32(slotId));
+        ASSERT_TRUE(answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnAnswerResponseInner(answerData, answerReply), TELEPHONY_SUCCESS);
+
+        MessageParcel dialData;
+        MessageParcel dialReply;
+        ASSERT_TRUE(dialData.WriteInt32(slotId));
+        ASSERT_TRUE(dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnDialResponseInner(dialData, dialReply), TELEPHONY_SUCCESS);
+
+        MessageParcel imsCallsData;
+        MessageParcel imsCallsReply;
+        ASSERT_TRUE(imsCallsData.WriteInt32(slotId));
+        ASSERT_TRUE(imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply), TELEPHONY_SUCCESS);
+
+        MessageParcel hangupData;
+        MessageParcel hangupReply;
+        ASSERT_TRUE(hangupData.WriteInt32(slotId));
+        ASSERT_TRUE(hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnHangUpResponseInner(hangupData, hangupReply), TELEPHONY_SUCCESS);
+
+        MessageParcel holdCallData;
+        MessageParcel holdCallReply;
+        ASSERT_TRUE(holdCallData.WriteInt32(slotId));
+        ASSERT_TRUE(holdCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnHoldCallResponseInner(holdCallData, holdCallReply), TELEPHONY_SUCCESS);
+
+        MessageParcel rejectData;
+        MessageParcel rejectReply;
+        ASSERT_TRUE(rejectData.WriteInt32(slotId));
+        ASSERT_TRUE(rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnRejectResponseInner(rejectData, rejectReply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0002
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        HRilRadioResponseInfo rilRadioResponse;
+        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        MessageParcel sendDtmfData;
+        MessageParcel sendDtmfReply;
+        ASSERT_TRUE(sendDtmfData.WriteInt32(slotId));
+        ASSERT_TRUE(sendDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnSendDtmfResponseInner(sendDtmfData, sendDtmfReply), TELEPHONY_SUCCESS);
+
+        MessageParcel setImsSwitchData;
+        MessageParcel setImsSwitchReply;
+        ASSERT_TRUE(setImsSwitchData.WriteInt32(slotId));
+        ASSERT_TRUE(setImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnSetImsSwitchResponseInner(setImsSwitchData, setImsSwitchReply), TELEPHONY_SUCCESS);
+
+        MessageParcel startDtmfData;
+        MessageParcel startDtmfReply;
+        ASSERT_TRUE(startDtmfData.WriteInt32(slotId));
+        ASSERT_TRUE(startDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnStartDtmfResponseInner(startDtmfData, startDtmfReply), TELEPHONY_SUCCESS);
+
+        MessageParcel stopDtmfData;
+        MessageParcel stopDtmfReply;
+        ASSERT_TRUE(stopDtmfData.WriteInt32(slotId));
+        ASSERT_TRUE(stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnStopDtmfResponseInner(stopDtmfData, stopDtmfReply), TELEPHONY_SUCCESS);
+
+        MessageParcel switchCallData;
+        MessageParcel switchCallReply;
+        ASSERT_TRUE(switchCallData.WriteInt32(slotId));
+        ASSERT_TRUE(switchCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnSwitchCallResponseInner(switchCallData, switchCallReply), TELEPHONY_SUCCESS);
+
+        MessageParcel unholdData;
+        MessageParcel unholdReply;
+        ASSERT_TRUE(unholdData.WriteInt32(slotId));
+        ASSERT_TRUE(unholdData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnUnHoldCallResponseInner(unholdData, unholdReply), TELEPHONY_SUCCESS);
+
+        MessageParcel getImsSwitchData;
+        MessageParcel getImsSwitchReply;
+        ASSERT_TRUE(getImsSwitchData.WriteInt32(slotId));
+        ASSERT_TRUE(getImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_EQ(stub->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0003
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        MessageParcel data;
+        MessageParcel reply;
+        ASSERT_TRUE(data.WriteInt32(slotId));
+        ASSERT_NE(stub->OnAnswerResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnCallRingBackReportInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnDialResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetCallRestrictionResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetCallTransferResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetCallWaitingResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetClipResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetClirResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetColrResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnGetImsCallsDataResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnHangUpResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnHoldCallResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnRejectResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSendDtmfResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetImsSwitchResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnStartDtmfResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnStopDtmfResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSwitchCallResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnUnHoldCallResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetCallRestrictionResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetCallTransferResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetCallWaitingResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetClipResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetClirResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetColrResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnSetMuteResponseInner(data, reply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0004
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0004, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        SsBaseResult normalResult;
+        normalResult.index = DEFAULT_INDEX;
+        MessageParcel crData;
+        MessageParcel crReply;
+        ASSERT_TRUE(crData.WriteInt32(slotId));
+        ASSERT_TRUE(crData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
+        MessageParcel ctData;
+        MessageParcel ctReply;
+        ASSERT_TRUE(ctData.WriteInt32(slotId));
+        ASSERT_TRUE(ctData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
+        MessageParcel cwData;
+        MessageParcel cwReply;
+        ASSERT_TRUE(cwData.WriteInt32(slotId));
+        ASSERT_TRUE(cwData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
+        MessageParcel clipData;
+        MessageParcel clipReply;
+        ASSERT_TRUE(clipData.WriteInt32(slotId));
+        ASSERT_TRUE(clipData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
+        MessageParcel clirData;
+        MessageParcel clirReply;
+        ASSERT_TRUE(clirData.WriteInt32(slotId));
+        ASSERT_TRUE(clirData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
+        MessageParcel colpData;
+        MessageParcel colpReply;
+        ASSERT_TRUE(colpData.WriteInt32(slotId));
+        ASSERT_TRUE(colpData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
+        MessageParcel colrData;
+        MessageParcel colrReply;
+        ASSERT_TRUE(colrData.WriteInt32(slotId));
+        ASSERT_TRUE(colrData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0005
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0005, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        SsBaseResult normalResult;
+        normalResult.index = INVALID_INDEX;
+        MessageParcel crData;
+        MessageParcel crReply;
+        ASSERT_TRUE(crData.WriteInt32(slotId));
+        ASSERT_TRUE(crData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
+        MessageParcel ctData;
+        MessageParcel ctReply;
+        ASSERT_TRUE(ctData.WriteInt32(slotId));
+        ASSERT_TRUE(ctData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
+        MessageParcel cwData;
+        MessageParcel cwReply;
+        ASSERT_TRUE(cwData.WriteInt32(slotId));
+        ASSERT_TRUE(cwData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
+        MessageParcel clipData;
+        MessageParcel clipReply;
+        ASSERT_TRUE(clipData.WriteInt32(slotId));
+        ASSERT_TRUE(clipData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
+        MessageParcel clirData;
+        MessageParcel clirReply;
+        ASSERT_TRUE(clirData.WriteInt32(slotId));
+        ASSERT_TRUE(clirData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
+        MessageParcel colpData;
+        MessageParcel colpReply;
+        ASSERT_TRUE(colpData.WriteInt32(slotId));
+        ASSERT_TRUE(colpData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
+        MessageParcel colrData;
+        MessageParcel colrReply;
+        ASSERT_TRUE(colrData.WriteInt32(slotId));
+        ASSERT_TRUE(colrData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(stub->OnSetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0006
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0006, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        SsBaseResult normalResult;
+        normalResult.index = DEFAULT_INDEX;
+        normalResult.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->SetCallRestrictionResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->SetCallTransferResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->SetCallWaitingResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->SetClirResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        MessageParcel muteData;
+        MessageParcel muteReply;
+        MuteControlResponse muteResponse;
+        ASSERT_TRUE(muteData.WriteInt32(slotId));
+        ASSERT_TRUE(muteData.WriteRawData((const void *)&muteResponse, sizeof(MuteControlResponse)));
+        ASSERT_EQ(stub->OnSetMuteResponseInner(muteData, muteReply), TELEPHONY_SUCCESS);
+        MessageParcel ringData;
+        MessageParcel ringReply;
+        RingbackVoice ringback;
+        ASSERT_TRUE(ringData.WriteInt32(slotId));
+        ASSERT_TRUE(ringData.WriteRawData((const void *)&ringback, sizeof(RingbackVoice)));
+        ASSERT_EQ(stub->OnCallRingBackReportInner(ringData, ringReply), TELEPHONY_SUCCESS);
+        MessageParcel failData;
+        MessageParcel failReply;
+        DisconnectedDetails details;
+        ASSERT_TRUE(failData.WriteInt32(slotId));
+        ASSERT_TRUE(failData.WriteRawData((const void *)&details, sizeof(DisconnectedDetails)));
+        ASSERT_EQ(stub->OnLastCallFailReasonResponseInner(failData, failReply), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0007
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CallRestrictionResult crResult;
+        crResult.result.index = INVALID_INDEX;
+        MessageParcel crErrorData;
+        MessageParcel crErrorReply;
+        ASSERT_TRUE(crErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(crErrorData.WriteRawData((const void *)&crResult, sizeof(CallRestrictionResult)));
+        ASSERT_EQ(stub->OnGetCallRestrictionResponseInner(crErrorData, crErrorReply), TELEPHONY_SUCCESS);
+
+        crResult.result.index = DEFAULT_INDEX;
+        MessageParcel crData;
+        MessageParcel crReply;
+        ASSERT_TRUE(crData.WriteInt32(slotId));
+        ASSERT_TRUE(crData.WriteRawData((const void *)&crResult, sizeof(CallRestrictionResult)));
+        ASSERT_EQ(stub->OnGetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
+        crResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->GetCallRestrictionResponse(slotId, crResult), TELEPHONY_SUCCESS);
+
+        CallForwardQueryInfoList callList;
+        callList.result.index = INVALID_INDEX;
+        MessageParcel ctErrorData;
+        MessageParcel ctErrorReply;
+        ASSERT_TRUE(ctErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(ctErrorData.WriteRawData((const void *)&callList, sizeof(CallForwardQueryInfoList)));
+        ASSERT_EQ(stub->OnGetCallTransferResponseInner(ctErrorData, ctErrorReply), TELEPHONY_SUCCESS);
+
+        callList.result.index = DEFAULT_INDEX;
+        MessageParcel ctData;
+        MessageParcel ctReply;
+        ASSERT_TRUE(ctData.WriteInt32(slotId));
+        ASSERT_TRUE(ctData.WriteRawData((const void *)&callList, sizeof(CallForwardQueryInfoList)));
+        ASSERT_EQ(stub->OnGetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
+        callList.result.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->GetCallTransferResponse(slotId, callList), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0008
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        CallWaitResult cwResult;
+        cwResult.result.index = INVALID_INDEX;
+        MessageParcel cwErrorData;
+        MessageParcel cwErrorReply;
+        ASSERT_TRUE(cwErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(cwErrorData.WriteRawData((const void *)&cwResult, sizeof(CallWaitResult)));
+        ASSERT_EQ(stub->OnGetCallWaitingResponseInner(cwErrorData, cwErrorReply), TELEPHONY_SUCCESS);
+
+        cwResult.result.index = DEFAULT_INDEX;
+        MessageParcel cwData;
+        MessageParcel cwReply;
+        ASSERT_TRUE(cwData.WriteInt32(slotId));
+        ASSERT_TRUE(cwData.WriteRawData((const void *)&cwResult, sizeof(CallWaitResult)));
+        ASSERT_EQ(stub->OnGetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
+        cwResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->GetCallWaitingResponse(slotId, cwResult), TELEPHONY_SUCCESS);
+
+        GetClipResult clipResult;
+        clipResult.result.index = INVALID_INDEX;
+        MessageParcel clipErrorData;
+        MessageParcel clipErrorReply;
+        ASSERT_TRUE(clipErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(clipErrorData.WriteRawData((const void *)&clipResult, sizeof(GetClipResult)));
+        ASSERT_EQ(stub->OnGetClipResponseInner(clipErrorData, clipErrorReply), TELEPHONY_SUCCESS);
+
+        clipResult.result.index = DEFAULT_INDEX;
+        MessageParcel clipData;
+        MessageParcel clipReply;
+        ASSERT_TRUE(clipData.WriteInt32(slotId));
+        ASSERT_TRUE(clipData.WriteRawData((const void *)&clipResult, sizeof(GetClipResult)));
+        ASSERT_EQ(stub->OnGetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
+        clipResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0009
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
+        GetClirResult clirResult;
+        clirResult.result.index = INVALID_INDEX;
+        MessageParcel clirErrorData;
+        MessageParcel clirErrorReply;
+        ASSERT_TRUE(clirErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(clirErrorData.WriteRawData((const void *)&clirResult, sizeof(GetClirResult)));
+        ASSERT_EQ(stub->OnGetClirResponseInner(clirErrorData, clirErrorReply), TELEPHONY_SUCCESS);
+
+        clirResult.result.index = DEFAULT_INDEX;
+        MessageParcel clirData;
+        MessageParcel clirReply;
+        ASSERT_TRUE(clirData.WriteInt32(slotId));
+        ASSERT_TRUE(clirData.WriteRawData((const void *)&clirResult, sizeof(GetClirResult)));
+        ASSERT_EQ(stub->OnGetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
+        clirResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
+        ASSERT_NE(stub->GetClirResponse(slotId, clirResult), TELEPHONY_SUCCESS);
+
+        GetColpResult colpResult;
+        colpResult.result.index = INVALID_INDEX;
+        MessageParcel colpErrorData;
+        MessageParcel colpErrorReply;
+        ASSERT_TRUE(colpErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(colpErrorData.WriteRawData((const void *)&colpResult, sizeof(GetColpResult)));
+        ASSERT_EQ(stub->OnGetColpResponseInner(colpErrorData, colpErrorReply), TELEPHONY_SUCCESS);
+
+        colpResult.result.index = DEFAULT_INDEX;
+        MessageParcel colpData;
+        MessageParcel colpReply;
+        ASSERT_TRUE(colpData.WriteInt32(slotId));
+        ASSERT_TRUE(colpData.WriteRawData((const void *)&colpResult, sizeof(GetColpResult)));
+        ASSERT_EQ(stub->OnGetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
+
+        GetColrResult colrResult;
+        colrResult.result.index = INVALID_INDEX;
+        MessageParcel colrErrorData;
+        MessageParcel colrErrorReply;
+        ASSERT_TRUE(colrErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(colrErrorData.WriteRawData((const void *)&colrResult, sizeof(GetColrResult)));
+        ASSERT_EQ(stub->OnGetColrResponseInner(colrErrorData, colrErrorReply), TELEPHONY_SUCCESS);
+
+        colrResult.result.index = DEFAULT_INDEX;
+        MessageParcel colrData;
+        MessageParcel colrReply;
+        ASSERT_TRUE(colrData.WriteInt32(slotId));
+        ASSERT_TRUE(colrData.WriteRawData((const void *)&colrResult, sizeof(GetColrResult)));
+        ASSERT_EQ(stub->OnGetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
+    }
 }
 } // namespace Telephony
 } // namespace OHOS
