@@ -1152,12 +1152,12 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
         return TELEPHONY_ERROR;
     }
     auto itor = utCommandMap_.find(index);
-    if (itor != utCommandMap_.end()) {
-        flag = itor->second->flag;
-        utCommandMap_.erase(index);
-    } else {
-        TELEPHONY_LOGE("[slot%{public}d] the index in utCommandMap_ haven't been found", slotId_);
+    if (itor == utCommandMap_.end()) {
+        TELEPHONY_LOGE("[slot%{public}d] the index(%{public}d) in utCommandMap_ haven't been found", slotId_, index);
+        return TELEPHONY_ERROR;
     }
+    flag = itor->second->flag;
+    utCommandMap_.erase(index);
     return TELEPHONY_SUCCESS;
 }
 
