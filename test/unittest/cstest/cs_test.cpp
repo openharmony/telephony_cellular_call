@@ -286,8 +286,9 @@ int32_t CsTest::IsEmergencyPhoneNumber(const sptr<CellularCallInterface> &teleph
     std::cout << "input slotId: ";
     int32_t slotId = 0;
     std::cin >> slotId;
-    int32_t errorCode = 0;
-    return telephonyService->IsEmergencyPhoneNumber(slotId, phoneNum, errorCode);
+    bool enabled = false;
+    telephonyService->IsEmergencyPhoneNumber(slotId, phoneNum, enabled);
+    return enabled;
 }
 
 int32_t CsTest::CombineConference(const sptr<CellularCallInterface> &telephonyService) const
@@ -618,23 +619,35 @@ void CsTest::JudgeIsEmergencyPhoneNumber()
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
-    int32_t errorCode = 0;
+    bool enabled = false;
     int32_t successCode = 1;
     if (HasSimCard(SIM1_SLOTID)) {
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "499", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "443", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "356", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "975", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "783", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "350", errorCode), successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "499", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "443", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "356", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "975", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "783", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "350", enabled);
+        EXPECT_EQ(enabled, successCode);
     }
     if (HasSimCard(SIM2_SLOTID)) {
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "499", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "443", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "356", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "975", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "783", errorCode), successCode);
-        EXPECT_EQ(telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "350", errorCode), successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "499", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "443", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "356", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "975", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "783", enabled);
+        EXPECT_EQ(enabled, successCode);
+        telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "350", enabled);
+        EXPECT_EQ(enabled, successCode);
     }
 }
 
@@ -772,8 +785,8 @@ HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function 
         DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM1_SLOTID, opc);
         if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
             for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
-                int32_t errorCode = 0;
-                telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, number, errorCode);
+                bool enabled = false;
+                int32_t errorCode = telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, number, enabled);
                 EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
             }
         }
@@ -782,8 +795,8 @@ HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function 
         DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM2_SLOTID, opc);
         if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
             for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
-                int32_t errorCode = 0;
-                telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, number, errorCode);
+                bool enabled = false;
+                int32_t errorCode = telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, number, enabled);
                 EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
             }
         }

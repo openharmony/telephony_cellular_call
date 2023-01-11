@@ -880,6 +880,9 @@ void CellularCallHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::P
         return;
     }
     CellularCallSupplement supplement;
+    if (result->result != TELEPHONY_SUCCESS) {
+        result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
     supplement.EventSetCallWaiting(result->result, result->message, flag);
 }
 
@@ -1040,6 +1043,9 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
         return;
     }
     CellularCallSupplement supplement;
+    if (result->result != TELEPHONY_SUCCESS) {
+        result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
     supplement.EventSetCallTransferInfo(result->result, result->message, flag);
 }
 
@@ -1072,6 +1078,9 @@ void CellularCallHandler::SetCallRestrictionResponse(const AppExecFwk::InnerEven
         return;
     }
     CellularCallSupplement supplement;
+    if (result->result != TELEPHONY_SUCCESS) {
+        result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
     supplement.EventSetCallRestriction(result->result, result->message, flag);
 }
 
