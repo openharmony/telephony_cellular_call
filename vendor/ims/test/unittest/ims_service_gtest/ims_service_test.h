@@ -34,6 +34,7 @@ public:
     void TearDown();
 
     static void Init();
+    bool HasSimCard(int32_t slotId);
 
     static sptr<ImsCallInterface> imsCallPtr_;
     static sptr<ImsSmsInterface> imsSmsPtr_;
