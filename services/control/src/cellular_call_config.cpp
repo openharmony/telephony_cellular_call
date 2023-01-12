@@ -30,6 +30,7 @@ const int32_t SIM_PRESENT = 1;
 const int32_t SIM_ABSENT = 0;
 const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
 const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
+const int32_t IMS_SWITCH_VALUE_UNKNOWN = -1;
 const int32_t IMS_SWITCH_STATUS_OFF = 0;
 const int32_t IMS_SWITCH_STATUS_ON = 1;
 const int32_t SAVE_IMS_SWITCH_FAILED = 0;
@@ -293,11 +294,12 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
 void CellularCallConfig::UpdateImsVoiceCapabilities(
     int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
 {
+    bool imsSwitch = false;
+    GetImsSwitchStatus(slotId, imsSwitch);
     ImsCapability volteCapability;
     volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
-    volteCapability.enable =
-        volteSupported_[slotId] && isGbaValid && GetSwitchStatus(slotId) && IsVolteProvisioned(slotId);
+    volteCapability.enable = volteSupported_[slotId] && isGbaValid && imsSwitch && IsVolteProvisioned(slotId);
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
 
     ImsCapability vonrCapability;
@@ -452,11 +454,11 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
 {
     TELEPHONY_LOGI("CellularCallConfig::GetSwitchStatus entry, slotId: %{public}d", slotId);
-    int32_t imsSwitchStatus;
+    int32_t imsSwitchStatus = IMS_SWITCH_VALUE_UNKNOWN;
     int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
-    if (ret != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("get ims switch failed");
-        return imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
+    if (ret != TELEPHONY_SUCCESS || imsSwitchStatus == IMS_SWITCH_VALUE_UNKNOWN) {
+        TELEPHONY_LOGW("get ims switch failed, return default ims switch in operator config");
+        imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
     }
     TELEPHONY_LOGI("imsSwitchStatus : %{public}d", imsSwitchStatus);
     return imsSwitchStatus;
