@@ -49,7 +49,9 @@ std::string ModuleServiceUtils::GetIsoCountryCode(int32_t slotId)
 
 std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
 {
-    return Str16ToStr8(CoreManagerInner::GetInstance().GetIsoCountryCodeForNetwork(slotId));
+    std::u16string countryCode;
+    CoreManagerInner::GetInstance().GetIsoCountryCodeForNetwork(slotId, countryCode);
+    return Str16ToStr8(countryCode);
 }
 
 bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
