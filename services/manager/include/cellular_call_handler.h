@@ -195,6 +195,15 @@ private:
      * @param AppExecFwk::InnerEvent::Pointer
      */
     void RadioStateChangeProcess(const AppExecFwk::InnerEvent::Pointer &event);
+
+    /**
+     * If get radio state on, get call manager service
+     *
+     * @param AppExecFwk::InnerEvent::Pointer
+     */
+    void GetRadioStateProcess(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void StartCallManagerService();
 #endif
 
 private:

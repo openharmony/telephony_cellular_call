@@ -216,6 +216,7 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
+            CoreManagerInner::GetInstance().GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
 #endif
         }
         CellularCallConfig config;
