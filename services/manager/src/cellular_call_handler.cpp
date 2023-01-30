@@ -20,6 +20,7 @@
 #include "cellular_call_service.h"
 #include "hitrace_meter.h"
 #include "hril_call_parcel.h"
+#include "hril_types.h"
 #include "ims_call_client.h"
 #include "operator_config_types.h"
 #include "radio_event.h"
@@ -121,6 +122,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
     requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
 #endif
 }
@@ -1195,6 +1197,16 @@ int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand
 }
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+void CellularCallHandler::StartCallManagerService()
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
+        return;
+    }
+    serviceInstance->StartCallManagerService();
+}
+
 void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::Pointer &event)
 {
     std::shared_ptr<HRilInt32Parcel> object = event->GetSharedObject<HRilInt32Parcel>();
@@ -1204,12 +1216,20 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
     }
     TELEPHONY_LOGI("[slot%{public}d] Radio changed with state: %{public}d", slotId_, object->data);
     if (object->data == CORE_SERVICE_POWER_ON) {
-        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-        if (serviceInstance == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-            return;
-        }
-        serviceInstance->StartCallManagerService();
+        StartCallManagerService();
+    }
+}
+
+void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto object = event->GetUniqueObject<HRilRadioStateInfo>();
+    if (object == nullptr) {
+        TELEPHONY_LOGE("object is null");
+        return;
+    }
+    TELEPHONY_LOGI("GetRadioStateProcess [slot%{public}d], state=%{public}d", slotId_, object->state);
+    if (object->state == CORE_SERVICE_POWER_ON) {
+        StartCallManagerService();
     }
 }
 #endif
