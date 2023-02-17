@@ -39,9 +39,10 @@ public:
      *
      * @param slotId
      * @param phoneNum
-     * @return bool
+     * @param enabled
+     * @return int32_t
      */
-    bool IsEmergencyCall(int32_t slotId, const std::string &phoneNum);
+    int32_t IsEmergencyCall(int32_t slotId, const std::string &phoneNum, bool &enabled);
 
 private:
     /**
@@ -49,9 +50,10 @@ private:
      *
      * @param slotId
      * @param formatString
-     * @return bool
+     * @param enabled
+     * @return int32_t
      */
-    bool IsEmergencyCallProcessing(int32_t slotId, const std::string &formatString);
+    int32_t IsEmergencyCallProcessing(int32_t slotId, const std::string &formatString, bool &enabled);
 };
 } // namespace Telephony
 } // namespace OHOS

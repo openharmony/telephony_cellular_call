@@ -19,6 +19,7 @@
 #include "cellular_call_service.h"
 #include "securec.h"
 #include "standardize_utils.h"
+#include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
@@ -342,9 +343,13 @@ void CellularCallSupplement::EventSetCallWaiting(HRilRadioResponseInfo &response
         TELEPHONY_LOGE("EventSetCallWaiting return, GetInstance is nullptr.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult((int32_t)responseInfo.error);
+    int32_t result = static_cast<int32_t>(responseInfo.error);
+    if (result != TELEPHONY_SUCCESS) {
+        result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetWaitingResult(result);
 
-    ReportMmiCodeMessage((int32_t)(responseInfo.error), SET_CALL_WAITING_SUCCESS, SET_CALL_WAITING_FAILED);
+    ReportMmiCodeMessage(result, SET_CALL_WAITING_SUCCESS, SET_CALL_WAITING_FAILED);
 }
 
 void CellularCallSupplement::EventGetCallTransferInfo(CallForwardQueryInfoList &cFQueryList)
@@ -414,9 +419,13 @@ void CellularCallSupplement::EventSetCallTransferInfo(HRilRadioResponseInfo &res
         TELEPHONY_LOGE("EventSetCallTransferInfo return, GetInstance is nullptr.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetTransferResult((int32_t)responseInfo.error);
+    int32_t result = static_cast<int32_t>(responseInfo.error);
+    if (result != TELEPHONY_SUCCESS) {
+        result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetTransferResult(result);
 
-    ReportMmiCodeMessage((int32_t)(responseInfo.error), SET_CALL_TRANSFER_SUCCESS, SET_CALL_TRANSFER_FAILED);
+    ReportMmiCodeMessage(result, SET_CALL_TRANSFER_SUCCESS, SET_CALL_TRANSFER_FAILED);
 }
 
 void CellularCallSupplement::EventGetCallRestriction(const CallRestrictionResult &result)
@@ -445,9 +454,13 @@ void CellularCallSupplement::EventSetCallRestriction(HRilRadioResponseInfo &info
         TELEPHONY_LOGE("EventSetCallRestriction return, GetInstance is nullptr.");
         return;
     }
-    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult((int32_t)info.error);
+    int32_t result = static_cast<int32_t>(info.error);
+    if (result != TELEPHONY_SUCCESS) {
+        result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSetRestrictionResult(result);
 
-    ReportMmiCodeMessage((int32_t)(info.error), SET_CALL_RESTRICTION_SUCCESS, SET_CALL_RESTRICTION_FAILED);
+    ReportMmiCodeMessage(result, SET_CALL_RESTRICTION_SUCCESS, SET_CALL_RESTRICTION_FAILED);
 }
 
 int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cfInfo)
@@ -457,8 +470,8 @@ int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTr
         return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
     }
     if (strlen(cfInfo.transferNum) == 0) {
-        TELEPHONY_LOGE("SetCallTransferInfo return, transferNum is empty!");
-        return CALL_ERR_PHONE_NUMBER_EMPTY;
+        TELEPHONY_LOGE("transferNum is empty!");
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
 
     /*

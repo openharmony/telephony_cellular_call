@@ -119,7 +119,6 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
         }
         TELEPHONY_LOGI("ExecuteMmiCode, default case, need check serviceCode.");
     }
-
     if (!mmiData_.fullString.empty()) {
         TELEPHONY_LOGI("ExecuteMmiCode, fullString is not empty.");
         supplement.SendUssd(slotId, mmiData_.fullString);

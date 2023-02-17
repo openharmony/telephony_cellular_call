@@ -112,28 +112,32 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     TELEPHONY_LOGI(
         "CellularCallConfig::SetImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
-    if (!volteSupported_[slotId] || (active && !IsVolteProvisioned(slotId))) {
-        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled or volte is not supported.");
-        return TELEPHONY_ERROR;
+    if (!volteSupported_[slotId]) {
+        TELEPHONY_LOGE("Enable ims switch failed due to volte is not supported.");
+        return CALL_ERR_VOLTE_NOT_SUPPORT;
+    }
+    if (active && !IsVolteProvisioned(slotId)) {
+        TELEPHONY_LOGE("Enable ims switch failed due to volte provisioning disabled.");
+        return CALL_ERR_VOLTE_PROVISIONING_DISABLED;
     }
     int32_t simId = CoreManagerInner::GetInstance().GetSimId(slotId);
     if (simId <= INVALID_SIM_ID) {
         TELEPHONY_LOGE("failed due to invalid sim id %{public}d", simId);
-        return TELEPHONY_ERROR;
+        return TELEPHONY_ERR_SLOTID_INVALID;
     }
 
     active = ChangeImsSwitchWithOperatorConfig(slotId, active);
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(active));
     if (ret == SAVE_IMS_SWITCH_FAILED) {
-        return TELEPHONY_ERROR;
+        return TELEPHONY_ERR_DATABASE_WRITE_FAIL;
     } else if (ret == SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED) {
         return TELEPHONY_SUCCESS;
     }
 
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
-    if (simState == static_cast<int32_t>(SimState::SIM_STATE_LOADED)
-            || simState == static_cast<int32_t>(SimState::SIM_STATE_READY)) {
+    if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
         UpdateImsCapabilities(slotId, !active);
     }
     return TELEPHONY_SUCCESS;
@@ -172,15 +176,16 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 }
 
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 {
     OperatorConfig operatorConfig;
-    bool ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
-    if (!ret) {
+    int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
+    if (ret != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("failed due to get operator config");
         return;
     }
@@ -239,11 +244,14 @@ void CellularCallConfig::ParseBoolOperatorConfigs(
 
 void CellularCallConfig::ResetImsSwitch(int32_t slotId)
 {
-    if (!CoreManagerInner::GetInstance().HasSimCard(slotId)) {
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
         TELEPHONY_LOGE("return due to no sim card");
         return;
     }
-    std::u16string iccId = CoreManagerInner::GetInstance().GetSimIccId(slotId);
+    std::u16string iccId;
+    CoreManagerInner::GetInstance().GetSimIccId(slotId, iccId);
     if (IsSimChanged(slotId, Str16ToStr8(iccId)) && forceVolteSwitchOn_[slotId]) {
         int32_t ret = CoreManagerInner::GetInstance().SaveImsSwitch(
             slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
@@ -544,7 +552,7 @@ void CellularCallConfig::InitModeActive()
 
 EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number)
 {
-    EmergencyCall  emergencyCall;
+    EmergencyCall emergencyCall;
     emergencyCall.eccNum = number;
     emergencyCall.eccType = EccType::TYPE_CATEGORY;
     emergencyCall.simpresent = SimpresentType::TYPE_HAS_CARD;
@@ -589,7 +597,9 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId_)
     }
     TELEPHONY_LOGI("MergeEccCallList merge config slotId  %{public}d size  %{public}zu", slotId_,
         eccListConfigMap_[slotId_].size());
-    if (CoreManagerInner::GetInstance().GetSimState(slotId_) != static_cast<int32_t>(SimState::SIM_STATE_NOT_PRESENT)) {
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId_, simState);
+    if (simState != SimState::SIM_STATE_NOT_PRESENT) {
         std::string mcc = GetMcc(slotId_);
         if (mcc.empty()) {
             TELEPHONY_LOGE("MergeEccCallList  countryCode is null");
@@ -621,7 +631,9 @@ void CellularCallConfig::UniqueEccCallList(int32_t slotId_)
 
 std::string CellularCallConfig::GetMcc(int32_t slotId_)
 {
-    std::string imsi = Str16ToStr8(CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_));
+    std::u16string operatorNumeric;
+    CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId_, operatorNumeric);
+    std::string imsi = Str16ToStr8(operatorNumeric);
     int len = static_cast<int>(imsi.length());
     std::string mcc = imsi;
     if (len >= MCC_LEN) {
@@ -678,11 +690,12 @@ int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, const std::vect
 
 bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
 {
-    int32_t simState = CoreManagerInner::GetInstance().GetSimState(slotId);
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     int32_t simStateForEcc;
     switch (simState) {
-        case static_cast<int32_t>(SimState::SIM_STATE_READY):
-        case static_cast<int32_t>(SimState::SIM_STATE_LOADED): {
+        case SimState::SIM_STATE_READY:
+        case SimState::SIM_STATE_LOADED: {
             simStateForEcc = SIM_PRESENT;
             break;
         }
@@ -712,7 +725,7 @@ std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
     TELEPHONY_LOGI("GetEccCallList  start %{publiic}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
-    TELEPHONY_LOGI("GetEccCallList  size %{publiic}zu",  allEccList_[slotId].size());
+    TELEPHONY_LOGI("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
         TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }

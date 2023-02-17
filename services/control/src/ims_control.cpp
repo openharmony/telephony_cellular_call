@@ -84,8 +84,9 @@ int32_t IMSControl::EncapsulateDial(
 
     ImsDialInfoStruct dialInfo;
     dialInfo.videoState = videoState;
+    dialInfo.bEmergencyCall = false;
     EmergencyUtils emergencyUtils;
-    dialInfo.bEmergencyCall = emergencyUtils.IsEmergencyCall(slotId, phoneNum);
+    emergencyUtils.IsEmergencyCall(slotId, phoneNum, dialInfo.bEmergencyCall);
 
     /**
      * <idx>: integer type;
