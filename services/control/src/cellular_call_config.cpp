@@ -723,9 +723,9 @@ void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const Emer
 
 std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
-    TELEPHONY_LOGI("GetEccCallList  start %{publiic}d", slotId);
+    TELEPHONY_LOGI("GetEccCallList  start %{public}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
-    TELEPHONY_LOGI("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
+    TELEPHONY_LOGI("GetEccCallList size %{public}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
         TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }
