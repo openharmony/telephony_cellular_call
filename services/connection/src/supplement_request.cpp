@@ -273,11 +273,11 @@ int32_t SupplementRequest::SendUssdRequest(int32_t slotId, const std::string &ms
 
 int32_t SupplementRequest::AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin)
 {
-    LockStatusResponse response = { 0 };
-    bool result = CoreManagerInner::GetInstance().AlterPin(slotId, newPin, oldPin, response);
+    LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
+    int32_t result = CoreManagerInner::GetInstance().AlterPin(slotId, newPin, oldPin, response);
     TELEPHONY_LOGI(
         "SupplementRequest::AlterPinPassword result: %{public}d, remain: %{public}d", response.result, response.remain);
-    if (result) {
+    if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
         if (ccHandler == nullptr) {
             TELEPHONY_LOGI("SupplementRequest::AlterPinPassword ccHandler is nullptr.");
@@ -296,11 +296,11 @@ int32_t SupplementRequest::AlterPinPassword(int32_t slotId, std::string newPin, 
 
 int32_t SupplementRequest::UnlockPuk(int32_t slotId, std::string newPin, std::string puk)
 {
-    LockStatusResponse response = { 0 };
-    bool result = CoreManagerInner::GetInstance().UnlockPuk(slotId, newPin, puk, response);
+    LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
+    int32_t result = CoreManagerInner::GetInstance().UnlockPuk(slotId, newPin, puk, response);
     TELEPHONY_LOGI(
         "SupplementRequest::UnlockPuk result: %{public}d, remain: %{public}d", response.result, response.remain);
-    if (result) {
+    if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
         if (ccHandler == nullptr) {
             TELEPHONY_LOGI("SupplementRequest::UnlockPuk ccHandler is nullptr.");
@@ -319,11 +319,11 @@ int32_t SupplementRequest::UnlockPuk(int32_t slotId, std::string newPin, std::st
 
 int32_t SupplementRequest::AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2)
 {
-    LockStatusResponse response = { 0 };
-    bool result = CoreManagerInner::GetInstance().AlterPin2(slotId, newPin2, oldPin2, response);
+    LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
+    int32_t result = CoreManagerInner::GetInstance().AlterPin2(slotId, newPin2, oldPin2, response);
     TELEPHONY_LOGI("SupplementRequest::AlterPin2Password result: %{public}d, remain: %{public}d", response.result,
         response.remain);
-    if (result) {
+    if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
         if (ccHandler == nullptr) {
             TELEPHONY_LOGI("SupplementRequest::AlterPin2Password ccHandler is nullptr.");
@@ -342,11 +342,11 @@ int32_t SupplementRequest::AlterPin2Password(int32_t slotId, std::string newPin2
 
 int32_t SupplementRequest::UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2)
 {
-    LockStatusResponse response = { 0 };
-    bool result = CoreManagerInner::GetInstance().UnlockPuk2(slotId, newPin2, puk2, response);
+    LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
+    int32_t result = CoreManagerInner::GetInstance().UnlockPuk2(slotId, newPin2, puk2, response);
     TELEPHONY_LOGI(
         "SupplementRequest::UnlockPuk2 result: %{public}d, remain: %{public}d", response.result, response.remain);
-    if (result) {
+    if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
         if (ccHandler == nullptr) {
             TELEPHONY_LOGI("SupplementRequest::UnlockPuk2 ccHandler is nullptr.");

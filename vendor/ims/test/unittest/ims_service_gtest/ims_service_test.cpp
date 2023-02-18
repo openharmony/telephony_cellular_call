@@ -70,6 +70,13 @@ void ImsServiceTest::Init()
     callInfoForSlot1_.index = DEFAULT_INDEX;
 }
 
+bool HasSimCard(int32_t slotId)
+{
+    bool hasSimCard = false;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    return hasSimCard;
+}
+
 /**
  * @tc.number   Telephony_ImsService_DIAL_001
  * @tc.name     Dial by Ims Service for slot 0
@@ -77,8 +84,7 @@ void ImsServiceTest::Init()
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -104,8 +110,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_001, Function | MediumTest | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -131,8 +136,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_002, Function | MediumTest | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -157,8 +161,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_001, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -183,8 +186,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_002, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -209,8 +211,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -235,8 +236,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_002, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -261,8 +261,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_001, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -287,8 +286,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_002, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -309,8 +307,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -331,8 +328,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -353,8 +349,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -375,8 +370,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_002, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -397,8 +391,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -419,8 +412,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_002, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -441,8 +433,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_001, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -463,8 +454,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_002, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -487,8 +477,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -511,8 +500,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -535,8 +523,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_001, Functio
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -559,8 +546,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_002, Functio
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -585,8 +571,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_001, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -611,8 +596,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_002, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -634,8 +618,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_001, Function | MediumTe
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -657,8 +640,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_002, Function | MediumTe
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -680,8 +662,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -703,8 +684,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -725,8 +705,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -747,8 +726,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -769,8 +747,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -791,8 +768,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -813,8 +789,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -835,8 +810,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -857,8 +831,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_001, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -879,8 +852,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_002, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -901,8 +873,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_001, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -923,8 +894,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_002, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -945,8 +915,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -967,8 +936,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -989,8 +957,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1011,8 +978,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigString_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1034,8 +1000,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigString_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigInt_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1057,8 +1022,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigInt_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsConfig_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1079,8 +1043,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsFeatureValue_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1102,8 +1065,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsFeatureValue_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsFeatureValue_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1126,8 +1088,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsFeatureValue_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1149,8 +1110,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1172,8 +1132,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1193,8 +1152,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1215,8 +1173,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CtrlCamera_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1240,8 +1197,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CtrlCamera_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPreviewWindow_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1267,8 +1223,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPreviewWindow_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDisplayWindow_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1294,8 +1249,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDisplayWindow_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCameraZoom_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1317,8 +1271,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCameraZoom_001, Function | Medi
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPauseImage_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1340,8 +1293,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPauseImage_001, Function | Medi
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDeviceDirection_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1363,8 +1315,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDeviceDirection_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1385,8 +1336,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1407,8 +1357,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1430,8 +1379,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1453,8 +1401,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1475,8 +1422,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1497,8 +1443,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1521,8 +1466,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1545,8 +1489,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_002, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1567,8 +1510,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1589,8 +1531,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_002, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1613,8 +1554,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1637,8 +1577,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1660,8 +1599,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1683,8 +1621,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1705,8 +1642,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_001, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1727,8 +1663,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_002, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1749,8 +1684,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_001, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1771,8 +1705,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_002, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1794,8 +1727,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1817,8 +1749,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_002, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1839,8 +1770,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1861,8 +1791,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_002, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1886,8 +1815,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_001, Function | Medium
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1911,8 +1839,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_002, Function | Medium
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_001, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(DEFAULT_SLOTID)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(DEFAULT_SLOTID)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
@@ -1933,8 +1860,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_001, Func
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_002, Function | MediumTest | Level1)
 {
-    if (CoreServiceClient::GetInstance().GetProxy() == nullptr ||
-        !CoreServiceClient::GetInstance().HasSimCard(SIM_SLOT_ID_1)) {
+    if (CoreServiceClient::GetInstance().GetProxy() == nullptr || !HasSimCard(SIM_SLOT_ID_1)) {
         TELEPHONY_LOGE("connect coreService server failed or haven't insert sim card!");
         return;
     }
