@@ -287,7 +287,7 @@ void CellularCallSupplement::HandleCallTransfer(int32_t slotId, const MMIData &m
 int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
 {
     if (serviceInfoB.empty()) {
-        TELEPHONY_LOGE("serviceInfoB is empty!");
+        TELEPHONY_LOGI("serviceInfoB is empty!");
         return NONE;
     }
     int32_t intServiceInfoB = atoi(serviceInfoB.c_str());
@@ -458,7 +458,7 @@ void CellularCallSupplement::HandleSetCallTransfer(int32_t slotId, int32_t servi
 void CellularCallSupplement::HandleCallRestriction(int32_t slotId, const MMIData &mmiData)
 {
     std::string infoA = mmiData.serviceInfoA;
-    std::string facType = ObtainBarringInstallation(mmiData.serviceInfoC);
+    std::string facType = ObtainBarringInstallation(mmiData.serviceCode);
     const std::string interrogate = "*#";
     const std::string activate = "*";
     const std::string deactivate = "#";
