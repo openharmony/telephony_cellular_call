@@ -287,7 +287,7 @@ void CellularCallSupplement::HandleCallTransfer(int32_t slotId, const MMIData &m
 int32_t CellularCallSupplement::ObtainServiceCode(const std::string &serviceInfoB)
 {
     if (serviceInfoB.empty()) {
-        TELEPHONY_LOGI("serviceInfoB is empty!");
+        TELEPHONY_LOGE("serviceInfoB is empty!");
         return NONE;
     }
     int32_t intServiceInfoB = atoi(serviceInfoB.c_str());
