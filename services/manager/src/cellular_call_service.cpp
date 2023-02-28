@@ -316,7 +316,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
     if (IsNeedIms(callInfo.slotId) || useImsForEmergency) {
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
-            TELEPHONY_LOGE("CellularCallService::Dial ims dial");
+            TELEPHONY_LOGI("CellularCallService::Dial ims dial");
             imsControl = std::make_shared<IMSControl>();
             if (imsControl == nullptr) {
                 TELEPHONY_LOGE("CellularCallService::Dial return, imsControl create fail");
