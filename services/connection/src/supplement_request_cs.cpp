@@ -253,7 +253,7 @@ int32_t SupplementRequestCs::UnlockPuk2(int32_t slotId, std::string newPin2, std
 
 int32_t SupplementRequestCs::CloseUnFinishedUssdRequest(int32_t slotId)
 {
-    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return CoreManagerInner::GetInstance().CloseUnFinishedUssd(
         slotId, RadioEvent::RADIO_CLOSE_UNFINISHED_USSD, GetMMIHandler(slotId));
 }
