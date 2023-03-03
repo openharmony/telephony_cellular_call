@@ -1132,6 +1132,16 @@ int32_t CellularCallService::GetMute(int32_t slotId)
     return config.GetMute(slotId);
 }
 
+int32_t CellularCallService::CloseUnFinishedUssd(int32_t slotId)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::CloseUnFinishedUssd return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallSupplement cellularCallSupplement;
+    return cellularCallSupplement.CloseUnFinishedUssd(slotId);
+}
+
 void CellularCallService::SetSrvccState(int32_t srvccState)
 {
     srvccState_ = srvccState;

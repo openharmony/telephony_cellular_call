@@ -105,6 +105,7 @@ void CellularCallHandler::InitSupplementFuncMap()
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_USSD] = &CellularCallHandler::SendUssdResponse;
     requestFuncMap_[MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID] = &CellularCallHandler::SendUnlockPinPukResponse;
+    requestFuncMap_[RadioEvent::RADIO_CLOSE_UNFINISHED_USSD] = &CellularCallHandler::CloseUnFinishedUssdResponse;
 }
 
 void CellularCallHandler::InitActiveReportFuncMap()
@@ -1194,6 +1195,17 @@ int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand
     ss.action = itor->second->action;
     ss.flag = itor->second->flag;
     return TELEPHONY_SUCCESS;
+}
+
+void CellularCallHandler::CloseUnFinishedUssdResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    CellularCallSupplement supplement;
+    supplement.EventCloseUnFinishedUssd(*result);
 }
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE

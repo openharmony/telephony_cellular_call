@@ -85,6 +85,8 @@ public:
 
     void ReportSendUssdResult(int32_t result);
 
+    void ReportCloseUnFinishedUssdResult(int32_t result);
+
     int32_t RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback);
 
     int32_t UnRegisterCallManagerCallBack();

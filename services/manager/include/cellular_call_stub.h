@@ -17,10 +17,11 @@
 #define CELLULAR_CALL_STUB_H
 
 #include <map>
+
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
-#include "telephony_log_wrapper.h"
 #include "iremote_stub.h"
+#include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -453,7 +454,16 @@ private:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnGetMuteInner(MessageParcel &data, MessageParcel &reply);
-    
+
+    /**
+     * Close Unfinished ussd
+     *
+     * @brief Close Unfinished ussd function for the current account
+     * @param slotId[in], The slot id
+     * @return Returns 0 on success, others on failure.
+     */
+    int32_t OnCloseUnFinishedUssdInner(MessageParcel &data, MessageParcel &reply);
+
     int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
 private:

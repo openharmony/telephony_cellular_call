@@ -259,6 +259,16 @@ public:
     void UnlockPuk2(int32_t slotId, const MMIData &mmiData);
 
     /**
+     * Close Unfinished ussd
+     *
+     * Control of close Ussd supplementary service
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t CloseUnFinishedUssd(int32_t slotId);
+
+    /**
      * Get clip result
      *
      * 3GPP TS 27.007 V3.9.0 (2001-06) 7.6 Calling line identification presentation +CLIP
@@ -450,6 +460,13 @@ public:
      * @param UssdNoticeInfo
      */
     void EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo);
+
+    /**
+     * Close Unfinished ussd result
+     *
+     * @param HRilRadioResponseInfo
+     */
+    void EventCloseUnFinishedUssd(const HRilRadioResponseInfo &responseInfo);
 
 private:
     /**
