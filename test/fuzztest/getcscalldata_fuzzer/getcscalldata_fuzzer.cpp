@@ -19,6 +19,7 @@
 #include <cstdint>
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
+#include "cellular_call_handler.h"
 #include "cellular_call_service.h"
 #include "hril_call_parcel.h"
 #include "radio_event.h"
@@ -70,7 +71,7 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
     handle->SetSlotId(slotId);
     handle->GetSlotId();
     handle->CurrentTimeMillis();
-    handle->IsCanRequestCallsData();
+    handle->IsCanRequestCallsData(FAST_DELAY_TIME_CS);
     handle->GetCsCallsDataRequest(event);
     handle->GetImsCallsDataRequest(event);
     handle->ReportCsCallsData(infoList);

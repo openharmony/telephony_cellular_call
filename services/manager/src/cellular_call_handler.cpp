@@ -33,7 +33,6 @@ const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
 const int64_t DELAY_TIME = 100;
-const int64_t FAST_DELAY_TIME = 250;
 const int32_t MAX_REQUEST_COUNT = 50;
 // message was null, mean report the default message to user which have been define at CellularCallSupplement
 const std::string DEFAULT_NULL_MESSAGE = "";
@@ -533,10 +532,10 @@ int64_t CellularCallHandler::CurrentTimeMillis()
     return timems;
 }
 
-bool CellularCallHandler::IsCanRequestCallsData()
+bool CellularCallHandler::IsCanRequestCallsData(const int64_t &delayTime)
 {
     int64_t timems = CurrentTimeMillis();
-    if ((timems - lastTime_) < FAST_DELAY_TIME) {
+    if ((timems - lastTime_) < delayTime) {
         return false;
     }
     lastTime_ = timems;
@@ -545,7 +544,7 @@ bool CellularCallHandler::IsCanRequestCallsData()
 
 void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (!IsCanRequestCallsData()) {
+    if (!IsCanRequestCallsData(FAST_DELAY_TIME_CS)) {
         TELEPHONY_LOGW("[slot%{public}d] Can not request calls data", slotId_);
         return;
     }
@@ -556,7 +555,7 @@ void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Po
 
 void CellularCallHandler::GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (!IsCanRequestCallsData()) {
+    if (!IsCanRequestCallsData(FAST_DELAY_TIME_IMS)) {
         TELEPHONY_LOGW("[slot%{public}d] Can not request calls data", slotId_);
         return;
     }
