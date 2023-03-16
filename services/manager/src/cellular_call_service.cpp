@@ -695,7 +695,7 @@ int32_t CellularCallService::HangUpAllConnection(int32_t slotId)
     if (GetCsControl(slotId)) {
         GetCsControl(slotId)->HangUpAllConnection(slotId);
     }
-    if (GetImsControl(it)) {
+    if (GetImsControl(slotId)) {
         GetImsControl(slotId)->HangUpAllConnection(slotId);
     }
     return TELEPHONY_SUCCESS;
