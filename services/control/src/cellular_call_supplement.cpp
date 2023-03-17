@@ -238,7 +238,7 @@ void CellularCallSupplement::HandleColp(int32_t slotId, const MMIData &mmiData)
     auto utCommand = std::make_shared<SsRequestCommand>();
     int32_t index;
     handler->RequestSsRequestCommandIndex(index);
-    if (mmiData.actionString == deactivate) {
+    if (mmiData.actionString == activate) {
         utCommand->action = ACTIVATE_ACTION;
         if (NeedUseImsToHandle(slotId)) {
             result = supplementRequestIms_.SetColpRequest(slotId, ACTIVATE_ACTION, index);
@@ -849,7 +849,6 @@ int32_t CellularCallSupplement::CheckSetCallTransferInfo(const CallTransferInfo 
 int32_t CellularCallSupplement::SetCallTransferInfoByIms(
     int32_t slotId, const CallTransferInfo &cfInfo, const std::shared_ptr<SsRequestCommand> &command)
 {
-    std::string dialString(cfInfo.transferNum);
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     HRilRadioResponseInfo responseInfo;
     responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
