@@ -14,10 +14,12 @@
  */
 
 #include "cellular_call_stub.h"
+
 #include "call_manager_errors.h"
-#include "telephony_log_wrapper.h"
 #include "emergency_utils.h"
 #include "i_call_status_callback.h"
+#include "telephony_log_wrapper.h"
+#include "telephony_permission.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -27,6 +29,10 @@ const int32_t MAX_ECC_SIZE = 1000;
 int32_t CellularCallStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::CONNECT_CELLULAR_CALL_SERVICE)) {
+        TELEPHONY_LOGE("Check permission failed, no CONNECT_CELLULAR_CALL_SERVICE permisson.");
+        return TELEPHONY_ERR_PERMISSION_ERR;
+    }
     std::u16string myDescriptor = CellularCallStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (myDescriptor != remoteDescriptor) {

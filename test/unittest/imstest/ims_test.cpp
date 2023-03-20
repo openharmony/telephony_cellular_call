@@ -838,6 +838,7 @@ HWTEST_F(ImsTest, cellular_call_SwitchCall_0001, Function | MediumTest | Level2)
  */
 HWTEST_F(ImsTest, cellular_call_CombineConference_0001, Function | MediumTest | Level2)
 {
+    AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -870,6 +871,7 @@ HWTEST_F(ImsTest, cellular_call_CombineConference_0001, Function | MediumTest | 
  */
 HWTEST_F(ImsTest, cellular_call_SeparateConference_0001, Function | MediumTest | Level2)
 {
+    AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);

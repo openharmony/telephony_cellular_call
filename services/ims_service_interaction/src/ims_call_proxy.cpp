@@ -19,16 +19,11 @@
 #include "message_option.h"
 #include "message_parcel.h"
 #include "telephony_errors.h"
-#include "telephony_permission.h"
 
 namespace OHOS {
 namespace Telephony {
 int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::PLACE_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", callInfo.slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", callInfo.slotId);
@@ -69,10 +64,6 @@ int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
 
 int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", callInfo.slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", callInfo.slotId);
@@ -105,10 +96,6 @@ int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
 
 int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", callInfo.slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", callInfo.slotId);
@@ -145,10 +132,6 @@ int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRej
 
 int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", callInfo.slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
         TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", callInfo.slotId);
@@ -181,10 +164,6 @@ int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
 
 int32_t ImsCallProxy::HoldCall(int32_t slotId, int32_t callType)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
@@ -195,10 +174,6 @@ int32_t ImsCallProxy::HoldCall(int32_t slotId, int32_t callType)
 
 int32_t ImsCallProxy::UnHoldCall(int32_t slotId, int32_t callType)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
@@ -209,10 +184,6 @@ int32_t ImsCallProxy::UnHoldCall(int32_t slotId, int32_t callType)
 
 int32_t ImsCallProxy::SwitchCall(int32_t slotId, int32_t callType)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::ANSWER_CALL)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, callType);
     if (ret != TELEPHONY_SUCCESS) {
@@ -377,10 +348,6 @@ int32_t ImsCallProxy::StopRtt(int32_t slotId)
 
 int32_t ImsCallProxy::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -723,10 +690,6 @@ int32_t ImsCallProxy::GetClir(int32_t slotId, int32_t index)
 
 int32_t ImsCallProxy::SetCallTransfer(int32_t slotId, const CallTransferInfo &cfInfo, int32_t classType, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -777,10 +740,6 @@ int32_t ImsCallProxy::CanSetCallTransferTime(int32_t slotId, bool &result)
 
 int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -800,10 +759,6 @@ int32_t ImsCallProxy::GetCallTransfer(int32_t slotId, int32_t reason, int32_t in
 int32_t ImsCallProxy::SetCallRestriction(
     int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -830,10 +785,6 @@ int32_t ImsCallProxy::SetCallRestriction(
 
 int32_t ImsCallProxy::GetCallRestriction(int32_t slotId, const std::string &fac, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -852,10 +803,6 @@ int32_t ImsCallProxy::GetCallRestriction(int32_t slotId, const std::string &fac,
 
 int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -878,10 +825,6 @@ int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t clas
 
 int32_t ImsCallProxy::GetCallWaiting(int32_t slotId, int32_t index)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::GET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("[slot%{public}d]Permission denied!", slotId);
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
@@ -960,10 +903,6 @@ int32_t ImsCallProxy::GetColp(int32_t slotId, int32_t index)
 
 int32_t ImsCallProxy::RegisterImsCallCallback(const sptr<ImsCallCallbackInterface> &callback)
 {
-    if (!TelephonyPermission::CheckPermission(Permission::SET_TELEPHONY_STATE)) {
-        TELEPHONY_LOGE("Permission denied!");
-        return TELEPHONY_ERR_PERMISSION_ERR;
-    }
     if (callback == nullptr) {
         TELEPHONY_LOGE("callback is null!");
         return TELEPHONY_ERR_ARGUMENT_INVALID;

@@ -39,7 +39,7 @@ HapInfoParams testInfoParams = {
 };
 
 PermissionDef testPermPlaceCallDef = {
-    .permissionName = "ohos.permission.PLACE_CALL",
+    .permissionName = "ohos.permission.CONNECT_CELLULAR_CALL_SERVICE",
     .bundleName = "tel_cellular_call_cs_gtest",
     .grantMode = 1, // SYSTEM_GRANT
     .label = "label",
@@ -53,53 +53,15 @@ PermissionStateFull testPlaceCallState = {
     .grantFlags = { 2 }, // PERMISSION_USER_SET
     .grantStatus = { PermissionState::PERMISSION_GRANTED },
     .isGeneral = true,
-    .permissionName = "ohos.permission.PLACE_CALL",
-    .resDeviceID = { "local" },
-};
-
-PermissionDef testPermAnswerCallDef = {
-    .permissionName = "ohos.permission.ANSWER_CALL",
-    .bundleName = "tel_cellular_call_cs_gtest",
-    .grantMode = 1, // SYSTEM_GRANT
-    .label = "label",
-    .labelId = 1,
-    .description = "Test cellular call",
-    .descriptionId = 1,
-    .availableLevel = APL_SYSTEM_BASIC,
-};
-
-PermissionStateFull testAnswerCallState = {
-    .grantFlags = { 2 }, // PERMISSION_USER_SET
-    .grantStatus = { PermissionState::PERMISSION_GRANTED },
-    .isGeneral = true,
-    .permissionName = "ohos.permission.ANSWER_CALL",
-    .resDeviceID = { "local" },
-};
-
-PermissionDef testPermSetTelephonyStateDef = {
-    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
-    .bundleName = "tel_cellular_call_cs_gtest",
-    .grantMode = 1, // SYSTEM_GRANT
-    .label = "label",
-    .labelId = 1,
-    .description = "Test cellular call",
-    .descriptionId = 1,
-    .availableLevel = APL_SYSTEM_BASIC,
-};
-
-PermissionStateFull testSetTelephonyState = {
-    .grantFlags = { 2 }, // PERMISSION_USER_SET
-    .grantStatus = { PermissionState::PERMISSION_GRANTED },
-    .isGeneral = true,
-    .permissionName = "ohos.permission.SET_TELEPHONY_STATE",
+    .permissionName = "ohos.permission.CONNECT_CELLULAR_CALL_SERVICE",
     .resDeviceID = { "local" },
 };
 
 HapPolicyParams testPolicyParams = {
     .apl = APL_SYSTEM_BASIC,
     .domain = "test.domain",
-    .permList = { testPermPlaceCallDef, testPermAnswerCallDef, testPermSetTelephonyStateDef },
-    .permStateList = { testPlaceCallState, testAnswerCallState, testSetTelephonyState },
+    .permList = { testPermPlaceCallDef },
+    .permStateList = { testPlaceCallState },
 };
 
 class AccessToken {

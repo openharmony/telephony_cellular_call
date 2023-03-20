@@ -15,6 +15,7 @@
 #include "ims_core_service_stub.h"
 
 #include "telephony_errors.h"
+#include "telephony_permission.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -39,6 +40,10 @@ void ImsCoreServiceStub::InitMemberFuncMap()
 int32_t ImsCoreServiceStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
 {
+    if (!TelephonyPermission::CheckPermission(Permission::CONNECT_IMS_SERVICE)) {
+        TELEPHONY_LOGE("Permission denied!");
+        return TELEPHONY_ERR_PERMISSION_ERR;
+    }
     std::u16string descriptor = ImsCoreServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
