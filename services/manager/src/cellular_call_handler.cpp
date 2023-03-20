@@ -532,22 +532,8 @@ int64_t CellularCallHandler::CurrentTimeMillis()
     return timems;
 }
 
-bool CellularCallHandler::IsCanRequestCallsData(const int64_t &delayTime)
-{
-    int64_t timems = CurrentTimeMillis();
-    if ((timems - lastTime_) < delayTime) {
-        return false;
-    }
-    lastTime_ = timems;
-    return true;
-}
-
 void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (!IsCanRequestCallsData(FAST_DELAY_TIME_CS)) {
-        TELEPHONY_LOGW("[slot%{public}d] Can not request calls data", slotId_);
-        return;
-    }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionCS connectionCs;
     connectionCs.GetCsCallsDataRequest(slotId_, lastCallsDataFlag_);
@@ -555,10 +541,6 @@ void CellularCallHandler::GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Po
 
 void CellularCallHandler::GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (!IsCanRequestCallsData(FAST_DELAY_TIME_IMS)) {
-        TELEPHONY_LOGW("[slot%{public}d] Can not request calls data", slotId_);
-        return;
-    }
     lastCallsDataFlag_ = CurrentTimeMillis();
     CellularCallConnectionIMS connectionIms;
     connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_);

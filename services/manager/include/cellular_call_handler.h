@@ -31,8 +31,6 @@
 
 namespace OHOS {
 namespace Telephony {
-const int64_t FAST_DELAY_TIME_CS = 250;
-const int64_t FAST_DELAY_TIME_IMS = 120;
 class CellularCallHandler : public AppExecFwk::EventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
@@ -154,7 +152,6 @@ public:
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
 
 private:
-    bool IsCanRequestCallsData(const int64_t &delayTime);
     int64_t CurrentTimeMillis();
     void GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event);
     void GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event);

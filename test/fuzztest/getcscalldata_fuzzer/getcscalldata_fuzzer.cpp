@@ -71,7 +71,6 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
     handle->SetSlotId(slotId);
     handle->GetSlotId();
     handle->CurrentTimeMillis();
-    handle->IsCanRequestCallsData(FAST_DELAY_TIME_CS);
     handle->GetCsCallsDataRequest(event);
     handle->GetImsCallsDataRequest(event);
     handle->ReportCsCallsData(infoList);
