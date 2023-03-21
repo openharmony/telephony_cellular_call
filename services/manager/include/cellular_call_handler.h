@@ -211,7 +211,6 @@ private:
 
 private:
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
-    int64_t lastTime_ = 0L;
     int64_t lastCallsDataFlag_ = 0L;
     using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
