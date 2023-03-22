@@ -502,6 +502,14 @@ public:
     int32_t GetMute(int32_t slotId) override;
 
     /**
+     * Close Unfinished ussd
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t CloseUnFinishedUssd(int32_t slotId) override;
+
+    /**
      * Is need choose IMS for execute
      *
      * @param slotId

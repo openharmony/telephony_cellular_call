@@ -100,6 +100,7 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::SET_DEVICE_DIRECTION] = &CellularCallStub::OnSetDeviceDirectionInner;
     requestFuncMap_[OperationType::SET_MUTE] = &CellularCallStub::OnSetMuteInner;
     requestFuncMap_[OperationType::GET_MUTE] = &CellularCallStub::OnGetMuteInner;
+    requestFuncMap_[OperationType::CLOSE_UNFINISHED_USSD] = &CellularCallStub::OnCloseUnFinishedUssdInner;
 }
 
 CellularCallStub::~CellularCallStub()
@@ -943,6 +944,21 @@ int32_t CellularCallStub::OnGetMuteInner(MessageParcel &data, MessageParcel &rep
     int32_t slotId = data.ReadInt32();
 
     reply.WriteInt32(GetMute(slotId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnCloseUnFinishedUssdInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnCloseUnFinishedUssdInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnCloseUnFinishedUssdInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+
+    reply.WriteInt32(CloseUnFinishedUssd(slotId));
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

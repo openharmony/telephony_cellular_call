@@ -176,6 +176,7 @@ private:
     int32_t ConfirmAndRemoveSsRequestCommand(int32_t index, int32_t &flag);
     void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void CloseUnFinishedUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void InitBasicFuncMap();
     void InitConfigFuncMap();

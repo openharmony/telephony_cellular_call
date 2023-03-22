@@ -353,5 +353,14 @@ bool CellularCallRegister::IsCallManagerCallBackRegistered()
 {
     return callManagerCallBack_ != nullptr;
 }
+
+void CellularCallRegister::ReportCloseUnFinishedUssdResult(int32_t result)
+{
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportCloseUnFinishedUssdResult return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    callManagerCallBack_->CloseUnFinishedUssdResult(result);
+}
 } // namespace Telephony
 } // namespace OHOS
