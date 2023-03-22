@@ -174,14 +174,6 @@ public:
      */
     int32_t UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2);
 
-    /**
-     * Close Unfinished ussd
-     *
-     * @param slotId The ID of SIM slot
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t CloseUnFinishedUssdRequest(int32_t slotId);
-
 private:
     /**
      * GetMMIHandler

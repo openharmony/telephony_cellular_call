@@ -1530,30 +1530,5 @@ void CellularCallSupplement::ReportMmiCodeMessage(
     }
     callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
-
-int32_t CellularCallSupplement::CloseUnFinishedUssd(int32_t slotId)
-{
-    if (!PhoneTypeGsmOrNot(slotId)) {
-        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
-        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
-    }
-    return supplementRequestCs_.CloseUnFinishedUssdRequest(slotId);
-}
-
-void CellularCallSupplement::EventCloseUnFinishedUssd(const HRilRadioResponseInfo &responseInfo)
-{
-    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
-    if (callRegister == nullptr) {
-        TELEPHONY_LOGE("callRegister is null.");
-        return;
-    }
-    int32_t result = TELEPHONY_ERROR;
-    if (responseInfo.error == HRilErrType::NONE) {
-        result = TELEPHONY_SUCCESS;
-    } else {
-        result = TELEPHONY_ERR_RIL_CMD_FAIL;
-    }
-    callRegister->ReportCloseUnFinishedUssdResult(result);
-}
 } // namespace Telephony
 } // namespace OHOS
