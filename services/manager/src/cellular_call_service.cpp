@@ -778,6 +778,13 @@ int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTrans
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallSupplement cellularCallSupplement;
+    if (cTInfo.settingType == CallTransferSettingType::CALL_TRANSFER_DISABLE) {
+        DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallForwardingInfo(
+            slotId, false, cTInfo.transferNum);
+    } else if (cTInfo.settingType == CallTransferSettingType::CALL_TRANSFER_ENABLE) {
+        DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallForwardingInfo(
+            slotId, true, cTInfo.transferNum);
+    }
     return cellularCallSupplement.SetCallTransferInfo(slotId, cTInfo);
 }
 

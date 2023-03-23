@@ -15,6 +15,8 @@
 
 #include "cellular_call_hisysevent.h"
 
+#include <securec.h>
+
 #include "call_manager_errors.h"
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
@@ -327,6 +329,28 @@ void CellularCallHiSysEvent::JudgingIncomingTimeOut(
         WriteIncomingCallFaultEvent(slotId, callType, videoState,
             static_cast<int32_t>(CallErrorCode::CALL_ERROR_INCOMING_TIME_OUT),
             "incoming time out " + std::to_string(incomingStartTime_ - incomingEndTime));
+    }
+}
+
+void CellularCallHiSysEvent::SetCallForwardingInfo(const int32_t slotId, const bool enable, const std::string &number)
+{
+    callForwardingSlotId_ = slotId;
+    callForwardingEnable_ = enable;
+    callForwardingNumber_ = number;
+}
+
+void CellularCallHiSysEvent::GetCallForwardingInfo(CallForwardingInfo &info)
+{
+    info.slotId = callForwardingSlotId_;
+    info.enable = callForwardingEnable_;
+
+    size_t cpyLen = callForwardingNumber_.length() + 1;
+    if (callForwardingNumber_.length() > static_cast<size_t>(maxNumberLen)) {
+        return;
+    }
+    if (strcpy_s(info.number, cpyLen, callForwardingNumber_.c_str()) != EOK) {
+        TELEPHONY_LOGE("strcpy_s fail.");
+        return;
     }
 }
 } // namespace Telephony
