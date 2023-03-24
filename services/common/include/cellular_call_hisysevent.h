@@ -23,6 +23,7 @@
 namespace OHOS {
 namespace Telephony {
 static const int64_t NORMAL_INCOMING_TIME = 500; // incoming time (ms)
+static const int16_t maxNumberLen = 100;
 
 enum class AnswerCallType {
     IMS_VOICE_ANSWER = 0,
@@ -56,6 +57,12 @@ struct CallBehaviorParameterInfo {
     int32_t incomingVideoState;
 };
 
+struct CallForwardingInfo {
+    int32_t slotId;
+    bool enable;
+    char number[maxNumberLen + 1];
+};
+
 class CellularCallHiSysEvent : public TelephonyHiSysEvent {
 public:
     static void WriteFoundationRestartFaultEvent(const int32_t count);
@@ -76,6 +83,8 @@ public:
     void GetCallParameterInfo(CallBehaviorParameterInfo &info);
     void SetIncomingStartTime();
     void JudgingIncomingTimeOut(const int32_t slotId, const int32_t callType, const int32_t videoState);
+    void SetCallForwardingInfo(const int32_t slotId, const bool enable, const std::string &number);
+    void GetCallForwardingInfo(CallForwardingInfo &info);
 
 private:
     template<typename... Types>
@@ -86,6 +95,8 @@ private:
     static int32_t TelephonyErrorCodeConversion(const int32_t errCode, CallErrorCode &eventValue);
 
 private:
+    bool callForwardingEnable_ = false;
+    int32_t callForwardingSlotId_;
     int32_t dfxSlotId_;
     int32_t dfxCallId_;
     int32_t dfxCallType_;
@@ -93,6 +104,7 @@ private:
     int32_t dfxIncomingCallType_;
     int32_t dfxIncomingVideoState_;
     int64_t incomingStartTime_ = 0L;
+    std::string callForwardingNumber_ = "";
 };
 } // namespace Telephony
 } // namespace OHOS

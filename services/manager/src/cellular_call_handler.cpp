@@ -1027,7 +1027,11 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
         return;
     }
     CellularCallSupplement supplement;
-    if (result->result != TELEPHONY_SUCCESS) {
+    CallForwardingInfo info;
+    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallForwardingInfo(info);
+    if (result->result == TELEPHONY_SUCCESS) {
+        CoreManagerInner::GetInstance().SetVoiceCallForwarding(info.slotId, info.enable, info.number);
+    } else {
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
     supplement.EventSetCallTransferInfo(result->result, result->message, flag);
