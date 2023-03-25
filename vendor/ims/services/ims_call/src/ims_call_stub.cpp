@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include "ims_call_stub.h"
+#include "ipc_skeleton.h"
 
 #include "telephony_log_wrapper.h"
 
@@ -413,8 +414,8 @@ int32_t ImsCallStub::OnGetMute(MessageParcel &data, MessageParcel &reply)
 int32_t ImsCallStub::OnCtrlCamera(MessageParcel &data, MessageParcel &reply)
 {
     const std::u16string cameraId = data.ReadString16();
-    int32_t callingUid = data.ReadInt32();
-    int32_t callingPid = data.ReadInt32();
+    auto callingPid = IPCSkeleton::GetCallingPid();
+    auto callingUid = IPCSkeleton::GetCallingUid();
     reply.WriteInt32(CtrlCamera(cameraId, callingUid, callingPid));
 
     return TELEPHONY_SUCCESS;
