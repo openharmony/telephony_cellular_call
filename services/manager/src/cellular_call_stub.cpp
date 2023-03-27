@@ -17,6 +17,7 @@
 #include "call_manager_errors.h"
 #include "telephony_log_wrapper.h"
 #include "emergency_utils.h"
+#include "ipc_skeleton.h"
 #include "i_call_status_callback.h"
 
 namespace OHOS {
@@ -800,8 +801,8 @@ int32_t CellularCallStub::OnCtrlCameraInner(MessageParcel &data, MessageParcel &
         return TELEPHONY_ERR_FAIL;
     }
     std::u16string cameraId = data.ReadString16();
-    int32_t callingUid = data.ReadInt32();
-    int32_t callingPid = data.ReadInt32();
+    auto callingPid = IPCSkeleton::GetCallingPid();
+    auto callingUid = IPCSkeleton::GetCallingUid();
 
     reply.WriteInt32(CtrlCamera(cameraId, callingUid, callingPid));
     return TELEPHONY_SUCCESS;
