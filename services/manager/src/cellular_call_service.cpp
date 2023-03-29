@@ -689,6 +689,17 @@ int32_t CellularCallService::HangUpAllConnection()
     return TELEPHONY_SUCCESS;
 }
 
+int32_t CellularCallService::HangUpAllConnection(int32_t slotId)
+{
+    if (GetCsControl(slotId)) {
+        GetCsControl(slotId)->HangUpAllConnection(slotId);
+    }
+    if (GetImsControl(slotId)) {
+        GetImsControl(slotId)->HangUpAllConnection(slotId);
+    }
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t CellularCallService::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
     auto control = GetImsControl(callInfo.slotId);

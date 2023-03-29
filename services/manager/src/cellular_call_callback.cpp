@@ -37,7 +37,8 @@ void CellularCallCallback::ClearCellularCallList(int32_t slotId)
         TELEPHONY_LOGE("ClearCellularCallList return, CellularCallService Remote service not exists.");
         return;
     }
-    iface_cast<CellularCallInterface>(remote)->HangUpAllConnection();
+    TELEPHONY_LOGI("HangUpAllConnection for slotId[%{public}d]", slotId);
+    iface_cast<CellularCallInterface>(remote)->HangUpAllConnection(slotId);
 }
 } // namespace Telephony
 } // namespace OHOS
