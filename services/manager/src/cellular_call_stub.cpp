@@ -40,8 +40,8 @@ int32_t CellularCallStub::OnRemoteRequest(
     auto itFunc = requestFuncMap_.find(static_cast<OperationType>(code));
     if (itFunc != requestFuncMap_.end()) {
         if (!TelephonyPermission::CheckPermission(Permission::CONNECT_CELLULAR_CALL_SERVICE)) {
-        TELEPHONY_LOGE("Check permission failed, no CONNECT_CELLULAR_CALL_SERVICE permisson.");
-        return TELEPHONY_ERR_PERMISSION_ERR;
+            TELEPHONY_LOGE("Check permission failed, no CONNECT_CELLULAR_CALL_SERVICE permisson.");
+            return TELEPHONY_ERR_PERMISSION_ERR;
         }
         auto requestFunc = itFunc->second;
         if (requestFunc != nullptr) {
