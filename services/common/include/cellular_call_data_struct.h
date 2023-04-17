@@ -34,16 +34,16 @@ enum CLIRMode {
 };
 
 struct DialRequestStruct {
-    std::string phoneNum;
-    CLIRMode clirMode;
+    std::string phoneNum = "";
+    CLIRMode clirMode = CLIRMode::DEFAULT;
 };
 
 // GSM Association Non-confidential Official Document IR.92 - IMS Profile for Voice and SMS
 struct ImsDialInfoStruct : public DialRequestStruct {
-    int32_t videoState; // 0: audio 1:video
-    bool bEmergencyCall;
-    bool bImsCallFirst;
-    bool bRoaming;
+    int32_t videoState = 0; // 0: audio 1:video
+    bool bEmergencyCall = false;
+    bool bImsCallFirst = false;
+    bool bRoaming = false;
 };
 
 enum MMIHandlerId {
@@ -65,18 +65,18 @@ enum MMIHandlerId {
  *  INDICATION:	Call progress indications.
  */
 struct MMIData {
-    std::string fullString;
-    std::string actionString;
-    std::string serviceCode;
+    std::string fullString = "";
+    std::string actionString = "";
+    std::string serviceCode = "";
     // 3GPP TS 22.030 V4.0.0 (2001-03)  6.5.2 Structure of the MMI
     // This structure consists of the following parts:
     // Service Code, SC( (2 or 3 digits);
     // Supplementary Information, SI (variable length).
-    std::string serviceInfoA;
-    std::string serviceInfoB;
-    std::string serviceInfoC;
-    std::string pwdString;
-    std::string dialString;
+    std::string serviceInfoA = "";
+    std::string serviceInfoB = "";
+    std::string serviceInfoC = "";
+    std::string pwdString = "";
+    std::string dialString = "";
 };
 
 /**
@@ -274,27 +274,27 @@ indicating the eMLPP priority level of the call, values specified in 3GPP TS 22.
 1	Valid information in parameter <CLI_validity>
  */
 struct ImsCallInfoResponse {
-    int32_t index;
-    bool mt;
-    bool negStatusPresent;
-    NegStatus negStatus;
-    char sdpMd[kMaxNumberLen];
-    CsMode csMode;
-    TelCallState state;
-    bool mpty;
-    int32_t numberType;
-    int32_t ton;
-    char number[kMaxNumberLen];
-    bool priorityPresent;
-    int32_t priority;
-    bool cliValidityPresent;
-    CallType callType; // call type: CS、IMS
-    int32_t videoState; // 0: audio 1:video
+    int32_t index = 0;
+    bool mt = false;
+    bool negStatusPresent = false;
+    NegStatus negStatus = NegStatus::NEG_INVALID;
+    char sdpMd[kMaxNumberLen] = { 0 };
+    CsMode csMode = CsMode::NO_INFORMATION;
+    TelCallState state = TelCallState::CALL_STATUS_UNKNOWN;
+    bool mpty = false;
+    int32_t numberType = 0;
+    int32_t ton = 0;
+    char number[kMaxNumberLen] = { 0 };
+    bool priorityPresent = false;
+    int32_t priority = 0;
+    bool cliValidityPresent = false;
+    CallType callType = CallType::TYPE_CS; // call type: CS、IMS
+    int32_t videoState = 0; // 0: audio 1:video
 };
 
 struct PinPukResponse {
-    int32_t result;
-    int32_t remain;  // It can be repeated operator N times
+    int32_t result = 0;
+    int32_t remain = 0; // It can be repeated operator N times
 };
 
 enum ImsHandleId {
@@ -311,7 +311,7 @@ struct SsRequestCommand {
     bool enable = false;
     int32_t clirAction = 0;
     std::string facility = "";
-    char password[kMaxNumberLen + 1];
+    char password[kMaxNumberLen + 1] = { 0 };
     int32_t classType = 0;
     int32_t action = 0;
     int32_t flag = SS_FROM_MMI_CODE; // 0: command come from dialer; 1: command come from JS api which called by setting

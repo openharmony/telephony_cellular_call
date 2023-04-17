@@ -29,13 +29,13 @@ enum ImsCapabilityType {
 };
 
 struct ImsCapability {
-    ImsCapabilityType imsCapabilityType;
-    ImsRegTech imsRadioTech;
-    bool enable;
+    ImsCapabilityType imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
+    ImsRegTech imsRadioTech = ImsRegTech::IMS_REG_TECH_NONE;
+    bool enable = false;
 };
 
 struct ImsCapabilityList {
-    std::vector<ImsCapability> imsCapabilities;
+    std::vector<ImsCapability> imsCapabilities {};
 };
 
 enum ImsFeatureIntResult {
