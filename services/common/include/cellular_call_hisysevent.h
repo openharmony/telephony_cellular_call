@@ -50,17 +50,17 @@ enum class CallResponseResult {
 };
 
 struct CallBehaviorParameterInfo {
-    int32_t slotId;
-    int32_t callType;
-    int32_t videoState;
-    int32_t incomingCallType;
-    int32_t incomingVideoState;
+    int32_t slotId = 0;
+    int32_t callType = 0;
+    int32_t videoState = 0;
+    int32_t incomingCallType = 0;
+    int32_t incomingVideoState = 0;
 };
 
 struct CallForwardingInfo {
-    int32_t slotId;
-    bool enable;
-    char number[maxNumberLen + 1];
+    int32_t slotId = 0;
+    bool enable = false;
+    char number[maxNumberLen + 1] = { 0 };
 };
 
 class CellularCallHiSysEvent : public TelephonyHiSysEvent {

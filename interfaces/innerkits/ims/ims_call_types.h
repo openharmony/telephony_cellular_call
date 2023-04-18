@@ -65,7 +65,7 @@ enum ImsCallType {
 
 struct ImsSrvccActionInfo {
     CellularCallInfo callInfo;
-    char dtmfCode;
+    char dtmfCode = 0;
 };
 
 enum TransferState {
@@ -74,29 +74,29 @@ enum TransferState {
 };
 
 struct ImsCallInfo {
-    char phoneNum[kMaxNumberLength]; // call phone number
-    int32_t slotId;
-    int32_t videoState; // 0: audio 1:video
-    int32_t index; // call index
+    char phoneNum[kMaxNumberLength] = { 0 }; // call phone number
+    int32_t slotId = 0;
+    int32_t videoState = 0; // 0: audio 1:video
+    int32_t index = 0; // call index
 };
 
 struct ImsCurrentCall {
-    int32_t index;
-    int32_t dir;
-    int32_t state;
-    int32_t mode;
-    int32_t mpty;
-    int32_t voiceDomain;
-    ImsCallType callType;
-    std::string number;
-    int32_t type;
-    std::string alpha;
+    int32_t index = 0;
+    int32_t dir = 0;
+    int32_t state = 0;
+    int32_t mode = 0;
+    int32_t mpty = 0;
+    int32_t voiceDomain = 0;
+    ImsCallType callType = ImsCallType::TEL_IMS_CALL_TYPE_VOICE;
+    std::string number = "";
+    int32_t type = 0;
+    std::string alpha = "";
 };
 
 struct ImsCurrentCallList {
-    int32_t callSize;
-    int32_t flag;
-    std::vector<ImsCurrentCall> calls;
+    int32_t callSize = 0;
+    int32_t flag = 0;
+    std::vector<ImsCurrentCall> calls {};
 };
 } // namespace Telephony
 } // namespace OHOS
