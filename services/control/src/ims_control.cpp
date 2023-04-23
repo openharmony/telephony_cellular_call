@@ -164,6 +164,22 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("IMSControl::Answer, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING)) {
+        TELEPHONY_LOGD("already threeway mode. hangup holding call and pickup new call");
+        auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
+            connectionMap_, TelCallState::CALL_STATUS_HOLDING);
+        if (con == nullptr) {
+            TELEPHONY_LOGE("Answer return, error type: con is null, there are no holding calls");
+            return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
+        }
+        auto callReportInfo = con->GetCallReportInfo();
+        int32_t result = cont->HangUpRequest(callReportInfo.accountId, callReportInfo.accountNum, callReportInfo.index);
+        if (result != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGE("hangup holding call failed");
+            return result;
+        }
+    }
+
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE) &&
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
