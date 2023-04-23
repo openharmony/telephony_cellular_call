@@ -226,13 +226,13 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
         }
         auto callReportInfo = con->GetCallReportInfo();
-        int32_t result = cont->HangUpRequest(callReportInfo.accountId, callReportInfo.accountNum, callReportInfo.index);
+        int32_t result = con->HangUpRequest(callReportInfo.accountId, callReportInfo.accountNum, callReportInfo.index);
         if (result != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("hangup holding call failed");
             return result;
         }
     }
-    
+
     /**
      * <stat> (state of the call):
      * 0 active
