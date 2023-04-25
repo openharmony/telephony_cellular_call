@@ -51,7 +51,7 @@ CellularCallService::~CellularCallService()
 
 bool CellularCallService::Init()
 {
-    TELEPHONY_LOGI("CellularCallService::Init start");
+    TELEPHONY_LOGD("CellularCallService::Init start");
     eventLoop_ = AppExecFwk::EventRunner::Create("CellularCallServiceLoop");
     if (eventLoop_ == nullptr) {
         TELEPHONY_LOGE("CellularCallService::Init return, failed to create EventRunner");
@@ -69,13 +69,13 @@ bool CellularCallService::Init()
     }
     // connect ims_service
     DelayedSingleton<ImsCallClient>::GetInstance()->Init();
-    TELEPHONY_LOGI("CellularCallService::Init, init success");
+    TELEPHONY_LOGD("CellularCallService::Init, init success");
     return true;
 }
 
 void CellularCallService::OnStart()
 {
-    TELEPHONY_LOGI("CellularCallService OnStart");
+    TELEPHONY_LOGD("CellularCallService OnStart");
     bindTime_ =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
             .count();
@@ -98,12 +98,12 @@ void CellularCallService::OnStart()
     endTime_ =
         std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
             .count();
-    TELEPHONY_LOGI("CellularCallService start success.");
+    TELEPHONY_LOGD("CellularCallService start success.");
 }
 
 void CellularCallService::OnStop()
 {
-    TELEPHONY_LOGI("CellularCallService stop service");
+    TELEPHONY_LOGD("CellularCallService stop service");
     if (eventLoop_ != nullptr) {
         eventLoop_.reset();
     }
@@ -114,19 +114,19 @@ void CellularCallService::OnStop()
 
 void CellularCallService::RegisterHandler()
 {
-    TELEPHONY_LOGI("connect core service Register Handler start");
+    TELEPHONY_LOGD("connect core service Register Handler start");
     networkSearchCallBack_ = (std::make_unique<CellularCallCallback>()).release();
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_CORE_SERVICE_WAIT_TIME));
         if (CoreManagerInner::GetInstance().IsInitFinishedForTelRil()) {
-            TELEPHONY_LOGI("connect core service Register Handler start");
+            TELEPHONY_LOGD("connect core service Register Handler start");
             RegisterCoreServiceHandler();
             CoreManagerInner::GetInstance().RegisterCellularCallObject(networkSearchCallBack_);
             break;
         }
         TELEPHONY_LOGW("connect core service Register Handler null or not init");
     }
-    TELEPHONY_LOGI("connect core service Register Handler end");
+    TELEPHONY_LOGD("connect core service Register Handler end");
 }
 
 void CellularCallService::CreateHandler()
@@ -156,7 +156,7 @@ void CellularCallService::CreateHandler()
 
 void CellularCallService::HandlerResetUnRegister()
 {
-    TELEPHONY_LOGI("HandlerResetUnRegister");
+    TELEPHONY_LOGD("HandlerResetUnRegister");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -188,7 +188,7 @@ void CellularCallService::HandlerResetUnRegister()
 
 void CellularCallService::RegisterCoreServiceHandler()
 {
-    TELEPHONY_LOGI("RegisterCoreServiceHandle");
+    TELEPHONY_LOGD("RegisterCoreServiceHandle");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -800,7 +800,7 @@ int32_t CellularCallService::CanSetCallTransferTime(int32_t slotId, bool &result
 
 int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferType type)
 {
-    TELEPHONY_LOGI("CellularCallService::GetCallTransferInfo");
+    TELEPHONY_LOGD("CellularCallService::GetCallTransferInfo");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallTransferInfo return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -841,7 +841,7 @@ int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)
 
 int32_t CellularCallService::GetCallWaiting(int32_t slotId)
 {
-    TELEPHONY_LOGI("CellularCallService::GetCallWaiting");
+    TELEPHONY_LOGD("CellularCallService::GetCallWaiting");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallWaiting return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -852,7 +852,7 @@ int32_t CellularCallService::GetCallWaiting(int32_t slotId)
 
 int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &crInfo)
 {
-    TELEPHONY_LOGI("CellularCallService::SetCallRestriction");
+    TELEPHONY_LOGD("CellularCallService::SetCallRestriction");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::SetCallRestriction return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -863,7 +863,7 @@ int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestri
 
 int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionType facType)
 {
-    TELEPHONY_LOGI("CellularCallService::GetCallRestriction");
+    TELEPHONY_LOGD("CellularCallService::GetCallRestriction");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::GetCallRestriction return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
@@ -884,7 +884,7 @@ int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::s
 
 int32_t CellularCallService::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec)
 {
-    TELEPHONY_LOGE("CellularCallService::SetEmergencyCallList start");
+    TELEPHONY_LOGD("CellularCallService::SetEmergencyCallList start");
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::SetMute return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;

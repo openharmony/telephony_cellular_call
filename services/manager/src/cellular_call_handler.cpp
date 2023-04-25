@@ -144,7 +144,7 @@ void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
     }
 
     uint32_t eventId = event->GetInnerEventId();
-    TELEPHONY_LOGI("[slot%{public}d] eventId = %{public}d", slotId_, eventId);
+    TELEPHONY_LOGD("[slot%{public}d] eventId = %{public}d", slotId_, eventId);
 
     auto itFunc = requestFuncMap_.find(event->GetInnerEventId());
     if (itFunc != requestFuncMap_.end()) {

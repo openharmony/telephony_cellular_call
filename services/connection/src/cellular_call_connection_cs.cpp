@@ -223,7 +223,7 @@ int32_t CellularCallConnectionCS::SendDtmfRequest(int32_t slotId, char cDtmfCode
 
 int32_t CellularCallConnectionCS::StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
-    TELEPHONY_LOGI("CellularCallConnectionCS::StartDtmfRequest start.");
+    TELEPHONY_LOGD("CellularCallConnectionCS::StartDtmfRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("StartDtmfRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -255,7 +255,7 @@ int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t slotId, int32_t index)
 
 int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
-    TELEPHONY_LOGI("CellularCallConnectionCS::GetCsCallsDataRequest start.");
+    TELEPHONY_LOGD("CellularCallConnectionCS::GetCsCallsDataRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCsCallsDataRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -274,7 +274,7 @@ int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t 
 
 int32_t CellularCallConnectionCS::GetCallFailReasonRequest(int32_t slotId) const
 {
-    TELEPHONY_LOGI("CellularCallConnectionCS::GetCallFailReasonRequest start.");
+    TELEPHONY_LOGD("CellularCallConnectionCS::GetCallFailReasonRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCallFailReasonRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;

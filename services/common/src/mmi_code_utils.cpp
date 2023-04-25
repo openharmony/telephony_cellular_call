@@ -138,7 +138,7 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
         TELEPHONY_LOGI("Function not found, need check serviceCode.");
     }
     if (!mmiData_.fullString.empty()) {
-        TELEPHONY_LOGI("fullString is not empty.");
+        TELEPHONY_LOGD("fullString is not empty.");
         supplement.SendUssd(slotId, mmiData_.fullString);
         return true;
     }
@@ -154,7 +154,7 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
     std::regex pattern(symbols);
     std::smatch results;
     if (regex_match(analyseString, results, pattern)) {
-        TELEPHONY_LOGI("regex_match ture");
+        TELEPHONY_LOGD("regex_match ture");
 
         /**
          * The following sequence of functions shall be used for the control of Supplementary Services:

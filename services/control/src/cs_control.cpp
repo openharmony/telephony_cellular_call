@@ -421,7 +421,7 @@ int32_t CSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfoL
 
 int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfoList)
 {
-    TELEPHONY_LOGI("ReportUpdateInfo entry");
+    TELEPHONY_LOGD("ReportUpdateInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
@@ -543,7 +543,7 @@ int32_t CSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callIn
 
 int32_t CSControl::ReportHungUpInfo(int32_t slotId)
 {
-    TELEPHONY_LOGI("ReportHungUpInfo entry");
+    TELEPHONY_LOGD("ReportHungUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo callReportInfo = it.second.GetCallReportInfo();

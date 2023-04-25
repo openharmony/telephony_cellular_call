@@ -28,7 +28,7 @@ CellularCallRegister::~CellularCallRegister() {}
 
 void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInfo)
 {
-    TELEPHONY_LOGI("ReportCallsInfo entry.");
+    TELEPHONY_LOGD("ReportCallsInfo entry.");
     CallsReportInfo callsInfo = callsReportInfo;
     CallDetailInfo detailInfo;
     detailInfo.state = TelCallState::CALL_STATUS_UNKNOWN;
@@ -64,7 +64,7 @@ int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatus
 
 void CellularCallRegister::ReportSingleCallInfo(const CallReportInfo &info, TelCallState callState)
 {
-    TELEPHONY_LOGI("ReportSingleCallInfo entry");
+    TELEPHONY_LOGD("ReportSingleCallInfo entry");
     CallReportInfo cellularCallReportInfo = info;
     cellularCallReportInfo.state = callState;
     if (callManagerCallBack_ == nullptr) {

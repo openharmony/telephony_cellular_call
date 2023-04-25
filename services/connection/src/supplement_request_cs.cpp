@@ -161,7 +161,7 @@ int32_t SupplementRequestCs::SendUssdRequest(int32_t slotId, const std::string &
 
 int32_t SupplementRequestCs::AlterPinPassword(int32_t slotId, std::string newPin, std::string oldPin)
 {
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
     LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
     int32_t result = CoreManagerInner::GetInstance().AlterPin(slotId, newPin, oldPin, response);
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
@@ -184,7 +184,7 @@ int32_t SupplementRequestCs::AlterPinPassword(int32_t slotId, std::string newPin
 
 int32_t SupplementRequestCs::UnlockPuk(int32_t slotId, std::string newPin, std::string puk)
 {
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
     LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
     int32_t result = CoreManagerInner::GetInstance().UnlockPuk(slotId, newPin, puk, response);
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
@@ -207,7 +207,7 @@ int32_t SupplementRequestCs::UnlockPuk(int32_t slotId, std::string newPin, std::
 
 int32_t SupplementRequestCs::AlterPin2Password(int32_t slotId, std::string newPin2, std::string oldPin2)
 {
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
     LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
     int32_t result = CoreManagerInner::GetInstance().AlterPin2(slotId, newPin2, oldPin2, response);
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
@@ -230,7 +230,7 @@ int32_t SupplementRequestCs::AlterPin2Password(int32_t slotId, std::string newPi
 
 int32_t SupplementRequestCs::UnlockPuk2(int32_t slotId, std::string newPin2, std::string puk2)
 {
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
     LockStatusResponse response = { UNLOCK_FAIL, TELEPHONY_ERROR };
     int32_t result = CoreManagerInner::GetInstance().UnlockPuk2(slotId, newPin2, puk2, response);
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);

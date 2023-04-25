@@ -353,7 +353,7 @@ int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfo
 
 int32_t IMSControl::ReportHungUpInfo(int32_t slotId)
 {
-    TELEPHONY_LOGI("ReportHungUpInfo entry");
+    TELEPHONY_LOGD("ReportHungUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo reportInfo = it.second.GetCallReportInfo();
@@ -409,7 +409,7 @@ int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList 
 
 int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
-    TELEPHONY_LOGI("ReportUpdateInfo entry");
+    TELEPHONY_LOGD("ReportUpdateInfo entry");
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
