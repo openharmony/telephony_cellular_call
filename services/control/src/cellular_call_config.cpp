@@ -146,7 +146,7 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 
 int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
 {
-    TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
+    TELEPHONY_LOGD("entry, slotId: %{public}d", slotId);
     auto itorHide = hideImsSwitch_.find(slotId);
     if (itorHide != hideImsSwitch_.end()) {
         if (itorHide->second) {
@@ -549,7 +549,7 @@ void CellularCallConfig::InitModeActive()
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("118"));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("119"));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("999"));
-    TELEPHONY_LOGI("InitModeActive finish");
+    TELEPHONY_LOGD("InitModeActive finish");
 }
 
 EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number)
@@ -647,7 +647,7 @@ std::string CellularCallConfig::GetMcc(int32_t slotId_)
 
 int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId)
 {
-    TELEPHONY_LOGI("SetEmergencyCallList start");
+    TELEPHONY_LOGD("SetEmergencyCallList start");
     return SetEmergencyCallList(slotId, allEccList_[slotId]);
 }
 
@@ -668,7 +668,7 @@ int32_t CellularCallConfig::GetEmergencyCallList(int32_t slotId)
 
 int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, const std::vector<EmergencyCall> &eccVec)
 {
-    TELEPHONY_LOGI("SetEmergencyCallList start %{public}d", slotId);
+    TELEPHONY_LOGD("SetEmergencyCallList start %{public}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
     std::vector<EmergencyCall> uniques;
     for (auto call : eccVec) {
@@ -725,9 +725,9 @@ void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const Emer
 
 std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
-    TELEPHONY_LOGI("GetEccCallList  start %{publiic}d", slotId);
+    TELEPHONY_LOGD("GetEccCallList  start %{publiic}d", slotId);
     std::lock_guard<std::mutex> lock(mutex_);
-    TELEPHONY_LOGI("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
+    TELEPHONY_LOGD("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
         TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }

@@ -239,7 +239,7 @@ int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(
 
 int32_t CellularCallConnectionIMS::CallSupplementRequest(int32_t slotId, CallSupplementType type)
 {
-    TELEPHONY_LOGI("start");
+    TELEPHONY_LOGD("start");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -256,7 +256,7 @@ int32_t CellularCallConnectionIMS::CallSupplementRequest(int32_t slotId, CallSup
 int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
+        TELEPHONY_LOGD("call ims service");
         ImsCallInfo imsCallInfo;
         if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");
@@ -300,7 +300,7 @@ int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_
 int32_t CellularCallConnectionIMS::SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
+        TELEPHONY_LOGD("call ims service");
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -370,7 +370,7 @@ int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId)
 int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) const
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
+        TELEPHONY_LOGD("call ims service");
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;

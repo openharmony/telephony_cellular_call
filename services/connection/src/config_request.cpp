@@ -33,7 +33,7 @@ int32_t ConfigRequest::SetDomainPreferenceModeRequest(int32_t slotId, int32_t mo
         return DelayedSingleton<ImsCallClient>::GetInstance()->SetDomainPreferenceMode(slotId, mode);
     }
 
-    TELEPHONY_LOGI("SetDomainPreferenceModeRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGD("SetDomainPreferenceModeRequest, ims vendor service does not exist.");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("SetDomainPreferenceModeRequest return, error type: handle is nullptr.");
@@ -55,7 +55,7 @@ int32_t ConfigRequest::GetDomainPreferenceModeRequest(int32_t slotId)
         return DelayedSingleton<ImsCallClient>::GetInstance()->GetDomainPreferenceMode(slotId);
     }
 
-    TELEPHONY_LOGI("GetDomainPreferenceModeRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGD("GetDomainPreferenceModeRequest, ims vendor service does not exist.");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("GetDomainPreferenceModeRequest return, error type: handle is nullptr.");
@@ -206,7 +206,7 @@ int32_t ConfigRequest::SetMuteRequest(int32_t slotId, int32_t mute)
         return DelayedSingleton<ImsCallClient>::GetInstance()->SetMute(slotId, mute);
     }
 
-    TELEPHONY_LOGI("SetMuteRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGD("SetMuteRequest, ims vendor service does not exist.");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("SetMuteRequest return, error type: handle is nullptr.");
@@ -227,7 +227,7 @@ int32_t ConfigRequest::GetMuteRequest(int32_t slotId)
         return DelayedSingleton<ImsCallClient>::GetInstance()->GetMute(slotId);
     }
 
-    TELEPHONY_LOGI("GetMuteRequest, ims vendor service does not exist.");
+    TELEPHONY_LOGD("GetMuteRequest, ims vendor service does not exist.");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("GetMuteRequest return, error type: handle is nullptr.");

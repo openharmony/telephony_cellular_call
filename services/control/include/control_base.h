@@ -336,7 +336,7 @@ public:
          * d) STOP DTMF ACKNOWLEDGE: No further info.
          * Only a single digit will be passed in each START DTMF and START DTMF ACKNOWLEDGE message
          */
-        TELEPHONY_LOGI("ControlBase::StartDtmf start");
+        TELEPHONY_LOGD("ControlBase::StartDtmf start");
         auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
         if (pConnection == nullptr) {
             TELEPHONY_LOGI("StartDtmf: connection cannot be matched, use index directly");
@@ -376,7 +376,7 @@ public:
          * d) STOP DTMF ACKNOWLEDGE: No further info.
          * Only a single digit will be passed in each START DTMF and START DTMF ACKNOWLEDGE message
          */
-        TELEPHONY_LOGI("ControlBase::StopDtmf start");
+        TELEPHONY_LOGD("ControlBase::StopDtmf start");
         auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
         if (pConnection == nullptr) {
             TELEPHONY_LOGI("StopDtmf: connection cannot be matched, use index directly");
@@ -424,7 +424,7 @@ public:
          3. {<DTMF>,<duration>}. This is interpreted as a DTMF tone of different duration from that mandated by the
          +VTD command. NOTE 4:	In GSM this operates only in voice mode.
          */
-        TELEPHONY_LOGI("ControlBase::SendDtmf start");
+        TELEPHONY_LOGD("ControlBase::SendDtmf start");
         auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
         if (pConnection == nullptr) {
             TELEPHONY_LOGI("SendDtmf: connection cannot be matched, use index directly");

@@ -189,7 +189,7 @@ int32_t CellularCallStub::OnAnswerInner(MessageParcel &data, MessageParcel &repl
 
 int32_t CellularCallStub::OnIsEmergencyPhoneNumberInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnIsEmergencyPhoneNumberInner entry.");
+    TELEPHONY_LOGD("CellularCallStub::OnIsEmergencyPhoneNumberInner entry.");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
