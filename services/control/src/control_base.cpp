@@ -15,6 +15,7 @@
 
 #include "control_base.h"
 
+#include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "module_service_utils.h"
@@ -22,8 +23,15 @@
 
 namespace OHOS {
 namespace Telephony {
-int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo)
+const uint32_t WAIT_TIME_SECOND = 5;
+
+int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEcc)
 {
+    int32_t ret = CheckAirplaneModeScene(callInfo, isEcc);
+    if (ret != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("CheckAirplaneModeScene fail");
+        return ret;
+    }
     std::string dialString(callInfo.phoneNum);
     if (dialString.empty()) {
         TELEPHONY_LOGE("DialPreJudgment return, dialString is empty.");
@@ -96,6 +104,55 @@ void ControlBase::SetHangupReportIgnoredFlag(bool ignored)
 {
     TELEPHONY_LOGI("SetHangupReportIgnoredFlag ignored:%{public}d", ignored);
     isIgnoredHangupReport_ = ignored;
+}
+
+int32_t ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc)
+{
+    bool isAirplaneModeOn = false;
+    ModuleServiceUtils moduleServiceUtils;
+    if (moduleServiceUtils.GetAirplaneMode(isAirplaneModeOn) == TELEPHONY_SUCCESS && isAirplaneModeOn) {
+        int32_t ret = HandleEcc(callInfo, isEcc);
+        if (ret != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGE("HandleEcc fail");
+            return ret;
+        }
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc)
+{
+    if (!isEcc) {
+        TELEPHONY_LOGE("HandleEcc airplane mode is not ecc");
+        return TELEPHONY_ERR_AIRPLANE_MODE_ON;
+    }
+
+    ModuleServiceUtils moduleServiceUtils;
+    int32_t ret = moduleServiceUtils.UpdateRadioOn(callInfo.slotId);
+    if (ret != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("UpdateRadioOn fail");
+        return ret;
+    }
+    std::unique_lock<std::mutex> lock(mutex_);
+    CellularCallConfig cellularCallConfig;
+    while (!cellularCallConfig.IsReadyToCall(callInfo.slotId)) {
+        if (cv_.wait_for(lock, std::chrono::seconds(WAIT_TIME_SECOND)) == std::cv_status::timeout) {
+            TELEPHONY_LOGE("HandleEcc network in service timeout");
+            return CALL_ERR_DIAL_FAILED;
+        }
+    }
+
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ControlBase::SetReadyToCall(int32_t slotId, bool isReadyToCall)
+{
+    CellularCallConfig cellularCallConfig;
+    if (!cellularCallConfig.IsReadyToCall(slotId) && isReadyToCall) {
+        cellularCallConfig.SetReadyToCall(slotId, isReadyToCall);
+        cv_.notify_all();
+    }
+    return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
 } // namespace OHOS

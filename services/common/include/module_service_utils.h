@@ -94,6 +94,10 @@ public:
      * @return sptr<ImsInterface>
      */
     sptr<ImsCallInterface> GetImsServiceRemoteObject() const;
+
+    int32_t GetAirplaneMode(bool &airplaneModeOn);
+
+    int32_t UpdateRadioOn(int32_t slotId);
 };
 } // namespace Telephony
 } // namespace OHOS

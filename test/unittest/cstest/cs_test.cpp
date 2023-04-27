@@ -17,6 +17,7 @@
 
 #define private public
 #define protected public
+#include "cellular_call_callback.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
@@ -2116,10 +2117,11 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
     }
     auto csControl = std::make_shared<CSControl>();
     CellularCallInfo cellularCallInfo;
+    bool enabled = false;
     EXPECT_EQ(InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
-    EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_GET_RADIO_STATE_FAILED);
+    EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
     EXPECT_EQ(InitCellularCallInfo(INVALID_SLOTID, "", cellularCallInfo), TELEPHONY_SUCCESS);
-    EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_PHONE_NUMBER_EMPTY);
+    EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_PHONE_NUMBER_EMPTY);
 
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
@@ -2132,7 +2134,7 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
         EXPECT_EQ(csControl->DialCdma(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->Dial(cellularCallInfo), CALL_ERR_GET_RADIO_STATE_FAILED);
+        EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
         ASSERT_FALSE(csControl->CalculateInternationalRoaming(slotId));
         CallInfoList callList;
         callList.callSize = 0;
@@ -2628,7 +2630,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest |
 
 /**
  * @tc.number   cellular_call_TestDump_0001
- * @tc.name    TestDump
+ * @tc.name     TestDump
  * @tc.desc     Function test
  */
 HWTEST_F(CsTest, cellular_call_TestDump_0001, Function | MediumTest | Level3)
@@ -2638,6 +2640,34 @@ HWTEST_F(CsTest, cellular_call_TestDump_0001, Function | MediumTest | Level3)
     EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(-1, args), TELEPHONY_ERR_FAIL);
     EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(0, emptyArgs), 0);
     EXPECT_EQ(DelayedSingleton<CellularCallService>::GetInstance()->Dump(0, args), 0);
+}
+
+/**
+ * @tc.number   cellular_call_ModuleServiceUtils_0001
+ * @tc.name     ModuleServiceUtils
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | Level3)
+{
+    ModuleServiceUtils moduleServiceUtils;
+    bool airplaneModeOn = false;
+    EXPECT_NE(moduleServiceUtils.GetAirplaneMode(airplaneModeOn), TELEPHONY_SUCCESS);
+    EXPECT_NE(moduleServiceUtils.UpdateRadioOn(SIM1_SLOTID), TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallConfig_0001
+ * @tc.name     CellularCallConfig
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
+{
+    CellularCallConfig CellularCallConfig;
+    bool isReadyToCall = false;
+    CellularCallConfig.SetReadyToCall(SIM1_SLOTID, isReadyToCall);
+    CellularCallCallback cellularCallCallback;
+    cellularCallCallback.SetReadyToCall(SIM1_SLOTID, isReadyToCall);
+    EXPECT_EQ(CellularCallConfig.IsReadyToCall(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 } // namespace Telephony
 } // namespace OHOS

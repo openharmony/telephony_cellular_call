@@ -423,6 +423,10 @@ public:
      */
     bool IsValidSlotId(int32_t slotId);
 
+    void SetReadyToCall(int32_t slotId, bool isReadyToCall);
+
+    bool IsReadyToCall(int32_t slotId);
+
 private:
     static void InitDefaultOperatorConfig();
     void UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc);
@@ -471,6 +475,7 @@ private:
     static std::map<int32_t, int32_t> callWaitingServiceClass_;
     static std::map<int32_t, std::vector<std::string>> imsCallDisconnectResoninfoMapping_;
     static std::map<int32_t, bool> forceVolteSwitchOn_;
+    static std::map<int32_t, bool> readyToCall_;
     static bool isOperatorConfigInit_;
 };
 } // namespace Telephony

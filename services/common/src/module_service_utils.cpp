@@ -18,6 +18,7 @@
 #include "ipc_skeleton.h"
 #include "string_ex.h"
 
+#include "cellular_call_config.h"
 #include "cellular_call_register.h"
 #include "ims_call_client.h"
 #include "telephony_log_wrapper.h"
@@ -33,6 +34,28 @@ bool ModuleServiceUtils::GetRadioState(int32_t slotId)
         return false;
     }
     return true;
+}
+
+int32_t ModuleServiceUtils::GetAirplaneMode(bool &airplaneMode)
+{
+    int32_t ret = CoreManagerInner::GetInstance().GetAirplaneMode(airplaneMode);
+    if (ret != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ModuleServiceUtils::GetAirplaneMode fail.");
+        return ret;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ModuleServiceUtils::UpdateRadioOn(int32_t slotId)
+{
+    CellularCallConfig config;
+    config.SetReadyToCall(slotId, false);
+    int32_t ret = CoreManagerInner::GetInstance().UpdateRadioOn(slotId);
+    if (ret != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ModuleServiceUtils::UpdateRadioOn fail.");
+        return ret;
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 PhoneType ModuleServiceUtils::GetNetworkStatus(int32_t slotId)
