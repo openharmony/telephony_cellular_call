@@ -32,6 +32,8 @@ public:
      * @param slotId
      */
     void ClearCellularCallList(int32_t slotId) override;
+
+    void SetReadyToCall(int32_t slotId, bool isReadyToCall) override;
 };
 } // namespace Telephony
 } // namespace OHOS

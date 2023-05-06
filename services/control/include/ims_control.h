@@ -37,12 +37,9 @@ public:
     ~IMSControl();
 
     /**
-     * Dial
-     *
-     * @param CellularCallInfo
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     * IMS Dial
      */
-    int32_t Dial(const CellularCallInfo &callInfo) override;
+    int32_t Dial(const CellularCallInfo &callInfo, bool isEcc) override;
 
     /**
      * HangUp

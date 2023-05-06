@@ -23,17 +23,18 @@
 
 namespace OHOS {
 namespace Telephony {
+
 CSControl::~CSControl()
 {
     ReleaseAllConnection();
 }
 
-int32_t CSControl::Dial(const CellularCallInfo &callInfo)
+int32_t CSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
 {
     TELEPHONY_LOGI("Dial start");
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
         callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
-    int32_t ret = DialPreJudgment(callInfo);
+    int32_t ret = DialPreJudgment(callInfo, isEcc);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }

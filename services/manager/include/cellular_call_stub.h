@@ -167,6 +167,8 @@ private:
      */
     int32_t OnHangUpAllConnectionInner(MessageParcel &data, MessageParcel &reply);
 
+    int32_t OnSetReadyToCallInner(MessageParcel &data, MessageParcel &reply);
+
     /**
      * On UpdateImsCallMode Inner
      *

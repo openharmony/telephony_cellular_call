@@ -1052,7 +1052,8 @@ HWTEST_F(ImsTest, cellular_call_ImsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(imsControl->UpdateImsCallMode(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
             CALL_ERR_CALL_CONNECTION_NOT_EXIST);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsControl->Dial(cellularCallInfo), CALL_ERR_GET_RADIO_STATE_FAILED);
+        bool enabled = false;
+        EXPECT_EQ(imsControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
         ImsCurrentCallList callList;
         callList.callSize = 0;
         CallInfoList callInfoList;

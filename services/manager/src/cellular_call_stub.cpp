@@ -69,6 +69,7 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::INVITE_TO_CONFERENCE] = &CellularCallStub::OnInviteToConferenceInner;
     requestFuncMap_[OperationType::KICK_OUT_CONFERENCE] = &CellularCallStub::OnKickOutFromConferenceInner;
     requestFuncMap_[OperationType::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
+    requestFuncMap_[OperationType::SET_READY_TO_CALL] = &CellularCallStub::OnSetReadyToCallInner;
     requestFuncMap_[OperationType::UPDATE_CALL_MEDIA_MODE] = &CellularCallStub::OnUpdateCallMediaModeInner;
     requestFuncMap_[OperationType::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
     requestFuncMap_[OperationType::UNREGISTER_CALLBACK] = &CellularCallStub::OnUnRegisterCallBackInner;
@@ -433,6 +434,18 @@ int32_t CellularCallStub::OnHangUpAllConnectionInner(MessageParcel &data, Messag
     }
 
     reply.WriteInt32(HangUpAllConnection());
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSetReadyToCallInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    bool isReadyToCall = data.ReadBool();
+    int32_t error = SetReadyToCall(slotId, isReadyToCall);
+    if (!reply.WriteInt32(error)) {
+        TELEPHONY_LOGE("OnSetReadyToCallInner WriteInt32 fail");
+        return TELEPHONY_ERR_WRITE_REPLY_FAIL;
+    }
     return TELEPHONY_SUCCESS;
 }
 

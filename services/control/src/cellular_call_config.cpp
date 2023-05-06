@@ -63,6 +63,7 @@ std::vector<EmergencyCall> CellularCallConfig::eccList3gppHasSim_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::allEccList_;
 std::map<int32_t, int32_t> CellularCallConfig::simState_;
+std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
@@ -83,6 +84,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::imsCallDisconnectResoninfoMapping_.insert(
             std::pair<int, std::vector<std::string>>(i, IMS_CALL_DISCONNECT_REASONINFO_MAPPING_CONFIG));
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
+        CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
     }
 }
 
@@ -856,6 +858,24 @@ bool CellularCallConfig::IsValidSlotId(int32_t slotId)
 
     TELEPHONY_LOGE("SlotId is InValid = %{public}d", slotId);
     return false;
+}
+
+void CellularCallConfig::SetReadyToCall(int32_t slotId, bool isReadyToCall)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id");
+        return;
+    }
+    readyToCall_[slotId] = isReadyToCall;
+}
+
+bool CellularCallConfig::IsReadyToCall(int32_t slotId)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id");
+        return false;
+    }
+    return readyToCall_[slotId];
 }
 } // namespace Telephony
 } // namespace OHOS

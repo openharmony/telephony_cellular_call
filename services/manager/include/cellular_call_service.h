@@ -215,6 +215,8 @@ public:
      */
     int32_t HangUpAllConnection(int32_t slotId) override;
 
+    int32_t SetReadyToCall(int32_t slotId, bool isReadyToCall) override;
+
     /**
      * IMS Update Call Media Mode
      *
@@ -606,11 +608,8 @@ private:
 
     /**
      * Check whether IMS should be used firstly for emergency call
-     *
-     * @param CellularCallInfo
-     * @return bool
      */
-    bool UseImsForEmergency(const CellularCallInfo &callInfo);
+    bool UseImsForEmergency(const CellularCallInfo &callInfo, bool isEcc);
 
     /**
      * Handle CallManager exception

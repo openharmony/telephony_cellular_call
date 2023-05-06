@@ -39,17 +39,12 @@ public:
     ~CSControl();
 
     /**
-     * CSControl Dial
+     * CS Dial
      *
      * 27007-430_2001 6.27 Informative examples
      * 3GPP TS 22.030 [19]
-     *
-     * originate a voice call
-     *
-     * @param CellularCallInfo
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t Dial(const CellularCallInfo &callInfo) override;
+    int32_t Dial(const CellularCallInfo &callInfo, bool isEcc) override;
 
     /**
      * CSControl HangUp

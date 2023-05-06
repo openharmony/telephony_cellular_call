@@ -306,7 +306,9 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
             "srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
-    bool useImsForEmergency = UseImsForEmergency(callInfo);
+    bool isEcc = false;
+    IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, isEcc);
+    bool useImsForEmergency = UseImsForEmergency(callInfo, isEcc);
     if (IsNeedIms(callInfo.slotId) || useImsForEmergency) {
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
@@ -318,7 +320,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
             }
             SetImsControl(callInfo.slotId, imsControl);
         }
-        return imsControl->Dial(callInfo);
+        return imsControl->Dial(callInfo, isEcc);
     }
 
     auto csControl = GetCsControl(callInfo.slotId);
@@ -330,7 +332,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
         }
         SetCsControl(callInfo.slotId, csControl);
     }
-    return csControl->Dial(callInfo);
+    return csControl->Dial(callInfo, isEcc);
 }
 
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
@@ -642,6 +644,21 @@ int32_t CellularCallService::HangUpAllConnection()
         if (GetImsControl(it)) {
             GetImsControl(it)->HangUpAllConnection(it);
         }
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallService::SetReadyToCall(int32_t slotId, bool isReadyToCall)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetReadyToCall return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    if (GetCsControl(slotId) != nullptr) {
+        GetCsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
+    }
+    if (GetImsControl(slotId) != nullptr) {
+        GetImsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
     return TELEPHONY_SUCCESS;
 }
@@ -1094,15 +1111,11 @@ int32_t CellularCallService::GetSrvccState()
     return srvccState_;
 }
 
-bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo)
+bool CellularCallService::UseImsForEmergency(const CellularCallInfo &callInfo, bool isEcc)
 {
     ModuleServiceUtils moduleUtils;
     CellularCallConfig config;
-    bool enabled = false;
-    if (IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, enabled) != TELEPHONY_SUCCESS) {
-        return false;
-    }
-    if (enabled && moduleUtils.NeedCallImsService() && config.GetImsPreferForEmergencyConfig(callInfo.slotId)) {
+    if (isEcc && moduleUtils.NeedCallImsService() && config.GetImsPreferForEmergencyConfig(callInfo.slotId)) {
         return true;
     }
     return false;

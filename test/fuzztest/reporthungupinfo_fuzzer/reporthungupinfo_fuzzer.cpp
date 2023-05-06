@@ -60,7 +60,8 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
         return;
     }
-    iMSControl->Dial(callInfo);
+    bool isEcc = false;
+    iMSControl->Dial(callInfo, isEcc);
     iMSControl->HangUp(callInfo, type);
     iMSControl->Answer(callInfo);
     iMSControl->Reject(callInfo);

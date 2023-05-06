@@ -108,6 +108,22 @@ void HangUpAllConnection(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnHangUpAllConnectionInner(dataMessageParcel, reply);
 }
 
+void SetReadyToCall(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t slotId = static_cast<int32_t>(size);
+    bool isReadyToCall = static_cast<bool>(size % SLOT_NUM);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(slotId);
+    dataMessageParcel.WriteBool(isReadyToCall);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnSetReadyToCallInner(dataMessageParcel, reply);
+}
+
 void StartRtt(const uint8_t *data, size_t size)
 {
     if (!IsServiceInited()) {
@@ -271,6 +287,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     UnRegisterCallManagerCallBack(data, size);
     IsEmergencyPhoneNumber(data, size);
     HangUpAllConnection(data, size);
+    SetReadyToCall(data, size);
     StartRtt(data, size);
     StopRtt(data, size);
     GetCallTransferInfo(data, size);

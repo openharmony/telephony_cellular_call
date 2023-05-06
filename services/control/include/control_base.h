@@ -47,9 +47,10 @@ public:
      * originate a voice call
      *
      * @param CellularCallInfo
+     * @param bool
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t Dial(const CellularCallInfo &callInfo) = 0;
+    virtual int32_t Dial(const CellularCallInfo &callInfo, bool isEcc) = 0;
 
     /**
      * HangUp
@@ -167,7 +168,7 @@ public:
      * @param CellularCallInfo
      * @returns Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t DialPreJudgment(const CellularCallInfo &callInfo);
+    int32_t DialPreJudgment(const CellularCallInfo &callInfo, bool isEcc);
 
     /**
      * Is Need Execute MMI
@@ -197,6 +198,8 @@ public:
      * @param ignored which decides whether to ignore the hangup report
      */
     void SetHangupReportIgnoredFlag(bool ignored);
+
+    int32_t SetReadyToCall(int32_t slotId, bool isReadyToCall);
 
     /**
      * Determine whether the call can be initiated currently
@@ -460,7 +463,20 @@ protected:
     bool isIgnoredIncomingCall_ = false;
 
 private:
+    /**
+     * Check call with airplane mode on
+     */
+    int32_t CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc);
+
+    /**
+     * Handle call with airplane mode on
+     */
+    int32_t HandleEcc(const CellularCallInfo &callInfo, bool isEcc);
+
+private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
+    std::condition_variable cv_;
+    std::mutex mutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
