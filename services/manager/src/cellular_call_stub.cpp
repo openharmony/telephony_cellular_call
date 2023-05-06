@@ -441,8 +441,9 @@ int32_t CellularCallStub::OnHangUpAllConnectionInner(MessageParcel &data, Messag
 int32_t CellularCallStub::OnSetReadyToCallInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
+    int32_t callType = data.ReadInt32();
     bool isReadyToCall = data.ReadBool();
-    int32_t error = SetReadyToCall(slotId, isReadyToCall);
+    int32_t error = SetReadyToCall(slotId, callType, isReadyToCall);
     if (!reply.WriteInt32(error)) {
         TELEPHONY_LOGE("OnSetReadyToCallInner WriteInt32 fail");
         return TELEPHONY_ERR_WRITE_REPLY_FAIL;

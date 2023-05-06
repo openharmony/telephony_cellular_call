@@ -2665,9 +2665,10 @@ HWTEST_F(CsTest, cellular_call_CellularCallConfig_0001, Function | MediumTest | 
 {
     CellularCallConfig CellularCallConfig;
     bool isReadyToCall = false;
+    bool csType = 0;
     CellularCallConfig.SetReadyToCall(SIM1_SLOTID, isReadyToCall);
     CellularCallCallback cellularCallCallback;
-    cellularCallCallback.SetReadyToCall(SIM1_SLOTID, isReadyToCall);
+    cellularCallCallback.SetReadyToCall(SIM1_SLOTID, csType, isReadyToCall);
     EXPECT_EQ(CellularCallConfig.IsReadyToCall(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 } // namespace Telephony

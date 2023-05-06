@@ -648,16 +648,16 @@ int32_t CellularCallService::HangUpAllConnection()
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallService::SetReadyToCall(int32_t slotId, bool isReadyToCall)
+int32_t CellularCallService::SetReadyToCall(int32_t slotId, int32_t callType, bool isReadyToCall)
 {
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::SetReadyToCall return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
-    if (GetCsControl(slotId) != nullptr) {
+    if (callType == static_cast<int32_t>(CallType::TYPE_CS) && GetCsControl(slotId) != nullptr) {
         GetCsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
-    if (GetImsControl(slotId) != nullptr) {
+    if (callType == static_cast<int32_t>(CallType::TYPE_IMS) && GetImsControl(slotId) != nullptr) {
         GetImsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
     return TELEPHONY_SUCCESS;
