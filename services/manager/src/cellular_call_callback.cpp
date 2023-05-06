@@ -15,6 +15,7 @@
 
 #include "cellular_call_callback.h"
 
+#include "cellular_call_proxy.h"
 #include "system_ability_definition.h"
 #include "iservice_registry.h"
 #include "telephony_log_wrapper.h"

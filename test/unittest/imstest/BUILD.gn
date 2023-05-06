@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+CELLULAR_CALL_PATH = "../../.."
 
 ohos_unittest("tel_cellular_call_ims_test") {
   subsystem_name = "telephony"
@@ -19,26 +20,18 @@ ohos_unittest("tel_cellular_call_ims_test") {
   test_module = "tel_cellular_call_ims_test"
   module_out_path = part_name + "/" + test_module
 
-  sources = [
-    "//base/telephony/call_manager/services/telephony_interaction/src/cellular_call_proxy.cpp",
-    "ims_test.cpp",
-  ]
+  sources = [ "ims_test.cpp" ]
 
   include_dirs = [
-    "//base/telephony/cellular_call/interfaces/innerkits/ims",
-    "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/services/connection/include",
-    "//base/telephony/cellular_call/services/control/include",
-    "//base/telephony/cellular_call/services/manager/include",
-    "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/call_manager/services/telephony_interaction/include",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",
+    "${CELLULAR_CALL_PATH}/services/common/include",
+    "${CELLULAR_CALL_PATH}/services/connection/include",
+    "${CELLULAR_CALL_PATH}/services/control/include",
+    "${CELLULAR_CALL_PATH}/services/manager/include",
   ]
 
   deps = [
-    "//base/telephony/cellular_call:tel_cellular_call",
-    "//base/telephony/core_service/interfaces/innerkits:tel_core_service_api",
-    "//base/telephony/core_service/utils:libtel_common",
-    "//third_party/googletest:gtest_main",
+    "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
@@ -48,6 +41,7 @@ ohos_unittest("tel_cellular_call_ims_test") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "call_manager:tel_call_manager_api",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",

@@ -19,44 +19,38 @@ ohos_unittest("tel_vendor_ims_service_gtest") {
   part_name = "cellular_call"
   test_module = "tel_vendor_ims_service_gtest"
   module_out_path = part_name + "/" + test_module
+  SUBSYSTEM_DIR = "../../../../.."
 
-  sources = [ "//base/telephony/cellular_call/vendor/ims/test/unittest/ims_service_gtest/ims_service_test.cpp" ]
+  sources = [ "ims_service_test.cpp" ]
 
   include_dirs = [
-    "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/cellular_call/interfaces/innerkits/ims/",
-    "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/sms_mms/interfaces/innerkits/ims/",
-    "//base/telephony/core_service/interfaces/innerkits/ims/",
+    "${SUBSYSTEM_DIR}/interfaces/innerkits/ims/",
+    "${SUBSYSTEM_DIR}/services/common/include",
   ]
 
-  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
-
   deps = [
-    "//base/telephony/cellular_call:tel_cellular_call",
-    "//base/telephony/core_service:tel_core_service",
-    "//base/telephony/sms_mms:tel_sms_mms",
+    "${SUBSYSTEM_DIR}:tel_cellular_call",
+    "${SUBSYSTEM_DIR}/interfaces/innerkits/ims:tel_ims_call_api",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
+    "ability_runtime:ability_manager",
     "c_utils:utils",
+    "call_manager:tel_call_manager_api",
     "core_service:tel_core_service_api",
+    "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
     "ipc:ipc_core",
-    "ril_adapter:hril_innerkits",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "sms_mms:tel_sms_mms_api",
   ]
 
   defines = [
     "TELEPHONY_LOG_TAG = \"VendorImsServiceGtest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
-
-  if ("${product_name}" == "rk3568" || "${product_name}" == "DAYU") {
-    #   defines += [ "TEL_TEST_UNSUPPORT" ]
-  }
 
   if (is_standard_system) {
     external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
