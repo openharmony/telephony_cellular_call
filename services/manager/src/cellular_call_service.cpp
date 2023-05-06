@@ -136,7 +136,7 @@ void CellularCallService::CreateHandler()
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-
+    subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
     for (const auto &it : slotVector) {
         auto handler = std::make_shared<CellularCallHandler>(eventLoop_, subscriberInfo);
         TELEPHONY_LOGI("setSlotId:%{public}d", it);
