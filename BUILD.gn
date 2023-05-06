@@ -11,55 +11,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
-
-SOURCE_DIR = "//base/telephony/cellular_call"
 
 ohos_shared_library("tel_cellular_call") {
   sources = [
-    "$SOURCE_DIR/services/common/src/cellular_call_dump_helper.cpp",
-    "$SOURCE_DIR/services/common/src/cellular_call_hisysevent.cpp",
-    "$SOURCE_DIR/services/common/src/emergency_utils.cpp",
-    "$SOURCE_DIR/services/common/src/mmi_code_utils.cpp",
-    "$SOURCE_DIR/services/common/src/module_service_utils.cpp",
-    "$SOURCE_DIR/services/common/src/standardize_utils.cpp",
-    "$SOURCE_DIR/services/connection/src/base_connection.cpp",
-    "$SOURCE_DIR/services/connection/src/base_request.cpp",
-    "$SOURCE_DIR/services/connection/src/cellular_call_connection_cs.cpp",
-    "$SOURCE_DIR/services/connection/src/cellular_call_connection_ims.cpp",
-    "$SOURCE_DIR/services/connection/src/config_request.cpp",
-    "$SOURCE_DIR/services/connection/src/supplement_request_cs.cpp",
-    "$SOURCE_DIR/services/connection/src/supplement_request_ims.cpp",
-    "$SOURCE_DIR/services/control/src/cellular_call_config.cpp",
-    "$SOURCE_DIR/services/control/src/cellular_call_supplement.cpp",
-    "$SOURCE_DIR/services/control/src/control_base.cpp",
-    "$SOURCE_DIR/services/control/src/cs_control.cpp",
-    "$SOURCE_DIR/services/control/src/ims_control.cpp",
-    "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_callback_stub.cpp",
-    "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_client.cpp",
-    "$SOURCE_DIR/services/ims_service_interaction/src/ims_call_proxy.cpp",
-    "$SOURCE_DIR/services/manager/src/cellular_call_callback.cpp",
-    "$SOURCE_DIR/services/manager/src/cellular_call_handler.cpp",
-    "$SOURCE_DIR/services/manager/src/cellular_call_register.cpp",
-    "$SOURCE_DIR/services/manager/src/cellular_call_service.cpp",
-    "$SOURCE_DIR/services/manager/src/cellular_call_stub.cpp",
-    "//base/telephony/call_manager/services/telephony_interaction/src/call_status_callback_proxy.cpp",
-    "//base/telephony/call_manager/services/telephony_interaction/src/cellular_call_proxy.cpp",
+    "services/common/src/cellular_call_dump_helper.cpp",
+    "services/common/src/cellular_call_hisysevent.cpp",
+    "services/common/src/emergency_utils.cpp",
+    "services/common/src/mmi_code_utils.cpp",
+    "services/common/src/module_service_utils.cpp",
+    "services/common/src/standardize_utils.cpp",
+    "services/connection/src/base_connection.cpp",
+    "services/connection/src/base_request.cpp",
+    "services/connection/src/cellular_call_connection_cs.cpp",
+    "services/connection/src/cellular_call_connection_ims.cpp",
+    "services/connection/src/config_request.cpp",
+    "services/connection/src/supplement_request_cs.cpp",
+    "services/connection/src/supplement_request_ims.cpp",
+    "services/control/src/cellular_call_config.cpp",
+    "services/control/src/cellular_call_supplement.cpp",
+    "services/control/src/control_base.cpp",
+    "services/control/src/cs_control.cpp",
+    "services/control/src/ims_control.cpp",
+    "services/ims_service_interaction/src/ims_call_callback_stub.cpp",
+    "services/ims_service_interaction/src/ims_call_client.cpp",
+    "services/ims_service_interaction/src/ims_call_proxy.cpp",
+    "services/manager/src/cellular_call_callback.cpp",
+    "services/manager/src/cellular_call_handler.cpp",
+    "services/manager/src/cellular_call_register.cpp",
+    "services/manager/src/cellular_call_service.cpp",
+    "services/manager/src/cellular_call_stub.cpp",
   ]
 
   include_dirs = [
-    "$SOURCE_DIR/interfaces/innerkits/ims",
-    "$SOURCE_DIR/services/common/include",
-    "$SOURCE_DIR/services/manager/include",
-    "$SOURCE_DIR/services/control/include",
-    "$SOURCE_DIR/services/connection/include",
-    "//base/telephony/call_manager/services/telephony_interaction/include",
+    "interfaces/innerkits/ims",
+    "services/common/include",
+    "services/manager/include",
+    "services/control/include",
+    "services/connection/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
-  defines += [
+  defines = [
     "TELEPHONY_LOG_TAG = \"CellularCall\"",
     "LOG_DOMAIN = 0xD001F02",
   ]

@@ -10,24 +10,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
-CELLULAR_CALL_SOURCE_DIR = "//base/telephony/cellular_call"
-CELLULAR_CALL_INTERFACES_INNERKITS =
-    "$CELLULAR_CALL_SOURCE_DIR/interfaces/innerkits"
+SUBSYSTEM_DIR = "../../.."
 
 config("public_config_ims_call_api") {
   # header file path
   include_dirs = [
-    "$CELLULAR_CALL_INTERFACES_INNERKITS/ims",
-    "$CELLULAR_CALL_SOURCE_DIR/services/common/include",
+    "${SUBSYSTEM_DIR}/interfaces/innerkits/ims",
+    "${SUBSYSTEM_DIR}/services/common/include",
   ]
 }
 
 ohos_shared_library("tel_ims_call_api") {
-  sources = [ "$CELLULAR_CALL_SOURCE_DIR/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
+  sources = [ "${SUBSYSTEM_DIR}/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
 
   public_configs = [ ":public_config_ims_call_api" ]
 
@@ -46,7 +42,7 @@ ohos_shared_library("tel_ims_call_api") {
     external_deps += [ "hilog:libhilog" ]
   }
 
-  defines += [
+  defines = [
     "TELEPHONY_LOG_TAG = \"ImsCallApi\"",
     "LOG_DOMAIN = 0xD001F09",
   ]

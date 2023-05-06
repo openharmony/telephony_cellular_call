@@ -19,6 +19,7 @@
 #define protected public
 #include "cellular_call_config.h"
 #include "cellular_call_handler.h"
+#include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "hril_call_parcel.h"
 #include "ims_call_callback_stub.h"

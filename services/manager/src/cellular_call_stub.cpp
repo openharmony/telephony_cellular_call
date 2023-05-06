@@ -16,6 +16,7 @@
 #include "cellular_call_stub.h"
 
 #include "call_manager_errors.h"
+#include "call_status_callback_proxy.h"
 #include "emergency_utils.h"
 #include "ipc_skeleton.h"
 #include "i_call_status_callback.h"

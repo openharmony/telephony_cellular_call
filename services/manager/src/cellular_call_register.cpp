@@ -15,7 +15,6 @@
 
 #include "cellular_call_register.h"
 
-#include "call_status_callback_proxy.h"
 #include "cellular_call_hisysevent.h"
 #include "hitrace_meter.h"
 #include "iservice_registry.h"

@@ -11,39 +11,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//base/telephony/core_service/telephony.gni")
 import("//build/ohos.gni")
 
-TELEPHONY_CELLULAR_CALL_ROOT = "//base/telephony/cellular_call"
-TELEPHONY_IMS_SERVICE_ROOT = "$TELEPHONY_CELLULAR_CALL_ROOT/vendor/ims"
+TELEPHONY_CELLULAR_CALL_ROOT = "../.."
 
 ohos_shared_library("tel_ims") {
   sources = [
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/src/ims_call_stub.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/src/ims_core_service_stub.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms.cpp",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/src/ims_sms_stub.cpp",
+    "services/ims_call/src/ims_call.cpp",
+    "services/ims_call/src/ims_call_stub.cpp",
+    "services/ims_core_service/src/ims_core_service.cpp",
+    "services/ims_core_service/src/ims_core_service_stub.cpp",
+    "services/ims_sms/src/ims_sms.cpp",
+    "services/ims_sms/src/ims_sms_stub.cpp",
   ]
 
   include_dirs = [
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_base/include",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_core_service/include",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_call/include",
-    "$TELEPHONY_IMS_SERVICE_ROOT/services/ims_sms/include",
+    "services/ims_base/include",
+    "services/ims_core_service/include",
+    "services/ims_call/include",
+    "services/ims_sms/include",
   ]
 
-  defines += [
+  defines = [
     "TELEPHONY_LOG_TAG = \"ImsService\"",
     "LOG_DOMAIN = 0xD001F09",
   ]
 
-  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
-
   deps = [
-    "$TELEPHONY_CELLULAR_CALL_ROOT:tel_cellular_call",
-    "$TELEPHONY_CELLULAR_CALL_ROOT/interfaces/innerkits/ims:tel_ims_call_api",
+    "${TELEPHONY_CELLULAR_CALL_ROOT}:tel_cellular_call",
+    "${TELEPHONY_CELLULAR_CALL_ROOT}/interfaces/innerkits/ims:tel_ims_call_api",
   ]
 
   external_deps = [

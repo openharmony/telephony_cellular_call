@@ -12,39 +12,28 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
-import("//base/telephony/core_service/telephony.gni")
 import("//build/config/features.gni")
 import("//build/ohos.gni")
-SOURCE_DIR = "//base/telephony/cellular_call"
-
 import("//build/test.gni")
+CELLULAR_CALL_PATH = "../../.."
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AnswerRequestFuzzTest") {
   module_output_path = "cellular_call/AnswerRequestFuzzTest"
   module_out_path = module_output_path
-  fuzz_config_file =
-      "//base/telephony/cellular_call/test/fuzztest/answerrequest_fuzzer"
+  fuzz_config_file = "${CELLULAR_CALL_PATH}/test/fuzztest/answerrequest_fuzzer"
 
   include_dirs = [
-    "//base/telephony/cellular_call/services/common/include",
-    "//base/telephony/cellular_call/services/manager/include",
-    "//base/telephony/cellular_call/test/fuzztest/common_fuzzer",
-    "//base/telephony/call_manager/interfaces/innerkits",
-    "//base/telephony/call_manager/services/telephony_interaction/include",
-    "//base/telephony/cellular_call/test/fuzztest/common_fuzzer",
-    "$SOURCE_DIR/interfaces/innerkits/ims",
-    "$SOURCE_DIR/services/common/include",
-    "$SOURCE_DIR/services/manager/include",
-    "$SOURCE_DIR/services/control/include",
-    "$SOURCE_DIR/services/connection/include",
+    "${CELLULAR_CALL_PATH}/test/fuzztest/common_fuzzer",
+    "${CELLULAR_CALL_PATH}/services/connection/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
-  configs = [ "//base/telephony/core_service/utils:telephony_log_config" ]
-
-  deps = [ "//base/telephony/cellular_call:tel_cellular_call" ]
+  deps = [
+    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
+  ]
 
   external_deps = [
     "ability_base:want",
@@ -67,7 +56,7 @@ ohos_fuzztest("AnswerRequestFuzzTest") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
-  defines += [
+  defines = [
     "TELEPHONY_LOG_TAG = \"CellularCallFuzzTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
@@ -84,7 +73,7 @@ ohos_fuzztest("AnswerRequestFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [
-    "//base/telephony/cellular_call/test/fuzztest/common_fuzzer/addcellularcalltoken_fuzzer.cpp",
+    "${CELLULAR_CALL_PATH}/test/fuzztest/common_fuzzer/addcellularcalltoken_fuzzer.cpp",
     "answerrequest_fuzzer.cpp",
   ]
 }
