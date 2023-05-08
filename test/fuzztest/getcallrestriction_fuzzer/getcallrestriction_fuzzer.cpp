@@ -115,9 +115,11 @@ void SetReadyToCall(const uint8_t *data, size_t size)
     }
 
     int32_t slotId = static_cast<int32_t>(size);
+    int32_t callType = static_cast<int32_t>(size % SLOT_NUM);
     bool isReadyToCall = static_cast<bool>(size % SLOT_NUM);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(slotId);
+    dataMessageParcel.WriteInt32(callType);
     dataMessageParcel.WriteBool(isReadyToCall);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;

@@ -42,7 +42,7 @@ void CellularCallCallback::ClearCellularCallList(int32_t slotId)
     iface_cast<CellularCallInterface>(remote)->HangUpAllConnection(slotId);
 }
 
-void CellularCallCallback::SetReadyToCall(int32_t slotId, bool isReadyToCall)
+void CellularCallCallback::SetReadyToCall(int32_t slotId, int32_t callType, bool isReadyToCall)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityMgr == nullptr) {
@@ -54,7 +54,7 @@ void CellularCallCallback::SetReadyToCall(int32_t slotId, bool isReadyToCall)
         TELEPHONY_LOGE("SetReadyToCall return, CellularCallService Remote service not exists.");
         return;
     }
-    iface_cast<CellularCallInterface>(remote)->SetReadyToCall(slotId, isReadyToCall);
+    iface_cast<CellularCallInterface>(remote)->SetReadyToCall(slotId, callType, isReadyToCall);
 }
 } // namespace Telephony
 } // namespace OHOS

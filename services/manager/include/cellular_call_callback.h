@@ -33,7 +33,7 @@ public:
      */
     void ClearCellularCallList(int32_t slotId) override;
 
-    void SetReadyToCall(int32_t slotId, bool isReadyToCall) override;
+    void SetReadyToCall(int32_t slotId, int32_t callType, bool isReadyToCall) override;
 };
 } // namespace Telephony
 } // namespace OHOS
