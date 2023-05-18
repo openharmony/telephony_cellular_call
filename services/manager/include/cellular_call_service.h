@@ -391,6 +391,24 @@ public:
     int32_t SetImsConfig(int32_t slotId, ImsConfigItem item, const std::string &value) override;
 
     /**
+     * Set VoNR Switch State
+     *
+     * @param slotId
+     * @param state
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t SetVoNRState(int32_t slotId, int32_t state) override;
+
+    /**
+     * Get VoNR Switch State
+     *
+     * @param slotId
+     * @param state
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t GetVoNRState(int32_t slotId, int32_t &state) override;
+
+    /**
      * Set Ims Config
      *
      * @param slotId

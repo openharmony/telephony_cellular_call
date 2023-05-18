@@ -61,6 +61,15 @@ public:
     int32_t GetImsSwitchStatusRequest(int32_t slotId);
 
     /**
+     * Set VoNR Switch Status Request
+     *
+     * @param slotId
+     * @param state
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetVoNRSwitchStatusRequest(int32_t slotId, int32_t state);
+
+    /**
      * Set Ims Config Request
      *
      * @param ImsConfigItem

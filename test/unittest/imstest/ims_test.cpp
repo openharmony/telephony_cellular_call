@@ -1030,6 +1030,90 @@ HWTEST_F(ImsTest, cellular_call_CanSetCallTransferTime_0001, Function | MediumTe
     }
 }
 
+
+/**
+ * @tc.number   cellular_call_SetVoNRState_0001
+ * @tc.name     Test for SetVoNRState function
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_SetVoNRState_0001, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 1);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 1);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_SetVoNRState_0002
+ * @tc.name     Test for SetVoNRState function
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_SetVoNRState_0002, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 0);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_GetVoNRState_0001
+ * @tc.name     Test for GetVoNRState function
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_GetVoNRState_0001, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        int32_t result;
+        int32_t ret = telephonyService->GetVoNRState(SIM1_SLOTID, result);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        int32_t result;
+        int32_t ret = telephonyService->GetVoNRState(SIM2_SLOTID, result);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
 /**
  * @tc.number   cellular_call_ImsControl_0001
  * @tc.name     Test for ImsControl
@@ -1241,6 +1325,7 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
         handler.SetDomainPreferenceModeResponse(responseEvent);
         handler.GetDomainPreferenceModeResponse(event);
         handler.SetDomainPreferenceModeResponse(event);
+        handler.SetVoNRSwitchStatusResponse(responseEvent);
         ASSERT_EQ(handler.GetSlotId(), slotId);
     }
 }

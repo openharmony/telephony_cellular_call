@@ -118,6 +118,7 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->SendUnlockPinPukResponse(event);
     handle->HandleOperatorConfigChanged(event);
     handle->UpdateRsrvccStateReport(event);
+    handle->SetVoNRSwitchStatusResponse(event);
 }
 
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
