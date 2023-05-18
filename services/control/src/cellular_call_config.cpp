@@ -482,7 +482,7 @@ int32_t CellularCallConfig::ObtainVoNRState(int32_t slotId)
 {
     std::string vonrStateKey = VONR_STATE + std::to_string(slotId);
 
-    int32_t vonrState = GetIntParameter(vonrStateKey.c_str(), VONR_SWITCH_STATUS_OFF);
+    int32_t vonrState = GetIntParameter(vonrStateKey.c_str(), VONR_SWITCH_STATUS_ON);
     TELEPHONY_LOGI("slotId: %{public}d, switchState: %{public}d", slotId, vonrState);
     return vonrState;
 }
