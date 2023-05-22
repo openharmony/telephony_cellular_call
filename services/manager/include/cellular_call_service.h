@@ -17,6 +17,7 @@
 #define CELLULAR_CALL_SERVICE_H
 
 #include <memory>
+#include <mutex>
 
 #include "cellular_call_config.h"
 #include "cellular_call_handler.h"
@@ -629,6 +630,7 @@ private:
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
+    std::mutex mutex_;
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {
