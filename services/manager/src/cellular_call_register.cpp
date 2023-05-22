@@ -39,6 +39,7 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
         detailInfo.callMode = (*it).callMode;
     }
 
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCallsInfo return, callManagerCallBack_ is nullptr, report fail!");
         if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {
@@ -57,6 +58,7 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
 
 int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     callManagerCallBack_ = callback;
     return TELEPHONY_SUCCESS;
 }
@@ -66,6 +68,7 @@ void CellularCallRegister::ReportSingleCallInfo(const CallReportInfo &info, TelC
     TELEPHONY_LOGD("ReportSingleCallInfo entry");
     CallReportInfo cellularCallReportInfo = info;
     cellularCallReportInfo.state = callState;
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSingleCallInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -75,6 +78,7 @@ void CellularCallRegister::ReportSingleCallInfo(const CallReportInfo &info, TelC
 
 int32_t CellularCallRegister::UnRegisterCallManagerCallBack()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     callManagerCallBack_ = nullptr;
     return TELEPHONY_SUCCESS;
 }
@@ -82,6 +86,7 @@ int32_t CellularCallRegister::UnRegisterCallManagerCallBack()
 void CellularCallRegister::ReportEventResultInfo(const CellularCallEventInfo &info)
 {
     TELEPHONY_LOGI("ReportEventResultInfo entry eventId:%{public}d", info.eventId);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportEventResultInfo return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -93,6 +98,7 @@ void CellularCallRegister::ReportGetWaitingResult(const CallWaitResponse &respon
 {
     TELEPHONY_LOGI("ReportGetWaitingResult result:%{public}d, status:%{public}d, class:%{public}d", response.result,
         response.status, response.classCw);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetWaitingResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -103,6 +109,7 @@ void CellularCallRegister::ReportGetWaitingResult(const CallWaitResponse &respon
 void CellularCallRegister::ReportSetWaitingResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportSetWaitingResult result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetWaitingResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -114,6 +121,7 @@ void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionRespo
 {
     TELEPHONY_LOGI("ReportGetRestrictionResult result:%{public}d, status:%{public}d, class:%{public}d",
         response.result, response.status, response.classCw);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -124,6 +132,7 @@ void CellularCallRegister::ReportGetRestrictionResult(const CallRestrictionRespo
 void CellularCallRegister::ReportSetRestrictionResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportSetRestrictionResult result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetRestrictionResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -137,6 +146,7 @@ void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &r
         response.status, response.classx);
     TELEPHONY_LOGI("ReportGetTransferResult type:%{public}d, reason:%{public}d, time:%{public}d",
         response.type, response.reason, response.time);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -147,6 +157,7 @@ void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &r
 void CellularCallRegister::ReportSetTransferResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportSetTransferResult result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetTransferResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -158,6 +169,7 @@ void CellularCallRegister::ReportGetClipResult(const ClipResponse &response)
 {
     TELEPHONY_LOGI("ReportGetClipResult result:%{public}d, action:%{public}d, stat:%{public}d", response.result,
         response.action, response.clipStat);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetClipResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -169,6 +181,7 @@ void CellularCallRegister::ReportGetClirResult(const ClirResponse &response)
 {
     TELEPHONY_LOGI("ReportGetClirResult result:%{public}d, action:%{public}d, stat:%{public}d", response.result,
         response.action, response.clirStat);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetClirResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -179,6 +192,7 @@ void CellularCallRegister::ReportGetClirResult(const ClirResponse &response)
 void CellularCallRegister::ReportSetClirResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportSetClirResult result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetClirResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -189,6 +203,7 @@ void CellularCallRegister::ReportSetClirResult(int32_t result)
 void CellularCallRegister::ReportGetImsConfigResult(const GetImsConfigResponse &response)
 {
     TELEPHONY_LOGI("ReportGetImsConfigResult entry, value:%{public}d", response.value);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetImsConfigResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -198,6 +213,7 @@ void CellularCallRegister::ReportGetImsConfigResult(const GetImsConfigResponse &
 
 void CellularCallRegister::ReportSetImsConfigResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetImsConfigResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -207,6 +223,7 @@ void CellularCallRegister::ReportSetImsConfigResult(int32_t result)
 
 void CellularCallRegister::ReportSetImsFeatureResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSetImsFeatureResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -217,6 +234,7 @@ void CellularCallRegister::ReportSetImsFeatureResult(int32_t result)
 void CellularCallRegister::ReportGetImsFeatureResult(const GetImsFeatureValueResponse &response)
 {
     TELEPHONY_LOGI("ReportGetImsFeatureResult entry, value:%{public}d", response.value);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetImsFeatureResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -227,6 +245,7 @@ void CellularCallRegister::ReportGetImsFeatureResult(const GetImsFeatureValueRes
 void CellularCallRegister::ReportCallRingBackResult(int32_t status)
 {
     TELEPHONY_LOGI("ReportCallRingBackResult entry");
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCallRingBackResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -236,6 +255,7 @@ void CellularCallRegister::ReportCallRingBackResult(int32_t status)
 
 void CellularCallRegister::ReportCallFailReason(const DisconnectedDetails &details)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCallFailReason return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -246,6 +266,7 @@ void CellularCallRegister::ReportCallFailReason(const DisconnectedDetails &detai
 void CellularCallRegister::ReportGetMuteResult(const MuteControlResponse &response)
 {
     TELEPHONY_LOGI("ReportGetMuteResult entry result:%{public}d, value:%{public}d", response.result, response.value);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportMuteResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -260,6 +281,7 @@ void CellularCallRegister::ReportSetMuteResult(const MuteControlResponse &respon
 void CellularCallRegister::ReportInviteToConferenceResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportInviteToConferenceResult entry result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportInviteToConferenceResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -269,6 +291,7 @@ void CellularCallRegister::ReportInviteToConferenceResult(int32_t result)
 
 void CellularCallRegister::ReportUpdateCallMediaModeResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportUpdateCallMediaModeResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -280,6 +303,7 @@ void CellularCallRegister::ReportUpdateCallMediaModeResult(int32_t result)
 
 void CellularCallRegister::ReportGetCallDataResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportGetCallDataResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -289,6 +313,7 @@ void CellularCallRegister::ReportGetCallDataResult(int32_t result)
 
 void CellularCallRegister::ReportStartDtmfResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportStartDtmfResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -298,6 +323,7 @@ void CellularCallRegister::ReportStartDtmfResult(int32_t result)
 
 void CellularCallRegister::ReportStopDtmfResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportStopDtmfResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -307,6 +333,7 @@ void CellularCallRegister::ReportStopDtmfResult(int32_t result)
 
 void CellularCallRegister::ReportStartRttResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportStartRttResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -316,6 +343,7 @@ void CellularCallRegister::ReportStartRttResult(int32_t result)
 
 void CellularCallRegister::ReportStopRttResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportStopRttResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -325,6 +353,7 @@ void CellularCallRegister::ReportStopRttResult(int32_t result)
 
 void CellularCallRegister::ReportSendUssdResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportSendUssdResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -335,6 +364,7 @@ void CellularCallRegister::ReportSendUssdResult(int32_t result)
 void CellularCallRegister::ReportMmiCodeResult(const MmiCodeInfo &info)
 {
     TELEPHONY_LOGI("ReportMmiCodeResult entry result:%{public}d, value:%{public}s", info.result, info.message);
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportMmiCodeResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
@@ -350,11 +380,13 @@ void CellularCallRegister::ReportSetEmergencyCallListResponse(const SetEccListRe
 
 bool CellularCallRegister::IsCallManagerCallBackRegistered()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return callManagerCallBack_ != nullptr;
 }
 
 void CellularCallRegister::ReportCloseUnFinishedUssdResult(int32_t result)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
         TELEPHONY_LOGE("ReportCloseUnFinishedUssdResult return, callManagerCallBack_ is nullptr, report fail!");
         return;
