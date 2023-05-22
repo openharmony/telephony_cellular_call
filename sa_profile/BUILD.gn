@@ -14,7 +14,7 @@
 import("//build/ohos/sa_profile/sa_profile.gni")
 
 ohos_sa_profile("cellular_call_sa_profile") {
-  sources = [ "4006.xml" ]
+  sources = [ "4006.json" ]
 
   part_name = "cellular_call"
 }
