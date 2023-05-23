@@ -40,6 +40,7 @@ int32_t ImsSms::ImsSendMessage(int32_t slotId, const ImsMessageInfo &imsMessageI
     // IMS demo send request info
 
     // IMS demo callback response info
+    std::lock_guard<std::mutex> lock(mutex_);
     SendSmsResultInfo result;
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
@@ -54,6 +55,7 @@ int32_t ImsSms::ImsSetSmsConfig(int32_t slotId, int32_t imsSmsConfig)
     // IMS demo send request info
 
     // IMS demo callback response info
+    std::lock_guard<std::mutex> lock(mutex_);
     HRilRadioResponseInfo info;
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
@@ -68,6 +70,7 @@ int32_t ImsSms::ImsGetSmsConfig(int32_t slotId)
     // IMS demo send request info
 
     // IMS demo callback response info
+    std::lock_guard<std::mutex> lock(mutex_);
     int32_t imsSmsConfig = 0;
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
@@ -79,7 +82,7 @@ int32_t ImsSms::ImsGetSmsConfig(int32_t slotId)
 
 int32_t ImsSms::RegisterImsSmsCallback(const sptr<ImsSmsCallbackInterface> &callback)
 {
-    TELEPHONY_LOGI("Register IMS call callback");
+    std::lock_guard<std::mutex> lock(mutex_);
     imsSmsCallback_ = callback;
     return TELEPHONY_SUCCESS;
 }
