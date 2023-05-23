@@ -64,6 +64,7 @@ public:
 
 private:
     sptr<ImsSmsCallbackInterface> imsSmsCallback_ = nullptr;
+    std::mutex mutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
