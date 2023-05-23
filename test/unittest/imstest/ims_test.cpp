@@ -1248,11 +1248,11 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
 }
 
 /**
- * @tc.number   Telephony_ImsCallClient_0001
- * @tc.name     test error branch
+ * @tc.number   cellular_call_ImsCallClient_0001
+ * @tc.name     test for ImsCallClient
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call__ImsCallClient_0001, Function | MediumTest | Level3)
+HWTEST_F(ImsTest, cellular_call_ImsCallClient_0001, Function | MediumTest | Level3)
 {
     ImsCallClient::SystemAbilityListener listen;
     int32_t systemAbilityId = 1;
@@ -1270,9 +1270,6 @@ HWTEST_F(ImsTest, cellular_call__ImsCallClient_0001, Function | MediumTest | Lev
  */
 HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
-    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
-        return;
-    }
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy = iface_cast<ImsCallCallbackInterface>(imsCallCallback_->AsObject().GetRefPtr());
     ASSERT_TRUE(callCallbackProxy != nullptr);
@@ -1324,9 +1321,6 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
  */
 HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
-    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
-        return;
-    }
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy = iface_cast<ImsCallCallbackInterface>(imsCallCallback_->AsObject().GetRefPtr());
     ASSERT_TRUE(callCallbackProxy != nullptr);
@@ -1334,6 +1328,13 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest
         if (!HasSimCard(slotId)) {
             continue;
         }
+        EventFwk::MatchingSkills matchingSkills;
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+        std::shared_ptr<AppExecFwk::EventRunner> eventLoop = AppExecFwk::EventRunner::Create("Imstest");
+        auto handler = std::make_shared<CellularCallHandler>(eventLoop, subscriberInfo);
+        handler->SetSlotId(slotId);
+        handler->RegisterImsCallCallbackHandler();
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
         ASSERT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
