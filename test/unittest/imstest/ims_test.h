@@ -171,6 +171,61 @@ public:
         return ret;
     };
 
+    int32_t WriteSsBaseResult(MessageParcel &in, const SsBaseResult &ssResult)
+    {
+        if (!in.WriteInt32(ssResult.index)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteInt32(ssResult.result)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteInt32(ssResult.reason)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteString(ssResult.message)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        return TELEPHONY_SUCCESS;
+    };
+
+    int32_t WriteSsResult(MessageParcel &in, const SsBaseResult &ssResult, const int32_t action, const int32_t state)
+    {
+        int32_t ret = WriteSsBaseResult(in, ssResult);
+        if (ret != TELEPHONY_SUCCESS) {
+            return ret;
+        }
+        if (!in.WriteInt32(action)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteInt32(state)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        return TELEPHONY_SUCCESS;
+    };
+
+    int32_t WriteCallForwardResult(MessageParcel &in, const CallForwardQueryInfoList &cFQueryList )
+    {
+        int32_t ret = WriteSsBaseResult(in, cFQueryList.result);
+        if (ret != TELEPHONY_SUCCESS) {
+            return ret;
+        }
+        if (!in.WriteInt32(cFQueryList.callSize) || !in.WriteInt32(cFQueryList.flag)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteInt32(static_cast<int32_t>(cFQueryList.calls.size()))) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        for (auto call : cFQueryList.calls) {
+            if (!in.WriteInt32(call.serial) || !in.WriteInt32(call.result) || !in.WriteInt32(call.status) ||
+                !in.WriteInt32(call.classx) || !in.WriteString(call.number) || !in.WriteInt32(call.type) ||
+                !in.WriteInt32(call.reason) || !in.WriteInt32(call.time) || !in.WriteInt32(call.startHour) ||
+                !in.WriteInt32(call.startMinute) || !in.WriteInt32(call.endHour) || !in.WriteInt32(call.endMinute)) {
+                return TELEPHONY_ERR_WRITE_DATA_FAIL;
+            }
+        }
+        return TELEPHONY_SUCCESS;
+    }
+
 private:
     using RequestFuncType = int32_t (ImsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
     std::map<int32_t, RequestFuncType> requestFuncMap_;

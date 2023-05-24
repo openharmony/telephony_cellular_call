@@ -150,8 +150,19 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsC
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&callList, sizeof(ImsCurrentCallList))) {
+    if (!in.WriteInt32(callList.callSize) || !in.WriteInt32(callList.flag)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(static_cast<int32_t>(callList.calls.size()))) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    for (auto call : callList.calls) {
+        if (!in.WriteInt32(call.index) || !in.WriteInt32(call.dir) || !in.WriteInt32(call.state) ||
+            !in.WriteInt32(call.mode) || !in.WriteInt32(call.mpty) || !in.WriteInt32(call.voiceDomain) ||
+            !in.WriteInt32(call.callType) || !in.WriteString(call.number) || !in.WriteInt32(call.type) ||
+            !in.WriteString(call.alpha)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
     }
     return SendResponseInfo(IMS_GET_CALLS_DATA, in);
 }
@@ -227,23 +238,23 @@ int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, const D
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&details, sizeof(DisconnectedDetails))) {
+    if (!in.WriteInt32(static_cast<int32_t>(details.reason))) {
+        TELEPHONY_LOGE("[slot%{public}d] Write reason fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-
+    if (!in.WriteString(details.message)) {
+        TELEPHONY_LOGE("[slot%{public}d] Write message fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
     return SendResponseInfo(IMS_LAST_CALL_FAIL_REASON, in);
 }
 
 int32_t ImsCallCallbackProxy::SetClipResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_CLIP, in);
@@ -252,11 +263,14 @@ int32_t ImsCallCallbackProxy::SetClipResponse(int32_t slotId, const SsBaseResult
 int32_t ImsCallCallbackProxy::GetClipResponse(int32_t slotId, const GetClipResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(GetClipResult))) {
+    if (!in.WriteInt32(result.action)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.clipStat)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -266,11 +280,14 @@ int32_t ImsCallCallbackProxy::GetClipResponse(int32_t slotId, const GetClipResul
 int32_t ImsCallCallbackProxy::GetClirResponse(int32_t slotId, const GetClirResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(GetClirResult))) {
+    if (!in.WriteInt32(result.action)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.clirStat)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -280,13 +297,9 @@ int32_t ImsCallCallbackProxy::GetClirResponse(int32_t slotId, const GetClirResul
 int32_t ImsCallCallbackProxy::SetClirResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_CLIR, in);
@@ -295,12 +308,23 @@ int32_t ImsCallCallbackProxy::SetClirResponse(int32_t slotId, const SsBaseResult
 int32_t ImsCallCallbackProxy::GetCallTransferResponse(int32_t slotId, const CallForwardQueryInfoList &cFQueryList)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, cFQueryList.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&cFQueryList, sizeof(CallForwardQueryInfoList))) {
+    if (!in.WriteInt32(cFQueryList.callSize) || !in.WriteInt32(cFQueryList.flag)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(static_cast<int32_t>(cFQueryList.calls.size()))) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    for (auto call : cFQueryList.calls) {
+        if (!in.WriteInt32(call.serial) || !in.WriteInt32(call.result) || !in.WriteInt32(call.status) ||
+            !in.WriteInt32(call.classx) || !in.WriteString(call.number) || !in.WriteInt32(call.type) ||
+            !in.WriteInt32(call.reason) || !in.WriteInt32(call.time) || !in.WriteInt32(call.startHour) ||
+            !in.WriteInt32(call.startMinute) || !in.WriteInt32(call.endHour) || !in.WriteInt32(call.endMinute)) {
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
     }
 
     return SendResponseInfo(IMS_GET_CALL_FORWARD, in);
@@ -309,13 +333,9 @@ int32_t ImsCallCallbackProxy::GetCallTransferResponse(int32_t slotId, const Call
 int32_t ImsCallCallbackProxy::SetCallTransferResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_FORWARD, in);
@@ -324,11 +344,14 @@ int32_t ImsCallCallbackProxy::SetCallTransferResponse(int32_t slotId, const SsBa
 int32_t ImsCallCallbackProxy::GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(CallRestrictionResult))) {
+    if (!in.WriteInt32(result.status)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.classCw)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -338,13 +361,9 @@ int32_t ImsCallCallbackProxy::GetCallRestrictionResponse(int32_t slotId, const C
 int32_t ImsCallCallbackProxy::SetCallRestrictionResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_RESTRICTION, in);
@@ -353,11 +372,14 @@ int32_t ImsCallCallbackProxy::SetCallRestrictionResponse(int32_t slotId, const S
 int32_t ImsCallCallbackProxy::GetCallWaitingResponse(int32_t slotId, const CallWaitResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(CallWaitResult))) {
+    if (!in.WriteInt32(result.status)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.classCw)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -367,13 +389,9 @@ int32_t ImsCallCallbackProxy::GetCallWaitingResponse(int32_t slotId, const CallW
 int32_t ImsCallCallbackProxy::SetCallWaitingResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_WAIT, in);
@@ -382,13 +400,9 @@ int32_t ImsCallCallbackProxy::SetCallWaitingResponse(int32_t slotId, const SsBas
 int32_t ImsCallCallbackProxy::SetColrResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_COLR, in);
@@ -397,11 +411,14 @@ int32_t ImsCallCallbackProxy::SetColrResponse(int32_t slotId, const SsBaseResult
 int32_t ImsCallCallbackProxy::GetColrResponse(int32_t slotId, const GetColrResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(GetColrResult))) {
+    if (!in.WriteInt32(result.action)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.colrStat)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -411,13 +428,9 @@ int32_t ImsCallCallbackProxy::GetColrResponse(int32_t slotId, const GetColrResul
 int32_t ImsCallCallbackProxy::SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, resultInfo);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
-    }
-    if (!in.WriteRawData((const void *)&resultInfo, sizeof(SsBaseResult))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write SsBaseResult fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
     return SendResponseInfo(IMS_SET_CALL_COLP, in);
@@ -426,11 +439,14 @@ int32_t ImsCallCallbackProxy::SetColpResponse(int32_t slotId, const SsBaseResult
 int32_t ImsCallCallbackProxy::GetColpResponse(int32_t slotId, const GetColpResult &result)
 {
     MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    int32_t ret = WriteSsBaseResultCommonInfo(slotId, __FUNCTION__, in, result.result);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&result, sizeof(GetColpResult))) {
+    if (!in.WriteInt32(result.action)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(result.colpStat)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
@@ -474,6 +490,28 @@ int32_t ImsCallCallbackProxy::WriteCommonInfo(
     }
     if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
         TELEPHONY_LOGE("[slot%{public}d]%{public}s:Write info fail!", slotId, funcName.c_str());
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackProxy::WriteSsBaseResultCommonInfo(
+    int32_t slotId, const std::string &funcName, MessageParcel &in, const SsBaseResult &ssResult)
+{
+    int32_t ret = WriteCommonInfo(slotId, funcName, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteInt32(ssResult.index)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(ssResult.result)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(ssResult.reason)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteString(ssResult.message)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     return TELEPHONY_SUCCESS;
