@@ -164,7 +164,8 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
         TELEPHONY_LOGE("IMSControl::Answer, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
-    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING) &&
+        IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         TELEPHONY_LOGD("already threeway mode. hangup holding call and pickup new call");
         auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
             connectionMap_, TelCallState::CALL_STATUS_HOLDING);
