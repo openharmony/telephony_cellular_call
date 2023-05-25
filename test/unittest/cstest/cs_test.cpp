@@ -2123,7 +2123,6 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
     EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
     EXPECT_EQ(InitCellularCallInfo(INVALID_SLOTID, "", cellularCallInfo), TELEPHONY_SUCCESS);
     EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_PHONE_NUMBER_EMPTY);
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -2137,6 +2136,40 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(csControl->DialCdma(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
         ASSERT_FALSE(csControl->CalculateInternationalRoaming(slotId));
+        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_SECOND, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_THIRD, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->SeparateConference(slotId, PHONE_NUMBER, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->SeparateConference(slotId, "", 1), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
+            CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(
+            csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(csControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
+            TELEPHONY_ERR_ARGUMENT_INVALID);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CsControl_0002
+ * @tc.name     Test for CsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CsControl_0002, Function | MediumTest | Level3)
+{
+    auto csControl = std::make_shared<CSControl>();
+    CellularCallInfo cellularCallInfo;
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
         CallInfoList callList;
         callList.callSize = 0;
         EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_ERROR);
@@ -2157,31 +2190,13 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
         callInfo.number = PHONE_NUMBER_THIRD;
         callInfo.index = 3;
         callList.calls.push_back(callInfo);
+        callList.callSize = 0;
         EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_SECOND, cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_THIRD, cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
         EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
         EXPECT_EQ(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
         EXPECT_EQ(csControl->SwitchCall(slotId), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(csControl->SeparateConference(slotId, PHONE_NUMBER, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->SeparateConference(slotId, "", 1), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
-            CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(
-            csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
-            TELEPHONY_ERR_ARGUMENT_INVALID);
-        callList.callSize = 0;
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
     }
 }
 
@@ -2232,16 +2247,6 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     }
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ASSERT_TRUE(callRegister != nullptr);
-    CallReportInfo callRepotInfo;
-    callRepotInfo.callType = CallType::TYPE_CS;
-    callRepotInfo.accountId = INVALID_SLOTID;
-    callRepotInfo.state = TelCallState::CALL_STATUS_INCOMING;
-    callRepotInfo.callMode = VideoStateType::TYPE_VOICE;
-    CallsReportInfo calls;
-    calls.slotId = INVALID_SLOTID;
-    calls.callVec.push_back(callRepotInfo);
-    callRegister->ReportCallsInfo(calls);
-    callRegister->ReportSingleCallInfo(callRepotInfo, TelCallState::CALL_STATUS_INCOMING);
     CellularCallEventInfo callEvent;
     callRegister->ReportEventResultInfo(callEvent);
     CallWaitResponse waitResponse;
@@ -2275,9 +2280,29 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     callRegister->ReportSetEmergencyCallListResponse(eccListResponse);
     MmiCodeInfo mmiInfo;
     callRegister->ReportMmiCodeResult(mmiInfo);
+    ASSERT_FALSE(callRegister->IsCallManagerCallBackRegistered());
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallRegister_0002
+ * @tc.name     Test for CellularCallRegister
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallRegister_0002, Function | MediumTest | Level3)
+{
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    CallReportInfo callRepotInfo;
+    callRepotInfo.callType = CallType::TYPE_CS;
+    callRepotInfo.accountId = INVALID_SLOTID;
+    callRepotInfo.state = TelCallState::CALL_STATUS_INCOMING;
+    callRepotInfo.callMode = VideoStateType::TYPE_VOICE;
+    CallsReportInfo calls;
+    calls.slotId = INVALID_SLOTID;
+    calls.callVec.push_back(callRepotInfo);
+    callRegister->ReportCallsInfo(calls);
+    callRegister->ReportSingleCallInfo(callRepotInfo, TelCallState::CALL_STATUS_INCOMING);
     EXPECT_EQ(callRegister->RegisterCallManagerCallBack(nullptr), TELEPHONY_SUCCESS);
     EXPECT_EQ(callRegister->UnRegisterCallManagerCallBack(), TELEPHONY_SUCCESS);
-    ASSERT_FALSE(callRegister->IsCallManagerCallBackRegistered());
 }
 
 /**
