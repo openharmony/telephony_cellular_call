@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t MAX_SIZE = 10;
 ImsCallCallbackStub::ImsCallCallbackStub()
 {
     TELEPHONY_LOGI("ImsCallCallbackStub");
@@ -284,6 +285,10 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
         callList->callSize = data.ReadInt32();
         callList->flag = data.ReadInt32();
         int32_t len = data.ReadInt32();
+        if (len < 0 || len > MAX_SIZE) {
+            TELEPHONY_LOGE("ImsCallCallbackStub::OnGetImsCallsDataResponseInner callSize error");
+            return TELEPHONY_ERR_FAIL;
+        }
         for (int32_t i = 0; i < len; i++) {
             ImsCurrentCall call;
             call.index = data.ReadInt32();
@@ -418,6 +423,10 @@ int32_t ImsCallCallbackStub::OnGetCallTransferResponseInner(MessageParcel &data,
     cFQueryList->callSize = data.ReadInt32();
     cFQueryList->flag = data.ReadInt32();
     int32_t len = data.ReadInt32();
+    if (len < 0 || len > MAX_SIZE) {
+        TELEPHONY_LOGE("ImsCallCallbackStub::OnGetCallTransferResponseInner callSize error");
+        return TELEPHONY_ERR_FAIL;
+    }
     for (int32_t i = 0; i < len; i++) {
         CallForwardQueryResult call;
         call.serial = data.ReadInt32();
