@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t MAX_SIZE = 10;
 ImsCallCallbackStub::ImsCallCallbackStub()
 {
     TELEPHONY_LOGI("ImsCallCallbackStub");
@@ -280,10 +281,27 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
     auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
-        auto callList = static_cast<const ImsCurrentCallList *>(data.ReadRawData(sizeof(ImsCurrentCallList)));
-        if (callList == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] callList is null.", slotId);
-            return TELEPHONY_ERR_ARGUMENT_INVALID;
+        auto callList = std::make_shared<ImsCurrentCallList>();
+        callList->callSize = data.ReadInt32();
+        callList->flag = data.ReadInt32();
+        int32_t len = data.ReadInt32();
+        if (len < 0 || len > MAX_SIZE) {
+            TELEPHONY_LOGE("ImsCallCallbackStub::OnGetImsCallsDataResponseInner callSize error");
+            return TELEPHONY_ERR_FAIL;
+        }
+        for (int32_t i = 0; i < len; i++) {
+            ImsCurrentCall call;
+            call.index = data.ReadInt32();
+            call.dir = data.ReadInt32();
+            call.state = data.ReadInt32();
+            call.mode = data.ReadInt32();
+            call.mpty = data.ReadInt32();
+            call.voiceDomain = data.ReadInt32();
+            call.callType = static_cast<ImsCallType>(data.ReadInt32());
+            data.ReadString(call.number);
+            call.type = data.ReadInt32();
+            data.ReadString(call.alpha);
+            callList->calls.push_back(call);
         }
         reply.WriteInt32(GetImsCallsDataResponse(slotId, *callList));
         return TELEPHONY_SUCCESS;
@@ -319,23 +337,25 @@ int32_t ImsCallCallbackStub::OnCallRingBackReportInner(MessageParcel &data, Mess
 int32_t ImsCallCallbackStub::OnLastCallFailReasonResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto details = static_cast<const DisconnectedDetails *>(data.ReadRawData(sizeof(DisconnectedDetails)));
-    reply.WriteInt32(LastCallFailReasonResponse(slotId, *details));
+    DisconnectedDetails details;
+    details.reason = static_cast<const DisconnectedReason>(data.ReadInt32());
+    details.message = data.ReadString();
+    reply.WriteInt32(LastCallFailReasonResponse(slotId, details));
     return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallCallbackStub::OnSetClipResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetClipResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetClipResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -343,15 +363,17 @@ int32_t ImsCallCallbackStub::OnSetClipResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnGetClipResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const GetClipResult *>(data.ReadRawData(sizeof(GetClipResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    GetClipResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.action = data.ReadInt32();
+    result.clipStat = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetClipResponse(slotId, *result));
+        reply.WriteInt32(GetClipResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -359,15 +381,17 @@ int32_t ImsCallCallbackStub::OnGetClipResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnGetClirResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const GetClirResult *>(data.ReadRawData(sizeof(GetClirResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    GetClirResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.action = data.ReadInt32();
+    result.clirStat = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetClirResponse(slotId, *result));
+        reply.WriteInt32(GetClirResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -375,15 +399,15 @@ int32_t ImsCallCallbackStub::OnGetClirResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnSetClirResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetClirResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetClirResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -391,11 +415,33 @@ int32_t ImsCallCallbackStub::OnSetClirResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnGetCallTransferResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto cFQueryList =
-        static_cast<const CallForwardQueryInfoList *>(data.ReadRawData(sizeof(CallForwardQueryInfoList)));
-    if (cFQueryList == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] cFQueryList is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    auto cFQueryList = std::make_shared<CallForwardQueryInfoList>();
+    cFQueryList->result.index = data.ReadInt32();
+    cFQueryList->result.result = data.ReadInt32();
+    cFQueryList->result.reason = data.ReadInt32();
+    data.ReadString(cFQueryList->result.message);
+    cFQueryList->callSize = data.ReadInt32();
+    cFQueryList->flag = data.ReadInt32();
+    int32_t len = data.ReadInt32();
+    if (len < 0 || len > MAX_SIZE) {
+        TELEPHONY_LOGE("ImsCallCallbackStub::OnGetCallTransferResponseInner callSize error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    for (int32_t i = 0; i < len; i++) {
+        CallForwardQueryResult call;
+        call.serial = data.ReadInt32();
+        call.result = data.ReadInt32();
+        call.status = data.ReadInt32();
+        call.classx = data.ReadInt32();
+        data.ReadString(call.number);
+        call.type = data.ReadInt32();
+        call.reason = data.ReadInt32();
+        call.time = data.ReadInt32();
+        call.startHour = data.ReadInt32();
+        call.startMinute = data.ReadInt32();
+        call.endHour = data.ReadInt32();
+        call.endMinute = data.ReadInt32();
+        cFQueryList->calls.push_back(call);
     }
     if (cFQueryList->result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
@@ -408,15 +454,15 @@ int32_t ImsCallCallbackStub::OnGetCallTransferResponseInner(MessageParcel &data,
 int32_t ImsCallCallbackStub::OnSetCallTransferResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetCallTransferResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetCallTransferResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -424,15 +470,17 @@ int32_t ImsCallCallbackStub::OnSetCallTransferResponseInner(MessageParcel &data,
 int32_t ImsCallCallbackStub::OnGetCallRestrictionResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const CallRestrictionResult *>(data.ReadRawData(sizeof(CallRestrictionResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    CallRestrictionResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.status = data.ReadInt32();
+    result.classCw = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetCallRestrictionResponse(slotId, *result));
+        reply.WriteInt32(GetCallRestrictionResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -440,15 +488,15 @@ int32_t ImsCallCallbackStub::OnGetCallRestrictionResponseInner(MessageParcel &da
 int32_t ImsCallCallbackStub::OnSetCallRestrictionResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetCallRestrictionResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetCallRestrictionResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -456,15 +504,17 @@ int32_t ImsCallCallbackStub::OnSetCallRestrictionResponseInner(MessageParcel &da
 int32_t ImsCallCallbackStub::OnGetCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const CallWaitResult *>(data.ReadRawData(sizeof(CallWaitResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    CallWaitResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.status = data.ReadInt32();
+    result.classCw = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetCallWaitingResponse(slotId, *result));
+        reply.WriteInt32(GetCallWaitingResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -472,15 +522,15 @@ int32_t ImsCallCallbackStub::OnGetCallWaitingResponseInner(MessageParcel &data, 
 int32_t ImsCallCallbackStub::OnSetCallWaitingResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetCallWaitingResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetCallWaitingResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -488,15 +538,15 @@ int32_t ImsCallCallbackStub::OnSetCallWaitingResponseInner(MessageParcel &data, 
 int32_t ImsCallCallbackStub::OnSetColrResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetColrResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetColrResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -504,15 +554,17 @@ int32_t ImsCallCallbackStub::OnSetColrResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnGetColrResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const GetColrResult *>(data.ReadRawData(sizeof(GetColrResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    GetColrResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.action = data.ReadInt32();
+    result.colrStat = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetColrResponse(slotId, *result));
+        reply.WriteInt32(GetColrResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -520,15 +572,15 @@ int32_t ImsCallCallbackStub::OnGetColrResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnSetColpResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto resultInfo = static_cast<const SsBaseResult *>(data.ReadRawData(sizeof(SsBaseResult)));
-    if (resultInfo == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] resultInfo is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (resultInfo->index == INVALID_INDEX) {
+    SsBaseResult resultInfo;
+    resultInfo.index = data.ReadInt32();
+    resultInfo.result = data.ReadInt32();
+    resultInfo.reason = data.ReadInt32();
+    resultInfo.message = data.ReadString();
+    if (resultInfo.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(SetColpResponse(slotId, *resultInfo));
+        reply.WriteInt32(SetColpResponse(slotId, resultInfo));
     }
     return TELEPHONY_SUCCESS;
 }
@@ -536,15 +588,17 @@ int32_t ImsCallCallbackStub::OnSetColpResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnGetColpResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto result = static_cast<const GetColpResult *>(data.ReadRawData(sizeof(GetColpResult)));
-    if (result == nullptr) {
-        TELEPHONY_LOGE("[slotId%{public}d] result is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    if (result->result.index == INVALID_INDEX) {
+    GetColpResult result;
+    result.result.index = data.ReadInt32();
+    result.result.result = data.ReadInt32();
+    result.result.reason = data.ReadInt32();
+    result.result.message = data.ReadString();
+    result.action = data.ReadInt32();
+    result.colpStat = data.ReadInt32();
+    if (result.result.index == INVALID_INDEX) {
         reply.WriteInt32(TELEPHONY_SUCCESS);
     } else {
-        reply.WriteInt32(GetColpResponse(slotId, *result));
+        reply.WriteInt32(GetColpResponse(slotId, result));
     }
     return TELEPHONY_SUCCESS;
 }

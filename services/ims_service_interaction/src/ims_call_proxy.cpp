@@ -926,9 +926,23 @@ int32_t ImsCallProxy::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityL
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&imsCapabilityList, sizeof(ImsCapabilityList))) {
-        TELEPHONY_LOGE("[slot%{public}d]Write imsCapabilityList fail!", slotId);
+    int32_t imsCapabilitiesSize = imsCapabilityList.imsCapabilities.size();
+    if (!in.WriteInt32(imsCapabilitiesSize)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    for (auto imsCapability : imsCapabilityList.imsCapabilities) {
+        if (!in.WriteInt32(static_cast<int32_t>(imsCapability.imsCapabilityType))) {
+            TELEPHONY_LOGE("[slot%{public}d] Write imsCapabilityType fail!", slotId);
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteInt32(static_cast<int32_t>(imsCapability.imsRadioTech))) {
+            TELEPHONY_LOGE("[slot%{public}d] Write imsRadioTech fail!", slotId);
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
+        if (!in.WriteBool(imsCapability.enable)) {
+            TELEPHONY_LOGE("[slot%{public}d] Write enable fail!", slotId);
+            return TELEPHONY_ERR_WRITE_DATA_FAIL;
+        }
     }
     return SendRequest(slotId, in, IMS_UPDATE_CAPABILITY);
 }

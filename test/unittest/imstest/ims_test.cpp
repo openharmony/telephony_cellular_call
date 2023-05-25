@@ -1558,37 +1558,37 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0004, Function | MediumTest 
         MessageParcel crData;
         MessageParcel crReply;
         ASSERT_TRUE(crData.WriteInt32(slotId));
-        ASSERT_TRUE(crData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(crData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
         MessageParcel ctData;
         MessageParcel ctReply;
         ASSERT_TRUE(ctData.WriteInt32(slotId));
-        ASSERT_TRUE(ctData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(ctData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
         MessageParcel cwData;
         MessageParcel cwReply;
         ASSERT_TRUE(cwData.WriteInt32(slotId));
-        ASSERT_TRUE(cwData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(cwData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
         MessageParcel clipData;
         MessageParcel clipReply;
         ASSERT_TRUE(clipData.WriteInt32(slotId));
-        ASSERT_TRUE(clipData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(clipData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
         MessageParcel clirData;
         MessageParcel clirReply;
         ASSERT_TRUE(clirData.WriteInt32(slotId));
-        ASSERT_TRUE(clirData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(clirData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
         MessageParcel colpData;
         MessageParcel colpReply;
         ASSERT_TRUE(colpData.WriteInt32(slotId));
-        ASSERT_TRUE(colpData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(colpData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
         MessageParcel colrData;
         MessageParcel colrReply;
         ASSERT_TRUE(colrData.WriteInt32(slotId));
-        ASSERT_TRUE(colrData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(colrData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
     }
 }
@@ -1614,37 +1614,37 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0005, Function | MediumTest 
         MessageParcel crData;
         MessageParcel crReply;
         ASSERT_TRUE(crData.WriteInt32(slotId));
-        ASSERT_TRUE(crData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(crData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
         MessageParcel ctData;
         MessageParcel ctReply;
         ASSERT_TRUE(ctData.WriteInt32(slotId));
-        ASSERT_TRUE(ctData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(ctData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
         MessageParcel cwData;
         MessageParcel cwReply;
         ASSERT_TRUE(cwData.WriteInt32(slotId));
-        ASSERT_TRUE(cwData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(cwData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
         MessageParcel clipData;
         MessageParcel clipReply;
         ASSERT_TRUE(clipData.WriteInt32(slotId));
-        ASSERT_TRUE(clipData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(clipData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
         MessageParcel clirData;
         MessageParcel clirReply;
         ASSERT_TRUE(clirData.WriteInt32(slotId));
-        ASSERT_TRUE(clirData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(clirData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
         MessageParcel colpData;
         MessageParcel colpReply;
         ASSERT_TRUE(colpData.WriteInt32(slotId));
-        ASSERT_TRUE(colpData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(colpData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
         MessageParcel colrData;
         MessageParcel colrReply;
         ASSERT_TRUE(colrData.WriteInt32(slotId));
-        ASSERT_TRUE(colrData.WriteRawData((const void *)&normalResult, sizeof(SsBaseResult)));
+        ASSERT_EQ(WriteSsBaseResult(colrData, normalResult), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnSetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
     }
 }
@@ -1688,7 +1688,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0006, Function | MediumTest 
         MessageParcel failReply;
         DisconnectedDetails details;
         ASSERT_TRUE(failData.WriteInt32(slotId));
-        ASSERT_TRUE(failData.WriteRawData((const void *)&details, sizeof(DisconnectedDetails)));
+        ASSERT_TRUE(failData.WriteInt32(static_cast<int32_t>(details.reason)));
+        ASSERT_TRUE(failData.WriteString(details.message));
         ASSERT_EQ(stub->OnLastCallFailReasonResponseInner(failData, failReply), TELEPHONY_SUCCESS);
     }
 }
@@ -1714,14 +1715,14 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest 
         MessageParcel crErrorData;
         MessageParcel crErrorReply;
         ASSERT_TRUE(crErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(crErrorData.WriteRawData((const void *)&crResult, sizeof(CallRestrictionResult)));
+        ASSERT_EQ(WriteSsResult(crErrorData, crResult.result, crResult.status, crResult.classCw), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallRestrictionResponseInner(crErrorData, crErrorReply), TELEPHONY_SUCCESS);
 
         crResult.result.index = DEFAULT_INDEX;
         MessageParcel crData;
         MessageParcel crReply;
         ASSERT_TRUE(crData.WriteInt32(slotId));
-        ASSERT_TRUE(crData.WriteRawData((const void *)&crResult, sizeof(CallRestrictionResult)));
+        ASSERT_EQ(WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallRestrictionResponseInner(crData, crReply), TELEPHONY_SUCCESS);
         crResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
         ASSERT_NE(stub->GetCallRestrictionResponse(slotId, crResult), TELEPHONY_SUCCESS);
@@ -1731,14 +1732,14 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest 
         MessageParcel ctErrorData;
         MessageParcel ctErrorReply;
         ASSERT_TRUE(ctErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(ctErrorData.WriteRawData((const void *)&callList, sizeof(CallForwardQueryInfoList)));
+        ASSERT_EQ(WriteCallForwardResult(ctErrorData, callList), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallTransferResponseInner(ctErrorData, ctErrorReply), TELEPHONY_SUCCESS);
 
         callList.result.index = DEFAULT_INDEX;
         MessageParcel ctData;
         MessageParcel ctReply;
         ASSERT_TRUE(ctData.WriteInt32(slotId));
-        ASSERT_TRUE(ctData.WriteRawData((const void *)&callList, sizeof(CallForwardQueryInfoList)));
+        ASSERT_EQ(WriteCallForwardResult(ctData, callList), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallTransferResponseInner(ctData, ctReply), TELEPHONY_SUCCESS);
         callList.result.result = IMS_ERROR_UT_CS_FALLBACK;
         ASSERT_NE(stub->GetCallTransferResponse(slotId, callList), TELEPHONY_SUCCESS);
@@ -1766,14 +1767,14 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest 
         MessageParcel cwErrorData;
         MessageParcel cwErrorReply;
         ASSERT_TRUE(cwErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(cwErrorData.WriteRawData((const void *)&cwResult, sizeof(CallWaitResult)));
+        ASSERT_EQ(WriteSsResult(cwErrorData, cwResult.result, cwResult.status, cwResult.classCw), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallWaitingResponseInner(cwErrorData, cwErrorReply), TELEPHONY_SUCCESS);
 
         cwResult.result.index = DEFAULT_INDEX;
         MessageParcel cwData;
         MessageParcel cwReply;
         ASSERT_TRUE(cwData.WriteInt32(slotId));
-        ASSERT_TRUE(cwData.WriteRawData((const void *)&cwResult, sizeof(CallWaitResult)));
+        ASSERT_EQ(WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetCallWaitingResponseInner(cwData, cwReply), TELEPHONY_SUCCESS);
         cwResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
         ASSERT_NE(stub->GetCallWaitingResponse(slotId, cwResult), TELEPHONY_SUCCESS);
@@ -1783,14 +1784,16 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest 
         MessageParcel clipErrorData;
         MessageParcel clipErrorReply;
         ASSERT_TRUE(clipErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(clipErrorData.WriteRawData((const void *)&clipResult, sizeof(GetClipResult)));
+        ASSERT_EQ(
+            WriteSsResult(clipErrorData, clipResult.result, clipResult.action, clipResult.clipStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetClipResponseInner(clipErrorData, clipErrorReply), TELEPHONY_SUCCESS);
 
         clipResult.result.index = DEFAULT_INDEX;
         MessageParcel clipData;
         MessageParcel clipReply;
         ASSERT_TRUE(clipData.WriteInt32(slotId));
-        ASSERT_TRUE(clipData.WriteRawData((const void *)&clipResult, sizeof(GetClipResult)));
+        ASSERT_EQ(
+            WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetClipResponseInner(clipData, clipReply), TELEPHONY_SUCCESS);
         clipResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
         ASSERT_NE(stub->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
@@ -1818,14 +1821,16 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
         MessageParcel clirErrorData;
         MessageParcel clirErrorReply;
         ASSERT_TRUE(clirErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(clirErrorData.WriteRawData((const void *)&clirResult, sizeof(GetClirResult)));
+        ASSERT_EQ(
+            WriteSsResult(clirErrorData, clirResult.result, clirResult.action, clirResult.clirStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetClirResponseInner(clirErrorData, clirErrorReply), TELEPHONY_SUCCESS);
 
         clirResult.result.index = DEFAULT_INDEX;
         MessageParcel clirData;
         MessageParcel clirReply;
         ASSERT_TRUE(clirData.WriteInt32(slotId));
-        ASSERT_TRUE(clirData.WriteRawData((const void *)&clirResult, sizeof(GetClirResult)));
+        ASSERT_EQ(
+            WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetClirResponseInner(clirData, clirReply), TELEPHONY_SUCCESS);
         clirResult.result.result = IMS_ERROR_UT_CS_FALLBACK;
         ASSERT_NE(stub->GetClirResponse(slotId, clirResult), TELEPHONY_SUCCESS);
@@ -1835,14 +1840,16 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
         MessageParcel colpErrorData;
         MessageParcel colpErrorReply;
         ASSERT_TRUE(colpErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(colpErrorData.WriteRawData((const void *)&colpResult, sizeof(GetColpResult)));
+        ASSERT_EQ(
+            WriteSsResult(colpErrorData, colpResult.result, colpResult.action, colpResult.colpStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColpResponseInner(colpErrorData, colpErrorReply), TELEPHONY_SUCCESS);
 
         colpResult.result.index = DEFAULT_INDEX;
         MessageParcel colpData;
         MessageParcel colpReply;
         ASSERT_TRUE(colpData.WriteInt32(slotId));
-        ASSERT_TRUE(colpData.WriteRawData((const void *)&colpResult, sizeof(GetColpResult)));
+        ASSERT_EQ(
+            WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
 
         GetColrResult colrResult;
@@ -1850,14 +1857,16 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
         MessageParcel colrErrorData;
         MessageParcel colrErrorReply;
         ASSERT_TRUE(colrErrorData.WriteInt32(slotId));
-        ASSERT_TRUE(colrErrorData.WriteRawData((const void *)&colrResult, sizeof(GetColrResult)));
+        ASSERT_EQ(
+            WriteSsResult(colrErrorData, colrResult.result, colrResult.action, colrResult.colrStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColrResponseInner(colrErrorData, colrErrorReply), TELEPHONY_SUCCESS);
 
         colrResult.result.index = DEFAULT_INDEX;
         MessageParcel colrData;
         MessageParcel colrReply;
         ASSERT_TRUE(colrData.WriteInt32(slotId));
-        ASSERT_TRUE(colrData.WriteRawData((const void *)&colrResult, sizeof(GetColrResult)));
+        ASSERT_EQ(
+            WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
     }
 }
