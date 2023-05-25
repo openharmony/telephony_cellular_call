@@ -17,6 +17,7 @@
 #define CELLULAR_CALL_HANDLER_H
 
 #include <memory>
+#include <mutex>
 
 #include "cellular_call_config.h"
 #include "cellular_call_data_struct.h"
@@ -219,6 +220,7 @@ private:
     bool isInCsRedial_ = false;
     int32_t indexCommand_ = 0;
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
+    std::mutex mutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
