@@ -118,7 +118,7 @@ void CellularCallService::RegisterHandler()
     networkSearchCallBack_ = (std::make_unique<CellularCallCallback>()).release();
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_CORE_SERVICE_WAIT_TIME));
-        if (CoreManagerInner::GetInstance().IsInitFinishedForTelRil()) {
+        if (CoreManagerInner::GetInstance().IsInitFinished()) {
             TELEPHONY_LOGD("connect core service Register Handler start");
             RegisterCoreServiceHandler();
             CoreManagerInner::GetInstance().RegisterCellularCallObject(networkSearchCallBack_);
