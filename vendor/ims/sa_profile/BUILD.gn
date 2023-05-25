@@ -14,7 +14,7 @@
 import("//build/ohos/sa_profile/sa_profile.gni")
 
 ohos_sa_profile("ims_sa_profile") {
-  sources = [ "4014.xml" ]
+  sources = [ "4014.json" ]
 
   part_name = "ims"
 }
