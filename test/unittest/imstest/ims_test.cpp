@@ -1052,42 +1052,13 @@ HWTEST_F(ImsTest, cellular_call_ImsControl_0001, Function | MediumTest | Level3)
         if (!HasSimCard(slotId) || !CanUseImsService(slotId, ImsServiceType::TYPE_VOICE)) {
             continue;
         }
+        EXPECT_EQ(imsControl->Answer(cellularCallInfo), TELEPHONY_ERROR);
+        EXPECT_EQ(imsControl->Reject(cellularCallInfo), TELEPHONY_ERROR);
         EXPECT_EQ(imsControl->UpdateImsCallMode(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
             CALL_ERR_CALL_CONNECTION_NOT_EXIST);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
         bool enabled = false;
         EXPECT_EQ(imsControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
-        ImsCurrentCallList callList;
-        callList.callSize = 0;
-        CallInfoList callInfoList;
-        EXPECT_EQ(imsControl->ReportCallsData(slotId, callInfoList), TELEPHONY_ERROR);
-        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_ERROR);
-        ImsCurrentCall callInfo;
-        callList.callSize = 1;
-        callInfo.number = PHONE_NUMBER;
-        callInfo.index = 1;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING);
-        callList.calls.push_back(callInfo);
-        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsControl->Answer(cellularCallInfo), TELEPHONY_ERROR);
-        EXPECT_EQ(imsControl->Reject(cellularCallInfo), TELEPHONY_ERROR);
-        EXPECT_EQ(imsControl->HangUpAllConnection(slotId), TELEPHONY_ERROR);
-        callList.callSize = 2;
-        callInfo.index = 2;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ACTIVE);
-        callInfo.number = PHONE_NUMBER_SECOND;
-        callList.calls.push_back(callInfo);
-        callList.callSize = 3;
-        callInfo.index = 3;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_WAITING);
-        callInfo.number = PHONE_NUMBER_THIRD;
-        callList.calls.push_back(callInfo);
-        callList.callSize = 4;
-        callInfo.index = 4;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED);
-        callInfo.number = PHONE_NUMBER_FOUR;
-        callList.calls.push_back(callInfo);
-        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
         CLIRMode mode = CLIRMode::DEFAULT;
         EXPECT_EQ(imsControl->DialJudgment(slotId, PHONE_NUMBER_SECOND, mode, 0), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
         EXPECT_EQ(imsControl->DialJudgment(slotId, PHONE_NUMBER_THIRD, mode, 0), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
@@ -1113,6 +1084,50 @@ HWTEST_F(ImsTest, cellular_call_ImsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), TELEPHONY_ERROR);
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
             TELEPHONY_ERR_ARGUMENT_INVALID);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_ImsControl_0002
+ * @tc.name     Test for ImsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsControl_0002, Function | MediumTest | Level3)
+{
+    auto imsControl = std::make_shared<IMSControl>();
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId) || !CanUseImsService(slotId, ImsServiceType::TYPE_VOICE)) {
+            continue;
+        }
+        ImsCurrentCallList callList;
+        callList.callSize = 0;
+        CallInfoList callInfoList;
+        EXPECT_EQ(imsControl->ReportCallsData(slotId, callInfoList), TELEPHONY_ERROR);
+        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_ERROR);
+        ImsCurrentCall callInfo;
+        callList.callSize = 1;
+        callInfo.number = PHONE_NUMBER;
+        callInfo.index = 1;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING);
+        callList.calls.push_back(callInfo);
+        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(imsControl->HangUpAllConnection(slotId), TELEPHONY_ERROR);
+        callList.callSize = 2;
+        callInfo.index = 2;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ACTIVE);
+        callInfo.number = PHONE_NUMBER_SECOND;
+        callList.calls.push_back(callInfo);
+        callList.callSize = 3;
+        callInfo.index = 3;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_WAITING);
+        callInfo.number = PHONE_NUMBER_THIRD;
+        callList.calls.push_back(callInfo);
+        callList.callSize = 4;
+        callInfo.index = 4;
+        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED);
+        callInfo.number = PHONE_NUMBER_FOUR;
+        callList.calls.push_back(callInfo);
+        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
         callList.callSize = 0;
         EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
     }
