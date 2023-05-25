@@ -218,7 +218,8 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
 
-    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING)) {
+    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING) &&
+        IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         auto con = FindConnectionByState<CsConnectionMap &, CellularCallConnectionCS *>(
             connectionMap_, TelCallState::CALL_STATUS_HOLDING);
         if (con == nullptr) {
