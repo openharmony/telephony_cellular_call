@@ -1138,6 +1138,7 @@ void CellularCallHandler::SaveSsRequestCommand(const std::shared_ptr<SsRequestCo
         TELEPHONY_LOGE("[slot%{public}d] utCommand is null", slotId_);
         return;
     }
+    std::lock_guard<std::mutex> lock(mutex_);
     utCommandMap_.insert(std::make_pair(indexCommand_, utCommand));
 }
 
@@ -1148,6 +1149,7 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
         TELEPHONY_LOGI("[slot%{public}d] index is invalid, nothing need to do", slotId_);
         return TELEPHONY_ERROR;
     }
+    std::lock_guard<std::mutex> lock(mutex_);
     auto itor = utCommandMap_.find(index);
     if (itor == utCommandMap_.end()) {
         TELEPHONY_LOGE("[slot%{public}d] the index(%{public}d) in utCommandMap_ haven't been found", slotId_, index);
@@ -1160,6 +1162,7 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
 
 int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand &ss)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto itor = utCommandMap_.find(index);
     if (itor == utCommandMap_.end()) {
         TELEPHONY_LOGE("[slot%{public}d] the index in utCommandMap_ haven't been found", slotId_);
