@@ -57,13 +57,12 @@ int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
 int32_t ImsSmsStub::OnImsSendMessage(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    ImsMessageInfo *messageInfo = (ImsMessageInfo *)data.ReadRawData(sizeof(ImsMessageInfo));
-    if (messageInfo == nullptr) {
-        TELEPHONY_LOGE("ImsMessageInfo nullptr");
-        reply.WriteInt32(TELEPHONY_ERR_LOCAL_PTR_NULL);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    reply.WriteInt32(ImsSendMessage(slotId, *messageInfo));
+    ImsMessageInfo messageInfo;
+    messageInfo.refId = data.ReadInt64();
+    messageInfo.smscPdu = data.ReadString();
+    messageInfo.pdu = data.ReadString();
+    messageInfo.tech = static_cast<const SmsRadioTechnologyFamily>(data.ReadInt32());
+    reply.WriteInt32(ImsSendMessage(slotId, messageInfo));
 
     return TELEPHONY_SUCCESS;
 }

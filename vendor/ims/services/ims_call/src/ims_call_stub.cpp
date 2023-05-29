@@ -19,6 +19,7 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t IMS_CAPABILITIES_MAX_SIZE = 10;
 ImsCallStub::ImsCallStub()
 {
     InitFuncMap();
@@ -600,12 +601,20 @@ int32_t ImsCallStub::OnRegisterImsCallCallback(MessageParcel &data, MessageParce
 int32_t ImsCallStub::OnUpdateImsCapabilities(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = (ImsCapabilityList *)data.ReadRawData(sizeof(ImsCapabilityList));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("data error");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    int32_t dataSize = data.ReadInt32();
+    if (dataSize < 0 || dataSize > IMS_CAPABILITIES_MAX_SIZE) {
+        TELEPHONY_LOGE("OnUpdateImsCapabilities size error");
+        return TELEPHONY_ERR_FAIL;
     }
-    reply.WriteInt32(UpdateImsCapabilities(slotId, *info));
+    ImsCapability imsCapability;
+    ImsCapabilityList imsCapabilityList;
+    for (int i = 0; i < dataSize; i++) {
+        imsCapability.imsCapabilityType = static_cast<const ImsCapabilityType>(data.ReadInt32());
+        imsCapability.imsRadioTech = static_cast<const ImsRegTech>(data.ReadInt32());
+        imsCapability.enable = data.ReadBool();
+        imsCapabilityList.imsCapabilities.push_back(imsCapability);
+    }
+    reply.WriteInt32(UpdateImsCapabilities(slotId, imsCapabilityList));
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
