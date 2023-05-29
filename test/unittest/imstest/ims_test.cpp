@@ -1286,7 +1286,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallClient_0001, Function | MediumTest | Leve
 HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
-    auto callCallbackProxy = iface_cast<ImsCallCallbackInterface>(imsCallCallback_->AsObject().GetRefPtr());
+    auto callCallbackProxy =
+        (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
     ASSERT_TRUE(callCallbackProxy != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
@@ -1337,7 +1338,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
 HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
-    auto callCallbackProxy = iface_cast<ImsCallCallbackInterface>(imsCallCallback_->AsObject().GetRefPtr());
+    auto callCallbackProxy =
+        (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
     ASSERT_TRUE(callCallbackProxy != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
@@ -1524,14 +1526,6 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest 
         ASSERT_NE(stub->OnAnswerResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnCallRingBackReportInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnDialResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetCallRestrictionResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetCallTransferResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetCallWaitingResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetClipResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetClirResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetColrResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnGetImsCallsDataResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnHangUpResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnHoldCallResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnRejectResponseInner(data, reply), TELEPHONY_SUCCESS);
@@ -1541,13 +1535,6 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest 
         ASSERT_NE(stub->OnStopDtmfResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnSwitchCallResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnUnHoldCallResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetCallRestrictionResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetCallTransferResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetCallWaitingResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetClipResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetClirResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stub->OnSetColrResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnSetMuteResponseInner(data, reply), TELEPHONY_SUCCESS);
     }
 }
@@ -1866,7 +1853,26 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
         ASSERT_EQ(
             WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColpResponseInner(colpData, colpReply), TELEPHONY_SUCCESS);
+    }
+}
 
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0010
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0010, Function | MediumTest | Level3)
+{
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+
+    sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stub != nullptr);
+    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
+        if (!HasSimCard(slotId)) {
+            continue;
+        }
         GetColrResult colrResult;
         colrResult.result.index = INVALID_INDEX;
         MessageParcel colrErrorData;
@@ -1883,6 +1889,26 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
         ASSERT_EQ(
             WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat), TELEPHONY_SUCCESS);
         ASSERT_EQ(stub->OnGetColrResponseInner(colrData, colrReply), TELEPHONY_SUCCESS);
+
+        SsBaseResult normalResult;
+        normalResult.index = DEFAULT_INDEX;
+        MessageParcel ctErrorData;
+        MessageParcel ctReply;
+        ASSERT_TRUE(ctErrorData.WriteInt32(slotId));
+        ASSERT_EQ(WriteSsBaseResult(ctErrorData, normalResult), TELEPHONY_SUCCESS);
+        ASSERT_TRUE(ctErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_TRUE(ctErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_TRUE(ctErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_NE(stub->OnGetCallTransferResponseInner(ctErrorData, ctReply), TELEPHONY_SUCCESS);
+
+        MessageParcel icErrorData;
+        MessageParcel icReply;
+        ASSERT_TRUE(icErrorData.WriteInt32(slotId));
+        ASSERT_TRUE(icErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_TRUE(icErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_TRUE(icErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_TRUE(icErrorData.WriteInt32(INVALID_INDEX));
+        ASSERT_NE(stub->OnGetImsCallsDataResponseInner(icErrorData, icReply), TELEPHONY_SUCCESS);
     }
 }
 } // namespace Telephony

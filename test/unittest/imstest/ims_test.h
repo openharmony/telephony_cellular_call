@@ -203,7 +203,7 @@ public:
         return TELEPHONY_SUCCESS;
     };
 
-    int32_t WriteCallForwardResult(MessageParcel &in, const CallForwardQueryInfoList &cFQueryList )
+    int32_t WriteCallForwardResult(MessageParcel &in, const CallForwardQueryInfoList &cFQueryList)
     {
         int32_t ret = WriteSsBaseResult(in, cFQueryList.result);
         if (ret != TELEPHONY_SUCCESS) {
