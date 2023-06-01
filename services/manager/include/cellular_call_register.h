@@ -17,6 +17,7 @@
 #define CELLULAR_CALL_REGISTER_H
 
 #include <map>
+#include <mutex>
 
 #include "cellular_call_connection_cs.h"
 #include "i_call_status_callback.h"
@@ -99,6 +100,7 @@ public:
 
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;
+    std::mutex mutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
