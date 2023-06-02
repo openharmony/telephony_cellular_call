@@ -41,7 +41,7 @@ ohos_unittest("tel_vendor_ims_service_gtest") {
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "sms_mms:tel_sms_mms_api",

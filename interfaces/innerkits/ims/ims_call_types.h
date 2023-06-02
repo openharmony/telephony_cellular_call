@@ -25,22 +25,57 @@ namespace OHOS {
 namespace Telephony {
 const int32_t kMaxNumberLength = 30;
 
+/**
+ * @brief Indicates the reason for rejecting the ims call.
+ */
 enum ImsRejectReason {
+    /**
+     * Indicates the reject reason is user busy.
+     */
     USER_IS_BUSY = 0,
+    /**
+     * Indicates the reject reason is user decline.
+     */
     USER_DECLINE = 1,
 };
 
-// service class used in IMS Set Call Waiting interface
+/**
+ * @brief Indicates the class of Ims service,which used in IMS Set Call Waiting interface.
+ */
 enum ImsServiceClass {
+    /**
+     * Indicates service class is voice.
+     */
     SERVICE_CLASS_VOICE = 1,
+    /**
+     * Indicates service class is video.
+     */
     SERVICE_CLASS_VIDEO = 2,
 };
 
+/**
+ * @brief Indicates the state of Srvcc.
+ */
 enum SrvccState {
+    /**
+     * Indicates SrvccState is null.
+     */
     SRVCC_NONE = -1,
+    /**
+     * Indicates SrvccState is started.
+     */
     STARTED = 0,
+    /**
+     * Indicates SrvccState is completed.
+     */
     COMPLETED = 1,
+    /**
+     * Indicates SrvccState is failed.
+     */
     FAILED = 2,
+    /**
+     * Indicates SrvccState is canceled.
+     */
     CANCELED = 3
 };
 
@@ -56,46 +91,154 @@ enum ImsSrvccAction {
     ACTION_STOP_DTMF,
 };
 
+/**
+ * @brief Indicates the type of ImsCall.
+ */
 enum ImsCallType {
+    /**
+     * Indicates the ImsCall type is voice.
+     */
     TEL_IMS_CALL_TYPE_VOICE,
+    /**
+     * Indicates the ImsCall type is VT_TX.
+     */
     TEL_IMS_CALL_TYPE_VT_TX,
+    /**
+     * Indicates the ImsCall type is VT_RX.
+     */
     TEL_IMS_CALL_TYPE_VT_RX,
+    /**
+     * Indicates the ImsCall type is VT.
+     */
     TEL_IMS_CALL_TYPE_VT,
 };
 
+/**
+ * @brief Indicates the type of ImsCall.
+ */
 struct ImsSrvccActionInfo {
     CellularCallInfo callInfo;
+    /**
+     * Indicates the initial value of dtmfCode is 0.
+     */
     char dtmfCode = 0;
 };
 
+/**
+ * @brief Indicates the code of TransferState.
+ */
 enum TransferState {
+    /**
+     * Indicates the code value of VT transfer to WFC is 0.
+     */
     VT_TRANSFER_TO_WFC = 0,
+    /**
+     * Indicates the code value of WFC transfer to VT is 1.
+     */
     WFC_TRANSFER_TO_VT = 1,
 };
 
+/**
+ * @brief Indicates the information of ImsCall.
+ */
 struct ImsCallInfo {
-    char phoneNum[kMaxNumberLength] = { 0 }; // call phone number
+    /**
+     * Indicates the call phone number,its initial value is 0.
+     */
+    char phoneNum[kMaxNumberLength] = { 0 };
+    /**
+     * Indicates the slotId.
+     */
     int32_t slotId = 0;
-    int32_t videoState = 0; // 0: audio 1:video
-    int32_t index = 0; // call index
+    /**
+     * Indicates the video state,when the audio state is 0 represents audio and 1 represents video.
+     */
+    int32_t videoState = 0;
+    /**
+     * Indicates the call index and its initial value is 0.
+     */
+    int32_t index = 0;
 };
 
+/**
+ * @brief Indicates the call status information.
+ */
 struct ImsCurrentCall {
+    /**
+     * Indicates connection Index for use with, eg, AT+CHLD.
+     */
     int32_t index = 0;
+    /**
+     * Indicates the call direction, The value 0 indicates mobile originated (MO) call,
+     * and the value 1 indicates mobile terminated (MT) call.
+     */
     int32_t dir = 0;
+    /**
+     * Indicates the call state:
+     * - 0: activated state
+     * - 1: holding state
+     * - 2: MO call, dialing state
+     * - 3: MO call, alerting state
+     * - 4: MT call, incoming call state
+     * - 5: MT call, call waiting state
+     */
     int32_t state = 0;
+    /**
+     * Indicates the call mode:
+     * - 0: voice call
+     * - 1: data call
+     * - 2: fax
+     */
     int32_t mode = 0;
+    /**
+     * Indicates the multiparty call status:
+     * - 0: not one of multiparty (conference) call parties
+     * - 1: one of multiparty (conference) call parties
+     */
     int32_t mpty = 0;
+    /**
+     * Identifies the service domain:
+     * - 0: CS domain phone
+     * - 1: IMS domain phone
+     */
     int32_t voiceDomain = 0;
+    /**
+     * Indicates the call type:
+     * - 0: Voice call
+     * - 1: VT_TX Video call: send one-way video, two-way voice
+     * - 2: VT_RX Video call: one-way receiving video, two-way voice
+     * - 3: VT Video call: two-way video, two-way voice
+     */
     ImsCallType callType = ImsCallType::TEL_IMS_CALL_TYPE_VOICE;
+    /**
+     * Indicates remote party number.
+     */
     std::string number = "";
+    /**
+     * Indicates the type of address octet in integer format.
+     */
     int32_t type = 0;
+    /**
+     * Indicates alphanumeric representation of <number> corresponding to the entry found in phonebook;
+     */
     std::string alpha = "";
 };
 
+/**
+ * @brief Indicates the call status information list.
+ */
 struct ImsCurrentCallList {
+    /**
+     * Indicates the size of call status information list.
+     */
     int32_t callSize = 0;
+    /**
+     * Indicates the ID of call status information list.
+     */
     int32_t flag = 0;
+    /**
+     * Indicates the call status information list.
+     */
     std::vector<ImsCurrentCall> calls {};
 };
 } // namespace Telephony
