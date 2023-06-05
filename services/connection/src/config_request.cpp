@@ -75,6 +75,18 @@ int32_t ConfigRequest::SetImsSwitchStatusRequest(int32_t slotId, bool active)
     return imsCallClient->SetImsSwitchStatus(slotId, active);
 }
 
+int32_t ConfigRequest::SetVoNRSwitchStatusRequest(int32_t slotId, int32_t state)
+{
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SetVoNRSwitchStatusRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    TELEPHONY_LOGD("slotId: %{public}d, switchState: %{public}d", slotId, state);
+    CoreManagerInner::GetInstance().SetVoNRSwitch(slotId, state, RadioEvent::RADIO_SET_VONR_SWITCH_STATUS, handle);
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t ConfigRequest::GetImsSwitchStatusRequest(int32_t slotId)
 {
     auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();

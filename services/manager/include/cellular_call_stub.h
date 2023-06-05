@@ -341,6 +341,24 @@ private:
     int32_t OnGetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * On Set VoNR Switch Status
+     *
+     * @param data send data
+     * @param reply received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnSetVoNRStateInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On Get VoNR Switch Status
+     *
+     * @param data send data
+     * @param reply received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnGetVoNRStateInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * On SetImsConfigStringInner
      *
      * @param data send data

@@ -111,6 +111,8 @@ public:
 
     void GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void SetVoNRSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
     void UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void SsNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event);

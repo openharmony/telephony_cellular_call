@@ -116,6 +116,33 @@ void GetImsSwitchStatus(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetImsSwitchStatusInner(dataMessageParcel, reply);
 }
 
+void SetVoNRSwitchStatus(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t state = static_cast<int32_t>(size % INT_NUM);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(state);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnSetVoNRStateInner(dataMessageParcel, reply);
+}
+
+void GetVoNRSwitchStatus(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteBuffer(data, size);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnGetVoNRStateInner(dataMessageParcel, reply);
+}
+
 void GetImsConfig(const uint8_t *data, size_t size)
 {
     if (!IsServiceInited()) {
@@ -271,6 +298,8 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     SetImsFeatureValue(data, size);
     Reject(data, size);
     HangUp(data, size);
+    SetVoNRSwitchStatus(data, size);
+    GetVoNRSwitchStatus(data, size);
     return;
 }
 } // namespace OHOS

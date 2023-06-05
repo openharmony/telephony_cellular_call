@@ -33,6 +33,9 @@ const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
 const int32_t IMS_SWITCH_VALUE_UNKNOWN = -1;
 const int32_t IMS_SWITCH_STATUS_OFF = 0;
 const int32_t IMS_SWITCH_STATUS_ON = 1;
+const int32_t VONR_SWITCH_VALUE_UNKNOWN = -1;
+const int32_t VONR_SWITCH_STATUS_OFF = 0;
+const int32_t VONR_SWITCH_STATUS_ON = 1;
 const int32_t SAVE_IMS_SWITCH_FAILED = 0;
 const int32_t SAVE_IMS_SWITCH_SUCCESS_CHANGED = 1;
 const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
@@ -41,6 +44,7 @@ const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int MCC_LEN = 3;
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
+const std::string VONR_STATE = "persist.telephony.vonrswitch";
 
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
@@ -56,6 +60,7 @@ std::map<int32_t, bool> CellularCallConfig::imsPreferForEmergency_;
 std::map<int32_t, int32_t> CellularCallConfig::callWaitingServiceClass_;
 std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnectResoninfoMapping_;
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
+std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::mutex mutex_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListConfigMap_;
@@ -85,6 +90,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
             std::pair<int, std::vector<std::string>>(i, IMS_CALL_DISCONNECT_REASONINFO_MAPPING_CONFIG));
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
+        CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_VALUE_UNKNOWN));
     }
 }
 
@@ -165,6 +171,35 @@ int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
         int32_t imsSwitchStatus = GetSwitchStatus(slotId);
         enabled = imsSwitchStatus;
     }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConfig::SetVoNRSwitchStatus(int32_t slotId, int32_t state)
+{
+    TELEPHONY_LOGI(
+        "CellularCallConfig::SetVoNRSwitchStatus entry, slotId: %{public}d, state: %{public}d", slotId, state);
+    if (!IsVonrSupported(slotId, IsGbaValid(slotId))) {
+        TELEPHONY_LOGE("Enable VoNR switch failed due to VoNR is not supported.");
+        return TELEPHONY_ERR_FAIL;
+    }
+    SimState simState = SimState::SIM_STATE_UNKNOWN;
+    CoreManagerInner::GetInstance().GetSimState(slotId, simState);
+    if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
+        configRequest_.SetVoNRSwitchStatusRequest(slotId, state);
+        vonrSwithStatus_[slotId] = state;
+        return TELEPHONY_SUCCESS;
+    }
+    return TELEPHONY_ERR_NO_SIM_CARD;
+}
+
+int32_t CellularCallConfig::GetVoNRSwitchStatus(int32_t slotId, int32_t &state)
+{
+    if (!IsVonrSupported(slotId, IsGbaValid(slotId))) {
+        TELEPHONY_LOGE("Enable VoNR switch failed due to VoNR is not supported.");
+        state = VONR_SWITCH_STATUS_OFF;
+        return TELEPHONY_SUCCESS;
+    }
+    state = ObtainVoNRState(slotId);
     return TELEPHONY_SUCCESS;
 }
 
@@ -304,10 +339,13 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
     volteCapability.enable = volteSupported_[slotId] && isGbaValid && imsSwitch && IsVolteProvisioned(slotId);
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
 
+    int32_t vonrSwitch = VONR_SWITCH_STATUS_OFF;
+    GetVoNRSwitchStatus(slotId, vonrSwitch);
+    bool vonrSwitchEnabled = vonrSwitch == VONR_SWITCH_STATUS_ON;
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = volteCapability.enable && IsVonrSupported(slotId, isGbaValid);
+    vonrCapability.enable = volteCapability.enable && IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 }
 
@@ -432,6 +470,23 @@ int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue
     return SAVE_IMS_SWITCH_SUCCESS_CHANGED;
 }
 
+void CellularCallConfig::SaveVoNRState(int32_t slotId, int32_t state)
+{
+    TELEPHONY_LOGI("slotId: %{public}d, switchState: %{public}d", slotId, state);
+    std::string vonrState = std::to_string(state);
+    std::string vonrStateKey = VONR_STATE + std::to_string(slotId);
+    SetParameter(vonrStateKey.c_str(), vonrState.c_str());
+}
+
+int32_t CellularCallConfig::ObtainVoNRState(int32_t slotId)
+{
+    std::string vonrStateKey = VONR_STATE + std::to_string(slotId);
+
+    int32_t vonrState = GetIntParameter(vonrStateKey.c_str(), VONR_SWITCH_STATUS_ON);
+    TELEPHONY_LOGI("slotId: %{public}d, switchState: %{public}d", slotId, vonrState);
+    return vonrState;
+}
+
 void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSetLteImsSwitchResult entry, slotId: %{public}d", slotId);
@@ -439,6 +494,19 @@ void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType
         TELEPHONY_LOGE("HandleSetLteImsSwitchResult set ims switch to modem failed!");
         // need to reset the Ims Switch parameter and notify APP to update UI.
     }
+}
+
+void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType result)
+{
+    TELEPHONY_LOGD("CellularCallConfig::HandleSetVoNRSwitchResult entry, slotId: %{public}d", slotId);
+    if (result != HRilErrType::NONE) {
+        TELEPHONY_LOGE("HandleSetVoNRSwitchResult set vonr switch to modem failed!");
+        return;
+    }
+    SaveVoNRState(slotId, vonrSwithStatus_[slotId]);
+    ImsCapabilityList imsCapabilityList;
+    UpdateImsVoiceCapabilities(slotId, IsGbaValid(slotId), imsCapabilityList);
+    configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 
 void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode)

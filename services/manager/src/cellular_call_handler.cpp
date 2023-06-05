@@ -81,6 +81,7 @@ void CellularCallHandler::InitConfigFuncMap()
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetDomainPreferenceModeResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_IMS_SWITCH_STATUS] = &CellularCallHandler::SetImsSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_IMS_SWITCH_STATUS] = &CellularCallHandler::GetImsSwitchStatusResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_VONR_SWITCH_STATUS] = &CellularCallHandler::SetVoNRSwitchStatusResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] = &CellularCallHandler::SetEmergencyCallListResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
     requestFuncMap_[OPERATOR_CONFIG_CHANGED_ID] = &CellularCallHandler::HandleOperatorConfigChanged;
@@ -604,6 +605,17 @@ void CellularCallHandler::SetImsSwitchStatusResponse(const AppExecFwk::InnerEven
 }
 
 void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event) {}
+
+void CellularCallHandler::SetVoNRSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
+        return;
+    }
+    CellularCallConfig config;
+    config.HandleSetVoNRSwitchResult(slotId_, info->error);
+}
 
 void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {

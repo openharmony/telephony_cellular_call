@@ -80,6 +80,24 @@ public:
     int32_t GetImsSwitchStatus(int32_t slotId, bool &enabled);
 
     /**
+     * Set VoNR Switch Status
+     *
+     * @param slotId
+     * @param state
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetVoNRSwitchStatus(int32_t slotId, int32_t state);
+
+    /**
+     * Get VoNR Switch Status
+     *
+     * @param slotId
+     * @param state
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetVoNRSwitchStatus(int32_t slotId, int32_t &state);
+
+    /**
      * Get Domain Preference Mode Response
      *
      * @param slotId
@@ -274,6 +292,14 @@ public:
     void HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result);
 
     /**
+     * HandleSetVoNRSwitchResult
+     *
+     * @param slotId
+     * @param result
+     */
+    void HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType result);
+
+    /**
      * HandleSimRecordsLoaded
      *
      * @param slotId
@@ -451,6 +477,8 @@ private:
     bool ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active);
     int32_t SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue);
     int32_t GetSwitchStatus(int32_t slotId) const;
+    void SaveVoNRState(int32_t slotId, int32_t state);
+    int32_t ObtainVoNRState(int32_t slotId);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
@@ -476,6 +504,7 @@ private:
     static std::map<int32_t, std::vector<std::string>> imsCallDisconnectResoninfoMapping_;
     static std::map<int32_t, bool> forceVolteSwitchOn_;
     static std::map<int32_t, bool> readyToCall_;
+    static std::map<int32_t, int32_t> vonrSwithStatus_;
     static bool isOperatorConfigInit_;
 };
 } // namespace Telephony

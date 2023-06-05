@@ -90,6 +90,8 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::GET_DOMAIN_PREFERENCE_MODE] = &CellularCallStub::OnGetDomainPreferenceModeInner;
     requestFuncMap_[OperationType::SET_IMS_SWITCH_STATUS] = &CellularCallStub::OnSetImsSwitchStatusInner;
     requestFuncMap_[OperationType::GET_IMS_SWITCH_STATUS] = &CellularCallStub::OnGetImsSwitchStatusInner;
+    requestFuncMap_[OperationType::SET_VONR_SWITCH_STATUS] = &CellularCallStub::OnSetVoNRStateInner;
+    requestFuncMap_[OperationType::GET_VONR_SWITCH_STATUS] = &CellularCallStub::OnGetVoNRStateInner;
     requestFuncMap_[OperationType::SET_IMS_CONFIG_STRING] = &CellularCallStub::OnSetImsConfigStringInner;
     requestFuncMap_[OperationType::SET_IMS_CONFIG_INT] = &CellularCallStub::OnSetImsConfigIntInner;
     requestFuncMap_[OperationType::GET_IMS_CONFIG] = &CellularCallStub::OnGetImsConfigInner;
@@ -746,6 +748,38 @@ int32_t CellularCallStub::OnGetImsSwitchStatusInner(MessageParcel &data, Message
     bool enabled;
     int32_t result = GetImsSwitchStatus(slotId, enabled);
     reply.WriteBool(enabled);
+    reply.WriteInt32(result);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSetVoNRStateInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnSetVoNRSwitchStatusInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnSetVoNRSwitchStatusInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    int32_t state = data.ReadInt32();
+    reply.WriteInt32(SetVoNRState(slotId, state));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnGetVoNRStateInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnGetVoNRSwitchStatusInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnGetVoNRSwitchStatusInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    int32_t state;
+    int32_t result = GetVoNRState(slotId, state);
+    reply.WriteInt32(state);
     reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;
 }

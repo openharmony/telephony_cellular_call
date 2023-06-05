@@ -954,6 +954,26 @@ int32_t CellularCallService::GetImsSwitchStatus(int32_t slotId, bool &enabled)
     return config.GetImsSwitchStatus(slotId, enabled);
 }
 
+int32_t CellularCallService::SetVoNRState(int32_t slotId, int32_t state)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SetVoNRState return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallConfig config;
+    return config.SetVoNRSwitchStatus(slotId, state);
+}
+
+int32_t CellularCallService::GetVoNRState(int32_t slotId, int32_t &state)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::GetVoNRState return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallConfig config;
+    return config.GetVoNRSwitchStatus(slotId, state);
+}
+
 int32_t CellularCallService::SetImsConfig(int32_t slotId, ImsConfigItem item, const std::string &value)
 {
     if (!IsValidSlotId(slotId)) {
