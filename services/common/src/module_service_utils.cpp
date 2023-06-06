@@ -127,5 +127,15 @@ sptr<ImsCallInterface> ModuleServiceUtils::GetImsServiceRemoteObject() const
     }
     return DelayedSingleton<ImsCallClient>::GetInstance()->GetImsCallProxy();
 }
+
+RegServiceState ModuleServiceUtils::GetCsRegState(int32_t slotId)
+{
+    return static_cast<RegServiceState>(CoreManagerInner::GetInstance().GetCsRegState(slotId));
+}
+
+RegServiceState ModuleServiceUtils::GetPsRegState(int32_t slotId)
+{
+    return static_cast<RegServiceState>(CoreManagerInner::GetInstance().GetPsRegState(slotId));
+}
 } // namespace Telephony
 } // namespace OHOS

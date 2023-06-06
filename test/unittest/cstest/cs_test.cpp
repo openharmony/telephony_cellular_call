@@ -2677,6 +2677,8 @@ HWTEST_F(CsTest, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | 
 {
     ModuleServiceUtils moduleServiceUtils;
     bool airplaneModeOn = false;
+    moduleServiceUtils.GetCsRegState(SIM1_SLOTID);
+    moduleServiceUtils.GetPsRegState(SIM1_SLOTID);
     EXPECT_NE(moduleServiceUtils.GetAirplaneMode(airplaneModeOn), TELEPHONY_SUCCESS);
     EXPECT_NE(moduleServiceUtils.UpdateRadioOn(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }

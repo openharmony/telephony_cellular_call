@@ -98,6 +98,10 @@ public:
     int32_t GetAirplaneMode(bool &airplaneModeOn);
 
     int32_t UpdateRadioOn(int32_t slotId);
+
+    RegServiceState GetCsRegState(int32_t slotId);
+
+    RegServiceState GetPsRegState(int32_t slotId);
 };
 } // namespace Telephony
 } // namespace OHOS
