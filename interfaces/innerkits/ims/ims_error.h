@@ -20,8 +20,17 @@
 
 namespace OHOS {
 namespace Telephony {
+/**
+ * @brief Indicates the error type when use UT.
+ */
 enum {
+    /**
+     * Indicates the SS doesn't use UT interface.
+     */
     IMS_ERROR_UT_NO_CONNECTION = IMS_ERR_OFFSET,
+    /**
+     * Indicates the UE will retry on CS when UT fail.
+     */
     IMS_ERROR_UT_CS_FALLBACK,
 };
 } // namespace Telephony

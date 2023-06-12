@@ -23,6 +23,7 @@ config("public_config_ims_call_api") {
 }
 
 ohos_shared_library("tel_ims_call_api") {
+  version_script = "tel_ims_call_api.versionscript"
   sources = [ "${SUBSYSTEM_DIR}/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
 
   public_configs = [ ":public_config_ims_call_api" ]
@@ -33,7 +34,7 @@ ohos_shared_library("tel_ims_call_api") {
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "init:libbegetutil",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 
   if (is_standard_system) {
@@ -46,6 +47,8 @@ ohos_shared_library("tel_ims_call_api") {
     "TELEPHONY_LOG_TAG = \"ImsCallApi\"",
     "LOG_DOMAIN = 0xD001F09",
   ]
+
+  innerapi_tags = [ "platformsdk" ]
 
   part_name = "cellular_call"
   subsystem_name = "telephony"

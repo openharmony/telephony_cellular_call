@@ -28,6 +28,10 @@ class ImsCallCallbackInterface : public IRemoteBroker {
 public:
     virtual ~ImsCallCallbackInterface() = default;
 
+    /**
+     * @brief map the specific request service function in ipc, one id corresponds one service,
+     * between ImsCallCallbackProxy and ImsCallCallbackStub
+     */
     enum {
         /****************** call basic ******************/
         IMS_DIAL = 0,
