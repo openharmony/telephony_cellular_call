@@ -39,7 +39,12 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-
+    ModuleServiceUtils moduleServiceUtils;
+    RegServiceState regState = moduleServiceUtils.GetPsRegState(callInfo.slotId);
+    if (!(regState == RegServiceState::REG_STATE_IN_SERVICE || isEcc)) {
+        TELEPHONY_LOGE("can not dial.");
+        return TELEPHONY_ERR_NETWORK_NOT_IN_SERVICE;
+    }
     // sip uri needs to remove separator
     std::string newPhoneNum(callInfo.phoneNum);
     StandardizeUtils standardizeUtils;

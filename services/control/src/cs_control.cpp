@@ -40,6 +40,11 @@ int32_t CSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
     }
 
     ModuleServiceUtils moduleServiceUtils;
+    RegServiceState regState = moduleServiceUtils.GetCsRegState(callInfo.slotId);
+    if (!(regState == RegServiceState::REG_STATE_IN_SERVICE || isEcc)) {
+        TELEPHONY_LOGE("can not dial.");
+        return TELEPHONY_ERR_NETWORK_NOT_IN_SERVICE;
+    }
     PhoneType netType = moduleServiceUtils.GetNetworkStatus(callInfo.slotId);
     if (netType == PhoneType::PHONE_TYPE_IS_GSM) {
         return DialGsm(callInfo);
