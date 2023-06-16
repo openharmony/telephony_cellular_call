@@ -926,7 +926,7 @@ int32_t ImsCallProxy::UpdateImsCapabilities(int32_t slotId, const ImsCapabilityL
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    int32_t imsCapabilitiesSize = imsCapabilityList.imsCapabilities.size();
+    int32_t imsCapabilitiesSize = static_cast<int32_t>(imsCapabilityList.imsCapabilities.size());
     if (!in.WriteInt32(imsCapabilitiesSize)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }

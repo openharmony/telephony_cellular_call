@@ -62,6 +62,7 @@ std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnec
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::mutex mutex_;
+std::mutex CellularCallConfig::operatorMutex_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListConfigMap_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppHasSim_;
@@ -73,6 +74,7 @@ bool CellularCallConfig::isOperatorConfigInit_ = false;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
 {
+    std::lock_guard<std::mutex> lock(operatorMutex_);
     for (int32_t i = DEFAULT_SIM_SLOT_ID; i < SIM_SLOT_COUNT; ++i) {
         CellularCallConfig::imsSwitchOnByDefault_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::hideImsSwitch_.insert(std::pair<int, bool>(i, false));
@@ -241,6 +243,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
 {
     TELEPHONY_LOGI("CellularCallConfig::ParseAndCacheOperatorConfigs start. slotId %{public}d", slotId);
+    std::lock_guard<std::mutex> lock(operatorMutex_);
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return TELEPHONY_ERROR;
@@ -901,6 +904,7 @@ std::int32_t CellularCallConfig::GetCallWaitingServiceClassConfig(int32_t slotId
 
 std::vector<std::string> CellularCallConfig::GetImsCallDisconnectResoninfoMappingConfig(int32_t slotId)
 {
+    std::lock_guard<std::mutex> lock(operatorMutex_);
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("invalid slot id");
         return std::vector<std::string> {};
