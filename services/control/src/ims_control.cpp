@@ -273,6 +273,10 @@ int32_t IMSControl::HangUpAllConnection(int32_t slotId)
 {
     TELEPHONY_LOGI("HangUpAllConnection entry");
     CellularCallConnectionIMS connection;
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGI("connectionMap_ is empty.");
+        return TELEPHONY_ERROR;
+    }
     int32_t index = connectionMap_.begin()->second.GetIndex();
     // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
     // so the reject interface is reused.
