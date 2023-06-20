@@ -490,6 +490,7 @@ private:
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
     std::mutex mutex_;
+    static std::mutex operatorMutex_;
     ConfigRequest configRequest_;
     static std::map<int32_t, bool> imsSwitchOnByDefault_;
     static std::map<int32_t, bool> hideImsSwitch_;

@@ -56,6 +56,26 @@ int32_t CellularCallStub::OnRemoteRequest(
 CellularCallStub::CellularCallStub()
 {
     TELEPHONY_LOGI("CellularCallStub::CellularCallStub");
+    InitFuncMap();
+}
+
+CellularCallStub::~CellularCallStub()
+{
+    TELEPHONY_LOGI("CellularCallStub::~CellularCallStub");
+    requestFuncMap_.clear();
+}
+
+void CellularCallStub::InitFuncMap()
+{
+    InitDialFuncMap();
+    InitDtmfFuncMap();
+    InitConfigFuncMap();
+    InitVideoFuncMap();
+    InitSupplementFuncMap();
+}
+
+void CellularCallStub::InitDialFuncMap()
+{
     requestFuncMap_[OperationType::DIAL] = &CellularCallStub::OnDialInner;
     requestFuncMap_[OperationType::HANG_UP] = &CellularCallStub::OnHangUpInner;
     requestFuncMap_[OperationType::REJECT] = &CellularCallStub::OnRejectInner;
@@ -72,20 +92,19 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
     requestFuncMap_[OperationType::SET_READY_TO_CALL] = &CellularCallStub::OnSetReadyToCallInner;
     requestFuncMap_[OperationType::UPDATE_CALL_MEDIA_MODE] = &CellularCallStub::OnUpdateCallMediaModeInner;
-    requestFuncMap_[OperationType::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
-    requestFuncMap_[OperationType::UNREGISTER_CALLBACK] = &CellularCallStub::OnUnRegisterCallBackInner;
+}
+
+void CellularCallStub::InitDtmfFuncMap()
+{
     requestFuncMap_[OperationType::START_DTMF] = &CellularCallStub::OnStartDtmfInner;
     requestFuncMap_[OperationType::STOP_DTMF] = &CellularCallStub::OnStopDtmfInner;
     requestFuncMap_[OperationType::SEND_DTMF] = &CellularCallStub::OnSendDtmfInner;
     requestFuncMap_[OperationType::START_RTT] = &CellularCallStub::OnStartRttInner;
     requestFuncMap_[OperationType::STOP_RTT] = &CellularCallStub::OnStopRttInner;
-    requestFuncMap_[OperationType::SET_CALL_TRANSFER] = &CellularCallStub::OnSetCallTransferInner;
-    requestFuncMap_[OperationType::GET_CALL_TRANSFER] = &CellularCallStub::OnGetCallTransferInner;
-    requestFuncMap_[OperationType::CAN_SET_CALL_TRANSFER_TIME] = &CellularCallStub::OnCanSetCallTransferTimeInner;
-    requestFuncMap_[OperationType::SET_CALL_WAITING] = &CellularCallStub::OnSetCallWaitingInner;
-    requestFuncMap_[OperationType::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
-    requestFuncMap_[OperationType::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
-    requestFuncMap_[OperationType::GET_CALL_RESTRICTION] = &CellularCallStub::OnGetCallRestrictionInner;
+}
+
+void CellularCallStub::InitConfigFuncMap()
+{
     requestFuncMap_[OperationType::SET_DOMAIN_PREFERENCE_MODE] = &CellularCallStub::OnSetDomainPreferenceModeInner;
     requestFuncMap_[OperationType::GET_DOMAIN_PREFERENCE_MODE] = &CellularCallStub::OnGetDomainPreferenceModeInner;
     requestFuncMap_[OperationType::SET_IMS_SWITCH_STATUS] = &CellularCallStub::OnSetImsSwitchStatusInner;
@@ -97,21 +116,32 @@ CellularCallStub::CellularCallStub()
     requestFuncMap_[OperationType::GET_IMS_CONFIG] = &CellularCallStub::OnGetImsConfigInner;
     requestFuncMap_[OperationType::SET_IMS_FEATURE] = &CellularCallStub::OnSetImsFeatureValueInner;
     requestFuncMap_[OperationType::GET_IMS_FEATURE] = &CellularCallStub::OnGetImsFeatureValueInner;
+    requestFuncMap_[OperationType::SET_MUTE] = &CellularCallStub::OnSetMuteInner;
+    requestFuncMap_[OperationType::GET_MUTE] = &CellularCallStub::OnGetMuteInner;
+}
+
+void CellularCallStub::InitVideoFuncMap()
+{
     requestFuncMap_[OperationType::CTRL_CAMERA] = &CellularCallStub::OnCtrlCameraInner;
     requestFuncMap_[OperationType::SET_PREVIEW_WINDOW] = &CellularCallStub::OnSetPreviewWindowInner;
     requestFuncMap_[OperationType::SET_DISPLAY_WINDOW] = &CellularCallStub::OnSetDisplayWindowInner;
     requestFuncMap_[OperationType::SET_CAMERA_ZOOM] = &CellularCallStub::OnSetCameraZoomInner;
     requestFuncMap_[OperationType::SET_PAUSE_IMAGE] = &CellularCallStub::OnSetPauseImageInner;
     requestFuncMap_[OperationType::SET_DEVICE_DIRECTION] = &CellularCallStub::OnSetDeviceDirectionInner;
-    requestFuncMap_[OperationType::SET_MUTE] = &CellularCallStub::OnSetMuteInner;
-    requestFuncMap_[OperationType::GET_MUTE] = &CellularCallStub::OnGetMuteInner;
-    requestFuncMap_[OperationType::CLOSE_UNFINISHED_USSD] = &CellularCallStub::OnCloseUnFinishedUssdInner;
 }
 
-CellularCallStub::~CellularCallStub()
+void CellularCallStub::InitSupplementFuncMap()
 {
-    TELEPHONY_LOGI("CellularCallStub::~CellularCallStub");
-    requestFuncMap_.clear();
+    requestFuncMap_[OperationType::SET_CALL_TRANSFER] = &CellularCallStub::OnSetCallTransferInner;
+    requestFuncMap_[OperationType::GET_CALL_TRANSFER] = &CellularCallStub::OnGetCallTransferInner;
+    requestFuncMap_[OperationType::CAN_SET_CALL_TRANSFER_TIME] = &CellularCallStub::OnCanSetCallTransferTimeInner;
+    requestFuncMap_[OperationType::SET_CALL_WAITING] = &CellularCallStub::OnSetCallWaitingInner;
+    requestFuncMap_[OperationType::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
+    requestFuncMap_[OperationType::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
+    requestFuncMap_[OperationType::GET_CALL_RESTRICTION] = &CellularCallStub::OnGetCallRestrictionInner;
+    requestFuncMap_[OperationType::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
+    requestFuncMap_[OperationType::UNREGISTER_CALLBACK] = &CellularCallStub::OnUnRegisterCallBackInner;
+    requestFuncMap_[OperationType::CLOSE_UNFINISHED_USSD] = &CellularCallStub::OnCloseUnFinishedUssdInner;
 }
 
 int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)
