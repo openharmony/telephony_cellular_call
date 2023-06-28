@@ -47,6 +47,7 @@ ohos_fuzztest("ImsClientFuzzTest") {
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
+    "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
@@ -57,12 +58,6 @@ ohos_fuzztest("ImsClientFuzzTest") {
     "TELEPHONY_LOG_TAG = \"ImsClientFuzzTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
-
-  if (is_standard_system) {
-    external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
-  } else {
-    external_deps += [ "hilog:libhilog" ]
-  }
 
   cflags = [
     "-g",
