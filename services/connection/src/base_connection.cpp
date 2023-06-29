@@ -70,5 +70,15 @@ int32_t BaseConnection::GetIndex() const
 {
     return index_;
 }
+
+void BaseConnection::SetNumber(const std::string &number)
+{
+    number_ = number;
+}
+
+std::string BaseConnection::GetNumber() const
+{
+    return number_;
+}
 } // namespace Telephony
 } // namespace OHOS
