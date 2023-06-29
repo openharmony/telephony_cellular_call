@@ -18,6 +18,7 @@
 #include <unordered_map>
 
 #include "ims_call_interface.h"
+#include "ims_call_ipc_interface_code.h"
 #include "iremote_stub.h"
 
 namespace OHOS {

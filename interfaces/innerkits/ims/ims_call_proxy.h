@@ -17,6 +17,7 @@
 #define TELEPHONY_IMS_CALL_PROXY_H
 
 #include "ims_call_interface.h"
+#include "ims_call_ipc_interface_code.h"
 #include "ims_feature.h"
 #include "iremote_proxy.h"
 #include "telephony_log_wrapper.h"

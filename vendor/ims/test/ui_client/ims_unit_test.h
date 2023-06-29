@@ -19,6 +19,7 @@
 #include <map>
 
 #include "ims_call_interface.h"
+#include "ims_call_ipc_interface_code.h"
 #include "ims_core_service_interface.h"
 #include "ims_sms_interface.h"
 #include "ims_sms_ipc_interface_code.h"
