@@ -19,6 +19,7 @@
 #include <unordered_map>
 
 #include "ims_sms_interface.h"
+#include "ims_sms_ipc_interface_code.h"
 #include "iremote_stub.h"
 
 namespace OHOS {

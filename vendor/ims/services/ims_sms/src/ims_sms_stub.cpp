@@ -28,11 +28,10 @@ ImsSmsStub::~ImsSmsStub() {}
 
 void ImsSmsStub::InitFuncMap()
 {
-    memberFuncMap_[IMS_SEND_MESSAGE] = &ImsSmsStub::OnImsSendMessage;
-    memberFuncMap_[IMS_SET_SMS_CONFIG] = &ImsSmsStub::OnImsSetSmsConfig;
-    memberFuncMap_[IMS_GET_SMS_CONFIG] = &ImsSmsStub::OnImsGetSmsConfig;
-
-    memberFuncMap_[IMS_SMS_REGISTER_CALLBACK] = &ImsSmsStub::OnRegisterSmsCallCallback;
+    memberFuncMap_[ImsSmsInterfaceCode::IMS_SEND_MESSAGE] = &ImsSmsStub::OnImsSendMessage;
+    memberFuncMap_[ImsSmsInterfaceCode::IMS_SET_SMS_CONFIG] = &ImsSmsStub::OnImsSetSmsConfig;
+    memberFuncMap_[ImsSmsInterfaceCode::IMS_GET_SMS_CONFIG] = &ImsSmsStub::OnImsGetSmsConfig;
+    memberFuncMap_[ImsSmsInterfaceCode::IMS_SMS_REGISTER_CALLBACK] = &ImsSmsStub::OnRegisterSmsCallCallback;
 }
 
 int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)

@@ -115,9 +115,9 @@ void ImsUnitTest::InitSupplementFuncMap(void)
 
 void ImsUnitTest::InitSmsFuncMap(void)
 {
-    requestSmsFuncMap_[ImsSmsInterface::IMS_SET_SMS_CONFIG] = &ImsUnitTest::SetSmsConfig;
-    requestSmsFuncMap_[ImsSmsInterface::IMS_GET_SMS_CONFIG] = &ImsUnitTest::GetSmsConfig;
-    requestSmsFuncMap_[ImsSmsInterface::IMS_SEND_MESSAGE] = &ImsUnitTest::SendMessage;
+    requestSmsFuncMap_[ImsSmsInterfaceCode::IMS_SET_SMS_CONFIG] = &ImsUnitTest::SetSmsConfig;
+    requestSmsFuncMap_[ImsSmsInterfaceCode::IMS_GET_SMS_CONFIG] = &ImsUnitTest::GetSmsConfig;
+    requestSmsFuncMap_[ImsSmsInterfaceCode::IMS_SEND_MESSAGE] = &ImsUnitTest::SendMessage;
 }
 
 void ImsUnitTest::InitCoreServiceFuncMap(void)

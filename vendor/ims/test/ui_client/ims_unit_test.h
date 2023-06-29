@@ -21,6 +21,8 @@
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
 #include "ims_sms_interface.h"
+#include "ims_sms_ipc_interface_code.h"
+
 #include "singleton.h"
 
 namespace OHOS {
