@@ -18,6 +18,7 @@
 
 #include "iremote_proxy.h"
 #include "ims_call_callback_interface.h"
+#include "ims_call_callback_ipc_interface_code.h"
 #include "telephony_errors.h"
 
 namespace OHOS {

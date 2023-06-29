@@ -20,6 +20,7 @@
 
 #include "cellular_call_data_struct.h"
 #include "ims_call_callback_interface.h"
+#include "ims_call_callback_ipc_interface_code.h"
 #include "iremote_stub.h"
 
 namespace OHOS {
