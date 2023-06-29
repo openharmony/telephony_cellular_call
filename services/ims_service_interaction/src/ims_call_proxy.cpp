@@ -51,7 +51,7 @@ int32_t ImsCallProxy::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
     }
     MessageParcel out;
     MessageOption option;
-    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_DIAL, in, out, option));
+    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_DIAL), in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -83,7 +83,7 @@ int32_t ImsCallProxy::HangUp(const ImsCallInfo &callInfo)
     }
     MessageParcel out;
     MessageOption option;
-    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_HANG_UP, in, out, option));
+    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_HANG_UP), in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -119,8 +119,8 @@ int32_t ImsCallProxy::RejectWithReason(const ImsCallInfo &callInfo, const ImsRej
     }
     MessageParcel out;
     MessageOption option;
-    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_REJECT_WITH_REASON, in,
-        out, option));
+    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_REJECT_WITH_REASON), in,
+        out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
@@ -152,7 +152,7 @@ int32_t ImsCallProxy::Answer(const ImsCallInfo &callInfo)
     }
     MessageParcel out;
     MessageOption option;
-    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_ANSWER, in, out, option));
+    int32_t error = remote->SendRequest(static_cast<int32_t>(ImsCallInterfaceCode::IMS_ANSWER), in, out, option);
     if (error == ERR_NONE) {
         return out.ReadInt32();
     }
