@@ -16,6 +16,7 @@
 #include "cellular_call_config.h"
 
 #include "cellular_call_data_struct.h"
+#include "cellular_call_hisysevent.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
 #include "core_manager_inner.h"
@@ -475,6 +476,7 @@ int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue
 
 void CellularCallConfig::SaveVoNRState(int32_t slotId, int32_t state)
 {
+    CellularCallHiSysEvent::WriteVoNRSwitchChangeEvent(state);
     TELEPHONY_LOGI("slotId: %{public}d, switchState: %{public}d", slotId, state);
     std::string vonrState = std::to_string(state);
     std::string vonrStateKey = VONR_STATE + std::to_string(slotId);
