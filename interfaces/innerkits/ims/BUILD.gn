@@ -33,15 +33,10 @@ ohos_shared_library("tel_ims_call_api") {
     "call_manager:tel_call_manager_api",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
+    "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
   ]
-
-  if (is_standard_system) {
-    external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
-  } else {
-    external_deps += [ "hilog:libhilog" ]
-  }
 
   defines = [
     "TELEPHONY_LOG_TAG = \"ImsCallApi\"",

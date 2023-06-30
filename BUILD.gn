@@ -69,7 +69,8 @@ ohos_shared_library("tel_cellular_call") {
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
-    "hisysevent_native:libhisysevent",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "init:libbegetutil",
     "ipc:ipc_single",
@@ -80,12 +81,6 @@ ohos_shared_library("tel_cellular_call") {
 
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
-  }
-
-  if (is_standard_system) {
-    external_deps += [ "hiviewdfx_hilog_native:libhilog" ]
-  } else {
-    external_deps += [ "hilog:libhilog" ]
   }
 
   part_name = "cellular_call"
