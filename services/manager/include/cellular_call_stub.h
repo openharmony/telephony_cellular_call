@@ -489,7 +489,7 @@ private:
 
 private:
     using RequestFuncType = int32_t (CellularCallStub::*)(MessageParcel &data, MessageParcel &reply);
-    std::map<OperationType, RequestFuncType> requestFuncMap_;
+    std::map<CellularCallInterfaceCode, RequestFuncType> requestFuncMap_;
     void InitFuncMap();
     void InitDialFuncMap();
     void InitDtmfFuncMap();

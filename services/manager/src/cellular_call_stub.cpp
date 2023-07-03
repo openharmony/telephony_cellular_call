@@ -38,7 +38,7 @@ int32_t CellularCallStub::OnRemoteRequest(
         return TELEPHONY_ERR_DESCRIPTOR_MISMATCH;
     }
 
-    auto itFunc = requestFuncMap_.find(static_cast<OperationType>(code));
+    auto itFunc = requestFuncMap_.find(static_cast<CellularCallInterfaceCode>(code));
     if (itFunc != requestFuncMap_.end()) {
         if (!TelephonyPermission::CheckPermission(Permission::CONNECT_CELLULAR_CALL_SERVICE)) {
             TELEPHONY_LOGE("Check permission failed, no CONNECT_CELLULAR_CALL_SERVICE permisson.");
