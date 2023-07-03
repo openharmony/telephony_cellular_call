@@ -28,13 +28,13 @@ ImsCoreServiceStub::~ImsCoreServiceStub() {}
 
 void ImsCoreServiceStub::InitMemberFuncMap()
 {
-    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_REGISTRATION_STATUS] =
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_REGISTRATION_STATUS] =
         &ImsCoreServiceStub::OnGetImsRegistrationStatus;
 
     /* ------------ callback ------------- */
-    memberFuncMap_[ImsCoreServiceInterface::IMS_REGISTER_CALLBACK] =
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_REGISTER_CALLBACK] =
         &ImsCoreServiceStub::OnRegisterImsCoreServiceCallback;
-    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
 }
 
 int32_t ImsCoreServiceStub::OnRemoteRequest(
