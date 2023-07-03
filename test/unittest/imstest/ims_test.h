@@ -20,6 +20,7 @@
 #include "accesstoken_kit.h"
 #include "call_manager_errors.h"
 #include "cellular_call_interface.h"
+#include "cellular_call_ipc_interface_code.h"
 #include "core_manager_inner.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"

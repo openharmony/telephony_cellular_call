@@ -67,50 +67,47 @@ void CsTest::TearDownTestCase(void)
 void CsTest::SetUp(void)
 {
     // step 3: input testcase setup step
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::DIAL)] = &CsTest::Dial;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::HANG_UP)] = &CsTest::HangUp;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::REJECT)] = &CsTest::Reject;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::ANSWER)] = &CsTest::Answer;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::HOLD_CALL)] = &CsTest::HoldCall;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::UN_HOLD_CALL)] = &CsTest::UnHoldCall;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SWITCH_CALL)] = &CsTest::SwitchCall;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::EMERGENCY_CALL)] =
-        &CsTest::IsEmergencyPhoneNumber;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::COMBINE_CONFERENCE)] =
-        &CsTest::CombineConference;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SEPARATE_CONFERENCE)] =
-        &CsTest::SeparateConference;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::INVITE_TO_CONFERENCE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::DIAL)] = &CsTest::Dial;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::HANG_UP)] = &CsTest::HangUp;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::REJECT)] = &CsTest::Reject;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::ANSWER)] = &CsTest::Answer;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::HOLD_CALL)] = &CsTest::HoldCall;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::UN_HOLD_CALL)] = &CsTest::UnHoldCall;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SWITCH_CALL)] = &CsTest::SwitchCall;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::EMERGENCY_CALL)] = &CsTest::IsEmergencyPhoneNumber;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::COMBINE_CONFERENCE)] = &CsTest::CombineConference;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SEPARATE_CONFERENCE)] = &CsTest::SeparateConference;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::INVITE_TO_CONFERENCE)] =
         &CsTest::InviteToConference;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::KICK_OUT_CONFERENCE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::KICK_OUT_CONFERENCE)] =
         &CsTest::KickOutFromConference;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::HANG_UP_ALL_CONNECTION)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION)] =
         &CsTest::HangUpAllConnection;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::UPDATE_CALL_MEDIA_MODE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::UPDATE_CALL_MEDIA_MODE)] =
         &CsTest::UpdateImsCallMode;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::REGISTER_CALLBACK)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::REGISTER_CALLBACK)] =
         &CsTest::RegisterCallBack;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::UNREGISTER_CALLBACK)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::UNREGISTER_CALLBACK)] =
         &CsTest::UnRegisterCallBack;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::START_DTMF)] = &CsTest::StartDtmf;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::STOP_DTMF)] = &CsTest::StopDtmf;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SEND_DTMF)] = &CsTest::SendDtmf;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::START_RTT)] = &CsTest::StartRtt;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::STOP_RTT)] = &CsTest::StopRtt;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_CALL_TRANSFER)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::START_DTMF)] = &CsTest::StartDtmf;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::STOP_DTMF)] = &CsTest::StopDtmf;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SEND_DTMF)] = &CsTest::SendDtmf;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::START_RTT)] = &CsTest::StartRtt;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::STOP_RTT)] = &CsTest::StopRtt;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_CALL_TRANSFER)] =
         &CsTest::SetCallTransferInfo;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_CALL_TRANSFER)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_CALL_TRANSFER)] =
         &CsTest::GetCallTransferInfo;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_CALL_WAITING)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_CALL_WAITING)] =
         &CsTest::SetCallWaiting;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_CALL_WAITING)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_CALL_WAITING)] =
         &CsTest::GetCallWaiting;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_CALL_RESTRICTION)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_CALL_RESTRICTION)] =
         &CsTest::SetCallRestriction;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_CALL_RESTRICTION)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_CALL_RESTRICTION)] =
         &CsTest::GetCallRestriction;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_MUTE)] = &CsTest::SetMute;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_MUTE)] = &CsTest::GetMute;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_MUTE)] = &CsTest::SetMute;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_MUTE)] = &CsTest::GetMute;
 }
 
 void CsTest::TearDown(void)

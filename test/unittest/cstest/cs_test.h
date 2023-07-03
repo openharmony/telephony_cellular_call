@@ -21,6 +21,7 @@
 #include "call_manager_errors.h"
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
+#include "cellular_call_ipc_interface_code.h"
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
