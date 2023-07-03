@@ -20,6 +20,7 @@
 
 #include "cellular_call_data_struct.h"
 #include "cellular_call_interface.h"
+#include "cellular_call_ipc_interface_code.h"
 #include "iremote_stub.h"
 #include "telephony_log_wrapper.h"
 
