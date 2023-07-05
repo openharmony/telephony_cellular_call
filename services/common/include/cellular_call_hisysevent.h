@@ -78,6 +78,7 @@ public:
         const int32_t slotId, const int32_t callId, const int32_t errorCode, const std::string &desc);
     static void WriteIncomingCallFaultEvent(const int32_t slotId, const int32_t callType, const int32_t videoState,
         const int32_t errCode, const std::string &desc);
+    static void WriteVoNRSwitchChangeEvent(const int32_t enable);
     void SetCallParameterInfo(const int32_t slotId, const int32_t callType, const int32_t videoState);
     void SetIncomingCallParameterInfo(const int32_t incomingCallType, const int32_t incomingVideoState);
     void GetCallParameterInfo(CallBehaviorParameterInfo &info);
