@@ -893,6 +893,17 @@ int32_t CellularCallService::GetCallRestriction(int32_t slotId, CallRestrictionT
     return cellularCallSupplement.GetCallRestriction(slotId, facType);
 }
 
+int32_t CellularCallService::SetCallRestrictionPassword(
+    int32_t slotId, CallRestrictionType facType, const char *oldPassword, const char *newPassword)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallSupplement cellularCallSupplement;
+    return cellularCallSupplement.SetBarringPassword(slotId, facType, oldPassword, newPassword);
+}
+
 int32_t CellularCallService::IsEmergencyPhoneNumber(int32_t slotId, const std::string &phoneNum, bool &enabled)
 {
     if (!IsValidSlotId(slotId)) {

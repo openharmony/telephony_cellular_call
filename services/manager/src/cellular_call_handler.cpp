@@ -103,6 +103,7 @@ void CellularCallHandler::InitSupplementFuncMap()
     requestFuncMap_[RadioEvent::RADIO_IMS_SET_COLP] = &CellularCallHandler::SetColpResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] = &CellularCallHandler::GetCallRestrictionResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION_PWD] = &CellularCallHandler::SetBarringPasswordResponse;
     requestFuncMap_[RadioEvent::RADIO_SET_USSD] = &CellularCallHandler::SendUssdResponse;
     requestFuncMap_[MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID] = &CellularCallHandler::SendUnlockPinPukResponse;
     requestFuncMap_[RadioEvent::RADIO_CLOSE_UNFINISHED_USSD] = &CellularCallHandler::CloseUnFinishedUssdResponse;
@@ -1082,6 +1083,25 @@ void CellularCallHandler::SetCallRestrictionResponse(const AppExecFwk::InnerEven
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
     supplement.EventSetCallRestriction(result->result, result->message, flag);
+}
+
+void CellularCallHandler::SetBarringPasswordResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<SsBaseResult>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    int32_t flag = SS_FROM_MMI_CODE;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    if (ret != TELEPHONY_SUCCESS) {
+        return;
+    }
+    CellularCallSupplement supplement;
+    if (result->result != TELEPHONY_SUCCESS) {
+        result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
+    }
+    supplement.EventSetBarringPassword(result->result, result->message, flag);
 }
 
 void CellularCallHandler::SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event)

@@ -154,6 +154,17 @@ void CellularCallRegister::ReportGetTransferResult(const CallTransferResponse &r
     callManagerCallBack_->UpdateGetTransferResult(response);
 }
 
+void CellularCallRegister::ReportSetBarringPasswordResult(int32_t result)
+{
+    TELEPHONY_LOGI("Set barring password result:%{public}d", result);
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    callManagerCallBack_->UpdateSetRestrictionPasswordResult(result);
+}
+
 void CellularCallRegister::ReportSetTransferResult(int32_t result)
 {
     TELEPHONY_LOGI("ReportSetTransferResult result:%{public}d", result);

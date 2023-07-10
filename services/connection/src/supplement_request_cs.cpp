@@ -119,6 +119,21 @@ int32_t SupplementRequestCs::SetCallRestrictionRequest(
     return CoreManagerInner::GetInstance().SetCallRestriction(slotId, callRestrictionParam, response);
 }
 
+int32_t SupplementRequestCs::SetBarringPasswordRequest(int32_t slotId, const std::string &restrictionType,
+    int32_t index, const char *oldPassword, const char *newPassword)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    AppExecFwk::InnerEvent::Pointer response =
+        AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SET_CALL_RESTRICTION_PWD, index);
+    if (response == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] response is null!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    response->SetOwner(GetMMIHandler(slotId));
+    return CoreManagerInner::GetInstance().SetBarringPassword(
+        slotId, oldPassword, newPassword, restrictionType, response);
+}
+
 int32_t SupplementRequestCs::SetCallWaitingRequest(int32_t slotId, bool activate, int32_t classType, int32_t index)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
