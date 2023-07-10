@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,58 +43,80 @@ void ImsCallCallbackStub::InitFuncMap()
 void ImsCallCallbackStub::InitCallBasicFuncMap()
 {
     /****************** call basic ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_DIAL] = &ImsCallCallbackStub::OnDialResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_HANG_UP] = &ImsCallCallbackStub::OnHangUpResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_REJECT] = &ImsCallCallbackStub::OnRejectResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_ANSWER] = &ImsCallCallbackStub::OnAnswerResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_HOLD] = &ImsCallCallbackStub::OnHoldCallResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_UN_HOLD] = &ImsCallCallbackStub::OnUnHoldCallResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SWITCH] = &ImsCallCallbackStub::OnSwitchCallResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_CALL_STATE_CHANGE] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_DIAL)] =
+        &ImsCallCallbackStub::OnDialResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_HANG_UP)] =
+        &ImsCallCallbackStub::OnHangUpResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_REJECT)] =
+        &ImsCallCallbackStub::OnRejectResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_ANSWER)] =
+        &ImsCallCallbackStub::OnAnswerResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_HOLD)] =
+        &ImsCallCallbackStub::OnHoldCallResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_UN_HOLD)] =
+        &ImsCallCallbackStub::OnUnHoldCallResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SWITCH)] =
+        &ImsCallCallbackStub::OnSwitchCallResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_STATE_CHANGE)] =
         &ImsCallCallbackStub::OnCallStateChangeReportInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_LAST_CALL_FAIL_REASON] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_LAST_CALL_FAIL_REASON)] =
         &ImsCallCallbackStub::OnLastCallFailReasonResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_CALL_CRING] = &ImsCallCallbackStub::OnCallRingBackReportInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CRING)] =
+        &ImsCallCallbackStub::OnCallRingBackReportInner;
 }
 
 void ImsCallCallbackStub::InitConfigFuncMap()
 {
     /****************** dtmf rtt ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_START_DTMF] = &ImsCallCallbackStub::OnStartDtmfResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SEND_DTMF] = &ImsCallCallbackStub::OnSendDtmfResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_STOP_DTMF] = &ImsCallCallbackStub::OnStopDtmfResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF)] =
+        &ImsCallCallbackStub::OnStartDtmfResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SEND_DTMF)] =
+        &ImsCallCallbackStub::OnSendDtmfResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_STOP_DTMF)] =
+        &ImsCallCallbackStub::OnStopDtmfResponseInner;
 
     /****************** ims config ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_SWITCH_STATUS] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_SWITCH_STATUS)] =
         &ImsCallCallbackStub::OnSetImsSwitchResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_SWITCH_STATUS] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_SWITCH_STATUS)] =
         &ImsCallCallbackStub::OnGetImsSwitchResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALLS_DATA] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA)] =
         &ImsCallCallbackStub::OnGetImsCallsDataResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_MUTE] = &ImsCallCallbackStub::OnSetMuteResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_MUTE)] =
+        &ImsCallCallbackStub::OnSetMuteResponseInner;
 }
 
 void ImsCallCallbackStub::InitSupplementFuncMap()
 {
     /****************** supplement ******************/
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_CLIP] = &ImsCallCallbackStub::OnSetClipResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_CLIP] = &ImsCallCallbackStub::OnGetClipResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_CLIR] = &ImsCallCallbackStub::OnGetClirResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_CLIR] = &ImsCallCallbackStub::OnSetClirResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_FORWARD] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIP)] =
+        &ImsCallCallbackStub::OnSetClipResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIP)] =
+        &ImsCallCallbackStub::OnGetClipResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIR)] =
+        &ImsCallCallbackStub::OnGetClirResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIR)] =
+        &ImsCallCallbackStub::OnSetClirResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_FORWARD)] =
         &ImsCallCallbackStub::OnGetCallTransferResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_FORWARD] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_FORWARD)] =
         &ImsCallCallbackStub::OnSetCallTransferResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_RESTRICTION] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_RESTRICTION)] =
         &ImsCallCallbackStub::OnGetCallRestrictionResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_RESTRICTION] =
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_RESTRICTION)] =
         &ImsCallCallbackStub::OnSetCallRestrictionResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_WAIT] = &ImsCallCallbackStub::OnGetCallWaitingResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_WAIT] = &ImsCallCallbackStub::OnSetCallWaitingResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_COLR] = &ImsCallCallbackStub::OnGetColrResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_COLR] = &ImsCallCallbackStub::OnSetColrResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_SET_CALL_COLP] = &ImsCallCallbackStub::OnSetColpResponseInner;
-    requestFuncMap_[ImsCallCallbackInterface::IMS_GET_CALL_COLP] = &ImsCallCallbackStub::OnGetColpResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_WAIT)] =
+        &ImsCallCallbackStub::OnGetCallWaitingResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_WAIT)] =
+        &ImsCallCallbackStub::OnSetCallWaitingResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLR)] =
+        &ImsCallCallbackStub::OnGetColrResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLR)] =
+        &ImsCallCallbackStub::OnSetColrResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLP)] =
+        &ImsCallCallbackStub::OnSetColpResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLP)] =
+        &ImsCallCallbackStub::OnGetColpResponseInner;
 }
 
 ImsCallCallbackStub::~ImsCallCallbackStub()

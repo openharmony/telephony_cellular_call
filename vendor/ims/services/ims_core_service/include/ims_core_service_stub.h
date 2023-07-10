@@ -19,6 +19,7 @@
 #include <map>
 
 #include "ims_core_service_interface.h"
+#include "ims_core_service_ipc_interface_code.h"
 #include "iremote_stub.h"
 #include "telephony_log_wrapper.h"
 

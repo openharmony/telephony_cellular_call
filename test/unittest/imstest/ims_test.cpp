@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,34 +57,34 @@ void ImsTest::TearDownTestCase(void)
 void ImsTest::SetUp(void)
 {
     // step 3: input testcase setup step
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DOMAIN_PREFERENCE_MODE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_DOMAIN_PREFERENCE_MODE)] =
         &ImsTest::SetDomainPreferenceMode;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_DOMAIN_PREFERENCE_MODE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_DOMAIN_PREFERENCE_MODE)] =
         &ImsTest::GetDomainPreferenceMode;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_SWITCH_STATUS)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_IMS_SWITCH_STATUS)] =
         &ImsTest::SetImsSwitchStatus;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_IMS_SWITCH_STATUS)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_IMS_SWITCH_STATUS)] =
         &ImsTest::GetImsSwitchStatus;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_CONFIG_STRING)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_IMS_CONFIG_STRING)] =
         &ImsTest::SetImsConfigString;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_CONFIG_INT)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_IMS_CONFIG_INT)] =
         &ImsTest::SetImsConfigInt;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_IMS_CONFIG)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_IMS_CONFIG)] =
         &ImsTest::GetImsConfig;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_IMS_FEATURE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_IMS_FEATURE)] =
         &ImsTest::SetImsFeatureValue;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::GET_IMS_FEATURE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_IMS_FEATURE)] =
         &ImsTest::GetImsFeatureValue;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::CTRL_CAMERA)] = &ImsTest::CtrlCamera;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_PREVIEW_WINDOW)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::CTRL_CAMERA)] = &ImsTest::CtrlCamera;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_PREVIEW_WINDOW)] =
         &ImsTest::SetPreviewWindow;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DISPLAY_WINDOW)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_DISPLAY_WINDOW)] =
         &ImsTest::SetDisplayWindow;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_CAMERA_ZOOM)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_CAMERA_ZOOM)] =
         &ImsTest::SetCameraZoom;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_PAUSE_IMAGE)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_PAUSE_IMAGE)] =
         &ImsTest::SetPauseImage;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterface::OperationType::SET_DEVICE_DIRECTION)] =
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_DEVICE_DIRECTION)] =
         &ImsTest::SetDeviceDirection;
 }
 

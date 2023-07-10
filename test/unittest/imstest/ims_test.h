@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@
 #include "accesstoken_kit.h"
 #include "call_manager_errors.h"
 #include "cellular_call_interface.h"
+#include "cellular_call_ipc_interface_code.h"
 #include "core_manager_inner.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"

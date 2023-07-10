@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,7 @@ int32_t ImsCallCallbackProxy::DialResponse(int32_t slotId, const HRilRadioRespon
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_DIAL, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_DIAL), in);
 }
 
 int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -40,7 +40,7 @@ int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const HRilRadioResp
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_HANG_UP, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_HANG_UP), in);
 }
 
 int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -50,7 +50,7 @@ int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const HRi
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_REJECT, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_REJECT), in);
 }
 
 int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -60,7 +60,7 @@ int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const HRilRadioResp
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_ANSWER, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_ANSWER), in);
 }
 
 int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -70,7 +70,7 @@ int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const HRilRadioRe
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_HOLD, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_HOLD), in);
 }
 
 int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -80,7 +80,7 @@ int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const HRilRadio
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_UN_HOLD, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_UN_HOLD), in);
 }
 
 int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -90,7 +90,7 @@ int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const HRilRadio
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_SWITCH, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SWITCH), in);
 }
 
 int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -100,7 +100,7 @@ int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const HRilRadioR
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_START_DTMF, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF), in);
 }
 
 int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -110,7 +110,7 @@ int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioRe
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_SEND_DTMF, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SEND_DTMF), in);
 }
 
 int32_t ImsCallCallbackProxy::StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -120,7 +120,7 @@ int32_t ImsCallCallbackProxy::StopDtmfResponse(int32_t slotId, const HRilRadioRe
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_STOP_DTMF, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_STOP_DTMF), in);
 }
 
 int32_t ImsCallCallbackProxy::CallStateChangeReport(int32_t slotId)
@@ -130,7 +130,7 @@ int32_t ImsCallCallbackProxy::CallStateChangeReport(int32_t slotId)
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_CALL_STATE_CHANGE, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_STATE_CHANGE), in);
 }
 
 int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -140,7 +140,7 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const HRil
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    return SendResponseInfo(IMS_GET_CALLS_DATA, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA), in);
 }
 
 int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList)
@@ -164,7 +164,7 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsC
             return TELEPHONY_ERR_WRITE_DATA_FAIL;
         }
     }
-    return SendResponseInfo(IMS_GET_CALLS_DATA, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA), in);
 }
 
 int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -175,7 +175,7 @@ int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const HRilRad
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_SWITCH_STATUS, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_SWITCH_STATUS), in);
 }
 
 int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
@@ -186,7 +186,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, const HRilRad
         return ret;
     }
 
-    return SendResponseInfo(IMS_GET_SWITCH_STATUS, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_SWITCH_STATUS), in);
 }
 
 int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, int32_t active)
@@ -200,7 +200,7 @@ int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, int32_t activ
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_SWITCH_STATUS, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_SWITCH_STATUS), in);
 }
 
 int32_t ImsCallCallbackProxy::CallRingBackReport(int32_t slotId, const RingbackVoice &info)
@@ -214,7 +214,7 @@ int32_t ImsCallCallbackProxy::CallRingBackReport(int32_t slotId, const RingbackV
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_CALL_CRING, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CRING), in);
 }
 
 int32_t ImsCallCallbackProxy::SetMuteResponse(int32_t slotId, const MuteControlResponse &response)
@@ -228,7 +228,7 @@ int32_t ImsCallCallbackProxy::SetMuteResponse(int32_t slotId, const MuteControlR
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_SET_MUTE, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_MUTE), in);
 }
 
 int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details)
@@ -246,7 +246,7 @@ int32_t ImsCallCallbackProxy::LastCallFailReasonResponse(int32_t slotId, const D
         TELEPHONY_LOGE("[slot%{public}d] Write message fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendResponseInfo(IMS_LAST_CALL_FAIL_REASON, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_LAST_CALL_FAIL_REASON), in);
 }
 
 int32_t ImsCallCallbackProxy::SetClipResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -257,7 +257,7 @@ int32_t ImsCallCallbackProxy::SetClipResponse(int32_t slotId, const SsBaseResult
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_CLIP, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIP), in);
 }
 
 int32_t ImsCallCallbackProxy::GetClipResponse(int32_t slotId, const GetClipResult &result)
@@ -274,7 +274,7 @@ int32_t ImsCallCallbackProxy::GetClipResponse(int32_t slotId, const GetClipResul
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_CLIP, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIP), in);
 }
 
 int32_t ImsCallCallbackProxy::GetClirResponse(int32_t slotId, const GetClirResult &result)
@@ -291,7 +291,7 @@ int32_t ImsCallCallbackProxy::GetClirResponse(int32_t slotId, const GetClirResul
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_CLIR, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIR), in);
 }
 
 int32_t ImsCallCallbackProxy::SetClirResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -302,7 +302,7 @@ int32_t ImsCallCallbackProxy::SetClirResponse(int32_t slotId, const SsBaseResult
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_CLIR, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIR), in);
 }
 
 int32_t ImsCallCallbackProxy::GetCallTransferResponse(int32_t slotId, const CallForwardQueryInfoList &cFQueryList)
@@ -327,7 +327,7 @@ int32_t ImsCallCallbackProxy::GetCallTransferResponse(int32_t slotId, const Call
         }
     }
 
-    return SendResponseInfo(IMS_GET_CALL_FORWARD, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_FORWARD), in);
 }
 
 int32_t ImsCallCallbackProxy::SetCallTransferResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -338,7 +338,7 @@ int32_t ImsCallCallbackProxy::SetCallTransferResponse(int32_t slotId, const SsBa
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_FORWARD, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_FORWARD), in);
 }
 
 int32_t ImsCallCallbackProxy::GetCallRestrictionResponse(int32_t slotId, const CallRestrictionResult &result)
@@ -355,7 +355,7 @@ int32_t ImsCallCallbackProxy::GetCallRestrictionResponse(int32_t slotId, const C
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_RESTRICTION, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_RESTRICTION), in);
 }
 
 int32_t ImsCallCallbackProxy::SetCallRestrictionResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -366,7 +366,7 @@ int32_t ImsCallCallbackProxy::SetCallRestrictionResponse(int32_t slotId, const S
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_RESTRICTION, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_RESTRICTION), in);
 }
 
 int32_t ImsCallCallbackProxy::GetCallWaitingResponse(int32_t slotId, const CallWaitResult &result)
@@ -383,7 +383,7 @@ int32_t ImsCallCallbackProxy::GetCallWaitingResponse(int32_t slotId, const CallW
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_WAIT, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_WAIT), in);
 }
 
 int32_t ImsCallCallbackProxy::SetCallWaitingResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -394,7 +394,7 @@ int32_t ImsCallCallbackProxy::SetCallWaitingResponse(int32_t slotId, const SsBas
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_WAIT, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_WAIT), in);
 }
 
 int32_t ImsCallCallbackProxy::SetColrResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -405,7 +405,7 @@ int32_t ImsCallCallbackProxy::SetColrResponse(int32_t slotId, const SsBaseResult
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_COLR, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLR), in);
 }
 
 int32_t ImsCallCallbackProxy::GetColrResponse(int32_t slotId, const GetColrResult &result)
@@ -422,7 +422,7 @@ int32_t ImsCallCallbackProxy::GetColrResponse(int32_t slotId, const GetColrResul
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_COLR, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLR), in);
 }
 
 int32_t ImsCallCallbackProxy::SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo)
@@ -433,7 +433,7 @@ int32_t ImsCallCallbackProxy::SetColpResponse(int32_t slotId, const SsBaseResult
         return ret;
     }
 
-    return SendResponseInfo(IMS_SET_CALL_COLP, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLP), in);
 }
 
 int32_t ImsCallCallbackProxy::GetColpResponse(int32_t slotId, const GetColpResult &result)
@@ -450,7 +450,7 @@ int32_t ImsCallCallbackProxy::GetColpResponse(int32_t slotId, const GetColpResul
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
-    return SendResponseInfo(IMS_GET_CALL_COLP, in);
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLP), in);
 }
 
 int32_t ImsCallCallbackProxy::SendResponseInfo(int32_t eventId, MessageParcel &in)

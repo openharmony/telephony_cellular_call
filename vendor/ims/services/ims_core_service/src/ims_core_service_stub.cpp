@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,13 +28,13 @@ ImsCoreServiceStub::~ImsCoreServiceStub() {}
 
 void ImsCoreServiceStub::InitMemberFuncMap()
 {
-    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_REGISTRATION_STATUS] =
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_REGISTRATION_STATUS] =
         &ImsCoreServiceStub::OnGetImsRegistrationStatus;
 
     /* ------------ callback ------------- */
-    memberFuncMap_[ImsCoreServiceInterface::IMS_REGISTER_CALLBACK] =
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_REGISTER_CALLBACK] =
         &ImsCoreServiceStub::OnRegisterImsCoreServiceCallback;
-    memberFuncMap_[ImsCoreServiceInterface::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
 }
 
 int32_t ImsCoreServiceStub::OnRemoteRequest(

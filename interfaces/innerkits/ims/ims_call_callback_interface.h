@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,77 +27,6 @@ namespace Telephony {
 class ImsCallCallbackInterface : public IRemoteBroker {
 public:
     virtual ~ImsCallCallbackInterface() = default;
-
-    /**
-     * @brief map the specific request service function in ipc, one id corresponds one service,
-     * between ImsCallCallbackProxy and ImsCallCallbackStub
-     */
-    enum {
-        /****************** call basic ******************/
-        IMS_DIAL = 0,
-        IMS_HANG_UP,
-        IMS_REJECT,
-        IMS_ANSWER,
-        IMS_HOLD,
-        IMS_UN_HOLD,
-        IMS_SWITCH,
-        IMS_COMBINE_CONFERENCE,
-        IMS_INVITE_TO_CONFERENCE,
-        IMS_KICK_OUT_CONFERENCE,
-        IMS_UPDATE_CALL_MEDIA_MODE,
-        IMS_EMERGENCY_CALL,
-        IMS_CALL_STATE_CHANGE,
-        IMS_SERVICE_STATUS,
-        IMS_LAST_CALL_FAIL_REASON,
-        IMS_GET_CALLS_DATA,
-        IMS_SRVCC_STATE,
-        IMS_VT_OR_WFC,
-        IMS_CALL_CRING,
-
-        /****************** dtmf rtt ******************/
-        IMS_START_DTMF,
-        IMS_SEND_DTMF,
-        IMS_STOP_DTMF,
-        IMS_START_RTT,
-        IMS_STOP_RTT,
-
-        /****************** ims config ******************/
-        IMS_SET_PRE_MODE,
-        IMS_GET_PRE_MODE,
-        IMS_SET_SWITCH_STATUS,
-        IMS_GET_SWITCH_STATUS,
-        IMS_SET_CONFIG,
-        IMS_GET_CONFIG,
-        IMS_SET_FEATURE,
-        IMS_GET_FEATURE,
-        IMS_SET_MUTE,
-        IMS_GET_MUTE,
-        IMS_GET_EMERGENCY_CALL_LIST,
-
-        /****************** video settings ******************/
-        IMS_CONTROL_CAMERA,
-        IMS_SET_PREVIEW_WINDOW,
-        IMS_SET_DISPLAY_WINDOW,
-        IMS_SET_CAMERA_ZOOM,
-        IMS_SET_PAUSE_IMAGE,
-        IMS_SET_DEVICE_DIRECTION,
-
-        /****************** supplement ******************/
-        IMS_GET_CALL_CLIP,
-        IMS_SET_CALL_CLIP,
-        IMS_GET_CALL_CLIR,
-        IMS_SET_CALL_CLIR,
-        IMS_GET_CALL_FORWARD,
-        IMS_SET_CALL_FORWARD,
-        IMS_GET_CALL_RESTRICTION,
-        IMS_SET_CALL_RESTRICTION,
-        IMS_GET_CALL_WAIT,
-        IMS_SET_CALL_WAIT,
-        IMS_GET_CALL_COLR,
-        IMS_SET_CALL_COLR,
-        IMS_SET_CALL_COLP,
-        IMS_GET_CALL_COLP,
-    };
 
     /**
      * @brief DialResponse the result of dial by ims.
