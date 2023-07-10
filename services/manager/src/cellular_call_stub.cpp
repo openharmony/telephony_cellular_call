@@ -449,14 +449,12 @@ int32_t CellularCallStub::OnKickOutFromConferenceInner(MessageParcel &data, Mess
         return TELEPHONY_ERR_FAIL;
     }
 
-    int32_t slotId = data.ReadInt32();
-    std::vector<std::string> numberList;
-    bool bRead = data.ReadStringVector(&numberList);
-    if (!bRead) {
-        TELEPHONY_LOGE("OnKickOutFromConferenceInner return, read fail.");
+    auto pCallInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
+    if (pCallInfo == nullptr) {
+        TELEPHONY_LOGE("OnKickOutFromConferenceInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    reply.WriteInt32(KickOutFromConference(slotId, numberList));
+    reply.WriteInt32(KickOutFromConference(*pCallInfo));
     return TELEPHONY_SUCCESS;
 }
 

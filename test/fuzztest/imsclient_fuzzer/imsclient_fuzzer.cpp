@@ -74,7 +74,7 @@ void TestImsCallClientWithCallInfo(
     imsCallClient->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
     imsCallClient->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
     imsCallClient->InviteToConference(slotId, numberList);
-    imsCallClient->KickOutFromConference(slotId, numberList);
+    imsCallClient->KickOutFromConference(slotId, index);
     imsCallClient->StartDtmf(slotId, *cDtmfCode, index);
     imsCallClient->SendDtmf(slotId, *cDtmfCode, index);
     imsCallClient->StopDtmf(slotId, index);
@@ -191,7 +191,7 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
     proxy->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
     proxy->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
     proxy->InviteToConference(slotId, numberList);
-    proxy->KickOutFromConference(slotId, numberList);
+    proxy->KickOutFromConference(slotId, index);
     proxy->StartDtmf(slotId, *cDtmfCode, index);
     proxy->SendDtmf(slotId, *cDtmfCode, index);
     proxy->StopDtmf(slotId, index);

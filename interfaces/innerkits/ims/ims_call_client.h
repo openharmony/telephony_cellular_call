@@ -160,10 +160,10 @@ public:
      * @brief Kick out someone from conference
      *
      * @param slotId Indicates the card slot index number,
-     * @param numberList phone number list which will be kicked out from the conference call
+     * @param index which will be kicked out from the conference call
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList);
+    int32_t KickOutFromConference(int32_t slotId, int32_t index);
 
     /**
      * @brief IMS UpdateImsCallMode interface

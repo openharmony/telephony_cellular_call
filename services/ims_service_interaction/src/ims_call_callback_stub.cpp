@@ -63,6 +63,10 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
         &ImsCallCallbackStub::OnLastCallFailReasonResponseInner;
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CRING)] =
         &ImsCallCallbackStub::OnCallRingBackReportInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_COMBINE_CONFERENCE)] =
+        &ImsCallCallbackStub::OnCombineConferenceResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_INVITE_TO_CONFERENCE)] =
+        &ImsCallCallbackStub::OnInviteToConferenceResponseInner;
 }
 
 void ImsCallCallbackStub::InitConfigFuncMap()
@@ -625,6 +629,30 @@ int32_t ImsCallCallbackStub::OnGetColpResponseInner(MessageParcel &data, Message
     return TELEPHONY_SUCCESS;
 }
 
+int32_t ImsCallCallbackStub::OnCombineConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(CombineConferenceResponse(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnInviteToConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(InviteToConferenceResponse(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t ImsCallCallbackStub::DialResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
@@ -1110,6 +1138,18 @@ int32_t ImsCallCallbackStub::GetColpResponse(int32_t slotId, const GetColpResult
         return TELEPHONY_ERR_FAIL;
     }
     return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_COMBINE_CALL, info);
+}
+
+int32_t ImsCallCallbackStub::InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_JOIN_CALL, info);
 }
 
 int32_t ImsCallCallbackStub::GetSsRequestCommand(int32_t slotId, int32_t index, SsRequestCommand &ss)

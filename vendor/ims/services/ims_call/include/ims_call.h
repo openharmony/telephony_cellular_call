@@ -111,10 +111,10 @@ public:
      * IMS KickOutFromConference interface
      *
      * @param slotId
-     * @param numberList
+     * @param index
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
+    int32_t KickOutFromConference(int32_t slotId, int32_t index) override;
 
     /**
      * IMS UpdateImsCallMode interface

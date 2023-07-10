@@ -115,10 +115,10 @@ public:
      * KickOutFromConference
      *
      * @param slotId
-     * @param numberList
+     * @param index
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList);
+    int32_t KickOutFromConference(int32_t slotId, const std::string &KickOutString, int32_t index);
 
     /**
      * HangUpAllConnection

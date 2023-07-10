@@ -516,6 +516,7 @@ CallReportInfo CSControl::EncapsulationCallReportInfo(int32_t slotId, const Call
     callReportInfo.state = static_cast<TelCallState>(callInfo.state);
     callReportInfo.callType = CallType::TYPE_CS;
     callReportInfo.callMode = VideoStateType::TYPE_VOICE;
+    callReportInfo.mpty = callInfo.mpty;
     return callReportInfo;
 }
 

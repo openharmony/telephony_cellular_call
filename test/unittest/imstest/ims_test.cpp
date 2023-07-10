@@ -901,6 +901,39 @@ HWTEST_F(ImsTest, cellular_call_SeparateConference_0001, Function | MediumTest |
 }
 
 /**
+ * @tc.number   cellular_call_KickOutFromConference_0001
+ * @tc.name     Test for KickOutFromConference function by ims
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+    }
+}
+
+/**
  * @tc.number   cellular_call_StartDtmf_0001
  * @tc.name     Test for startDtmf function by ims
  * @tc.desc     Function test
@@ -1156,7 +1189,7 @@ HWTEST_F(ImsTest, cellular_call_ImsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(imsControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
         EXPECT_EQ(imsControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
         std::vector<std::string> numberList;
-        EXPECT_EQ(imsControl->KickOutFromConference(slotId, numberList), TELEPHONY_ERROR);
+        EXPECT_EQ(imsControl->KickOutFromConference(slotId, PHONE_NUMBER, cellularCallInfo.index), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->InviteToConference(slotId, numberList), TELEPHONY_ERROR);
         EXPECT_EQ(imsControl->StartRtt(slotId, PHONE_NUMBER), TELEPHONY_ERROR);
         EXPECT_EQ(imsControl->StopRtt(slotId), TELEPHONY_ERROR);
@@ -1412,6 +1445,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
         ASSERT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
         MuteControlResponse muteResponse;
         ASSERT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
     }
 }
 
@@ -1621,6 +1656,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest 
         ASSERT_NE(stub->OnSwitchCallResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnUnHoldCallResponseInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stub->OnSetMuteResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnCombineConferenceResponseInner(data, reply), TELEPHONY_SUCCESS);
+        ASSERT_NE(stub->OnInviteToConferenceResponseInner(data, reply), TELEPHONY_SUCCESS);
     }
 }
 

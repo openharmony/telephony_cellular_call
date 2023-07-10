@@ -165,7 +165,7 @@ int32_t ImsCall::InviteToConference(int32_t slotId, const std::vector<std::strin
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCall::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
+int32_t ImsCall::KickOutFromConference(int32_t slotId, int32_t index)
 {
     // IMS demo send request info
 
@@ -175,7 +175,7 @@ int32_t ImsCall::KickOutFromConference(int32_t slotId, const std::vector<std::st
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    imsCallCallback_->KickOutFromConferenceResponse(slotId, info);
+    imsCallCallback_->HangUpResponse(slotId, info);
     return TELEPHONY_SUCCESS;
 }
 

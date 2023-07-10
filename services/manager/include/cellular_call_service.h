@@ -195,11 +195,10 @@ public:
     /**
      * KickOutFromConference
      *
-     * @param slotId
-     * @param numberList
+     * @param CellularCallInfo
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
+    int32_t KickOutFromConference(const CellularCallInfo &callInfo) override;
 
     /**
      * Hang Up All Connection

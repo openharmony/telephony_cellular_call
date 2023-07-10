@@ -269,11 +269,30 @@ void KickOutFromConference(const uint8_t *data, size_t size)
         return;
     }
 
-    std::string number(reinterpret_cast<const char *>(data), size);
-    std::vector<std::string> numberList;
-    numberList.push_back(number);
+    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t callId = static_cast<int32_t>(size);
+    int32_t accountId = static_cast<int32_t>(size);
+    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
+    int32_t index = static_cast<int32_t>(size);
+    std::string telNum = "000000000";
+    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
+        telNum = tempNum;
+    }
+    size_t length = strlen(telNum.c_str()) + 1;
+    CellularCallInfo callInfo;
+    callInfo.slotId = slotId;
+    callInfo.callId = callId;
+    callInfo.accountId = accountId;
+    callInfo.videoState = videoState;
+    callInfo.index = index;
+    if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
+        return;
+    }
     MessageParcel dataMessageParcel;
-    dataMessageParcel.WriteStringVector(numberList);
+    dataMessageParcel.WriteInt32(maxSize);
+    dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnKickOutFromConferenceInner(dataMessageParcel, reply);

@@ -72,6 +72,10 @@ public:
     int32_t SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
     int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
 
+    /****************** conference ******************/
+    int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+
 private:
     void InitFuncMap();
     void InitCallBasicFuncMap();
@@ -118,6 +122,10 @@ private:
     int32_t OnGetColpResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t GetSsRequestCommand(int32_t slotId, int32_t index, SsRequestCommand &ss);
     void BuildCallForwardInfo(const CallForwardQueryInfoList &cFQueryList, CallForwardQueryInfoList &cFQueryResultList);
+
+    /****************** conference ******************/
+    int32_t OnCombineConferenceResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnInviteToConferenceResponseInner(MessageParcel &data, MessageParcel &reply);
 
     int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
     int32_t SendEvent(int32_t slotId, int32_t eventId, const SsBaseResult &resultInfo);
