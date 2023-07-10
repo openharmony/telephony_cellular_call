@@ -103,6 +103,18 @@ public:
         int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index);
 
     /**
+     * @brief GetCallRestrictionRequest Get Call Restriction Request
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param restrictionType Indicates the facility of the get call restriction.
+     * @param index Indicates the index of command.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    int32_t SetBarringPasswordRequest(int32_t slotId, const std::string &restrictionType,
+        int32_t index, const char *oldPassword, const char *newPassword);
+
+    /**
      * @brief SetCallWaitingRequest Set CallWaiting Request
      *
      * @param slotId Indicates the card slot index number,

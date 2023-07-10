@@ -119,6 +119,7 @@ public:
     int32_t GetCallWaiting(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetCallRestriction(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetCallRestrictionPassword(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetMute(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;

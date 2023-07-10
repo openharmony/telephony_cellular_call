@@ -164,6 +164,24 @@ public:
     int32_t GetCallRestriction(int32_t slotId, CallRestrictionType facType);
 
     /**
+     * Inquire Call Restriction Password
+     *
+     * 27007-430_2001 7.4	Facility lock +CLCK
+     * 3GPP TS 22.088 [6] 1	Barring of outgoing calls
+     * 3GPP TS 22.088 [6] 2	Barring of incoming calls
+     *
+     * Control of the call barring supplementary service
+     *
+     * @param slotId
+     * @param CallRestrictionType
+     * @param oldPassword[in] indicate the call restriction old password
+     * @param newPassword[in] indicate the call restriction new password
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetBarringPassword(
+        int32_t slotId, CallRestrictionType facType, const char *oldPassword, const char *newPassword);
+
+    /**
      * Handle Call Waiting mmi code
      *
      * 27007-430_2001 7.12	Call waiting +CCWA
@@ -388,6 +406,17 @@ public:
      */
     void EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag);
 
+    /**
+     * Set call restriction password result
+     *
+     * 3GPP TS 27.007 V3.9.0 (2001-06) 7.4 Facility lock +CLCK
+     *
+     * @param result
+     * @param message the remain message for user which come from network
+     * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
+     */
+    void EventSetBarringPassword(int32_t result, const std::string &message, int32_t flag);
     /**
      * Get call waiting result
      *

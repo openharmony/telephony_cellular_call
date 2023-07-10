@@ -212,6 +212,24 @@ void GetCallRestriction(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetCallRestrictionInner(dataMessageParcel, reply);
 }
 
+void SetCallRestrictionPassword(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t facType = static_cast<int32_t>(size);
+    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(slotId);
+    dataMessageParcel.WriteInt32(facType);
+    size_t dataSize = size - sizeof(int32_t);
+    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.RewindRead(0);
+    MessageParcel reply;
+    DelayedSingleton<CellularCallService>::GetInstance()->OnSetCallRestrictionPasswordInner(dataMessageParcel, reply);
+}
+
 void Dial(const uint8_t *data, size_t size)
 {
     if (!IsServiceInited()) {
@@ -296,6 +314,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     GetCallWaiting(data, size);
     SetCallWaiting(data, size);
     GetCallRestriction(data, size);
+    SetCallRestrictionPassword(data, size);
     Dial(data, size);
     InviteToConference(data, size);
     KickOutFromConference(data, size);

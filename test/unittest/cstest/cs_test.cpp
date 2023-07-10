@@ -106,6 +106,8 @@ void CsTest::SetUp(void)
         &CsTest::SetCallRestriction;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_CALL_RESTRICTION)] =
         &CsTest::GetCallRestriction;
+    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_CALL_RESTRICTION_PWD)] =
+        &CsTest::SetCallRestrictionPassword;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::SET_MUTE)] = &CsTest::SetMute;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::GET_MUTE)] = &CsTest::GetMute;
 }
@@ -587,6 +589,28 @@ int32_t CsTest::GetCallRestriction(const sptr<CellularCallInterface> &telephonyS
     return telephonyService->GetCallRestriction(slotId, static_cast<CallRestrictionType>(facType));
 }
 
+int32_t CsTest::SetCallRestrictionPassword(const sptr<CellularCallInterface> &telephonyService) const
+{
+    std::cout << "test SetCallRestrictionPassword entry.\n";
+    int32_t slotId = 0;
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    std::cout << "please enter the fac(0 - 4):";
+    int32_t fac = 0;
+    std::cin >> fac;
+    CallRestrictionType facType = static_cast<CallRestrictionType>(fac);
+    std::cout << "please enter the old password:";
+    char oldPassword[kMaxNumberLen + 1] = { 0 };
+    std::cin >> oldPassword;
+    std::cout << "please enter the new password:";
+    char newPassword[kMaxNumberLen + 1] = { 0 };
+    std::cin >> newPassword;
+    int32_t ret = telephonyService->SetCallRestrictionPassword(slotId, facType, oldPassword, newPassword);
+    (void)memset_s(oldPassword, sizeof(oldPassword), 0, sizeof(oldPassword));
+    (void)memset_s(newPassword, sizeof(newPassword), 0, sizeof(newPassword));
+    return ret;
+}
+
 int32_t CsTest::SetMute(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test SetMute entry.\n";
@@ -666,8 +690,8 @@ int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephon
                      "12:KickOutFromConference\n13:HangUpAllConnection\n14:UpdateImsCallMode\n"
                      "15:RegisterCallBack\n16:UnRegisterCallBack\n100:StartDtmf\n101:StopDtmf\n102:SendDtmf\n"
                      "103:StartRtt\n104:StopRtt\n200:SetCallTransferInfo\n201:GetCallTransferInfo\n"
-                     "203:SetCallWaiting\n204:GetCallWaiting\n"
-                     "205:SetCallRestriction\n206:GetCallRestriction\n311:SetMute\n312:GetMute\n"
+                     "203:SetCallWaiting\n204:GetCallWaiting\n205:SetCallRestriction\n"
+                     "206:GetCallRestriction\n208:SetCallRestrictionPassword\n311:SetMute\n312:GetMute\n"
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
@@ -2252,6 +2276,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
     CallRestrictionResponse restrictionResponse;
     callRegister->ReportGetRestrictionResult(restrictionResponse);
     callRegister->ReportSetRestrictionResult(ERROR_RESULT);
+    callRegister->ReportSetBarringPasswordResult(ERROR_RESULT);
     CallTransferResponse transferResponse;
     callRegister->ReportGetTransferResult(transferResponse);
     callRegister->ReportSetTransferResult(ERROR_RESULT);
@@ -2323,10 +2348,13 @@ HWTEST_F(CsTest, cellular_call_SupplementRequestCs_0001, Function | MediumTest |
         int32_t index = 1;
         int32_t mode = 1;
         int32_t classType = 1;
+        const char *oldPassword = "oldpwd";
+        const char *newPassword = "newpwd";
         bool active = true;
         CallTransferParam param;
         EXPECT_NE(request.GetCallRestrictionRequest(slotId, fac, index), TELEPHONY_SUCCESS);
         EXPECT_NE(request.SetCallRestrictionRequest(slotId, fac, mode, pw, index), TELEPHONY_SUCCESS);
+        EXPECT_NE(request.SetBarringPasswordRequest(slotId, fac, index, oldPassword, newPassword), TELEPHONY_SUCCESS);
         EXPECT_NE(request.GetCallWaitingRequest(slotId, index), TELEPHONY_SUCCESS);
         EXPECT_NE(request.SetCallWaitingRequest(slotId, active, classType, index), TELEPHONY_SUCCESS);
         EXPECT_NE(request.GetClipRequest(slotId, index), TELEPHONY_SUCCESS);
@@ -2577,6 +2605,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest |
         auto errorEvent = AppExecFwk::InnerEvent::Get(0, ssResult);
         handler.SetCallRestrictionResponse(event);
         handler.SetCallRestrictionResponse(errorEvent);
+        handler.SetBarringPasswordResponse(event);
         handler.SetCallTransferInfoResponse(event);
         handler.SetCallWaitingResponse(event);
         handler.SetClipResponse(event);

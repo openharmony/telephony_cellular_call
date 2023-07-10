@@ -61,7 +61,9 @@ const std::string SET_CALL_TRANSFER_FAILED = "Set call transfer failed";
 const std::string GET_CALL_RESTRICTION_SUCCESS = "Get call restriction success";
 const std::string GET_CALL_RESTRICTION_FAILED = "Get call restriction failed";
 const std::string SET_CALL_RESTRICTION_SUCCESS = "Set call restriction success";
+const std::string SET_SET_BARRING_PASSWORD_SUCCESS = "Set call restriction password success";
 const std::string SET_CALL_RESTRICTION_FAILED = "Set call restriction failed";
+const std::string SET_SET_BARRING_PASSWORD_FAILED = "Set call restriction password failed";
 const std::string GET_CLIP_SUCCESS = "Get clip success";
 const std::string GET_CLIP_FAILED = "Get clip failed";
 const std::string SET_CLIP_SUCCESS = "Set clip success";
@@ -770,6 +772,21 @@ void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::
     }
 }
 
+void CellularCallSupplement::EventSetBarringPassword(int32_t result, const std::string &message, int32_t flag)
+{
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
+        return;
+    }
+    if (flag == SS_FROM_MMI_CODE) {
+        ReportMmiCodeMessage(
+            result, SET_SET_BARRING_PASSWORD_SUCCESS, message.empty() ? SET_SET_BARRING_PASSWORD_FAILED : message);
+    } else {
+        callRegister->ReportSetBarringPasswordResult(result);
+    }
+}
+
 int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cfInfo)
 {
     int32_t result = CheckSetCallTransferInfo(cfInfo);
@@ -1092,6 +1109,35 @@ int32_t CellularCallSupplement::GetCallRestriction(int32_t slotId, CallRestricti
     }
     handler->RequestSsRequestCommandIndex(index);
     result = supplementRequestCs_.GetCallRestrictionRequest(slotId, fac, index);
+    if (result == TELEPHONY_SUCCESS) {
+        handler->SaveSsRequestCommand(utCommand, index);
+    }
+    return result;
+}
+
+int32_t CellularCallSupplement::SetBarringPassword(
+    int32_t slotId, CallRestrictionType facType, const char *oldPassword, const char *newPassword)
+{
+    std::string fac;
+    int32_t result = CheckCallRestrictionType(fac, facType);
+    if (result != TELEPHONY_SUCCESS) {
+        return result;
+    }
+    auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    auto utCommand = std::make_shared<SsRequestCommand>();
+    utCommand->flag = SS_FROM_SETTING_MENU;
+    utCommand->facility = fac;
+    if (!PhoneTypeGsmOrNot(slotId)) {
+        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
+        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
+    }
+    int32_t index;
+    handler->RequestSsRequestCommandIndex(index);
+    result = supplementRequestCs_.SetBarringPasswordRequest(slotId, fac, index, oldPassword, newPassword);
     if (result == TELEPHONY_SUCCESS) {
         handler->SaveSsRequestCommand(utCommand, index);
     }

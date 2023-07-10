@@ -142,6 +142,8 @@ void CellularCallStub::InitSupplementFuncMap()
     requestFuncMap_[CellularCallInterfaceCode::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
     requestFuncMap_[CellularCallInterfaceCode::GET_CALL_RESTRICTION] = &CellularCallStub::OnGetCallRestrictionInner;
+    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_RESTRICTION_PWD] =
+        &CellularCallStub::OnSetCallRestrictionPasswordInner;
     requestFuncMap_[CellularCallInterfaceCode::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
     requestFuncMap_[CellularCallInterfaceCode::UNREGISTER_CALLBACK] = &CellularCallStub::OnUnRegisterCallBackInner;
     requestFuncMap_[CellularCallInterfaceCode::CLOSE_UNFINISHED_USSD] = &CellularCallStub::OnCloseUnFinishedUssdInner;
@@ -718,6 +720,23 @@ int32_t CellularCallStub::OnGetCallRestrictionInner(MessageParcel &data, Message
     auto facType = static_cast<CallRestrictionType>(data.ReadInt32());
 
     reply.WriteInt32(GetCallRestriction(slotId, facType));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSetCallRestrictionPasswordInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    auto facType = static_cast<CallRestrictionType>(data.ReadInt32());
+    auto oldPassword = data.ReadCString();
+    auto newPassword = data.ReadCString();
+
+    reply.WriteInt32(SetCallRestrictionPassword(slotId, facType, oldPassword, newPassword));
     return TELEPHONY_SUCCESS;
 }
 

@@ -176,6 +176,7 @@ private:
     void SetCallTransferInfoResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void SetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void SetBarringPasswordResponse(const AppExecFwk::InnerEvent::Pointer &event);
     int32_t ConfirmAndRemoveSsRequestCommand(int32_t index, int32_t &flag);
     void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event);

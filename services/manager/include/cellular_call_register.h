@@ -46,6 +46,8 @@ public:
 
     void ReportGetTransferResult(const CallTransferResponse &response);
 
+    void ReportSetBarringPasswordResult(int32_t result);
+
     void ReportSetTransferResult(int32_t result);
 
     void ReportGetClipResult(const ClipResponse &response);

@@ -306,6 +306,15 @@ private:
     int32_t OnGetCallRestrictionInner(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * On Set Call Restriction Password
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnSetCallRestrictionPasswordInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * On Set Domain Preference Mode
      *
      * @param data send data

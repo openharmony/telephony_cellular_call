@@ -82,6 +82,7 @@ void ReportCallsInfo(const uint8_t *data, size_t size)
     cellularCallRegister->ReportGetWaitingResult(response);
     cellularCallRegister->ReportSetWaitingResult(result);
     cellularCallRegister->ReportGetRestrictionResult(callRestrictionResponse);
+    cellularCallRegister->ReportSetBarringPasswordResult(result);
 }
 
 void ReportSetRestrictionResult(const uint8_t *data, size_t size)

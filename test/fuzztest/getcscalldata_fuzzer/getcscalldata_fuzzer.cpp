@@ -114,6 +114,7 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->SetCallTransferInfoResponse(event);
     handle->GetCallRestrictionResponse(event);
     handle->SetCallRestrictionResponse(event);
+    handle->SetBarringPasswordResponse(event);
     handle->SendUssdResponse(event);
     handle->SendUnlockPinPukResponse(event);
     handle->HandleOperatorConfigChanged(event);
