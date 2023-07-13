@@ -102,7 +102,7 @@ public:
     /**
      * @brief Invite someone to conference
      *
-     * @param slotId Indicates the card slot index number,
+     * @param slotId Indicates the card slot index number
      * @param numberList phone number list which will be invited to the conference call
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
@@ -111,11 +111,11 @@ public:
     /**
      * @brief Kick out someone from conference
      *
-     * @param slotId Indicates the card slot index number,
-     * @param numberList phone number list which will be kicked out from the conference call
+     * @param slotId Indicates the card slot index number
+     * @param index Call index which will be kicked out from the conference call
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) = 0;
+    virtual int32_t KickOutFromConference(int32_t slotId, int32_t index) = 0;
 
     /**
      * @brief IMS UpdateImsCallMode interface

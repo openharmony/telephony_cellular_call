@@ -244,8 +244,9 @@ int32_t ImsUnitTest::SwitchCall(const sptr<ImsCallInterfaceCode> &imsCallPtr) co
 int32_t ImsUnitTest::CombineConference(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test CombineConference entry." << std::endl;
+    int32_t slotId;
     std::cout << "please enter the slotId:";
-    int32_t slotId = 0;
+    std::cin >> slotId;
     imsCallPtr->CombineConference(slotId);
     return IMS_TEST_SUCCESS;
 }
@@ -258,8 +259,9 @@ int32_t ImsUnitTest::InviteToConference(const sptr<ImsCallInterfaceCode> &imsCal
     std::string phoneNum;
     std::cin >> phoneNum;
     numberList.push_back(phoneNum);
+    int32_t slotId;
     std::cout << "please enter the slotId:";
-    int32_t slotId = 0;
+    std::cin >> slotId;
     imsCallPtr->InviteToConference(slotId, numberList);
     return IMS_TEST_SUCCESS;
 }
@@ -267,14 +269,13 @@ int32_t ImsUnitTest::InviteToConference(const sptr<ImsCallInterfaceCode> &imsCal
 int32_t ImsUnitTest::KickOutFromConference(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test KickOutFromConference entry." << std::endl;
-    std::vector<std::string> numberList;
-    std::cout << "please enter the kick out phone number:";
-    std::string phoneNum;
-    std::cin >> phoneNum;
-    numberList.push_back(phoneNum);
+    int32_t index;
+    std::cout << "please enter the kick out phone index:";
+    std::cin >> index;
+    int32_t slotId;
     std::cout << "please enter the slotId:";
-    int32_t slotId = 0;
-    imsCallPtr->KickOutFromConference(slotId, numberList);
+    std::cin >> slotId;
+    imsCallPtr->KickOutFromConference(slotId, index);
     return IMS_TEST_SUCCESS;
 }
 

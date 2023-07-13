@@ -222,8 +222,7 @@ int32_t CellularCallConnectionIMS::InviteToConferenceRequest(
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(
-    int32_t slotId, const std::vector<std::string> &numberList)
+int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(int32_t slotId, int32_t index)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -231,7 +230,7 @@ int32_t CellularCallConnectionIMS::KickOutFromConferenceRequest(
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->KickOutFromConference(slotId, numberList);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->KickOutFromConference(slotId, index);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;

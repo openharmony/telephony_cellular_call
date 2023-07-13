@@ -523,9 +523,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_001, Functio
         EXPECT_EQ(TELEPHONY_SUCCESS, ret);
         return;
     }
-    std::vector<std::string> numberList;
-    numberList.push_back(PHONE_NUMBER);
-    ret = imsCallPtr_->KickOutFromConference(DEFAULT_SLOTID, numberList);
+    int32_t index = 1;
+    int32_t ret = imsCallPtr_->KickOutFromConference(DEFAULT_SLOTID, index);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
 }
 
@@ -546,9 +545,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_002, Functio
         EXPECT_EQ(TELEPHONY_SUCCESS, ret);
         return;
     }
-    std::vector<std::string> numberList;
-    numberList.push_back(PHONE_NUMBER);
-    ret = imsCallPtr_->KickOutFromConference(SIM_SLOT_ID_1, numberList);
+    int32_t index = 1;
+    int32_t ret = imsCallPtr_->KickOutFromConference(SIM_SLOT_ID_1, index);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
 }
 

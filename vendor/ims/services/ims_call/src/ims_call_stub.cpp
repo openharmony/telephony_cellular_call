@@ -230,12 +230,13 @@ int32_t ImsCallStub::OnInviteToConference(MessageParcel &data, MessageParcel &re
 int32_t ImsCallStub::OnKickOutFromConference(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    std::vector<std::string> numberList;
-    if (!data.ReadStringVector(&numberList)) {
-        TELEPHONY_LOGE("Read string vector failed");
-        return TELEPHONY_ERR_FAIL;
+    int32_t callIndex = data.ReadInt32();
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slotId[%{public}d]", slotId);
+        reply.WriteInt32(TELEPHONY_ERR_FAIL);
+        return TELEPHONY_ERR_SLOTID_INVALID;
     }
-    reply.WriteInt32(KickOutFromConference(slotId, numberList));
+    reply.WriteInt32(KickOutFromConference(slotId, callIndex, callMode));
     return TELEPHONY_SUCCESS;
 }
 

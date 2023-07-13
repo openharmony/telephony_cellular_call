@@ -56,6 +56,7 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[RadioEvent::RADIO_HOLD_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_ACTIVE_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[RadioEvent::RADIO_COMBINE_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_JOIN_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_SPLIT_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_CALL_SUPPLEMENT] = &CellularCallHandler::CommonResultResponse;
@@ -402,6 +403,9 @@ void CellularCallHandler::CommonResultEventHandling(
             break;
         case RadioEvent::RADIO_SWAP_CALL:
             eventInfo.eventId = RequestResultEventId::RESULT_SWAP_SEND_FAILED;
+            break;
+        case RadioEvent::RADIO_COMBINE_CALL:
+            eventInfo.eventId = RequestResultEventId::RESULT_COMBINE_SEND_FAILED;
             break;
         case RadioEvent::RADIO_JOIN_CALL:
             eventInfo.eventId = RequestResultEventId::RESULT_JOIN_SEND_FAILED;

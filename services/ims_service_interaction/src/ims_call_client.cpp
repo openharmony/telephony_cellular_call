@@ -251,13 +251,13 @@ int32_t ImsCallClient::InviteToConference(int32_t slotId, const std::vector<std:
     return imsCallProxy_->InviteToConference(slotId, numberList);
 }
 
-int32_t ImsCallClient::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
+int32_t ImsCallClient::KickOutFromConference(int32_t slotId, int32_t index)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->KickOutFromConference(slotId, numberList);
+    return imsCallProxy_->KickOutFromConference(slotId, index);
 }
 
 int32_t ImsCallClient::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)

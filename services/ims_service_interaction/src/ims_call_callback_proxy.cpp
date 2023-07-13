@@ -453,6 +453,26 @@ int32_t ImsCallCallbackProxy::GetColpResponse(int32_t slotId, const GetColpResul
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLP), in);
 }
 
+int32_t ImsCallCallbackProxy::CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_COMBINE_CONFERENCE), in);
+}
+
+int32_t ImsCallCallbackProxy::InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_INVITE_TO_CONFERENCE), in);
+}
+
 int32_t ImsCallCallbackProxy::SendResponseInfo(int32_t eventId, MessageParcel &in)
 {
     MessageOption option;

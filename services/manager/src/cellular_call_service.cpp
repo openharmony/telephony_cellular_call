@@ -592,16 +592,7 @@ int32_t CellularCallService::SeparateConference(const CellularCallInfo &callInfo
         TELEPHONY_LOGE("CellularCallService::SeparateConference return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
-    if (CallType::TYPE_IMS == callInfo.callType) {
-        auto imsControl = GetImsControl(callInfo.slotId);
-        if (imsControl == nullptr) {
-            TELEPHONY_LOGE("CellularCallService::SeparateConference return, imsControl is nullptr");
-            return TELEPHONY_ERR_LOCAL_PTR_NULL;
-        }
-        std::vector<std::string> numberList;
-        numberList.emplace_back(callInfo.phoneNum);
-        return imsControl->KickOutFromConference(callInfo.slotId, numberList);
-    } else if (CallType::TYPE_CS == callInfo.callType) {
+    if (CallType::TYPE_CS == callInfo.callType) {
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SeparateConference return, csControl is nullptr");
@@ -623,14 +614,29 @@ int32_t CellularCallService::InviteToConference(int32_t slotId, const std::vecto
     return control->InviteToConference(slotId, numberList);
 }
 
-int32_t CellularCallService::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
+int32_t CellularCallService::KickOutFromConference(const CellularCallInfo &callInfo)
 {
-    auto control = GetImsControl(slotId);
-    if (control == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, control is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    if (!IsValidSlotId(callInfo.slotId)) {
+        TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
     }
-    return control->KickOutFromConference(slotId, numberList);
+    if (CallType::TYPE_IMS == callInfo.callType) {
+        auto imsControl = GetImsControl(callInfo.slotId);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, imsControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return imsControl->KickOutFromConference(callInfo.slotId, callInfo.phoneNum, callInfo.index);
+    } else if (CallType::TYPE_CS == callInfo.callType) {
+        auto csControl = GetCsControl(callInfo.slotId);
+        if (csControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, csControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return csControl->HangUp(callInfo, CallSupplementType::TYPE_DEFAULT);
+    }
+    TELEPHONY_LOGE("CellularCallService::KickOutFromConference return, call type error.");
+    return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
 int32_t CellularCallService::HangUpAllConnection()

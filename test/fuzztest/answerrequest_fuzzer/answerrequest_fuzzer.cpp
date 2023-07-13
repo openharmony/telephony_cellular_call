@@ -47,7 +47,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     cellularCallConnectionIMS->HoldCallRequest(slotId);
     cellularCallConnectionIMS->UnHoldCallRequest(slotId);
     cellularCallConnectionIMS->InviteToConferenceRequest(slotId, numberList);
-    cellularCallConnectionIMS->KickOutFromConferenceRequest(slotId, numberList);
+    cellularCallConnectionIMS->KickOutFromConferenceRequest(slotId, index);
     cellularCallConnectionIMS->StartRttRequest(slotId, msg);
     cellularCallConnectionIMS->StopRttRequest(slotId);
     return;

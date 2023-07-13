@@ -68,6 +68,9 @@ public:
     int32_t GetColrResponse(int32_t slotId, const GetColrResult &result) override;
     int32_t SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
     int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
+    /****************** conference ******************/
+    int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
 
 private:
     int32_t SendResponseInfo(int32_t eventId, MessageParcel &in);

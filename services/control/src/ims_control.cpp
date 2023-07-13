@@ -290,11 +290,21 @@ int32_t IMSControl::InviteToConference(int32_t slotId, const std::vector<std::st
     return connection.InviteToConferenceRequest(slotId, numberList);
 }
 
-int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
+int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &KickOutString, int32_t index)
 {
-    TELEPHONY_LOGI("KickOutFromConference entry");
+    if (KickOutString.empty()) {
+        TELEPHONY_LOGW("KickOutFromConference, splitString is empty.");
+    }
+
+    auto pConnection =
+        GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, KickOutString);
+    if (pConnection != nullptr) {
+        return pConnection->KickOutFromConferenceRequest(slotId, pConnection->GetIndex());
+    }
+
+    TELEPHONY_LOGI("KickOutFromConference: connection cannot be matched, use index directly");
     CellularCallConnectionIMS connection;
-    return connection.KickOutFromConferenceRequest(slotId, numberList);
+    return connection.KickOutFromConferenceRequest(slotId, index);
 }
 
 int32_t IMSControl::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
@@ -477,6 +487,7 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.voiceDomain = callInfo.voiceDomain;
     callReportInfo.callType = CallType::TYPE_IMS;
     callReportInfo.callMode = callInfo.callType ? VideoStateType::TYPE_VIDEO : VideoStateType::TYPE_VOICE;
+    callReportInfo.mpty = callInfo.mpty;
     return callReportInfo;
 }
 

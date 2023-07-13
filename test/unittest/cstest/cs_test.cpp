@@ -356,14 +356,25 @@ int32_t CsTest::InviteToConference(const sptr<CellularCallInterface> &telephonyS
 int32_t CsTest::KickOutFromConference(const sptr<CellularCallInterface> &telephonyService) const
 {
     std::cout << "test KickOutFromConference entry." << std::endl;
-    std::vector<std::string> numberList;
-    std::cout << "please enter the kick out phone number:";
-    std::string phoneNum;
-    std::cin >> phoneNum;
-    numberList.push_back(phoneNum);
-    std::cout << "please enter the slotId:";
+    CellularCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    std::cout << "please enter the need kick out phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
     int32_t slotId = 0;
-    return telephonyService->KickOutFromConference(slotId, numberList);
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    callInfo.slotId = slotId;
+    std::cout << "please enter the need kick out index:";
+    std::cin >> callInfo.index;
+    return telephonyService->KickOutFromConference(callInfo);
 }
 
 int32_t CsTest::HangUpAllConnection(const sptr<CellularCallInterface> &telephonyService) const
@@ -1778,6 +1789,72 @@ HWTEST_F(CsTest, cellular_call_SeparateConference_0002, Function | MediumTest | 
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SeparateConference(callInfo);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_KickOutFromConference_0001
+ * @tc.name     Test for separateConference function by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
+        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
+        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_KickOutFromConference_0002
+ * @tc.name     Test for KickOutFromConference function with invalid slot by cs
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_KickOutFromConference_0002, Function | MediumTest | Level2)
+{
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(remote != nullptr);
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    ASSERT_TRUE(telephonyService != nullptr);
+    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
+        return;
+    }
+    if (HasSimCard(SIM1_SLOTID)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
+        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
+    }
+    if (HasSimCard(SIM2_SLOTID)) {
+        CellularCallInfo callInfo;
+        int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, callInfo);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        ret = telephonyService->KickOutFromConference(callInfo);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
     }
 }

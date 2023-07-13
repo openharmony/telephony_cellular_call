@@ -120,10 +120,10 @@ public:
      * KickOutFromConference Request
      *
      * @param slotId
-     * @param numberList
+     * @param index
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t KickOutFromConferenceRequest(int32_t slotId, const std::vector<std::string> &numberList);
+    int32_t KickOutFromConferenceRequest(int32_t slotId, int32_t index);
 
     /**
      * CallSupplement Request

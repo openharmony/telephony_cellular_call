@@ -216,15 +216,15 @@ int32_t ImsCallProxy::InviteToConference(int32_t slotId, const std::vector<std::
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_INVITE_TO_CONFERENCE));
 }
 
-int32_t ImsCallProxy::KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList)
+int32_t ImsCallProxy::KickOutFromConference(int32_t slotId, int32_t index)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteStringVector(numberList)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write numberList fail!", slotId);
+    if (!in.WriteInt32(index)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write index fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_KICK_OUT_CONFERENCE));

@@ -37,7 +37,7 @@ public:
     int32_t SwitchCall(int32_t slotId, int32_t callType) override;
     int32_t CombineConference(int32_t slotId) override;
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList) override;
-    int32_t KickOutFromConference(int32_t slotId, const std::vector<std::string> &numberList) override;
+    int32_t KickOutFromConference(int32_t slotId, int32_t index) override;
     int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag) override;
     int32_t GetLastCallFailReason(int32_t slotId) override;

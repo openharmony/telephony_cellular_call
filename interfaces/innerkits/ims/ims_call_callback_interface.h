@@ -358,6 +358,26 @@ public:
      */
     virtual int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) = 0;
 
+    /**
+     * @brief CombineConferenceResponse the result of get combine conference by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates get action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+
+    /**
+     * @brief InviteToConferenceResponse the result of get invite to conference by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates get action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };
