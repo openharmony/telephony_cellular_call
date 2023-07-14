@@ -16,6 +16,7 @@
 #include "cellular_call_register.h"
 
 #include "cellular_call_hisysevent.h"
+#include "core_manager_inner.h"
 #include "hitrace_meter.h"
 #include "iservice_registry.h"
 
@@ -47,7 +48,8 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
         }
         return;
     }
-
+    CoreManagerInner::GetInstance().NotifyCallStatusToNetworkSearch(
+        detailInfo.accountId, static_cast<int32_t>(detailInfo.state));
     if (detailInfo.state == TelCallState::CALL_STATUS_INCOMING) {
         DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetIncomingCallParameterInfo(
             static_cast<int32_t>(detailInfo.callType), static_cast<int32_t>(detailInfo.callMode));
