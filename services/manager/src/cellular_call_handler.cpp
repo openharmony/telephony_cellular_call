@@ -175,12 +175,12 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    this->SendEvent(GET_CS_CALL_DATA_ID, DELAY_TIME, Priority::HIGH);
+    this->SendEvent(GET_CS_CALL_DATA_ID, 0, Priority::HIGH);
 }
 
 void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    this->SendEvent(GET_IMS_CALL_DATA_ID, DELAY_TIME, Priority::HIGH);
+    this->SendEvent(GET_IMS_CALL_DATA_ID, 0, Priority::HIGH);
 }
 
 void CellularCallHandler::CellularCallIncomingStartTrace(const int32_t state)
