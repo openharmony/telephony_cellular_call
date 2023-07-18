@@ -769,8 +769,12 @@ int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, const HRilRadi
 int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, int32_t active)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry active:%{public}d", slotId, active);
-    DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId)->SendEvent(
-        RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, active);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr || handler.get() == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    handler->SendEvent(RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, active);
     return TELEPHONY_SUCCESS;
 }
 

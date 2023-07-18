@@ -236,7 +236,7 @@ int32_t ImsCallStub::OnKickOutFromConference(MessageParcel &data, MessageParcel 
         reply.WriteInt32(TELEPHONY_ERR_FAIL);
         return TELEPHONY_ERR_SLOTID_INVALID;
     }
-    reply.WriteInt32(KickOutFromConference(slotId, callIndex, callMode));
+    reply.WriteInt32(KickOutFromConference(slotId, callIndex));
     return TELEPHONY_SUCCESS;
 }
 
