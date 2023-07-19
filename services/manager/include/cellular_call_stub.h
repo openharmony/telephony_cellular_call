@@ -215,6 +215,8 @@ private:
      */
     int32_t OnStopDtmfInner(MessageParcel &data, MessageParcel &reply);
 
+    int32_t OnPostDialProceedInner(MessageParcel &data, MessageParcel &reply);
+
     /**
      * On send Dtmf Inner
      *

@@ -98,6 +98,7 @@ void CellularCallStub::InitDtmfFuncMap()
 {
     requestFuncMap_[CellularCallInterfaceCode::START_DTMF] = &CellularCallStub::OnStartDtmfInner;
     requestFuncMap_[CellularCallInterfaceCode::STOP_DTMF] = &CellularCallStub::OnStopDtmfInner;
+    requestFuncMap_[CellularCallInterfaceCode::POST_DIAL_PROCEED] = &CellularCallStub::OnPostDialProceedInner;
     requestFuncMap_[CellularCallInterfaceCode::SEND_DTMF] = &CellularCallStub::OnSendDtmfInner;
     requestFuncMap_[CellularCallInterfaceCode::START_RTT] = &CellularCallStub::OnStartRttInner;
     requestFuncMap_[CellularCallInterfaceCode::STOP_RTT] = &CellularCallStub::OnStopRttInner;
@@ -545,6 +546,27 @@ int32_t CellularCallStub::OnStopDtmfInner(MessageParcel &data, MessageParcel &re
     }
 
     reply.WriteInt32(StopDtmf(*pCallInfo));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnPostDialProceedInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnPostDialProceedInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnPostDialProceedInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+
+    auto info = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("OnStopDtmfInner return, info is nullptr.");
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    bool proceed = data.ReadBool();
+
+    reply.WriteInt32(PostDialProceed(*info, proceed));
     return TELEPHONY_SUCCESS;
 }
 

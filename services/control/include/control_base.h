@@ -192,6 +192,8 @@ public:
      */
     bool IsDtmfKey(char c) const;
 
+    bool IsConnectedOut(TelCallState preState, TelCallState curState);
+
     /**
      * Ignore the hangup report when the hangup is caused by CallManager crash.
      *

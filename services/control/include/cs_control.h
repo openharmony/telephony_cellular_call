@@ -179,6 +179,10 @@ public:
      */
     int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) override;
 
+    int32_t ExecutePostDial(int32_t slotId, int64_t callId);
+
+    int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
+
 private:
     /**
      * Calculate International Roaming
@@ -254,6 +258,7 @@ private:
 
 private:
     CsConnectionMap connectionMap_; // save callConnection map
+    std::string pendingPhoneNumber_;
     const int32_t VOICE_CALL = 0;
 };
 } // namespace Telephony

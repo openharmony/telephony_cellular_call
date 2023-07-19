@@ -1428,7 +1428,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
         ASSERT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);

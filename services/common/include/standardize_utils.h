@@ -42,6 +42,8 @@ public:
      */
     std::string RemoveSeparatorsPhoneNumber(const std::string &phoneNum);
 
+    void ExtractAddressAndPostDial(const std::string &phoneString, std::string &networkAddress, std::string &postDial);
+
     typedef std::uint64_t hash_t64;
 
     static hash_t64 Hash_(char const *hashStr)
@@ -58,6 +60,21 @@ public:
     static constexpr hash_t64 HashCompileTime(char const *str, hash_t64 last_value = cellular_call_b)
     {
         return *str ? HashCompileTime(str + 1, (*str ^ last_value) * cellular_call_p) : last_value;
+    }
+
+    static bool IsDtmfKey(char c)
+    {
+        return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'D') || c == '*' || c == '#';
+    }
+
+    static bool IsPauseKey(char c)
+    {
+        return c == ',';
+    }
+
+    static bool IsWaitKey(char c)
+    {
+        return c == ';';
     }
 
 private:

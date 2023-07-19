@@ -22,6 +22,8 @@
 
 namespace OHOS {
 namespace Telephony {
+constexpr size_t CHAR_LENG = 1;
+
 CellularCallRegister::CellularCallRegister() : callManagerCallBack_(nullptr) {}
 
 CellularCallRegister::~CellularCallRegister() {}
@@ -405,6 +407,27 @@ void CellularCallRegister::ReportCloseUnFinishedUssdResult(int32_t result)
         return;
     }
     callManagerCallBack_->CloseUnFinishedUssdResult(result);
+}
+
+void CellularCallRegister::ReportPostDialChar(char c)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportPostDialChar return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    std::string nextDtmf(CHAR_LENG, c);
+    callManagerCallBack_->ReportPostDialChar(nextDtmf);
+}
+
+void CellularCallRegister::ReportPostDialDelay(std::string str)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReportPostDialChar return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    callManagerCallBack_->ReportPostDialDelay(str);
 }
 } // namespace Telephony
 } // namespace OHOS

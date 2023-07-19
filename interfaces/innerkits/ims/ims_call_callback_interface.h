@@ -113,9 +113,10 @@ public:
      * @param slotId Indicates the card slot index number,
      * ranging from {@code 0} to the maximum card slot index number supported by the device.
      * @param info Indicates send action was success or failure.
+     * @param callIndex Indicates the call index number.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex) = 0;
 
     /**
      * @brief StopDtmfResponse the result of stop dtmf by ims.

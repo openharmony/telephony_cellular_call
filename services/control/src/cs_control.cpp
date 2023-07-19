@@ -124,6 +124,7 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo)
 
 int32_t CSControl::EncapsulateDialCommon(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode)
 {
+    pendingPhoneNumber_ = phoneNum;
     DialRequestStruct dialRequest;
     /**
      * <idx>: integer type;
@@ -184,7 +185,7 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
             return pConnection->HangUpRequest(callInfo.slotId);
         }
         // 3GPP TS 27.007 V3.9.0 (2001-06) Call related supplementary services +CHLD
-        // 3GPP TS 27.007 V3.9.0 (2001-06) 7.22	Informative examples
+        // 3GPP TS 27.007 V3.9.0 (2001-06) 7.22 Informative examples
         case CallSupplementType::TYPE_HANG_UP_HOLD_WAIT:
         // release the second (active) call and recover the first (held) call
         case CallSupplementType::TYPE_HANG_UP_ACTIVE: {
@@ -442,9 +443,16 @@ int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfo
             connection.SetIndex(callInfoList.calls[i].index);
             SetConnectionData(connectionMap_, callInfoList.calls[i].number, connection);
         } else {
+            TelCallState preCallState = pConnection->GetStatus();
             pConnection->SetFlag(true);
             pConnection->SetIndex(callInfoList.calls[i].index);
             pConnection->SetOrUpdateCallReportInfo(reportInfo);
+            TelCallState curCallState = pConnection->GetStatus();
+            if (IsConnectedOut(preCallState, curCallState)) {
+                pConnection->UpdateCallNumber(pendingPhoneNumber_);
+                pendingPhoneNumber_.clear();
+                ExecutePostDial(slotId, pConnection->GetIndex());
+            }
         }
         callsReportInfo.callVec.push_back(reportInfo);
     }
@@ -573,6 +581,46 @@ int32_t CSControl::ReportHungUpInfo(int32_t slotId)
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     }
     ReleaseAllConnection();
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CSControl::ExecutePostDial(int32_t slotId, int64_t callId)
+{
+    auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callId);
+    if (pConnection == nullptr) {
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    char currentChar;
+    PostDialCallState state = pConnection->ProcessNextChar(slotId, currentChar);
+    switch (state) {
+        case PostDialCallState::POST_DIAL_CALL_STARTED:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialChar(currentChar);
+            break;
+        case PostDialCallState::POST_DIAL_CALL_DELAY:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialDelay(
+                pConnection->GetLeftPostDialCallString());
+            break;
+        default:
+            break;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
+{
+    std::string networkAddress;
+    std::string postDialString;
+    StandardizeUtils standardizeUtils;
+    standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    auto pConnection = GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, networkAddress);
+    if (pConnection == nullptr) {
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (proceed) {
+        ExecutePostDial(callInfo.slotId, pConnection->GetIndex());
+    } else {
+        pConnection->SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_CANCELED);
+    }
     return TELEPHONY_SUCCESS;
 }
 
