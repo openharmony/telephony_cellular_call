@@ -24,7 +24,7 @@
 
 namespace OHOS {
 namespace Telephony {
-using CsConnectionMap = std::map<std::string, CellularCallConnectionCS>;
+using CsConnectionMap = std::map<int32_t, CellularCallConnectionCS>;
 class CSControl : public ControlBase {
 public:
     /**

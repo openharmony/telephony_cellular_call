@@ -156,13 +156,8 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
             // Match the session connection according to the phone number string
-            auto pConnection =
-                GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.phoneNum);
-            if (pConnection == nullptr) {
-                TELEPHONY_LOGI("HangUp: connection cannot be matched, use index directly");
-                pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
-                    connectionMap_, callInfo.index);
-            }
+            auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
+                connectionMap_, callInfo.index);
             if (pConnection == nullptr) {
                 TELEPHONY_LOGE("CSControl::HangUp, error type: connection is null");
                 CellularCallHiSysEvent::WriteHangUpFaultEvent(
@@ -210,12 +205,7 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
 int32_t CSControl::Answer(const CellularCallInfo &callInfo)
 {
     auto pConnection =
-        GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.phoneNum);
-    if (pConnection == nullptr) {
-        TELEPHONY_LOGI("Answer: connection cannot be matched, use index directly");
-        pConnection =
-            FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
-    }
+        FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("Answer return, error type: connection is null");
         CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
@@ -281,12 +271,7 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
 int32_t CSControl::Reject(const CellularCallInfo &callInfo)
 {
     auto pConnection =
-        GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.phoneNum);
-    if (pConnection == nullptr) {
-        TELEPHONY_LOGI("Reject: connection cannot be matched, use index directly");
-        pConnection =
-            FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
-    }
+        FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("CSControl::Reject, error type: connection is null");
         CellularCallHiSysEvent::WriteHangUpFaultEvent(
@@ -367,7 +352,7 @@ int32_t CSControl::SeparateConference(int32_t slotId, const std::string &splitSt
         TELEPHONY_LOGW("SeparateConference, splitString is empty.");
     }
 
-    auto pConnection = GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, splitString);
+    auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, index);
     if (pConnection != nullptr) {
         return pConnection->SeparateConferenceRequest(slotId, pConnection->GetIndex(), VOICE_CALL);
     }
@@ -433,18 +418,20 @@ int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfo
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
 
-        auto pConnection = GetConnectionData<CsConnectionMap &, CellularCallConnectionCS *>(
-            connectionMap_, callInfoList.calls[i].number);
+        auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
+            connectionMap_, callInfoList.calls[i].index);
         if (pConnection == nullptr) {
             CellularCallConnectionCS connection;
             connection.SetOrUpdateCallReportInfo(reportInfo);
             connection.SetFlag(true);
             connection.SetIndex(callInfoList.calls[i].index);
-            SetConnectionData(connectionMap_, callInfoList.calls[i].number, connection);
+            connection.SetNumber(callInfoList.calls[i].number);
+            SetConnectionData(connectionMap_, callInfoList.calls[i].index, connection);
         } else {
             pConnection->SetFlag(true);
             pConnection->SetIndex(callInfoList.calls[i].index);
             pConnection->SetOrUpdateCallReportInfo(reportInfo);
+            pConnection->SetNumber(callInfoList.calls[i].number);
         }
         callsReportInfo.callVec.push_back(reportInfo);
     }
@@ -531,7 +518,8 @@ int32_t CSControl::ReportIncomingInfo(int32_t slotId, const CallInfoList &callIn
         connection.SetStatus(static_cast<TelCallState>(callInfoList.calls[i].state));
         connection.SetIndex(callInfoList.calls[i].index);
         connection.SetOrUpdateCallReportInfo(cellularCallReportInfo);
-        SetConnectionData(connectionMap_, callInfoList.calls[i].number, connection);
+        connection.SetNumber(callInfoList.calls[i].number);
+        SetConnectionData(connectionMap_, callInfoList.calls[i].index, connection);
 
         callsReportInfo.callVec.push_back(cellularCallReportInfo);
     }

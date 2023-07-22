@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace Telephony {
-using ImsConnectionMap = std::map<std::string, CellularCallConnectionIMS>;
+using ImsConnectionMap = std::map<int32_t, CellularCallConnectionIMS>;
 class IMSControl : public ControlBase {
 public:
     /**

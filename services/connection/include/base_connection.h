@@ -99,9 +99,14 @@ public:
      */
     int32_t GetIndex() const;
 
+    void SetNumber(const std::string &number);
+
+    std::string GetNumber() const;
+
 private:
     bool flag_ = false;
     int32_t index_ = 1;
+    std::string number_;
     CallReportInfo callReportInfo_;
 };
 } // namespace Telephony
