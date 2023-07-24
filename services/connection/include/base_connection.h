@@ -100,6 +100,10 @@ public:
      */
     int32_t GetIndex() const;
 
+    void SetNumber(const std::string &number);
+
+    std::string GetNumber() const;
+
     PostDialCallState ProcessNextChar(int32_t slotId, char &c);
 
     void SetPostDialCallState(PostDialCallState s);
@@ -117,6 +121,7 @@ protected:
 private:
     bool flag_ = false;
     int32_t index_ = 1;
+    std::string number_;
     CallReportInfo callReportInfo_;
     PostDialCallState postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
     int32_t nextPostDialCallCode_ = 0;

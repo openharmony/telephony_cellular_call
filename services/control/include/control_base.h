@@ -263,39 +263,13 @@ public:
      * @return bool
      */
     template<typename T1, typename T2>
-    bool SetConnectionData(T1 &&t1, const std::string &key, const T2 &con)
+    bool SetConnectionData(T1 &&t1, const int32_t &key, const T2 &con)
     {
-        if (key.empty()) {
-            TELEPHONY_LOGE("SetConnectionData, key is empty.");
-            return false;
-        }
         if (!t1.insert(std::make_pair(key, con)).second) {
             TELEPHONY_LOGE("SetConnectionData, key already exists.");
             return false;
         }
         return true;
-    }
-
-    /**
-     * GetConnectionData
-     *
-     * @param std::map<std::string, BaseConnection>
-     * @param string phoneNum
-     * @return pointer
-     */
-    template<typename T1, typename T2>
-    T2 GetConnectionData(const T1 &&t1, const std::string &key) const
-    {
-        if (key.empty()) {
-            TELEPHONY_LOGE("GetConnectionData, key is empty.");
-            return nullptr;
-        }
-
-        auto p = t1.find(key);
-        if (p != t1.end()) {
-            return &p->second;
-        }
-        return nullptr;
     }
 
     /**
@@ -342,11 +316,8 @@ public:
          * Only a single digit will be passed in each START DTMF and START DTMF ACKNOWLEDGE message
          */
         TELEPHONY_LOGD("ControlBase::StartDtmf start");
-        auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
-        if (pConnection == nullptr) {
-            TELEPHONY_LOGI("StartDtmf: connection cannot be matched, use index directly");
-            pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
-        }
+        auto pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
+
         if (pConnection == nullptr) {
             TELEPHONY_LOGE("StartDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
@@ -382,11 +353,7 @@ public:
          * Only a single digit will be passed in each START DTMF and START DTMF ACKNOWLEDGE message
          */
         TELEPHONY_LOGD("ControlBase::StopDtmf start");
-        auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
-        if (pConnection == nullptr) {
-            TELEPHONY_LOGI("StopDtmf: connection cannot be matched, use index directly");
-            pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
-        }
+        auto pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
         if (pConnection == nullptr) {
             TELEPHONY_LOGE("StopDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
@@ -430,11 +397,7 @@ public:
          +VTD command. NOTE 4:	In GSM this operates only in voice mode.
          */
         TELEPHONY_LOGD("ControlBase::SendDtmf start");
-        auto pConnection = GetConnectionData<T &, decltype(&t.begin()->second)>(t, callInfo.phoneNum);
-        if (pConnection == nullptr) {
-            TELEPHONY_LOGI("SendDtmf: connection cannot be matched, use index directly");
-            pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
-        }
+        auto pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
         if (pConnection == nullptr) {
             TELEPHONY_LOGE("SendDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;

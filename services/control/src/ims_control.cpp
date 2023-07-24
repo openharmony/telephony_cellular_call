@@ -123,13 +123,8 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
     TELEPHONY_LOGI("HangUp start");
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
-            auto pConnection =
-                GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.phoneNum);
-            if (pConnection == nullptr) {
-                TELEPHONY_LOGI("HangUp: connection cannot be matched, use index directly");
-                pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
-                    connectionMap_, callInfo.index);
-            }
+            auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
+                connectionMap_, callInfo.index);
             if (pConnection == nullptr) {
                 TELEPHONY_LOGE("HangUp return, error type: connection is null");
                 return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
@@ -164,10 +159,10 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
 int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("IMSControl::Answer start");
-    auto pConnection =
-        GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.phoneNum);
+    auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
+        connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
-        TELEPHONY_LOGE("IMSControl::Answer, error type: connection is null");
+        TELEPHONY_LOGE("HangUp return, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
     }
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING) &&
@@ -211,12 +206,7 @@ int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("IMSControl::Reject start");
     auto pConnection =
-        GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.phoneNum);
-    if (pConnection == nullptr) {
-        TELEPHONY_LOGI("Reject: connection cannot be matched, use index directly");
-        pConnection =
-            FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
-    }
+        FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("IMSControl::Reject, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
@@ -279,9 +269,10 @@ int32_t IMSControl::HangUpAllConnection(int32_t slotId)
         return TELEPHONY_ERROR;
     }
     int32_t index = connectionMap_.begin()->second.GetIndex();
+    std::string number = connectionMap_.begin()->second.GetNumber();
     // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
     // so the reject interface is reused.
-    return connection.RejectRequest(slotId, connectionMap_.begin()->first, index);
+    return connection.RejectRequest(slotId, number, index);
 }
 
 int32_t IMSControl::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
@@ -297,8 +288,7 @@ int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &Kic
         TELEPHONY_LOGW("KickOutFromConference, splitString is empty.");
     }
 
-    auto pConnection =
-        GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, KickOutString);
+    auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, index);
     if (pConnection != nullptr) {
         return pConnection->KickOutFromConferenceRequest(slotId, pConnection->GetIndex());
     }
@@ -312,12 +302,7 @@ int32_t IMSControl::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallM
 {
     TELEPHONY_LOGI("UpdateImsCallMode entry");
     auto pConnection =
-        GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.phoneNum);
-    if (pConnection == nullptr) {
-        TELEPHONY_LOGI("UpdateImsCallMode: connection cannot be matched, use index directly");
-        pConnection =
-            FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
-    }
+        FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
         TELEPHONY_LOGE("IMSControl::UpdateImsCallMode, error type: connection is null");
         return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
@@ -409,8 +394,9 @@ int32_t IMSControl::ReportIncomingInfo(int32_t slotId, const ImsCurrentCallList 
         CellularCallConnectionIMS connection;
         connection.SetStatus(static_cast<TelCallState>(imsCurrentCallInfoList.calls[i].state));
         connection.SetIndex(imsCurrentCallInfoList.calls[i].index);
+        connection.SetNumber(imsCurrentCallInfoList.calls[i].number);
         connection.SetOrUpdateCallReportInfo(reportInfo);
-        SetConnectionData(connectionMap_, imsCurrentCallInfoList.calls[i].number, connection);
+        SetConnectionData(connectionMap_, imsCurrentCallInfoList.calls[i].index, connection);
 
         callsReportInfo.callVec.push_back(reportInfo);
     }
@@ -434,19 +420,20 @@ int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &c
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
-
-        auto pConnection = GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(
-            connectionMap_, callInfoList.calls[i].number);
+        auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
+            connectionMap_, callInfoList.calls[i].index);
         if (pConnection == nullptr) {
             CellularCallConnectionIMS connection;
             connection.SetOrUpdateCallReportInfo(reportInfo);
             connection.SetFlag(true);
             connection.SetIndex(callInfoList.calls[i].index);
-            SetConnectionData(connectionMap_, callInfoList.calls[i].number, connection);
+            connection.SetNumber(callInfoList.calls[i].number);
+            SetConnectionData(connectionMap_, callInfoList.calls[i].index, connection);
         } else {
             TelCallState preCallState = pConnection->GetStatus();
             pConnection->SetFlag(true);
             pConnection->SetIndex(callInfoList.calls[i].index);
+            pConnection->SetNumber(callInfoList.calls[i].number);
             pConnection->SetOrUpdateCallReportInfo(reportInfo);
             TelCallState curCallState = pConnection->GetStatus();
             if (IsConnectedOut(preCallState, curCallState)) {

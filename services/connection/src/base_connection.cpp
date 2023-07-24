@@ -72,6 +72,16 @@ int32_t BaseConnection::GetIndex() const
     return index_;
 }
 
+void BaseConnection::SetNumber(const std::string &number)
+{
+    number_ = number;
+}
+
+std::string BaseConnection::GetNumber() const
+{
+    return number_;
+}
+
 PostDialCallState BaseConnection::ProcessNextChar(int32_t slotId, char &c)
 {
     if (postDialCalltate_ == PostDialCallState::POST_DIAL_CALL_CANCELED) {
