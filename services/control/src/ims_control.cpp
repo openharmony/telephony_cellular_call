@@ -532,8 +532,8 @@ int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool
     std::string postDialString;
     StandardizeUtils standardizeUtils;
     standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
-    auto pConnection = GetConnectionData<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_,
-        networkAddress);
+    auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_,
+        callInfo.index);
     if (pConnection == nullptr) {
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
