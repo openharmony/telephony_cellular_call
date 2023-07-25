@@ -24,6 +24,7 @@
 
 namespace OHOS {
 namespace Telephony {
+constexpr static const int64_t PAUSE_DELAY_TIME = 3 * 1000;
 class BaseConnection {
 public:
     /**
@@ -103,11 +104,28 @@ public:
 
     std::string GetNumber() const;
 
+    PostDialCallState ProcessNextChar(int32_t slotId, char &c);
+
+    void SetPostDialCallState(PostDialCallState s);
+
+    void UpdateCallNumber(std::string phoneNum);
+
+    std::string GetLeftPostDialCallString();
+
+private:
+    virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c);
+
+protected:
+    std::string phoneNumber_;
+
 private:
     bool flag_ = false;
     int32_t index_ = 1;
     std::string number_;
     CallReportInfo callReportInfo_;
+    PostDialCallState postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
+    int32_t nextPostDialCallCode_ = 0;
+    std::string postDialCallString_;
 };
 } // namespace Telephony
 } // namespace OHOS

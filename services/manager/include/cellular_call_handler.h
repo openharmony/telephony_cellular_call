@@ -87,6 +87,8 @@ public:
 
     void CommonResultResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void ExecutePostDial(const AppExecFwk::InnerEvent::Pointer &event);
+
     void SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);

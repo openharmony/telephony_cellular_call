@@ -47,7 +47,7 @@ public:
 
     /****************** dtmf rtt ******************/
     int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex) override;
     int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
 
     /****************** ims config ******************/

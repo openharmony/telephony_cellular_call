@@ -103,12 +103,15 @@ int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const HRilRadioR
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF), in);
 }
 
-int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
+    }
+    if (!in.WriteInt32(callIndex)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SEND_DTMF), in);
 }

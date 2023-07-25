@@ -100,6 +100,10 @@ public:
 
     bool IsCallManagerCallBackRegistered();
 
+    void ReportPostDialChar(char c);
+
+    void ReportPostDialDelay(std::string str);
+
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;
     std::mutex mutex_;

@@ -70,6 +70,7 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
     requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
     requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &CellularCallHandler::GetMMIResponse;
+    requestFuncMap_[DtmfHandlerId::EVENT_EXECUTE_POST_DIAL] = &CellularCallHandler::ExecutePostDial;
 
     requestFuncMap_[RadioEvent::RADIO_IMS_GET_CALL_DATA] = &CellularCallHandler::GetImsCallsDataResponse;
 }
@@ -460,6 +461,28 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
     }
 }
 
+void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto postDialData = event->GetSharedObject<PostDialData>();
+    if (postDialData == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] postDialData is null", slotId_);
+        return;
+    }
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
+        return;
+    }
+    int64_t callId = postDialData->callId;
+    if (postDialData->isIms) {
+        auto imsControl = serviceInstance->GetImsControl(slotId_);
+        imsControl->ExecutePostDial(slotId_, callId);
+    } else {
+        auto csControl = serviceInstance->GetCsControl(slotId_);
+        csControl->ExecutePostDial(slotId_, callId);
+    }
+}
+
 void CellularCallHandler::SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     auto result = event->GetSharedObject<HRilRadioResponseInfo>();
@@ -467,6 +490,12 @@ void CellularCallHandler::SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
     }
+
+    std::shared_ptr<PostDialData> postDial = std::make_shared<PostDialData>();
+    postDial->callId = result->flag;
+    postDial->isIms = event->GetParam() == static_cast<int32_t>(CallType::TYPE_IMS);
+    this->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, DELAY_TIME);
+
     CellularCallEventInfo eventInfo;
     eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
     if (result->error != HRilErrType::NONE) {

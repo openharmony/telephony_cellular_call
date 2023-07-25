@@ -18,6 +18,7 @@
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "radio_event.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -37,8 +38,10 @@ int32_t CellularCallConnectionCS::DialRequest(int32_t slotId, const DialRequestS
             CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
+    UpdateCallNumber(dialRequest.phoneNum);
     CoreManagerInner::GetInstance().Dial(
-        slotId, RadioEvent::RADIO_DIAL, dialRequest.phoneNum, dialRequest.clirMode, handle);
+        slotId, RadioEvent::RADIO_DIAL, phoneNumber_, dialRequest.clirMode, handle);
+    phoneNumber_.clear();
     return TELEPHONY_SUCCESS;
 }
 
@@ -291,6 +294,27 @@ int32_t CellularCallConnectionCS::GetCallFailReasonRequest(int32_t slotId) const
 void CellularCallConnectionCS::RegisterHandler()
 {
     DelayedSingleton<CellularCallService>::GetInstance()->RegisterHandler();
+}
+
+int32_t CellularCallConnectionCS::ProcessPostDialCallChar(int32_t slotId, char c)
+{
+    if (StandardizeUtils::IsDtmfKey(c)) {
+        SendDtmfRequest(slotId, c, GetIndex());
+    } else if (StandardizeUtils::IsPauseKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_PAUSE);
+        auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+        if (handle == nullptr) {
+            TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        std::shared_ptr<PostDialData> postDial = std::make_shared<PostDialData>();
+        postDial->callId = GetIndex();
+        postDial->isIms = false;
+        handle->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, PAUSE_DELAY_TIME);
+    } else if (StandardizeUtils::IsWaitKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_DELAY);
+    }
+    return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
 } // namespace OHOS

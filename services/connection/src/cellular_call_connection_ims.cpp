@@ -20,6 +20,7 @@
 #include "ims_call_client.h"
 #include "radio_event.h"
 #include "securec.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -33,16 +34,20 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
             slotId, INVALID_PARAMETER, dialRequest.videoState, TELEPHONY_ERR_MEMSET_FAIL, "memset_s error");
         return TELEPHONY_ERR_MEMSET_FAIL;
     }
-    size_t cpyLen = strlen(dialRequest.phoneNum.c_str()) + 1;
+    UpdateCallNumber(dialRequest.phoneNum);
+    size_t cpyLen = strlen(phoneNumber_.c_str()) + 1;
     if (cpyLen > static_cast<size_t>(kMaxNumberLength)) {
+        phoneNumber_.clear();
         return TELEPHONY_ERR_STRCPY_FAIL;
     }
-    if (strcpy_s(callInfo.phoneNum, cpyLen, dialRequest.phoneNum.c_str()) != EOK) {
+    if (strcpy_s(callInfo.phoneNum, cpyLen, phoneNumber_.c_str()) != EOK) {
         TELEPHONY_LOGE("return, strcpy_s fail.");
+        phoneNumber_.clear();
         CellularCallHiSysEvent::WriteDialCallFaultEvent(
             slotId, INVALID_PARAMETER, dialRequest.videoState, TELEPHONY_ERR_STRCPY_FAIL, "strcpy_s fail");
         return TELEPHONY_ERR_STRCPY_FAIL;
     }
+    phoneNumber_.clear();
     callInfo.videoState = dialRequest.videoState;
     callInfo.slotId = slotId;
     if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
@@ -378,6 +383,27 @@ int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) cons
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
+}
+
+int32_t CellularCallConnectionIMS::ProcessPostDialCallChar(int32_t slotId, char c)
+{
+    if (StandardizeUtils::IsDtmfKey(c)) {
+        SendDtmfRequest(slotId, c, GetIndex());
+    } else if (StandardizeUtils::IsPauseKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_PAUSE);
+        auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+        if (handle == nullptr) {
+            TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        std::shared_ptr<PostDialData> postDial = std::make_shared<PostDialData>();
+        postDial->callId = GetIndex();
+        postDial->isIms = true;
+        handle->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, PAUSE_DELAY_TIME);
+    } else if (StandardizeUtils::IsWaitKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_DELAY);
+    }
+    return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
 } // namespace OHOS

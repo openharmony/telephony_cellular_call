@@ -257,6 +257,8 @@ public:
      */
     int32_t StopDtmf(const CellularCallInfo &callInfo) override;
 
+    int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed) override;
+
     /**
      * SendDtmf
      *

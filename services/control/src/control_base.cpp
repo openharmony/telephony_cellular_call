@@ -100,6 +100,15 @@ bool ControlBase::IsDtmfKey(char c) const
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'D') || c == '*' || c == '#';
 }
 
+bool ControlBase::IsConnectedOut(TelCallState preState, TelCallState curState)
+{
+    if ((preState == TelCallState::CALL_STATUS_DIALING || preState == TelCallState::CALL_STATUS_ALERTING) &&
+        !(curState == TelCallState::CALL_STATUS_DIALING || curState == TelCallState::CALL_STATUS_ALERTING)) {
+        return true;
+    }
+    return false;
+}
+
 void ControlBase::SetHangupReportIgnoredFlag(bool ignored)
 {
     TELEPHONY_LOGI("SetHangupReportIgnoredFlag ignored:%{public}d", ignored);

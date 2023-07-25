@@ -207,6 +207,9 @@ public:
     int32_t GetCallFailReasonRequest(int32_t slotId) const;
 
 private:
+    virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
+
+private:
     ModuleServiceUtils moduleUtils_;
 };
 } // namespace Telephony

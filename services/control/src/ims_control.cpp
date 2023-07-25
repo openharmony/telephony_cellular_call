@@ -79,6 +79,7 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
         // - a call can be temporarily disconnected from the ME but the connection is retained by the network
         connection.HoldCallRequest(slotId);
     }
+    pendingPhoneNumber_ = phoneNum;
     return EncapsulateDial(slotId, phoneNum, clirMode, videoState);
 }
 
@@ -429,10 +430,17 @@ int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &c
             connection.SetNumber(callInfoList.calls[i].number);
             SetConnectionData(connectionMap_, callInfoList.calls[i].index, connection);
         } else {
+            TelCallState preCallState = pConnection->GetStatus();
             pConnection->SetFlag(true);
             pConnection->SetIndex(callInfoList.calls[i].index);
             pConnection->SetNumber(callInfoList.calls[i].number);
             pConnection->SetOrUpdateCallReportInfo(reportInfo);
+            TelCallState curCallState = pConnection->GetStatus();
+            if (IsConnectedOut(preCallState, curCallState)) {
+                pConnection->UpdateCallNumber(pendingPhoneNumber_);
+                pendingPhoneNumber_.clear();
+                ExecutePostDial(slotId, pConnection->GetIndex());
+            }
         }
         callsReportInfo.callVec.push_back(reportInfo);
     }
@@ -494,6 +502,47 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCur
             ++it;
         }
     }
+}
+
+int32_t IMSControl::ExecutePostDial(int32_t slotId, int64_t callId)
+{
+    char currentChar;
+    auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callId);
+    if (pConnection == nullptr) {
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    PostDialCallState state = pConnection->ProcessNextChar(slotId, currentChar);
+    switch (state) {
+        case PostDialCallState::POST_DIAL_CALL_STARTED:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialChar(currentChar);
+            break;
+        case PostDialCallState::POST_DIAL_CALL_DELAY:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialDelay(
+                pConnection->GetLeftPostDialCallString());
+            break;
+        default:
+            break;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
+{
+    std::string networkAddress;
+    std::string postDialString;
+    StandardizeUtils standardizeUtils;
+    standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_,
+        callInfo.index);
+    if (pConnection == nullptr) {
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (proceed) {
+        ExecutePostDial(callInfo.slotId, pConnection->GetIndex());
+    } else {
+        pConnection->SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_CANCELED);
+    }
+    return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
 } // namespace OHOS

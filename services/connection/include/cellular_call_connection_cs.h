@@ -184,6 +184,9 @@ public:
      * RegisterHandler
      */
     void RegisterHandler();
+
+private:
+    virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 };
 } // namespace Telephony
 } // namespace OHOS

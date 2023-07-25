@@ -746,6 +746,35 @@ int32_t CellularCallService::StopDtmf(const CellularCallInfo &callInfo)
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
+int32_t CellularCallService::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
+{
+    if (!IsValidSlotId(callInfo.slotId)) {
+        TELEPHONY_LOGE("CellularCallService::PostDialProceed return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGE("CellularCallService::PostDialProceed srvccState_ is started");
+        return TELEPHONY_ERR_FAIL;
+    }
+    if (callInfo.callType == CallType::TYPE_IMS) {
+        auto imsControl = GetImsControl(callInfo.slotId);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::PostDialProceed return, imsControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return imsControl->PostDialProceed(callInfo, proceed);
+    } else if (callInfo.callType == CallType::TYPE_CS) {
+        auto csControl = GetCsControl(callInfo.slotId);
+        if (csControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::PostDialProceed return, csControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return csControl->PostDialProceed(callInfo, proceed);
+    }
+    TELEPHONY_LOGE("CellularCallService::PostDialProceed return, call type error.");
+    return TELEPHONY_ERR_ARGUMENT_INVALID;
+}
+
 int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &callInfo)
 {
     if (!IsValidSlotId(callInfo.slotId)) {

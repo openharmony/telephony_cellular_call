@@ -316,6 +316,25 @@ struct SsRequestCommand {
     int32_t action = 0;
     int32_t flag = SS_FROM_MMI_CODE; // 0: command come from dialer; 1: command come from JS api which called by setting
 };
+
+enum PostDialCallState {
+    POST_DIAL_CALL_NOT_STARTED = 0,
+    POST_DIAL_CALL_STARTED,
+    POST_DIAL_CALL_DELAY,
+    POST_DIAL_CALL_WILD,
+    POST_DIAL_CALL_COMPLETE,
+    POST_DIAL_CALL_CANCELED,
+    POST_DIAL_CALL_PAUSE,
+};
+
+enum DtmfHandlerId {
+    EVENT_EXECUTE_POST_DIAL = 600,
+};
+
+struct PostDialData {
+    int32_t callId = 0;
+    bool isIms = false;
+};
 } // namespace Telephony
 } // namespace OHOS
 

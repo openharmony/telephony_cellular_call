@@ -183,6 +183,10 @@ public:
      */
     int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) override;
 
+    int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
+
+    int32_t ExecutePostDial(int32_t slotId, int64_t callId);
+
 private:
     /**
      * handle dial judgment
@@ -246,6 +250,7 @@ private:
 
 private:
     ImsConnectionMap connectionMap_; // save callConnection map
+    std::string pendingPhoneNumber_;
 };
 } // namespace Telephony
 } // namespace OHOS

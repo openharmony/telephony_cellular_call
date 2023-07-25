@@ -27,6 +27,8 @@
 namespace OHOS {
 namespace Telephony {
 const int32_t MAX_SIZE = 10;
+const int32_t IMS_CALL = 1;
+
 ImsCallCallbackStub::ImsCallCallbackStub()
 {
     TELEPHONY_LOGI("ImsCallCallbackStub");
@@ -247,12 +249,13 @@ int32_t ImsCallCallbackStub::OnStartDtmfResponseInner(MessageParcel &data, Messa
 int32_t ImsCallCallbackStub::OnSendDtmfResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
     auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
-    reply.WriteInt32(SendDtmfResponse(slotId, *info));
+    reply.WriteInt32(SendDtmfResponse(slotId, *info, callIndex));
     return TELEPHONY_SUCCESS;
 }
 
@@ -701,10 +704,26 @@ int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const HRilRadioRe
     return SendEvent(slotId, RadioEvent::RADIO_START_DTMF, info);
 }
 
-int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
-    return SendEvent(slotId, RadioEvent::RADIO_SEND_DTMF, info);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler.get() == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+
+    *responseInfo = info;
+    responseInfo->flag = callIndex;
+    AppExecFwk::InnerEvent::Pointer response =
+        AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SEND_DTMF, responseInfo, IMS_CALL);
+    bool ret = handler->SendEvent(response);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallCallbackStub::StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
