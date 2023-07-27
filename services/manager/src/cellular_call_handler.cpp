@@ -355,7 +355,12 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
         return;
     }
     struct CallBehaviorParameterInfo info = { 0 };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallParameterInfo(info);
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallParameterInfo(info);
     if (result->error != HRilErrType::NONE) {
         TELEPHONY_LOGE("[slot%{public}d] dial error:%{public}d", slotId_, result->error);
         CellularCallEventInfo eventInfo;
@@ -430,7 +435,12 @@ void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Poi
         return;
     }
     struct CallBehaviorParameterInfo info = { 0 };
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallParameterInfo(info);
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallParameterInfo(info);
     if (result->error != HRilErrType::NONE) {
         CellularCallEventInfo eventInfo;
         eventInfo.eventId = RequestResultEventId::INVALID_REQUEST_RESULT_EVENT_ID;
@@ -1074,7 +1084,12 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
     }
     CellularCallSupplement supplement;
     CallForwardingInfo info;
-    DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->GetCallForwardingInfo(info);
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallForwardingInfo(info);
     if (result->result == TELEPHONY_SUCCESS) {
         CoreManagerInner::GetInstance().SetVoiceCallForwarding(info.slotId, info.enable, info.number);
     } else {
