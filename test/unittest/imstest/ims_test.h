@@ -24,8 +24,12 @@
 #include "core_manager_inner.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"
+#include "ims_core_service_client.h"
+#include "ims_core_service_proxy.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
+#include "telephony_log_wrapper.h"
+#include "telephony_permission.h"
 #include "token_setproc.h"
 
 namespace OHOS {
@@ -38,6 +42,26 @@ HapInfoParams testInfoParams = {
     .userID = 1,
     .instIndex = 0,
     .appIDDesc = "test",
+    .isSystemApp = true,
+};
+
+PermissionDef testConnectImsServiceDef = {
+    .permissionName = "ohos.permission.CONNECT_IMS_SERVICE",
+    .bundleName = "tel_cellular_call_ims_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test cellular call",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testConnectImsServiceState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.CONNECT_IMS_SERVICE",
+    .resDeviceID = { "local" },
 };
 
 PermissionDef testPermPlaceCallDef = {
@@ -59,11 +83,30 @@ PermissionStateFull testPlaceCallState = {
     .resDeviceID = { "local" },
 };
 
+PermissionDef testGetTelephonyStateDef = {
+    .permissionName = "ohos.permission.GET_TELEPHONY_STATE",
+    .bundleName = "tel_cellular_call_ims_gtest",
+    .grantMode = 1, // SYSTEM_GRANT
+    .label = "label",
+    .labelId = 1,
+    .description = "Test cellular call",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionStateFull testGetTelephonyState = {
+    .grantFlags = { 2 }, // PERMISSION_USER_SET
+    .grantStatus = { PermissionState::PERMISSION_GRANTED },
+    .isGeneral = true,
+    .permissionName = "ohos.permission.GET_TELEPHONY_STATE",
+    .resDeviceID = { "local" },
+};
+
 HapPolicyParams testPolicyParams = {
     .apl = APL_SYSTEM_BASIC,
     .domain = "test.domain",
-    .permList = { testPermPlaceCallDef },
-    .permStateList = { testPlaceCallState },
+    .permList = { testPermPlaceCallDef, testConnectImsServiceDef, testGetTelephonyStateDef },
+    .permStateList = { testPlaceCallState, testConnectImsServiceState, testGetTelephonyState },
 };
 
 class AccessToken {
@@ -73,7 +116,7 @@ public:
         currentID_ = GetSelfTokenID();
         AccessTokenIDEx tokenIdEx = AccessTokenKit::AllocHapToken(testInfoParams, testPolicyParams);
         accessID_ = tokenIdEx.tokenIdExStruct.tokenID;
-        SetSelfTokenID(accessID_);
+        SetSelfTokenID(tokenIdEx.tokenIDEx);
     }
     ~AccessToken()
     {
@@ -119,8 +162,9 @@ public:
     bool CanUseImsService(int32_t slotId, ImsServiceType type)
     {
         ImsRegInfo info;
-        CoreManagerInner::GetInstance().GetImsRegStatus(slotId, type, info);
-        return info.imsRegState == ImsRegState::IMS_REGISTERED;
+        CoreServiceClient::GetInstance().GetImsRegStatus(slotId, type, info);
+        bool imsReg = info.imsRegState == ImsRegState::IMS_REGISTERED;
+        return imsReg;
     }
 
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
