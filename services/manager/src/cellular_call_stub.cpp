@@ -92,6 +92,7 @@ void CellularCallStub::InitDialFuncMap()
     requestFuncMap_[CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_READY_TO_CALL] = &CellularCallStub::OnSetReadyToCallInner;
     requestFuncMap_[CellularCallInterfaceCode::UPDATE_CALL_MEDIA_MODE] = &CellularCallStub::OnUpdateCallMediaModeInner;
+    requestFuncMap_[CellularCallInterfaceCode::CLEAR_ALL_CALLS] = &CellularCallStub::OnClearAllCallsInner;
 }
 
 void CellularCallStub::InitDtmfFuncMap()
@@ -1082,6 +1083,23 @@ int32_t CellularCallStub::OnCloseUnFinishedUssdInner(MessageParcel &data, Messag
     int32_t slotId = data.ReadInt32();
 
     reply.WriteInt32(CloseUnFinishedUssd(slotId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnClearAllCallsInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnClearAllCallsInner entry");
+    int32_t size = data.ReadInt32();
+    if (size < 0) {
+        TELEPHONY_LOGE("data size error");
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    std::vector<CellularCallInfo> callInfos;
+    for (int32_t i = 0; i < size; i++) {
+        CellularCallInfo *callInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
+        callInfos.push_back(*callInfo);
+    }
+    reply.WriteInt32(ClearAllCalls(callInfos));
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

@@ -543,6 +543,8 @@ public:
      */
     int32_t CloseUnFinishedUssd(int32_t slotId) override;
 
+    int32_t ClearAllCalls(const std::vector<CellularCallInfo> &infos) override;
+
     /**
      * Is need choose IMS for execute
      *
@@ -647,6 +649,10 @@ private:
      * Handle CallManager exception
      */
     void HandleCallManagerException();
+
+    void HangUpWithCellularCallRestart(const std::vector<CellularCallInfo> &infos);
+
+    int32_t SetControl(const CellularCallInfo &info);
 
 private:
     int64_t bindTime_ = 0L;

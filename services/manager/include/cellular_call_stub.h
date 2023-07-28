@@ -496,6 +496,14 @@ private:
      */
     int32_t OnCloseUnFinishedUssdInner(MessageParcel &data, MessageParcel &reply);
 
+    /**
+     * @brief clear all call if cellular call service restart
+     *
+     * @param infos[in] the call detail info vector which contains phone number, call type, slot id .etc
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnClearAllCallsInner(MessageParcel &data, MessageParcel &reply);
+
     int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
 private:
