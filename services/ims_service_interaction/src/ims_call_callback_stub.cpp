@@ -708,7 +708,7 @@ int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioRes
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -736,7 +736,7 @@ int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -759,7 +759,7 @@ int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const ImsCu
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -807,7 +807,7 @@ int32_t ImsCallCallbackStub::CallRingBackReport(int32_t slotId, const RingbackVo
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -825,7 +825,7 @@ int32_t ImsCallCallbackStub::LastCallFailReasonResponse(int32_t slotId, const Di
 {
     TELEPHONY_LOGI("[slot%{public}d] entry, reason is %{public}d", slotId, details.reason);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -879,7 +879,7 @@ int32_t ImsCallCallbackStub::GetClipResponse(int32_t slotId, const GetClipResult
         return supplementRequest.GetClipRequest(slotId, result.result.index);
     }
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -909,7 +909,7 @@ int32_t ImsCallCallbackStub::GetClirResponse(int32_t slotId, const GetClirResult
         return supplementRequest.GetClirRequest(slotId, result.result.index);
     }
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -962,7 +962,7 @@ int32_t ImsCallCallbackStub::GetCallTransferResponse(int32_t slotId, const CallF
         return supplementRequest.GetCallTransferRequest(slotId, ss.cfReason, cFQueryList.result.index);
     }
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1015,7 +1015,7 @@ int32_t ImsCallCallbackStub::GetCallRestrictionResponse(int32_t slotId, const Ca
         return supplementRequest.GetCallRestrictionRequest(slotId, fac, result.result.index);
     }
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1063,7 +1063,7 @@ int32_t ImsCallCallbackStub::GetCallWaitingResponse(int32_t slotId, const CallWa
         return supplementRequest.GetCallWaitingRequest(slotId, result.result.index);
     }
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1111,7 +1111,7 @@ int32_t ImsCallCallbackStub::GetColrResponse(int32_t slotId, const GetColrResult
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1142,7 +1142,7 @@ int32_t ImsCallCallbackStub::GetColpResponse(int32_t slotId, const GetColpResult
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1214,7 +1214,7 @@ void ImsCallCallbackStub::BuildCallForwardInfo(
 int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info)
 {
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
@@ -1231,7 +1231,7 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HR
 int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const SsBaseResult &resultInfo)
 {
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler.get() == nullptr) {
+    if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
