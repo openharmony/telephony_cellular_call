@@ -28,7 +28,6 @@
 using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
-constexpr int32_t INT_NUM = 6;
 constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t VEDIO_STATE_NUM = 2;
 constexpr size_t MAX_NUMBER_LEN = 99;
@@ -53,8 +52,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(CellularCallStub::GetDescriptor())) {
         return;
     }
-    size_t dataSize = size - sizeof(uint32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     uint32_t code = static_cast<uint32_t>(size);
     MessageParcel reply;
@@ -81,8 +79,7 @@ void SetPreviewWindow(const uint8_t *data, size_t size)
     dataMessageParcel.WriteInt32(z);
     dataMessageParcel.WriteInt32(width);
     dataMessageParcel.WriteInt32(height);
-    size_t dataSize = size - sizeof(int32_t) * INT_NUM;
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t) * INT_NUM, dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetPreviewWindowInner(dataMessageParcel, reply);
@@ -107,8 +104,7 @@ void SetDisplayWindow(const uint8_t *data, size_t size)
     dataMessageParcel.WriteInt32(z);
     dataMessageParcel.WriteInt32(width);
     dataMessageParcel.WriteInt32(height);
-    size_t dataSize = size - sizeof(int32_t) * INT_NUM;
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t) * INT_NUM, dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetDisplayWindowInner(dataMessageParcel, reply);
@@ -139,8 +135,7 @@ void SetMute(const uint8_t *data, size_t size)
     int32_t mute = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(mute);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetMuteInner(dataMessageParcel, reply);
