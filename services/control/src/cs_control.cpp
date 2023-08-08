@@ -622,5 +622,37 @@ CsConnectionMap CSControl::GetConnectionMap()
 {
     return connectionMap_;
 }
+
+int32_t CSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId)
+{
+    CallsReportInfo callsReportInfo;
+    callsReportInfo.slotId = slotId;
+    for (const auto &info : infos) {
+        if (info.callType == CallType::TYPE_CS && info.slotId == slotId) {
+            CallReportInfo callReportInfo;
+            if (memset_s(callReportInfo.accountNum, kMaxNumberLen + 1, 0, kMaxNumberLen + 1) != EOK) {
+                TELEPHONY_LOGE("memset_s fail");
+                return TELEPHONY_ERR_MEMSET_FAIL;
+            }
+            if (memcpy_s(callReportInfo.accountNum, kMaxNumberLen, info.phoneNum, kMaxNumberLen) != EOK) {
+                TELEPHONY_LOGE("memcpy_s fail");
+                return TELEPHONY_ERR_MEMCPY_FAIL;
+            }
+            callReportInfo.index = info.index;
+            callReportInfo.accountId = info.slotId;
+            callReportInfo.callType = CallType::TYPE_CS;
+            callReportInfo.callMode = VideoStateType::TYPE_VOICE;
+            callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+            callsReportInfo.callVec.push_back(callReportInfo);
+        }
+    }
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("CellularCallRegister instance is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+    ReleaseAllConnection();
+    return TELEPHONY_SUCCESS;
+}
 } // namespace Telephony
 } // namespace OHOS

@@ -187,6 +187,10 @@ public:
 
     int32_t ExecutePostDial(int32_t slotId, int64_t callId);
 
+    int32_t RestoreConnection(const std::vector<CellularCallInfo> &infos, int32_t slotId);
+
+    int32_t ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId);
+
 private:
     /**
      * handle dial judgment

@@ -268,11 +268,14 @@ int32_t IMSControl::HangUpAllConnection(int32_t slotId)
         TELEPHONY_LOGI("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
     }
-    int32_t index = connectionMap_.begin()->second.GetIndex();
-    std::string number = connectionMap_.begin()->second.GetNumber();
+    for (auto &it : connectionMap_) {
+        int32_t index = it.second.GetIndex();
+        std::string number = it.second.GetNumber();
+        connection.RejectRequest(slotId, number, index);
+    }
     // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
     // so the reject interface is reused.
-    return connection.RejectRequest(slotId, number, index);
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t IMSControl::InviteToConference(int32_t slotId, const std::vector<std::string> &numberList)
@@ -542,6 +545,51 @@ int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool
     } else {
         pConnection->SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_CANCELED);
     }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t IMSControl::RestoreConnection(const std::vector<CellularCallInfo> &infos, int32_t slotId)
+{
+    for (auto &info : infos) {
+        if (info.callType == CallType::TYPE_IMS && info.slotId == slotId) {
+            CellularCallConnectionIMS connectionIMS;
+            connectionIMS.SetIndex(info.index);
+            connectionIMS.SetNumber(info.phoneNum);
+            SetConnectionData(connectionMap_, info.index, connectionIMS);
+        }
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t IMSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId)
+{
+    CallsReportInfo callsReportInfo;
+    callsReportInfo.slotId = slotId;
+    for (const auto &info : infos) {
+        if (info.callType == CallType::TYPE_IMS && info.slotId == slotId) {
+            CallReportInfo callReportInfo;
+            if (memset_s(callReportInfo.accountNum, kMaxNumberLen + 1, 0, kMaxNumberLen + 1) != EOK) {
+                TELEPHONY_LOGE("memset_s fail");
+                return TELEPHONY_ERR_MEMSET_FAIL;
+            }
+            if (memcpy_s(callReportInfo.accountNum, kMaxNumberLen, info.phoneNum, kMaxNumberLen) != EOK) {
+                TELEPHONY_LOGE("memcpy_s fail");
+                return TELEPHONY_ERR_MEMCPY_FAIL;
+            }
+            callReportInfo.index = info.index;
+            callReportInfo.accountId = info.slotId;
+            callReportInfo.callType = CallType::TYPE_IMS;
+            callReportInfo.callMode = static_cast<bool>(info.callType) ? VideoStateType::TYPE_VIDEO :
+                VideoStateType::TYPE_VOICE;
+            callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+            callsReportInfo.callVec.push_back(callReportInfo);
+        }
+    }
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("CellularCallRegister instance is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

@@ -1171,6 +1171,50 @@ int32_t CellularCallService::CloseUnFinishedUssd(int32_t slotId)
     return cellularCallSupplement.CloseUnFinishedUssd(slotId);
 }
 
+int32_t CellularCallService::SetControl(const CellularCallInfo &info)
+{
+    if (info.callType == CallType::TYPE_CS) {
+        auto csControl = GetCsControl(info.slotId);
+        if (csControl == nullptr) {
+            TELEPHONY_LOGI("GetCsControl csControl is nullptr");
+            csControl = std::make_shared<CSControl>();
+            if (csControl == nullptr) {
+                TELEPHONY_LOGE("csControl is nullptr");
+                return TELEPHONY_ERR_LOCAL_PTR_NULL;
+            }
+            SetCsControl(info.slotId, csControl);
+        }
+    }
+    if (info.callType == CallType::TYPE_IMS) {
+        auto imsControl = GetImsControl(info.slotId);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGI("GetImsControl imsControl is nullptr");
+            imsControl = std::make_shared<IMSControl>();
+            if (imsControl == nullptr) {
+                TELEPHONY_LOGE("imsControl is nullptr");
+                return TELEPHONY_ERR_LOCAL_PTR_NULL;
+            }
+            SetImsControl(info.slotId, imsControl);
+        }
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallService::ClearAllCalls(const std::vector<CellularCallInfo> &infos)
+{
+    if (infos.empty()) {
+        TELEPHONY_LOGE("CellularCallService::ClearAllCalls infos is empty");
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    for (auto &info : infos) {
+        if (SetControl(info) != TELEPHONY_SUCCESS) {
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+    }
+    HangUpWithCellularCallRestart(infos);
+    return TELEPHONY_SUCCESS;
+}
+
 void CellularCallService::SetSrvccState(int32_t srvccState)
 {
     srvccState_ = srvccState;
@@ -1205,6 +1249,26 @@ void CellularCallService::HandleCallManagerException()
         if (imsControl != nullptr) {
             imsControl->SetHangupReportIgnoredFlag(true);
             imsControl->HangUpAllConnection(it);
+        }
+    }
+}
+
+void CellularCallService::HangUpWithCellularCallRestart(const std::vector<CellularCallInfo> &infos)
+{
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (const auto &it : slotVector) {
+        auto csControl = GetCsControl(it);
+        if (csControl != nullptr) {
+            csControl->ReportHangUp(infos, it);
+            csControl->HangUpAllConnection(it);
+        }
+        auto imsControl = GetImsControl(it);
+        if (imsControl != nullptr) {
+            imsControl->ReportHangUp(infos, it);
+            imsControl->RestoreConnection(infos, it);
+            imsControl->HangUpAllConnection(it);
+            imsControl->ReleaseAllConnection();
         }
     }
 }

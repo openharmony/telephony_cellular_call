@@ -183,6 +183,8 @@ public:
 
     int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
 
+    int32_t ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId);
+
 private:
     /**
      * Calculate International Roaming
