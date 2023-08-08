@@ -51,8 +51,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(CellularCallStub::GetDescriptor())) {
         return;
     }
-    size_t dataSize = size - sizeof(uint32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     uint32_t code = static_cast<uint32_t>(size);
     MessageParcel reply;
@@ -69,8 +68,7 @@ void UnRegisterCallManagerCallBack(const uint8_t *data, size_t size)
     int32_t maxSize = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnUnRegisterCallBackInner(dataMessageParcel, reply);
@@ -101,8 +99,7 @@ void HangUpAllConnection(const uint8_t *data, size_t size)
     int32_t maxSize = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnHangUpAllConnectionInner(dataMessageParcel, reply);
@@ -162,8 +159,7 @@ void GetCallTransferInfo(const uint8_t *data, size_t size)
     int32_t type = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(type);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetCallTransferInner(dataMessageParcel, reply);
@@ -205,8 +201,7 @@ void GetCallRestriction(const uint8_t *data, size_t size)
     int32_t facType = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(facType);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetCallRestrictionInner(dataMessageParcel, reply);
@@ -223,8 +218,7 @@ void SetCallRestrictionPassword(const uint8_t *data, size_t size)
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(facType);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetCallRestrictionPasswordInner(dataMessageParcel, reply);

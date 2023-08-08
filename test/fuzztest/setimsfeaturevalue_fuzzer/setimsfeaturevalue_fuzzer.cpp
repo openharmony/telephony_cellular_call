@@ -51,8 +51,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(CellularCallStub::GetDescriptor())) {
         return;
     }
-    size_t dataSize = size - sizeof(uint32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(uint32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     uint32_t code = static_cast<uint32_t>(size);
     MessageParcel reply;
@@ -69,8 +68,7 @@ void SetDomainPreferenceMode(const uint8_t *data, size_t size)
     int32_t mode = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(mode);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetDomainPreferenceModeInner(dataMessageParcel, reply);
@@ -152,8 +150,7 @@ void GetImsConfig(const uint8_t *data, size_t size)
     int32_t item = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(item);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetImsConfigInner(dataMessageParcel, reply);
@@ -184,8 +181,7 @@ void GetImsFeatureValue(const uint8_t *data, size_t size)
     int32_t type = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(type);
-    size_t dataSize = size - sizeof(int32_t);
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t), dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetImsFeatureValueInner(dataMessageParcel, reply);
@@ -202,8 +198,7 @@ void SetImsFeatureValue(const uint8_t *data, size_t size)
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(type);
     dataMessageParcel.WriteInt32(value);
-    size_t dataSize = size - sizeof(int32_t) * INT_NUM;
-    dataMessageParcel.WriteBuffer(data + sizeof(int32_t) * INT_NUM, dataSize);
+    dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetImsFeatureValueInner(dataMessageParcel, reply);
