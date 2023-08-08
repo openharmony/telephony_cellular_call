@@ -49,7 +49,6 @@ ohos_fuzztest("ReportHungUpInfoFuzzTest") {
     "call_manager:tel_call_manager_api",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
-    "drivers_interface_ril:hril_innerkits",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
