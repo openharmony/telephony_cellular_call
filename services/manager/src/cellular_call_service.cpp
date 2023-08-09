@@ -137,6 +137,7 @@ void CellularCallService::CreateHandler()
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto &it : slotVector) {
         auto handler = std::make_shared<CellularCallHandler>(eventLoop_, subscriberInfo);
         TELEPHONY_LOGI("setSlotId:%{public}d", it);
@@ -157,6 +158,7 @@ void CellularCallService::CreateHandler()
 void CellularCallService::HandlerResetUnRegister()
 {
     TELEPHONY_LOGD("HandlerResetUnRegister");
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -189,6 +191,7 @@ void CellularCallService::HandlerResetUnRegister()
 void CellularCallService::RegisterCoreServiceHandler()
 {
     TELEPHONY_LOGD("RegisterCoreServiceHandle");
+    std::lock_guard<std::mutex> lock(mutex_);
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -233,6 +236,7 @@ void CellularCallService::SendEventRegisterHandler()
 {
     int64_t delayTime = 1000;
     int32_t slot = DEFAULT_SIM_SLOT_ID;
+    std::lock_guard<std::mutex> lock(mutex_);
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("SendEventRegisterHandler return, handler is nullptr");
@@ -1102,6 +1106,7 @@ bool CellularCallService::IsNeedIms(int32_t slotId) const
 
 std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler(int32_t slotId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return handlerMap_[slotId];
 }
 
