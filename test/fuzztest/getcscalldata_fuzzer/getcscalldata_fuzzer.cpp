@@ -59,6 +59,7 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
 
     handle->GetCsCallData(event);
     handle->GetImsCallData(event);
+    handle->ImsCallStatusInfoReport(event);
     handle->CellularCallIncomingStartTrace(state);
     handle->GetCsCallsDataResponse(event);
     handle->GetImsCallsDataResponse(event);
@@ -94,7 +95,6 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->GetDomainPreferenceModeResponse(event);
     handle->SetImsSwitchStatusResponse(event);
     handle->GetImsSwitchStatusResponse(event);
-    handle->ImsCallStatusInfoReport(event);
     handle->UssdNotifyResponse(event);
     handle->SetMuteResponse(event);
     handle->GetMuteResponse(event);
