@@ -119,7 +119,7 @@ public:
      * @param slotId
      * @return mode
      */
-    int32_t GetPreferenceMode(int32_t slotId);
+    int32_t GetPreferenceMode(int32_t slotId) const;
 
     /**
      * Set Ims Config

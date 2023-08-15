@@ -187,7 +187,6 @@ int32_t CellularCallConfig::SetVoNRSwitchStatus(int32_t slotId, int32_t state)
     }
     SimState simState = SimState::SIM_STATE_UNKNOWN;
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
-    std::lock_guard<std::mutex> lock(mutex_);
     if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
         configRequest_.SetVoNRSwitchStatusRequest(slotId, state);
         vonrSwithStatus_[slotId] = state;
@@ -210,7 +209,6 @@ int32_t CellularCallConfig::GetVoNRSwitchStatus(int32_t slotId, int32_t &state)
 void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimStateChanged entry, slotId: %{public}d", slotId);
-    std::lock_guard<std::mutex> lock(mutex_);
     if (IsNeedUpdateEccListWhenSimStateChanged(slotId)) {
         MergeEccCallList(slotId);
         SetEmergencyCallList(slotId);
@@ -510,7 +508,6 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType r
         TELEPHONY_LOGE("HandleSetVoNRSwitchResult set vonr switch to modem failed!");
         return;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
     SaveVoNRState(slotId, vonrSwithStatus_[slotId]);
     ImsCapabilityList imsCapabilityList;
     UpdateImsVoiceCapabilities(slotId, IsGbaValid(slotId), imsCapabilityList);
@@ -519,15 +516,13 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType r
 
 void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     modeMap_[slotId] = mode;
 }
 
 void CellularCallConfig::GetImsSwitchStatusResponse(int32_t slotId, int32_t active) {}
 
-int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId)
+int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     return modeMap_[slotId];
 }
 
@@ -607,14 +602,12 @@ int32_t CellularCallConfig::SetDeviceDirection(int32_t rotation)
 
 void CellularCallConfig::SetTempMode(int32_t slotId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     modeMap_[slotId] = modeTempMap_[slotId];
 }
 
 void CellularCallConfig::InitModeActive()
 {
     int32_t slotId = DEFAULT_SIM_SLOT_ID;
-    std::lock_guard<std::mutex> lock(mutex_);
     modeMap_[slotId] = DomainPreferenceMode::IMS_PS_VOICE_PREFERRED;
     eccListRadioMap_.clear();
     eccList3gppHasSim_.clear();
@@ -647,7 +640,6 @@ EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &n
 
 void CellularCallConfig::UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     eccListConfigMap_[slotId].clear();
     std::vector<EmergencyCall> configVector;
     std::string mcc = GetMcc(slotId);
@@ -670,6 +662,7 @@ void CellularCallConfig::UpdateEccWhenOperatorConfigChange(int32_t slotId, Opera
 
 void CellularCallConfig::MergeEccCallList(int32_t slotId_)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     allEccList_[slotId_].clear();
     for (auto ecc : eccListRadioMap_[slotId_]) {
         allEccList_[slotId_].push_back(ecc);
@@ -751,6 +744,7 @@ int32_t CellularCallConfig::GetEmergencyCallList(int32_t slotId)
 int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, const std::vector<EmergencyCall> &eccVec)
 {
     TELEPHONY_LOGD("SetEmergencyCallList start %{public}d", slotId);
+    std::lock_guard<std::mutex> lock(mutex_);
     std::vector<EmergencyCall> uniques;
     for (auto call : eccVec) {
         if (std::find(eccListRadioMap_[slotId].begin(), eccListRadioMap_[slotId].end(), call) ==
@@ -795,7 +789,6 @@ bool CellularCallConfig::IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId)
 void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList)
 {
     TELEPHONY_LOGI("UpdateEmergencyCallFromRadio %{publid}d size %{public}d", slotId, eccList.callSize);
-    std::lock_guard<std::mutex> lock(mutex_);
     eccListRadioMap_[slotId] = std::vector<EmergencyCall>();
     for (auto ecc : eccList.calls) {
         TELEPHONY_LOGI("UpdateEmergencyCallFromRadio , data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(),
