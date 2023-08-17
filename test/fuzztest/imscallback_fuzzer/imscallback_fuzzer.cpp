@@ -142,20 +142,21 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
     ringData.WriteRawData((const void *)&ringback, sizeof(RingbackVoice));
     stub->OnCallRingBackReportInner(ringData, ringReply);
 
+    MessageParcel callData;
+    MessageParcel callReply;
+    callData.WriteInt32(slotId);
+    stub->OnCallStateChangeReportInner(callData, callReply);
+
     MessageParcel failData;
     MessageParcel failReply;
     DisconnectedDetails details;
     details.reason = static_cast<DisconnectedReason>(size);
     details.message = number;
+    slotId = ERROR_NUM;
     failData.WriteInt32(slotId);
     failData.WriteInt32(static_cast<int32_t>(details.reason));
     failData.WriteString(details.message);
     stub->OnLastCallFailReasonResponseInner(failData, failReply);
-
-    MessageParcel callData;
-    MessageParcel callReply;
-    callData.WriteInt32(slotId);
-    stub->OnCallStateChangeReportInner(callData, callReply);
 }
 
 void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
