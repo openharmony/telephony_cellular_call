@@ -27,6 +27,7 @@ namespace OHOS {
 namespace Telephony {
 const int32_t MAX_SIZE = 10;
 const int32_t MAX_ECC_SIZE = 1000;
+const int32_t FOUNDATION_UID = 5523;
 
 int32_t CellularCallStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -40,7 +41,9 @@ int32_t CellularCallStub::OnRemoteRequest(
 
     auto itFunc = requestFuncMap_.find(static_cast<CellularCallInterfaceCode>(code));
     if (itFunc != requestFuncMap_.end()) {
-        if (!TelephonyPermission::CheckPermission(Permission::CONNECT_CELLULAR_CALL_SERVICE)) {
+        auto callingUid = IPCSkeleton::GetCallingUid();
+        if (callingUid != FOUNDATION_UID &&
+            !TelephonyPermission::CheckPermission(Permission::CONNECT_CELLULAR_CALL_SERVICE)) {
             TELEPHONY_LOGE("Check permission failed, no CONNECT_CELLULAR_CALL_SERVICE permisson.");
             return TELEPHONY_ERR_PERMISSION_ERR;
         }
