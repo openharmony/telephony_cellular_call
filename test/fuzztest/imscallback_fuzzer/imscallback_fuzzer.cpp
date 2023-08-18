@@ -75,31 +75,21 @@ void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallC
     MessageParcel answerData;
     MessageParcel answerReply;
     answerData.WriteInt32(slotId);
-    answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnAnswerResponseInner(answerData, answerReply);
 
     MessageParcel dialData;
     MessageParcel dialReply;
     dialData.WriteInt32(slotId);
-    dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnDialResponseInner(dialData, dialReply);
-
-    MessageParcel imsCallsData;
-    MessageParcel imsCallsReply;
-    imsCallsData.WriteInt32(slotId);
-    imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
-    stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply);
 
     MessageParcel hangupData;
     MessageParcel hangupReply;
     hangupData.WriteInt32(slotId);
-    hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnHangUpResponseInner(hangupData, hangupReply);
 
     MessageParcel rejectData;
     MessageParcel rejectReply;
     rejectData.WriteInt32(slotId);
-    rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnRejectResponseInner(rejectData, rejectReply);
 
     MessageParcel sendDtmfData;
@@ -119,6 +109,13 @@ void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallC
     stopDtmfData.WriteInt32(slotId);
     stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnStopDtmfResponseInner(stopDtmfData, stopDtmfReply);
+
+    MessageParcel imsCallsData;
+    MessageParcel imsCallsReply;
+    slotId = ERROR_NUM;
+    imsCallsData.WriteInt32(slotId);
+    imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply);
 }
 
 void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
@@ -177,19 +174,16 @@ void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCal
     MessageParcel holdCallData;
     MessageParcel holdCallReply;
     holdCallData.WriteInt32(slotId);
-    holdCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnHoldCallResponseInner(holdCallData, holdCallReply);
 
     MessageParcel switchCallData;
     MessageParcel switchCallReply;
     switchCallData.WriteInt32(slotId);
-    switchCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnSwitchCallResponseInner(switchCallData, switchCallReply);
 
     MessageParcel unholdData;
     MessageParcel unholdReply;
     unholdData.WriteInt32(slotId);
-    unholdData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
     stub->OnUnHoldCallResponseInner(unholdData, unholdReply);
 
     MessageParcel getImsSwitchData;
