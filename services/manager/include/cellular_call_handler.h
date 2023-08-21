@@ -89,6 +89,8 @@ public:
 
     void ExecutePostDial(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void SwapCallResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
     void SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);

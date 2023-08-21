@@ -405,5 +405,29 @@ int32_t CellularCallConnectionIMS::ProcessPostDialCallChar(int32_t slotId, char 
     }
     return TELEPHONY_SUCCESS;
 }
+
+void CellularCallConnectionIMS::SetHoldToDialInfo(std::string holdToDialNum, CLIRMode holdToDialClirMode,
+    int32_t holdToDialVideoState, bool isEmergency)
+{
+    holdToDialInfo_.phoneNum = holdToDialNum;
+    holdToDialInfo_.clirMode = holdToDialClirMode;
+    holdToDialInfo_.videoState = holdToDialVideoState;
+    holdToDialInfo_.bEmergencyCall = isEmergency;
+}
+
+bool CellularCallConnectionIMS::IsNeedToDial()
+{
+    return isNeedToDial_;
+}
+
+void CellularCallConnectionIMS::SetDialFlag(bool isNeedToDial)
+{
+    isNeedToDial_ = isNeedToDial;
+}
+
+ImsDialInfoStruct CellularCallConnectionIMS::GetHoldToDialInfo()
+{
+    return holdToDialInfo_;
+}
 } // namespace Telephony
 } // namespace OHOS

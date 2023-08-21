@@ -55,7 +55,7 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[RadioEvent::RADIO_ACCEPT_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_HOLD_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_ACTIVE_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] = &CellularCallHandler::SwapCallResponse;
     requestFuncMap_[RadioEvent::RADIO_COMBINE_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_JOIN_CALL] = &CellularCallHandler::CommonResultResponse;
     requestFuncMap_[RadioEvent::RADIO_SPLIT_CALL] = &CellularCallHandler::CommonResultResponse;
@@ -490,6 +490,40 @@ void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer 
     } else {
         auto csControl = serviceInstance->GetCsControl(slotId_);
         csControl->ExecutePostDial(slotId_, callId);
+    }
+}
+
+void CellularCallHandler::SwapCallResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (result->error != HRilErrType::NONE) {
+        CellularCallEventInfo eventInfo;
+        eventInfo.eventId = RequestResultEventId::INVALID_REQUEST_RESULT_EVENT_ID;
+        CommonResultEventHandling(event, eventInfo);
+        if (registerInstance_ == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+            return;
+        }
+        registerInstance_->ReportEventResultInfo(eventInfo);
+        return;
+    }
+    auto serviceInstence = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstence == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    auto callType = event->GetParam();
+    if (callType == static_cast<int32_t>(CallType::TYPE_IMS)) {
+        std::shared_ptr<IMSControl> imsControl = serviceInstence->GetImsControl(slotId_);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] imsControl is null", slotId_);
+            return;
+        }
+        imsControl->DialAfterHold(slotId_);
     }
 }
 
