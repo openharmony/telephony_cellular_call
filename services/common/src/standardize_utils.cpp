@@ -44,8 +44,8 @@ void StandardizeUtils::ExtractAddressAndPostDial(const std::string &phoneString,
         return;
     }
 
-    int32_t postDialIndex = phoneString.length();
-    for (int32_t i = 0; i < phoneString.length(); i++) {
+    size_t postDialIndex = phoneString.length();
+    for (size_t i = 0; i < phoneString.length(); i++) {
         char c = phoneString.at(i);
         if ((c >= '0' && c <= '9') || c == '*' || c == '#' || c == '+' || c == 'N') {
             networkAddress += c;
@@ -55,7 +55,7 @@ void StandardizeUtils::ExtractAddressAndPostDial(const std::string &phoneString,
         }
     }
 
-    for (int32_t i = postDialIndex; i < phoneString.length(); i++) {
+    for (size_t i = postDialIndex; i < phoneString.length(); i++) {
         char c = phoneString.at(i);
         postDial += c;
     }
