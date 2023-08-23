@@ -28,6 +28,7 @@ namespace Telephony {
 const int32_t MAX_SIZE = 10;
 const int32_t MAX_ECC_SIZE = 1000;
 const int32_t FOUNDATION_UID = 5523;
+const int32_t MAX_CALL_NUM = 10;
 
 int32_t CellularCallStub::OnRemoteRequest(
     uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -1093,7 +1094,7 @@ int32_t CellularCallStub::OnClearAllCallsInner(MessageParcel &data, MessageParce
 {
     TELEPHONY_LOGI("CellularCallStub::OnClearAllCallsInner entry");
     int32_t size = data.ReadInt32();
-    if (size < 0) {
+    if (size <= 0 || size > MAX_CALL_NUM) {
         TELEPHONY_LOGE("data size error");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
