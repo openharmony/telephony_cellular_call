@@ -252,6 +252,12 @@ private:
      */
     void DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCurrentCallList &callInfoList);
 
+    /**
+     * Check if active and holding call exist, hangup all holding call
+     *
+     */
+    int32_t CheckAndHangupHoldingCall();
+
 private:
     ImsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;

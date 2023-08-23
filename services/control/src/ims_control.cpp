@@ -168,17 +168,10 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING) &&
         IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
         TELEPHONY_LOGD("already threeway mode. hangup holding call and pickup new call");
-        auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
-            connectionMap_, TelCallState::CALL_STATUS_HOLDING);
-        if (con == nullptr) {
-            TELEPHONY_LOGE("Answer return, error type: con is null, there are no holding calls");
-            return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
-        }
-        auto callReportInfo = con->GetCallReportInfo();
-        int32_t result = con->HangUpRequest(callReportInfo.accountId, callReportInfo.accountNum, callReportInfo.index);
-        if (result != TELEPHONY_SUCCESS) {
+        int32_t ret = CheckAndHangupHoldingCall();
+        if (ret != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("hangup holding call failed");
-            return result;
+            return ret;
         }
     }
 
@@ -200,6 +193,22 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     }
     TELEPHONY_LOGE("IMSControl::Answer return, error type: call state error, phone not ringing.");
     return CALL_ERR_CALL_STATE;
+}
+
+int32_t IMSControl::CheckAndHangupHoldingCall()
+{
+    for (auto &it : connectionMap_) {
+        CellularCallConnectionIMS holdConn = it.second;
+        if (holdConn.GetStatus() == TelCallState::CALL_STATUS_HOLDING) {
+            auto callReportInfo = holdConn.GetCallReportInfo();
+            int32_t result = holdConn.HangUpRequest(callReportInfo.accountId,
+                callReportInfo.accountNum, callReportInfo.index);
+            if (result != TELEPHONY_SUCCESS) {
+                return result;
+            }
+        }
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t IMSControl::Reject(const CellularCallInfo &callInfo)

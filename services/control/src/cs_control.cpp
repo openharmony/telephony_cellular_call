@@ -216,17 +216,10 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
 
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_HOLDING) &&
         IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
-        auto con = FindConnectionByState<CsConnectionMap &, CellularCallConnectionCS *>(
-            connectionMap_, TelCallState::CALL_STATUS_HOLDING);
-        if (con == nullptr) {
-            TELEPHONY_LOGE("Answer return, error type: con is null, there are no holding calls");
-            return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
-        }
-        auto callReportInfo = con->GetCallReportInfo();
-        int32_t result = con->HangUpRequest(callReportInfo.accountId);
-        if (result != TELEPHONY_SUCCESS) {
+        int32_t ret = CheckAndHangupHoldingCall();
+        if (ret != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("hangup holding call failed");
-            return result;
+            return ret;
         }
     }
     /**
@@ -267,6 +260,21 @@ int32_t CSControl::Answer(const CellularCallInfo &callInfo)
     CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
         CALL_ERR_CALL_STATE, "call state error phone not ringing");
     return CALL_ERR_CALL_STATE;
+}
+
+int32_t CSControl::CheckAndHangupHoldingCall()
+{
+    for (auto &it : connectionMap_) {
+        CellularCallConnectionCS holdConn = it.second;
+        if (holdConn.GetStatus() == TelCallState::CALL_STATUS_HOLDING) {
+            auto callReportInfo = holdConn.GetCallReportInfo();
+            int32_t result = holdConn.HangUpRequest(callReportInfo.accountId);
+            if (result != TELEPHONY_SUCCESS) {
+                return result;
+            }
+        }
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t CSControl::Reject(const CellularCallInfo &callInfo)

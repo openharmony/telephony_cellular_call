@@ -258,6 +258,12 @@ private:
      */
     int32_t EncapsulateDialCommon(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode);
 
+    /**
+     * Check if active and holding call exist, hangup all holding call
+     *
+     */
+    int32_t CheckAndHangupHoldingCall();
+
 private:
     CsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
