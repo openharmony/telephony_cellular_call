@@ -191,6 +191,8 @@ public:
 
     int32_t ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId);
 
+    void DialAfterHold(int32_t slotId);
+
 private:
     /**
      * handle dial judgment

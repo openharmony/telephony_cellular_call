@@ -206,11 +206,22 @@ public:
      */
     int32_t GetCallFailReasonRequest(int32_t slotId) const;
 
+    void SetHoldToDialInfo(std::string holdToDialNum, CLIRMode holdToDialClirMode, int32_t holdToDialVideoState,
+        bool isEmergency);
+
+    bool IsNeedToDial();
+
+    void SetDialFlag(bool isNeedToDial);
+
+    ImsDialInfoStruct GetHoldToDialInfo();
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 
 private:
     ModuleServiceUtils moduleUtils_;
+    bool isNeedToDial_ = false;
+    ImsDialInfoStruct holdToDialInfo_;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -694,8 +694,21 @@ int32_t ImsCallCallbackStub::UnHoldCallResponse(int32_t slotId, const HRilRadioR
 
 int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
-    return SendEvent(slotId, RadioEvent::RADIO_SWAP_CALL, info);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    *responseInfo = info;
+    AppExecFwk::InnerEvent::Pointer response =
+        AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SWAP_CALL, responseInfo, IMS_CALL);
+    bool ret = handler->SendEvent(response);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
 }
 
 int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)

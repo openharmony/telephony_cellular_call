@@ -69,17 +69,21 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
             slotId, INVALID_PARAMETER, videoState, CALL_ERR_CALL_COUNTS_EXCEED_LIMIT, "ims dial call state error");
         return CALL_ERR_CALL_COUNTS_EXCEED_LIMIT;
     }
-
+    pendingPhoneNumber_ = phoneNum;
     // Calls can be put on hold, recovered, released, added to conversation,
     // and transferred similarly as defined in 3GPP TS 22.030 [19].
-    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE)) {
-        // New calls must be active, so other calls need to be hold
-        TELEPHONY_LOGI("DialJudgment, have connection in active state.");
-        CellularCallConnectionIMS connection;
-        // - a call can be temporarily disconnected from the ME but the connection is retained by the network
-        connection.HoldCallRequest(slotId);
+    for (auto &connection : connectionMap_) {
+        if (connection.second.GetStatus() == TelCallState::CALL_STATUS_ACTIVE) {
+            TELEPHONY_LOGI("DialJudgment, have connection in active state.");
+            EmergencyUtils emergencyUtils;
+            bool isEmergency = false;
+            emergencyUtils.IsEmergencyCall(slotId, phoneNum, isEmergency);
+            connection.second.SetHoldToDialInfo(phoneNum, clirMode, videoState, isEmergency);
+            connection.second.SetDialFlag(true);
+            // - a call can be temporarily disconnected from the ME but the connection is retained by the network
+            return connection.second.SwitchCallRequest(slotId);
+        }
     }
-    pendingPhoneNumber_ = phoneNum;
     return EncapsulateDial(slotId, phoneNum, clirMode, videoState);
 }
 
@@ -600,6 +604,20 @@ int32_t IMSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int
     }
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     return TELEPHONY_SUCCESS;
+}
+
+void IMSControl::DialAfterHold(int32_t slotId)
+{
+    TELEPHONY_LOGI("DialAfterHold entry");
+    for (auto &connection : connectionMap_) {
+        if (connection.second.IsNeedToDial()) {
+            ImsDialInfoStruct holdToDialInfo = connection.second.GetHoldToDialInfo();
+            CellularCallConnectionIMS cellularCallConnectionIms;
+            cellularCallConnectionIms.DialRequest(slotId, holdToDialInfo);
+            connection.second.SetDialFlag(false);
+            break;
+        }
+    }
 }
 } // namespace Telephony
 } // namespace OHOS
