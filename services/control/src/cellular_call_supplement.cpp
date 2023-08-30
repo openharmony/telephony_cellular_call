@@ -18,6 +18,7 @@
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
 #include "ims_error.h"
+#include "mmi_code_message.h"
 #include "securec.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
@@ -43,47 +44,6 @@ const std::string BARR_INCOMING_CALLS_OUTSIDE_HOME = "IR";
 const std::string ALL_BARRING_SERVICES = "AB";
 const std::string ALL_OUTGOING_BARRING_SERVICES = "AG";
 const std::string ALL_INCOMING_BARRING_SERVICES = "AC";
-const std::string TRANSFER_UNCONDITIONAL_SUCCESS = "Transfer unconditional success";
-const std::string TRANSFER_BUSY_SUCCESS = "Transfer busy success";
-const std::string TRANSFER_NO_REPLYL_SUCCESS = "Transfer no replay success";
-const std::string TRANSFER_NOT_REACHABLE_SUCCESS = "Transfer not reachable success";
-const std::string QUERY_SS_SUCCESS = "Query SS success";
-const std::string QUERY_SS_FAILED = "Query SS failed";
-const std::string INVALID_MMI_CODE = "Invalid MMI code";
-const std::string GET_CALL_WAITING_SUCCESS = "Get call waiting success";
-const std::string GET_CALL_WAITING_FAILED = "Get call waiting failed";
-const std::string SET_CALL_WAITING_SUCCESS = "Set call waiting success";
-const std::string SET_CALL_WAITING_FAILED = "Set call waiting failed";
-const std::string GET_CALL_TRANSFER_SUCCESS = "Get call transfer success";
-const std::string GET_CALL_TRANSFER_FAILED = "Get call transfer failed";
-const std::string SET_CALL_TRANSFER_SUCCESS = "Set call transfer success";
-const std::string SET_CALL_TRANSFER_FAILED = "Set call transfer failed";
-const std::string GET_CALL_RESTRICTION_SUCCESS = "Get call restriction success";
-const std::string GET_CALL_RESTRICTION_FAILED = "Get call restriction failed";
-const std::string SET_CALL_RESTRICTION_SUCCESS = "Set call restriction success";
-const std::string SET_SET_BARRING_PASSWORD_SUCCESS = "Set call restriction password success";
-const std::string SET_CALL_RESTRICTION_FAILED = "Set call restriction failed";
-const std::string SET_SET_BARRING_PASSWORD_FAILED = "Set call restriction password failed";
-const std::string GET_CLIP_SUCCESS = "Get clip success";
-const std::string GET_CLIP_FAILED = "Get clip failed";
-const std::string SET_CLIP_SUCCESS = "Set clip success";
-const std::string SET_CLIP_FAILED = "Set clip failed";
-const std::string GET_CLIR_SUCCESS = "Get clir success";
-const std::string GET_CLIR_FAILED = "Get clir failed";
-const std::string SET_CLIR_SUCCESS = "Set clir success";
-const std::string SET_CLIR_FAILED = "Set clir failed";
-const std::string GET_COLR_SUCCESS = "Get colr success";
-const std::string GET_COLR_FAILED = "Get colr failed";
-const std::string SET_COLR_SUCCESS = "Set colr success";
-const std::string SET_COLR_FAILED = "Set colr failed";
-const std::string GET_COLP_SUCCESS = "Get colp success";
-const std::string GET_COLP_FAILED = "Get colp failed";
-const std::string SET_COLP_SUCCESS = "Set colp success";
-const std::string SET_COLP_FAILED = "Set colp failed";
-const std::string MIS_MATCH_PIN_PUK = "PIN or PUK don\'t match";
-const std::string INVAILD_PIN_PUK = "Invaild PIN or PUK numbers";
-const std::string SEND_USSD_SUCCESS = "Send ussd success";
-const std::string GENERIC_FAILURE = "Generic fail, please retry";
 
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
@@ -629,8 +589,10 @@ void CellularCallSupplement::EventGetCallWaiting(
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
+        std::string successMessage = GET_CALL_WAITING_SUCCESS;
+        CreateGetCallWaitingResultMessage(successMessage, callWaitResponse);
         ReportMmiCodeMessage(
-            callWaitResponse.result, GET_CALL_WAITING_SUCCESS, message.empty() ? GET_CALL_WAITING_FAILED : message);
+            callWaitResponse.result, successMessage, message.empty() ? GET_CALL_WAITING_FAILED : message);
     } else {
         callRegister->ReportGetWaitingResult(callWaitResponse);
     }
@@ -653,10 +615,17 @@ void CellularCallSupplement::EventSetCallWaiting(int32_t result, const std::stri
 void CellularCallSupplement::EventGetCallTransferInfo(
     const CallForwardQueryInfoList &cFQueryList, const std::string &message, int32_t flag)
 {
+    if (cFQueryList.result.result != TELEPHONY_SUCCESS && cFQueryList.callSize == 0) {
+        CallForwardQueryResult failResult;
+        failResult.result = cFQueryList.result.result;
+        BuildCallForwardQueryInfo(failResult, message, flag);
+    }
     for (auto queryResult : cFQueryList.calls) {
-        TELEPHONY_LOGI("data: status %{public}d, classx %{public}d, type %{public}d", queryResult.status,
-            queryResult.classx, queryResult.type);
-        BuildCallForwardQueryInfo(queryResult, message, flag);
+        TELEPHONY_LOGI("data: status %{public}d, classx %{public}d, reason %{public}d", queryResult.status,
+            queryResult.classx, queryResult.reason);
+        if ((queryResult.classx & ServiceClassType::VOICE) != 0) {
+            BuildCallForwardQueryInfo(queryResult, message, flag);
+        }
     }
 }
 
@@ -702,8 +671,9 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
     response.endHour = queryResult.endHour;
     response.endMinute = queryResult.endMinute;
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(
-            queryResult.result, GET_CALL_TRANSFER_SUCCESS, message.empty() ? GET_CALL_TRANSFER_FAILED : message);
+        std::string successMessage = GET_CALL_TRANSFER_SUCCESS;
+        CreateGetCallTransferResultMessage(successMessage, response);
+        ReportMmiCodeMessage(queryResult.result, successMessage, message.empty() ? GET_CALL_TRANSFER_FAILED : message);
     } else {
         auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
         if (callRegister == nullptr) {
@@ -750,8 +720,10 @@ void CellularCallSupplement::EventGetCallRestriction(
     response.classCw = result.classCw;
 
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result.result.result, GET_CALL_RESTRICTION_SUCCESS,
-            message.empty() ? GET_CALL_RESTRICTION_FAILED : message);
+        std::string successMessage = GET_CALL_RESTRICTION_SUCCESS;
+        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.status);
+        ReportMmiCodeMessage(
+            result.result.result, successMessage, message.empty() ? GET_CALL_RESTRICTION_FAILED : message);
     } else {
         callRegister->ReportGetRestrictionResult(response);
     }
@@ -1206,7 +1178,9 @@ void CellularCallSupplement::EventGetClip(const GetClipResult &getClipResult, co
     }
 
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(clipResponse.result, GET_CLIP_SUCCESS, message.empty() ? GET_CLIP_FAILED : message);
+        std::string successMessage = GET_CLIP_SUCCESS;
+        CreateSuppSvcQueryResultMessage(successMessage, clipResponse.result, clipResponse.clipStat);
+        ReportMmiCodeMessage(clipResponse.result, successMessage, message.empty() ? GET_CLIP_FAILED : message);
     } else {
         callRegister->ReportGetClipResult(clipResponse);
     }
@@ -1237,7 +1211,9 @@ void CellularCallSupplement::EventGetClir(const GetClirResult &result, const std
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(response.result, GET_CLIR_SUCCESS, message.empty() ? GET_CLIR_FAILED : message);
+        std::string successMessage = GET_CLIR_SUCCESS;
+        CreateGetClirResultMessage(successMessage, response);
+        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_CLIR_FAILED : message);
     } else {
         callRegister->ReportGetClirResult(response);
     }
@@ -1267,7 +1243,9 @@ void CellularCallSupplement::EventGetColr(const GetColrResult &result, const std
     response.action = result.action;
     response.colrStat = result.colrStat;
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(response.result, GET_COLR_SUCCESS, message.empty() ? GET_COLR_FAILED : message);
+        std::string successMessage = GET_COLR_SUCCESS;
+        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.colrStat);
+        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_COLR_FAILED : message);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
@@ -1292,7 +1270,9 @@ void CellularCallSupplement::EventGetColp(const GetColpResult &result, const std
     response.action = result.action;
     response.colpStat = result.colpStat;
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(response.result, GET_COLP_SUCCESS, message.empty() ? GET_COLP_FAILED : message);
+        std::string successMessage = GET_COLP_SUCCESS;
+        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.colpStat);
+        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_COLP_FAILED : message);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }

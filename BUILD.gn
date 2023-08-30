@@ -33,6 +33,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/control/src/control_base.cpp",
     "services/control/src/cs_control.cpp",
     "services/control/src/ims_control.cpp",
+    "services/control/src/mmi_code_message.cpp",
     "services/ims_service_interaction/src/ims_call_callback_stub.cpp",
     "services/ims_service_interaction/src/ims_call_client.cpp",
     "services/ims_service_interaction/src/ims_call_proxy.cpp",
