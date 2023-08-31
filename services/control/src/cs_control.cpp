@@ -582,6 +582,10 @@ int32_t CSControl::ReportHungUpInfo(int32_t slotId)
 
 int32_t CSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 {
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGE("connectionMap_ is empty.");
+        return TELEPHONY_ERROR;
+    }
     auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callId);
     if (pConnection == nullptr) {
         return TELEPHONY_ERR_LOCAL_PTR_NULL;

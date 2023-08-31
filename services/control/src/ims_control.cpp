@@ -522,11 +522,15 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCur
 
 int32_t IMSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 {
-    char currentChar;
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGE("connectionMap_ is empty.");
+        return TELEPHONY_ERROR;
+    }
     auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callId);
     if (pConnection == nullptr) {
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+    char currentChar;
     PostDialCallState state = pConnection->ProcessNextChar(slotId, currentChar);
     switch (state) {
         case PostDialCallState::POST_DIAL_CALL_STARTED:
