@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef CELLULAR_CALL_MMICODE_MSG_H
+#define CELLULAR_CALL_MMICODE_MSG_H
+
 #include "cellular_call_data_struct.h"
 #include "ims_error.h"
 #include "telephony_types.h"
@@ -154,3 +157,5 @@ void CreateServiceClassMessage(std::string &resultMessage, int32_t classex);
 
 } // namespace Telephony
 } // namespace OHOS
+
+#endif // CELLULAR_CALL_MMICODE_MSG_H

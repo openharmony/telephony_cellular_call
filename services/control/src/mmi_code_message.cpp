@@ -51,9 +51,9 @@ void CreateGetCallTransferResultMessage(std::string &resultMessage, CallTransfer
 {
     if (response.result == TELEPHONY_SUCCESS) {
         resultMessage.append("\n");
-        for (int classMask = 1; classMask <= ServiceClassType::DEDICATED_PAD_ACCESS; classMask <<= 1) {
-            if ((classMask & response.classx) != 0) {
-                MakeCallTransferMessageEx(resultMessage, response, classMask & response.classx);
+        for (uint32_t classMask = 1; classMask <= ServiceClassType::DEDICATED_PAD_ACCESS; classMask <<= 1) {
+            if (response.classx > 0 && (static_cast<uint32_t>(response.classx) & classMask) != 0) {
+                MakeCallTransferMessageEx(resultMessage, response, static_cast<uint32_t>(response.classx) & classMask);
             }
         }
     }
@@ -132,10 +132,10 @@ void CreateGetClirResultMessage(std::string &resultMessage, ClirResponse respons
 
 void CreateServiceClassMessage(std::string &resultMessage, int32_t classex)
 {
-    for (int classMask = 1; classMask <= ServiceClassType::DEDICATED_PAD_ACCESS; classMask <<= 1) {
-        if ((classMask & classex) != 0) {
+    for (uint32_t classMask = 1; classMask <= ServiceClassType::DEDICATED_PAD_ACCESS; classMask <<= 1) {
+        if (classex > 0 && (static_cast<uint32_t>(classex) & classMask) != 0) {
             resultMessage.append("\n");
-            resultMessage.append(GetServiceClassName(classMask & classex));
+            resultMessage.append(GetServiceClassName(static_cast<uint32_t>(classex) & classMask));
         }
     }
 }
