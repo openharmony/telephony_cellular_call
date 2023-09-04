@@ -623,7 +623,7 @@ void CellularCallSupplement::EventGetCallTransferInfo(
     for (auto queryResult : cFQueryList.calls) {
         TELEPHONY_LOGI("data: status %{public}d, classx %{public}d, reason %{public}d", queryResult.status,
             queryResult.classx, queryResult.reason);
-        if ((queryResult.classx & ServiceClassType::VOICE) != 0) {
+        if (queryResult.classx > 0 && (static_cast<uint32_t>(queryResult.classx) & ServiceClassType::VOICE) != 0) {
             BuildCallForwardQueryInfo(queryResult, message, flag);
         }
     }
