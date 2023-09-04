@@ -30,6 +30,7 @@ namespace OHOS {
 static bool g_isInited = false;
 constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t VEDIO_STATE_NUM = 2;
+constexpr int32_t OFFSET_SIZE = 11;
 constexpr size_t MAX_NUMBER_LEN = 99;
 
 bool IsServiceInited()
@@ -52,6 +53,8 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(CellularCallStub::GetDescriptor())) {
         return;
     }
+    int32_t maxSize = static_cast<int32_t>(size) + OFFSET_SIZE;
+    dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     uint32_t code = static_cast<uint32_t>(size);

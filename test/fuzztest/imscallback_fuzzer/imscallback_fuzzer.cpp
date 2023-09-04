@@ -58,6 +58,8 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(ImsCallCallbackStub::GetDescriptor())) {
         return;
     }
+    int32_t slotId = ERROR_NUM;
+    dataMessageParcel.WriteInt32(slotId);
     uint32_t code = static_cast<uint32_t>(size);
     MessageParcel reply;
     MessageOption option;
@@ -66,7 +68,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
 
 void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t slotId = ERROR_NUM;
     HRilRadioResponseInfo rilRadioResponse;
     rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
     rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
@@ -120,7 +122,7 @@ void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallC
 
 void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t slotId = ERROR_NUM;
     std::string number(reinterpret_cast<const char *>(data), size);
     MessageParcel muteData;
     MessageParcel muteReply;
@@ -158,7 +160,7 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
 
 void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t slotId = ERROR_NUM;
     HRilRadioResponseInfo rilRadioResponse;
     rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
     rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
