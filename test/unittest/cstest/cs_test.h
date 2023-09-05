@@ -175,6 +175,9 @@ public:
     };
 
 private:
+    int32_t InitCallInfo(CellularCallInfo &callInfo) const;
+
+private:
     using RequestFuncType = int32_t (CsTest::*)(const sptr<CellularCallInterface> &telephonyService) const;
     std::map<int32_t, RequestFuncType> requestFuncMap_;
 };

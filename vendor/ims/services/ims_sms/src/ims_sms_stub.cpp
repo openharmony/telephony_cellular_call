@@ -44,9 +44,9 @@ int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
         return TELEPHONY_ERR_DESCRIPTOR_MISMATCH;
     }
     TELEPHONY_LOGI("OnReceived, cmd = %{public}u", code);
-    auto itFunc = memberFuncMap_.find(code);
-    if (itFunc != memberFuncMap_.end()) {
-        auto memberFunc = itFunc->second;
+    auto itFunction = memberFuncMap_.find(code);
+    if (itFunction != memberFuncMap_.end()) {
+        auto memberFunc = itFunction->second;
         if (memberFunc != nullptr) {
             return (this->*memberFunc)(data, reply);
         }
@@ -57,12 +57,12 @@ int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
 int32_t ImsSmsStub::OnImsSendMessage(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    ImsMessageInfo messageInfo;
-    messageInfo.refId = data.ReadInt64();
-    messageInfo.smscPdu = data.ReadString();
-    messageInfo.pdu = data.ReadString();
-    messageInfo.tech = static_cast<const SmsRadioTechnologyFamily>(data.ReadInt32());
-    reply.WriteInt32(ImsSendMessage(slotId, messageInfo));
+    ImsMessageInfo sendMessageInfo;
+    sendMessageInfo.refId = data.ReadInt64();
+    sendMessageInfo.smscPdu = data.ReadString();
+    sendMessageInfo.pdu = data.ReadString();
+    sendMessageInfo.tech = static_cast<const SmsRadioTechnologyFamily>(data.ReadInt32());
+    reply.WriteInt32(ImsSendMessage(slotId, sendMessageInfo));
 
     return TELEPHONY_SUCCESS;
 }
