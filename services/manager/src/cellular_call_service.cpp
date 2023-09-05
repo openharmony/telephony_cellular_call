@@ -864,24 +864,40 @@ int32_t CellularCallService::GetCallTransferInfo(int32_t slotId, CallTransferTyp
 std::shared_ptr<CSControl> CellularCallService::GetCsControl(int32_t slotId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("return nullptr, invalid slot id");
+        return nullptr;
+    }
     return csControlMap_[slotId];
 }
 
 std::shared_ptr<IMSControl> CellularCallService::GetImsControl(int32_t slotId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("return nullptr, invalid slot id");
+        return nullptr;
+    }
     return imsControlMap_[slotId];
 }
 
 void CellularCallService::SetCsControl(int32_t slotId, const std::shared_ptr<CSControl> &csControl)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id, return");
+        return;
+    }
     csControlMap_[slotId] = csControl;
 }
 
 void CellularCallService::SetImsControl(int32_t slotId, const std::shared_ptr<IMSControl> &imsControl)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id, return");
+        return;
+    }
     imsControlMap_[slotId] = imsControl;
 }
 
