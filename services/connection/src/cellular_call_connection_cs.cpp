@@ -302,15 +302,15 @@ int32_t CellularCallConnectionCS::ProcessPostDialCallChar(int32_t slotId, char c
         SendDtmfRequest(slotId, c, GetIndex());
     } else if (StandardizeUtils::IsPauseKey(c)) {
         SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_PAUSE);
-        auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
-        if (handle == nullptr) {
+        auto cellularCallHandle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+        if (cellularCallHandle == nullptr) {
             TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
         std::shared_ptr<PostDialData> postDial = std::make_shared<PostDialData>();
         postDial->callId = GetIndex();
         postDial->isIms = false;
-        handle->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, PAUSE_DELAY_TIME);
+        cellularCallHandle->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, PAUSE_DELAY_TIME);
     } else if (StandardizeUtils::IsWaitKey(c)) {
         SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_DELAY);
     }

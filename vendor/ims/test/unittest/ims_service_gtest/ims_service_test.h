@@ -32,7 +32,7 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-
+    static int32_t InitConditionCheck();
     static void Init();
     bool HasSimCard(int32_t slotId);
 

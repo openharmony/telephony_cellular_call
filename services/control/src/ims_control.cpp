@@ -555,6 +555,7 @@ int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool
     auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_,
         callInfo.index);
     if (pConnection == nullptr) {
+        TELEPHONY_LOGE("ims pConnection is nullptr!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     if (proceed) {
@@ -584,22 +585,22 @@ int32_t IMSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int
     callsReportInfo.slotId = slotId;
     for (const auto &info : infos) {
         if (info.callType == CallType::TYPE_IMS && info.slotId == slotId) {
-            CallReportInfo callReportInfo;
-            if (memset_s(callReportInfo.accountNum, kMaxNumberLen + 1, 0, kMaxNumberLen + 1) != EOK) {
+            CallReportInfo imsCallReportInfo;
+            if (memset_s(imsCallReportInfo.accountNum, kMaxNumberLen + 1, 0, kMaxNumberLen + 1) != EOK) {
                 TELEPHONY_LOGE("memset_s fail");
                 return TELEPHONY_ERR_MEMSET_FAIL;
             }
-            if (memcpy_s(callReportInfo.accountNum, kMaxNumberLen, info.phoneNum, kMaxNumberLen) != EOK) {
+            if (memcpy_s(imsCallReportInfo.accountNum, kMaxNumberLen, info.phoneNum, kMaxNumberLen) != EOK) {
                 TELEPHONY_LOGE("memcpy_s fail");
                 return TELEPHONY_ERR_MEMCPY_FAIL;
             }
-            callReportInfo.index = info.index;
-            callReportInfo.accountId = info.slotId;
-            callReportInfo.callType = CallType::TYPE_IMS;
-            callReportInfo.callMode = static_cast<bool>(info.callType) ? VideoStateType::TYPE_VIDEO :
-                VideoStateType::TYPE_VOICE;
-            callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
-            callsReportInfo.callVec.push_back(callReportInfo);
+            imsCallReportInfo.index = info.index;
+            imsCallReportInfo.accountId = info.slotId;
+            imsCallReportInfo.callType = CallType::TYPE_IMS;
+            imsCallReportInfo.callMode =
+                static_cast<bool>(info.callType) ? VideoStateType::TYPE_VIDEO : VideoStateType::TYPE_VOICE;
+            imsCallReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+            callsReportInfo.callVec.push_back(imsCallReportInfo);
         }
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {

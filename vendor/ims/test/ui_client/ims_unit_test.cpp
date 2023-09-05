@@ -151,54 +151,54 @@ int32_t ImsUnitTest::Dial(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 int32_t ImsUnitTest::HangUp(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test HangUp entry." << std::endl;
-    ImsCallInfo callInfo;
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+    ImsCallInfo hangUpCallInfo;
+    if (memset_s(&hangUpCallInfo, sizeof(hangUpCallInfo), 0, sizeof(hangUpCallInfo)) != EOK) {
         std::cout << "HangUp return, memset_s failed." << std::endl;
         return IMS_TEST_ERROR;
     }
     std::cout << "please enter the phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.videoState = 1;
-    callInfo.slotId = 0;
+    std::cin >> hangUpCallInfo.phoneNum;
+    hangUpCallInfo.videoState = 1;
+    hangUpCallInfo.slotId = 0;
     std::cout << "please enter the connect index:";
-    std::cin >> callInfo.index;
-    imsCallPtr->HangUp(callInfo);
+    std::cin >> hangUpCallInfo.index;
+    imsCallPtr->HangUp(hangUpCallInfo);
     return IMS_TEST_SUCCESS;
 }
 
 int32_t ImsUnitTest::RejectWithReason(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test RejectWithReason entry." << std::endl;
-    ImsCallInfo callInfo;
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+    ImsCallInfo rejectCallInfo;
+    if (memset_s(&rejectCallInfo, sizeof(rejectCallInfo), 0, sizeof(rejectCallInfo)) != EOK) {
         std::cout << "RejectWithReason return, memset_s failed." << std::endl;
         return IMS_TEST_ERROR;
     }
     std::cout << "please enter the phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.videoState = 1;
-    callInfo.slotId = 0;
+    std::cin >> rejectCallInfo.phoneNum;
+    rejectCallInfo.videoState = 1;
+    rejectCallInfo.slotId = 0;
     std::cout << "please enter the connect index:";
-    std::cin >> callInfo.index;
-    imsCallPtr->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
+    std::cin >> rejectCallInfo.index;
+    imsCallPtr->RejectWithReason(rejectCallInfo, ImsRejectReason::USER_DECLINE);
     return IMS_TEST_SUCCESS;
 }
 
 int32_t ImsUnitTest::Answer(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test Answer entry." << std::endl;
-    ImsCallInfo callInfo;
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+    ImsCallInfo answerCallInfo;
+    if (memset_s(&answerCallInfo, sizeof(answerCallInfo), 0, sizeof(answerCallInfo)) != EOK) {
         std::cout << "Answer return, memset_s failed." << std::endl;
         return IMS_TEST_ERROR;
     }
     std::cout << "please enter the phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.videoState = 1;
-    callInfo.slotId = 0;
+    std::cin >> answerCallInfo.phoneNum;
+    answerCallInfo.videoState = 1;
+    answerCallInfo.slotId = 0;
     std::cout << "please enter the connect index:";
-    std::cin >> callInfo.index;
-    imsCallPtr->Answer(callInfo);
+    std::cin >> answerCallInfo.index;
+    imsCallPtr->Answer(answerCallInfo);
     return IMS_TEST_SUCCESS;
 }
 
@@ -206,12 +206,12 @@ int32_t ImsUnitTest::HoldCall(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
 {
     std::cout << "test HoldCall entry." << std::endl;
     int32_t slotId;
-    int32_t callType;
+    int32_t holdCallType;
     std::cout << "please enter the slot id:";
     std::cin >> slotId;
     std::cout << "please enter the callType(0->CS, 1->IMS, 2->OTT, 3->OTHER):";
-    std::cin >> callType;
-    imsCallPtr->HoldCall(slotId, callType);
+    std::cin >> holdCallType;
+    imsCallPtr->HoldCall(slotId, holdCallType);
     return IMS_TEST_SUCCESS;
 }
 
@@ -219,12 +219,12 @@ int32_t ImsUnitTest::UnHoldCall(const sptr<ImsCallInterfaceCode> &imsCallPtr) co
 {
     std::cout << "test UnHoldCall entry." << std::endl;
     int32_t slotId;
-    int32_t callType;
+    int32_t unHoldCallType;
     std::cout << "please enter the slot id:";
     std::cin >> slotId;
     std::cout << "please enter the callType(0->CS, 1->IMS, 2->OTT, 3->OTHER):";
-    std::cin >> callType;
-    imsCallPtr->UnHoldCall(slotId, callType);
+    std::cin >> unHoldCallType;
+    imsCallPtr->UnHoldCall(slotId, unHoldCallType);
     return IMS_TEST_SUCCESS;
 }
 
@@ -232,12 +232,12 @@ int32_t ImsUnitTest::SwitchCall(const sptr<ImsCallInterfaceCode> &imsCallPtr) co
 {
     std::cout << "test SwitchCall entry." << std::endl;
     int32_t slotId;
-    int32_t callType;
+    int32_t switchCallType;
     std::cout << "please enter the slot id:";
     std::cin >> slotId;
     std::cout << "please enter the callType(0->CS, 1->IMS, 2->OTT, 3->OTHER):";
-    std::cin >> callType;
-    imsCallPtr->SwitchCall(slotId, callType);
+    std::cin >> switchCallType;
+    imsCallPtr->SwitchCall(slotId, switchCallType);
     return IMS_TEST_SUCCESS;
 }
 
@@ -256,9 +256,9 @@ int32_t ImsUnitTest::InviteToConference(const sptr<ImsCallInterfaceCode> &imsCal
     std::cout << "test InviteToConference entry." << std::endl;
     std::vector<std::string> numberList;
     std::cout << "please enter the invite phone number:";
-    std::string phoneNum;
-    std::cin >> phoneNum;
-    numberList.push_back(phoneNum);
+    std::string phoneNumber;
+    std::cin >> phoneNumber;
+    numberList.push_back(phoneNumber);
     int32_t slotId;
     std::cout << "please enter the slotId:";
     std::cin >> slotId;
@@ -269,34 +269,34 @@ int32_t ImsUnitTest::InviteToConference(const sptr<ImsCallInterfaceCode> &imsCal
 int32_t ImsUnitTest::KickOutFromConference(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test KickOutFromConference entry." << std::endl;
-    int32_t index;
+    int32_t kickOutIndex;
     std::cout << "please enter the kick out phone index:";
-    std::cin >> index;
+    std::cin >> kickOutIndex;
     int32_t slotId;
     std::cout << "please enter the slotId:";
     std::cin >> slotId;
-    imsCallPtr->KickOutFromConference(slotId, index);
+    imsCallPtr->KickOutFromConference(slotId, kickOutIndex);
     return IMS_TEST_SUCCESS;
 }
 
 int32_t ImsUnitTest::UpdateImsCallMode(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test UpdateImsCallMode entry." << std::endl;
-    ImsCallInfo callInfo;
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+    ImsCallInfo updateImsCallInfo;
+    if (memset_s(&updateImsCallInfo, sizeof(updateImsCallInfo), 0, sizeof(updateImsCallInfo)) != EOK) {
         std::cout << "UpdateImsCallMode return, memset_s failed." << std::endl;
         return IMS_TEST_ERROR;
     }
     std::cout << "please enter the phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.videoState = 1;
-    callInfo.slotId = 0;
+    std::cin >> updateImsCallInfo.phoneNum;
+    updateImsCallInfo.videoState = 1;
+    updateImsCallInfo.slotId = 0;
     std::cout << "please enter the connect index:";
-    std::cin >> callInfo.index;
+    std::cin >> updateImsCallInfo.index;
     std::cout << "please enter the update call mode():";
     int32_t mode = 0;
     std::cin >> mode;
-    imsCallPtr->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
+    imsCallPtr->UpdateImsCallMode(updateImsCallInfo, static_cast<ImsCallMode>(mode));
     return IMS_TEST_SUCCESS;
 }
 
@@ -325,15 +325,15 @@ int32_t ImsUnitTest::StartDtmf(const sptr<ImsCallInterfaceCode> &imsCallPtr) con
 {
     std::cout << "test StartDtmf entry." << std::endl;
     std::cout << "please enter the dtmf code(0-9,#,*,A,D):";
-    char dtmfCode;
-    std::cin >> dtmfCode;
+    char startDtmfCode;
+    std::cin >> startDtmfCode;
     std::cout << "please enter the index:";
     int32_t index = 0;
     std::cin >> index;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->StartDtmf(slotId, dtmfCode, index);
+    imsCallPtr->StartDtmf(slotId, startDtmfCode, index);
     return IMS_TEST_SUCCESS;
 }
 
@@ -341,15 +341,15 @@ int32_t ImsUnitTest::SendDtmf(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
 {
     std::cout << "test SendDtmf entry." << std::endl;
     std::cout << "please enter the dtmf code(0-9,#,*,A,D):";
-    char dtmfCode;
-    std::cin >> dtmfCode;
+    char sendDtmfCode;
+    std::cin >> sendDtmfCode;
     std::cout << "please enter the index:";
     int32_t index = 0;
     std::cin >> index;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->SendDtmf(slotId, dtmfCode, index);
+    imsCallPtr->SendDtmf(slotId, sendDtmfCode, index);
     return IMS_TEST_SUCCESS;
 }
 
@@ -357,12 +357,12 @@ int32_t ImsUnitTest::StopDtmf(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
 {
     std::cout << "test StopDtmf entry." << std::endl;
     std::cout << "please enter the index:";
-    int32_t index = 0;
-    std::cin >> index;
+    int32_t stopDtmfIndex = 0;
+    std::cin >> stopDtmfIndex;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->StopDtmf(slotId, index);
+    imsCallPtr->StopDtmf(slotId, stopDtmfIndex);
     return IMS_TEST_SUCCESS;
 }
 
@@ -370,12 +370,12 @@ int32_t ImsUnitTest::StartRtt(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
 {
     std::cout << "test StartRtt entry." << std::endl;
     std::cout << "please enter the send msg:";
-    std::string msg;
-    std::cin >> msg;
+    std::string startRttMsg;
+    std::cin >> startRttMsg;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->StartRtt(slotId, msg);
+    imsCallPtr->StartRtt(slotId, startRttMsg);
     return IMS_TEST_SUCCESS;
 }
 
@@ -393,12 +393,12 @@ int32_t ImsUnitTest::SetDomainPreferenceMode(const sptr<ImsCallInterfaceCode> &i
 {
     std::cout << "test SetDomainPreferenceMode entry." << std::endl;
     std::cout << "please enter the need mode:(1 - 4)";
-    int32_t mode;
-    std::cin >> mode;
+    int32_t domainPrefMode;
+    std::cin >> domainPrefMode;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->SetDomainPreferenceMode(slotId, mode);
+    imsCallPtr->SetDomainPreferenceMode(slotId, domainPrefMode);
     return IMS_TEST_SUCCESS;
 }
 
@@ -416,12 +416,12 @@ int32_t ImsUnitTest::SetImsSwitchStatus(const sptr<ImsCallInterfaceCode> &imsCal
 {
     std::cout << "test SetImsSwitchStatus entry." << std::endl;
     std::cout << "please enter the switch state:";
-    bool active;
-    std::cin >> active;
+    bool switchStatus;
+    std::cin >> switchStatus;
     std::cout << "please enter the slot id:";
     int32_t slotId = 0;
     std::cin >> slotId;
-    imsCallPtr->SetImsSwitchStatus(slotId, active);
+    imsCallPtr->SetImsSwitchStatus(slotId, switchStatus);
     return IMS_TEST_SUCCESS;
 }
 
@@ -439,12 +439,12 @@ int32_t ImsUnitTest::SetImsConfigString(const sptr<ImsCallInterfaceCode> &imsCal
 {
     std::cout << "test SetImsConfigString entry." << std::endl;
     std::cout << "please enter the item id:";
-    int32_t item = 0;
-    std::cin >> item;
+    int32_t imsConfigItem = 0;
+    std::cin >> imsConfigItem;
     std::cout << "please enter the item value:";
     std::string value;
     std::cin >> value;
-    imsCallPtr->SetImsConfig(static_cast<ImsConfigItem>(item), value);
+    imsCallPtr->SetImsConfig(static_cast<ImsConfigItem>(imsConfigItem), value);
     return IMS_TEST_SUCCESS;
 }
 
@@ -452,12 +452,12 @@ int32_t ImsUnitTest::SetImsConfigInt(const sptr<ImsCallInterfaceCode> &imsCallPt
 {
     std::cout << "test SetImsConfigInt entry." << std::endl;
     std::cout << "please enter the item id:";
-    int32_t item = 0;
-    std::cin >> item;
+    int32_t imsConfigItem = 0;
+    std::cin >> imsConfigItem;
     std::cout << "please enter the item value:";
     int32_t value = 0;
     std::cin >> value;
-    imsCallPtr->SetImsConfig(static_cast<ImsConfigItem>(item), value);
+    imsCallPtr->SetImsConfig(static_cast<ImsConfigItem>(imsConfigItem), value);
     return IMS_TEST_SUCCESS;
 }
 
@@ -475,8 +475,8 @@ int32_t ImsUnitTest::SetImsFeatureValue(const sptr<ImsCallInterfaceCode> &imsCal
 {
     std::cout << "test SetImsFeatureValue entry." << std::endl;
     std::cout << "please enter the feature type:";
-    int32_t type = 0;
-    std::cin >> type;
+    int32_t imsFeatureType = 0;
+    std::cin >> imsFeatureType;
     std::cout << "please enter the feature value:";
     int32_t value = 0;
     std::cin >> value;
@@ -488,8 +488,8 @@ int32_t ImsUnitTest::GetImsFeatureValue(const sptr<ImsCallInterfaceCode> &imsCal
 {
     std::cout << "test GetImsFeatureValue entry." << std::endl;
     std::cout << "please enter the feature type:";
-    int32_t type = 0;
-    std::cin >> type;
+    int32_t imsFeatureType = 0;
+    std::cin >> imsFeatureType;
     int32_t value;
     imsCallPtr->GetImsFeatureValue(static_cast<FeatureType>(type), value);
     std::cout << "test GetImsFeatureValue value:" << value;
@@ -526,24 +526,24 @@ int32_t ImsUnitTest::CtrlCamera(const sptr<ImsCallInterfaceCode> &imsCallPtr) co
 int32_t ImsUnitTest::SetPreviewWindow(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test SetPreviewWindow entry." << std::endl;
-    int32_t x = 0;
-    int32_t y = 0;
-    int32_t z = 0;
+    int32_t previewWindowX = 0;
+    int32_t previewWindowY = 0;
+    int32_t previewWindowZ = 0;
     int32_t width = 0;
     int32_t height = 0;
-    imsCallPtr->SetPreviewWindow(x, y, z, width, height);
+    imsCallPtr->SetPreviewWindow(previewWindowX, previewWindowY, previewWindowZ, width, height);
     return IMS_TEST_SUCCESS;
 }
 
 int32_t ImsUnitTest::SetDisplayWindow(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test SetDisplayWindow entry." << std::endl;
-    int32_t x = 0;
-    int32_t y = 0;
-    int32_t z = 0;
+    int32_t displayWindowX = 0;
+    int32_t displayWindowY = 0;
+    int32_t displayWindowZ = 0;
     int32_t width = 0;
     int32_t height = 0;
-    imsCallPtr->SetDisplayWindow(x, y, z, width, height);
+    imsCallPtr->SetDisplayWindow(displayWindowX, displayWindowY, displayWindowZ, width, height);
     return IMS_TEST_SUCCESS;
 }
 
@@ -606,8 +606,8 @@ int32_t ImsUnitTest::SetCallTransfer(const sptr<ImsCallInterfaceCode> &imsCallPt
     std::cout << "test SetCallTransfer entry.\n";
     int32_t slotId = 0;
     std::cout << "please enter the transfer type(0 - 5):";
-    int32_t type = 0;
-    std::cin >> type;
+    int32_t callTransferType = 0;
+    std::cin >> callTransferType;
     std::cout << "please enter the transfer mode(0 - 4):";
     int32_t mode = 0;
     std::cin >> mode;
@@ -615,7 +615,7 @@ int32_t ImsUnitTest::SetCallTransfer(const sptr<ImsCallInterfaceCode> &imsCallPt
     std::string transferNum;
     std::cin >> transferNum;
     int32_t classType = 1;
-    return imsCallPtr->SetCallTransfer(slotId, type, mode, transferNum, classType);
+    return imsCallPtr->SetCallTransfer(slotId, callTransferType, mode, transferNum, classType);
 }
 
 int32_t ImsUnitTest::GetCallTransfer(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
@@ -635,13 +635,13 @@ int32_t ImsUnitTest::SetCallRestriction(const sptr<ImsCallInterfaceCode> &imsCal
     std::cout << "please enter the fac:";
     std::string fac = "AO";
     std::cout << "please enter the call restriction password:";
-    char password[IMS_TEST_MAX_PASSWORD] = { 0 };
-    std::cin >> password;
+    char crRassword[IMS_TEST_MAX_PASSWORD] = { 0 };
+    std::cin >> crRassword;
     std::cout << "please enter the mode:";
-    int32_t mode = 0;
-    std::cin >> mode;
-    int32_t ret = imsCallPtr->SetCallRestriction(slotId, fac, mode, password);
-    memset_s(password, sizeof(password), 0, sizeof(password));
+    int32_t crMode = 0;
+    std::cin >> crMode;
+    int32_t ret = imsCallPtr->SetCallRestriction(slotId, fac, crMode, crRassword);
+    memset_s(crRassword, sizeof(crRassword), 0, sizeof(crRassword));
     return ret;
 }
 
@@ -672,8 +672,8 @@ int32_t ImsUnitTest::GetCallWaiting(const sptr<ImsCallInterfaceCode> &imsCallPtr
 int32_t ImsUnitTest::SetSmsConfig(const sptr<ImsSmsInterface> &imsSmsPtr) const
 {
     std::cout << "test SetSmsConfig entry.\n";
-    int32_t slotId = 0;
     int32_t imsSmsConfig = 1;
+    int32_t slotId = 0;
     return imsSmsPtr->ImsSetSmsConfig(slotId, imsSmsConfig);
 }
 
@@ -687,8 +687,8 @@ int32_t ImsUnitTest::GetSmsConfig(const sptr<ImsSmsInterface> &imsSmsPtr) const
 int32_t ImsUnitTest::SendMessage(const sptr<ImsSmsInterface> &imsSmsPtr) const
 {
     std::cout << "test SendMessage entry.\n";
-    int32_t slotId = 0;
     ImsMessageInfo imsMessageInfo;
+    int32_t slotId = 0;
     imsMessageInfo.refId = 1;
     return imsSmsPtr->ImsSendMessage(slotId, imsMessageInfo);
 }
@@ -731,16 +731,16 @@ int32_t ImsUnitTest::ImsCallTest() const
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> inputNum;
-        if (inputNum == returnNum) {
+        std::cin >> inputNumber;
+        if (inputNumber == returnNum) {
             std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestCallFuncMap_.find(inputNum);
+        auto itFunc = requestCallFuncMap_.find(inputNumber);
         if (itFunc != requestCallFuncMap_.end()) {
-            auto requestFunc = itFunc->second;
-            if (requestFunc != nullptr) {
-                ret = (this->*requestFunc)(imsCallPtr);
+            auto requestFunction = itFunc->second;
+            if (requestFunction != nullptr) {
+                ret = (this->*requestFunction)(imsCallPtr);
             }
         }
         if (ret != IMS_TEST_SUCCESS) {
@@ -803,7 +803,7 @@ int32_t ImsUnitTest::ImsCoreServiceTest() const
     std::shared_ptr<ImsTestHandler> handler = std::make_shared<ImsTestHandler>();
     handler->RegisterImsCoreService();
     int32_t ret = -1;
-    int32_t inputNum = 0;
+    int32_t inputNumber = 0;
     int32_t returnNum = 1000; //  end loop variable value
     bool loopFlag = true;
     while (loopFlag) {
@@ -813,16 +813,16 @@ int32_t ImsUnitTest::ImsCoreServiceTest() const
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";
-        std::cin >> inputNum;
-        if (inputNum == returnNum) {
+        std::cin >> inputNumber;
+        if (inputNumber == returnNum) {
             std::cout << "exiting...\n";
             break;
         }
-        auto itFunc = requestCoreServiceFuncMap_.find(inputNum);
+        auto itFunc = requestCoreServiceFuncMap_.find(inputNumber);
         if (itFunc != requestCoreServiceFuncMap_.end()) {
-            auto requestFunc = itFunc->second;
-            if (requestFunc != nullptr) {
-                ret = (this->*requestFunc)(imsCoreSerivcePtr);
+            auto requestFunction = itFunc->second;
+            if (requestFunction != nullptr) {
+                ret = (this->*requestFunction)(imsCoreSerivcePtr);
             }
         }
         if (ret != IMS_TEST_SUCCESS) {

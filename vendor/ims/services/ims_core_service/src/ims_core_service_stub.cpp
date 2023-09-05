@@ -44,16 +44,16 @@ int32_t ImsCoreServiceStub::OnRemoteRequest(
         TELEPHONY_LOGE("Permission denied!");
         return TELEPHONY_ERR_PERMISSION_ERR;
     }
-    std::u16string descriptor = ImsCoreServiceStub::GetDescriptor();
+    std::u16string serviceDescriptor = ImsCoreServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
-    if (descriptor != remoteDescriptor) {
+    if (serviceDescriptor != remoteDescriptor) {
         TELEPHONY_LOGE("descriptor checking fail!");
         return TELEPHONY_ERR_DESCRIPTOR_MISMATCH;
     }
     TELEPHONY_LOGI("OnReceived, cmd = %{public}u", code);
-    auto itFunc = memberFuncMap_.find(code);
-    if (itFunc != memberFuncMap_.end()) {
-        auto memberFunc = itFunc->second;
+    auto itFunction = memberFuncMap_.find(code);
+    if (itFunction != memberFuncMap_.end()) {
+        auto memberFunc = itFunction->second;
         if (memberFunc != nullptr) {
             return (this->*memberFunc)(data, reply);
         }
