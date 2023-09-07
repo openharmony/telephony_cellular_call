@@ -486,9 +486,17 @@ void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer 
     int64_t callId = postDialData->callId;
     if (postDialData->isIms) {
         auto imsControl = serviceInstance->GetImsControl(slotId_);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] imsControl is null", slotId_);
+            return;
+        }
         imsControl->ExecutePostDial(slotId_, callId);
     } else {
         auto csControl = serviceInstance->GetCsControl(slotId_);
+        if (csControl == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] csControl is null", slotId_);
+            return;
+        }
         csControl->ExecutePostDial(slotId_, callId);
     }
 }
