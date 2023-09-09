@@ -37,7 +37,7 @@ namespace Telephony {
 using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 
-HapInfoParams testInfoParams = {
+inline HapInfoParams testInfoParams = {
     .bundleName = "tel_cellular_call_ims_gtest",
     .userID = 1,
     .instIndex = 0,
@@ -45,7 +45,7 @@ HapInfoParams testInfoParams = {
     .isSystemApp = true,
 };
 
-PermissionDef testConnectImsServiceDef = {
+inline PermissionDef testConnectImsServiceDef = {
     .permissionName = "ohos.permission.CONNECT_IMS_SERVICE",
     .bundleName = "tel_cellular_call_ims_gtest",
     .grantMode = 1, // SYSTEM_GRANT
@@ -56,7 +56,7 @@ PermissionDef testConnectImsServiceDef = {
     .availableLevel = APL_SYSTEM_BASIC,
 };
 
-PermissionStateFull testConnectImsServiceState = {
+inline PermissionStateFull testConnectImsServiceState = {
     .grantFlags = { 2 }, // PERMISSION_USER_SET
     .grantStatus = { PermissionState::PERMISSION_GRANTED },
     .isGeneral = true,
@@ -64,7 +64,7 @@ PermissionStateFull testConnectImsServiceState = {
     .resDeviceID = { "local" },
 };
 
-PermissionDef testPermPlaceCallDef = {
+inline PermissionDef testPermPlaceCallDef = {
     .permissionName = "ohos.permission.CONNECT_CELLULAR_CALL_SERVICE",
     .bundleName = "tel_cellular_call_ims_gtest",
     .grantMode = 1, // SYSTEM_GRANT
@@ -75,7 +75,7 @@ PermissionDef testPermPlaceCallDef = {
     .availableLevel = APL_SYSTEM_BASIC,
 };
 
-PermissionStateFull testPlaceCallState = {
+inline PermissionStateFull testPlaceCallState = {
     .grantFlags = { 2 }, // PERMISSION_USER_SET
     .grantStatus = { PermissionState::PERMISSION_GRANTED },
     .isGeneral = true,
@@ -83,7 +83,7 @@ PermissionStateFull testPlaceCallState = {
     .resDeviceID = { "local" },
 };
 
-PermissionDef testGetTelephonyStateDef = {
+inline PermissionDef testGetTelephonyStateDef = {
     .permissionName = "ohos.permission.GET_TELEPHONY_STATE",
     .bundleName = "tel_cellular_call_ims_gtest",
     .grantMode = 1, // SYSTEM_GRANT
@@ -94,7 +94,7 @@ PermissionDef testGetTelephonyStateDef = {
     .availableLevel = APL_SYSTEM_BASIC,
 };
 
-PermissionStateFull testGetTelephonyState = {
+inline PermissionStateFull testGetTelephonyState = {
     .grantFlags = { 2 }, // PERMISSION_USER_SET
     .grantStatus = { PermissionState::PERMISSION_GRANTED },
     .isGeneral = true,
@@ -102,7 +102,7 @@ PermissionStateFull testGetTelephonyState = {
     .resDeviceID = { "local" },
 };
 
-HapPolicyParams testPolicyParams = {
+inline HapPolicyParams testPolicyParams = {
     .apl = APL_SYSTEM_BASIC,
     .domain = "test.domain",
     .permList = { testPermPlaceCallDef, testConnectImsServiceDef, testGetTelephonyStateDef },

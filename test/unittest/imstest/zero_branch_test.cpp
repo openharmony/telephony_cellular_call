@@ -32,6 +32,7 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
+#include "ims_test.h"
 #include "securec.h"
 
 namespace OHOS {
@@ -60,6 +61,7 @@ public:
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo);
     void InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t num);
     void InitCsCallInfoList(CallInfoList &callInfoList, int32_t num);
+    void MakeCallInfoParcelData(bool isError, MessageParcel &data);
 };
 
 void BranchTest::SetUpTestCase()
@@ -106,6 +108,20 @@ void BranchTest::InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t n
     }
 }
 
+void BranchTest::MakeCallInfoParcelData(bool isError, MessageParcel &data)
+{
+    if (isError) {
+        int32_t errorSize = 0;
+        data.WriteInt32(errorSize);
+    } else {
+        CellularCallInfo callInfo;
+        callInfo.slotId = -1;
+        int32_t size = 1;
+        data.WriteInt32(size);
+        data.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
+    }
+}
+
 void BranchTest::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
 {
     callInfoList.callSize = num;
@@ -125,6 +141,7 @@ void BranchTest::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
  */
 HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallConfig config;
     config.SetDomainPreferenceMode(SIM1_SLOTID, 1);
     config.SetDomainPreferenceMode(SIM1_SLOTID, -1);
@@ -154,6 +171,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
  */
 HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallConfig config;
     std::u16string cameraId = u"";
     int32_t x = 0;
@@ -177,6 +195,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | L
  */
 HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallConfig config;
     config.SetMute(SIM1_SLOTID, 0);
     config.GetMute(SIM1_SLOTID);
@@ -212,6 +231,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | L
  */
 HWTEST_F(BranchTest, Telephony_CellularCallSupplement_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallSupplement callSup;
     MMIData mmiDataEmp = {};
     MMIData mmiDataAct = { .actionString = "*" };
@@ -269,6 +289,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_001, Function | MediumTest
  */
 HWTEST_F(BranchTest, Telephony_CellularCallSupplement_002, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallSupplement callSup;
     callSup.SendUssd(SIM1_SLOTID, "*#21#");
     PinPukResponse pinPuk;
@@ -314,6 +335,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_002, Function | MediumTest
  */
 HWTEST_F(BranchTest, Telephony_CellularCallSupplement_003, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallSupplement callSup;
     GetColpResult getColpResult;
     std::string message = "";
@@ -357,6 +379,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_003, Function | MediumTest
  */
 HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CSControl csControl;
     CellularCallInfo cellularCallInfo;
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
@@ -404,6 +427,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
  */
 HWTEST_F(BranchTest, Telephony_CellularCallImsControl_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     IMSControl imsControl;
     CellularCallInfo cellularCallInfo;
     int32_t invalidSupType = -1;
@@ -450,6 +474,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_001, Function | MediumTest
  */
 HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest | Level3)
 {
+    AccessToken token;
     IMSControl imsControl;
     ImsCurrentCallList ImsCallList;
     imsControl.ReportImsCallsData(SIM1_SLOTID, ImsCallList);
@@ -474,6 +499,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest
  */
 HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     CellularCallConnectionIMS callConn;
     ImsDialInfoStruct dialRequest;
     callConn.DialRequest(SIM1_SLOTID, dialRequest);
@@ -507,6 +533,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
  */
 HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumTest | Level3)
 {
+    AccessToken token;
     ConfigRequest configReq;
     configReq.SetDomainPreferenceModeRequest(SIM1_SLOTID, 1);
     configReq.GetDomainPreferenceModeRequest(SIM1_SLOTID);
@@ -545,5 +572,545 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumT
     configReq.UpdateImsCapabilities(SIM1_SLOTID, imsCapabilityList);
 }
 
+/**
+ * @tc.number   Telephony_CellularCallStub_001
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_001, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    MessageParcel reply;
+
+    MessageParcel dialErrorData;
+    MakeCallInfoParcelData(true, dialErrorData);
+    callStub.OnDialInner(dialErrorData, reply);
+    MessageParcel dialData;
+    MakeCallInfoParcelData(false, dialData);
+    callStub.OnDialInner(dialData, reply);
+
+    MessageParcel hangUpErrorData;
+    MakeCallInfoParcelData(true, hangUpErrorData);
+    callStub.OnHangUpInner(hangUpErrorData, reply);
+    MessageParcel hangUpData;
+    MakeCallInfoParcelData(false, hangUpData);
+    hangUpData.WriteInt32(1);
+    callStub.OnHangUpInner(hangUpData, reply);
+
+    MessageParcel rejectErrorData;
+    MakeCallInfoParcelData(true, rejectErrorData);
+    callStub.OnRejectInner(rejectErrorData, reply);
+    MessageParcel rejectData;
+    MakeCallInfoParcelData(false, rejectData);
+    callStub.OnRejectInner(rejectData, reply);
+
+    MessageParcel answerErrorData;
+    MakeCallInfoParcelData(true, answerErrorData);
+    callStub.OnAnswerInner(answerErrorData, reply);
+    MessageParcel answerData;
+    MakeCallInfoParcelData(false, answerData);
+    callStub.OnAnswerInner(answerData, reply);
+
+    MessageParcel holdErrorData;
+    MakeCallInfoParcelData(true, holdErrorData);
+    callStub.OnHoldCallInner(holdErrorData, reply);
+    MessageParcel holdData;
+    MakeCallInfoParcelData(false, answerData);
+    callStub.OnHoldCallInner(holdData, reply);
+
+    MessageParcel unholdErrorData;
+    MakeCallInfoParcelData(true, unholdErrorData);
+    callStub.OnUnHoldCallInner(unholdErrorData, reply);
+    MessageParcel unholdData;
+    MakeCallInfoParcelData(false, unholdData);
+    callStub.OnUnHoldCallInner(unholdData, reply);
+
+    MessageParcel switchCallErrorData;
+    MakeCallInfoParcelData(true, switchCallErrorData);
+    callStub.OnSwitchCallInner(switchCallErrorData, reply);
+    MessageParcel switchCallData;
+    MakeCallInfoParcelData(false, switchCallData);
+    callStub.OnSwitchCallInner(switchCallData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_002, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    MessageParcel reply;
+    int32_t size = 1;
+
+    MessageParcel combineErrorData;
+    MakeCallInfoParcelData(true, combineErrorData);
+    callStub.OnCombineConferenceInner(combineErrorData, reply);
+    MessageParcel combineData;
+    MakeCallInfoParcelData(false, combineData);
+    callStub.OnCombineConferenceInner(combineData, reply);
+
+    MessageParcel separateErrorData;
+    MakeCallInfoParcelData(true, separateErrorData);
+    callStub.OnSeparateConferenceInner(separateErrorData, reply);
+    MessageParcel separateData;
+    MakeCallInfoParcelData(false, separateData);
+    callStub.OnSeparateConferenceInner(separateData, reply);
+
+    MessageParcel kickOutErrorData;
+    MakeCallInfoParcelData(true, kickOutErrorData);
+    callStub.OnKickOutFromConferenceInner(kickOutErrorData, reply);
+    MessageParcel kickOutData;
+    MakeCallInfoParcelData(false, kickOutData);
+    callStub.OnKickOutFromConferenceInner(kickOutData, reply);
+
+    MessageParcel stopDtmfErrorData;
+    MakeCallInfoParcelData(true, stopDtmfErrorData);
+    callStub.OnStopDtmfInner(stopDtmfErrorData, reply);
+    MessageParcel stopDtmfData;
+    MakeCallInfoParcelData(false, stopDtmfData);
+    callStub.OnStopDtmfInner(stopDtmfData, reply);
+
+    MessageParcel postDialErrorData;
+    MakeCallInfoParcelData(true, postDialErrorData);
+    callStub.OnPostDialProceedInner(postDialErrorData, reply);
+    MessageParcel postDialData;
+    MakeCallInfoParcelData(false, postDialData);
+    postDialData.WriteBool(false);
+    callStub.OnPostDialProceedInner(postDialData, reply);
+
+    MessageParcel cameraData;
+    cameraData.WriteInt32(size);
+    callStub.OnCtrlCameraInner(cameraData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_003
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_003, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    CellularCallInfo callInfo;
+    callInfo.slotId = -1;
+    int32_t errorSize = -1;
+    int32_t size = 1;
+    MessageParcel reply;
+
+    MessageParcel hangUpAllData;
+    hangUpAllData.WriteInt32(size);
+    callStub.OnHangUpAllConnectionInner(hangUpAllData, reply);
+    MessageParcel startDtmfData;
+    startDtmfData.WriteInt32(size);
+    startDtmfData.WriteInt8('1');
+    startDtmfData.WriteRawData((const void *)&callInfo, sizeof(CellularCallInfo));
+    callStub.OnStartDtmfInner(startDtmfData, reply);
+    MessageParcel sendDtmfData;
+    sendDtmfData.WriteInt32(size);
+    sendDtmfData.WriteInt8('1');
+    sendDtmfData.WriteRawData((const void *)&callInfo, sizeof(CellularCallInfo));
+    callStub.OnSendDtmfInner(sendDtmfData, reply);
+    MessageParcel emergencyData;
+    emergencyData.WriteInt32(size);
+    emergencyData.WriteInt32(errorSize);
+    callStub.OnIsEmergencyPhoneNumberInner(emergencyData, reply);
+    MessageParcel setReadyData;
+    setReadyData.WriteInt32(errorSize);
+    callStub.OnSetReadyToCallInner(setReadyData, reply);
+    MessageParcel setCallTransferData;
+    setCallTransferData.WriteInt32(size);
+    setCallTransferData.WriteInt32(errorSize);
+    callStub.OnSetCallTransferInner(setCallTransferData, reply);
+    MessageParcel canSetTimerData;
+    canSetTimerData.WriteInt32(size);
+    canSetTimerData.WriteInt32(errorSize);
+    callStub.OnCanSetCallTransferTimeInner(canSetTimerData, reply);
+    MessageParcel getCallTransferData;
+    getCallTransferData.WriteInt32(size);
+    getCallTransferData.WriteInt32(errorSize);
+    callStub.OnGetCallTransferInner(getCallTransferData, reply);
+    MessageParcel setCallWaitData;
+    setCallWaitData.WriteInt32(size);
+    setCallWaitData.WriteInt32(errorSize);
+    callStub.OnSetCallWaitingInner(setCallWaitData, reply);
+    MessageParcel getCallWaitData;
+    getCallWaitData.WriteInt32(size);
+    getCallWaitData.WriteInt32(errorSize);
+    callStub.OnGetCallWaitingInner(getCallWaitData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_004
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_004, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t errorSize = -1;
+    int32_t size = 1;
+    MessageParcel reply;
+
+    MessageParcel setCallRestData;
+    setCallRestData.WriteInt32(size);
+    setCallRestData.WriteInt32(errorSize);
+    callStub.OnSetCallRestrictionInner(setCallRestData, reply);
+    MessageParcel getCallRestData;
+    getCallRestData.WriteInt32(size);
+    getCallRestData.WriteInt32(errorSize);
+    callStub.OnGetCallRestrictionInner(getCallRestData, reply);
+    MessageParcel setCallRestPwdData;
+    setCallRestPwdData.WriteInt32(size);
+    setCallRestPwdData.WriteInt32(errorSize);
+    callStub.OnSetCallRestrictionPasswordInner(setCallRestPwdData, reply);
+    MessageParcel setDomainData;
+    setDomainData.WriteInt32(size);
+    setDomainData.WriteInt32(errorSize);
+    callStub.OnSetDomainPreferenceModeInner(setDomainData, reply);
+    MessageParcel getDomainData;
+    getDomainData.WriteInt32(size);
+    getDomainData.WriteInt32(errorSize);
+    callStub.OnGetDomainPreferenceModeInner(getDomainData, reply);
+    MessageParcel setImsSwitchData;
+    setImsSwitchData.WriteInt32(size);
+    setImsSwitchData.WriteInt32(errorSize);
+    callStub.OnSetImsSwitchStatusInner(setImsSwitchData, reply);
+    MessageParcel getImsSwitchData;
+    getImsSwitchData.WriteInt32(size);
+    getImsSwitchData.WriteInt32(errorSize);
+    callStub.OnGetImsSwitchStatusInner(getImsSwitchData, reply);
+    MessageParcel setVonrData;
+    setVonrData.WriteInt32(size);
+    setVonrData.WriteInt32(errorSize);
+    callStub.OnSetVoNRStateInner(setVonrData, reply);
+    MessageParcel getVonrData;
+    getVonrData.WriteInt32(size);
+    getVonrData.WriteInt32(errorSize);
+    callStub.OnGetVoNRStateInner(getVonrData, reply);
+    MessageParcel setconfigData;
+    setconfigData.WriteInt32(size);
+    setconfigData.WriteInt32(errorSize);
+    callStub.OnSetImsConfigStringInner(setconfigData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_005
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_005, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t errorSize = -1;
+    int32_t size = 1;
+    MessageParcel reply;
+
+    MessageParcel setconfigData;
+    setconfigData.WriteInt32(size);
+    setconfigData.WriteInt32(errorSize);
+    callStub.OnSetImsConfigIntInner(setconfigData, reply);
+    MessageParcel getconfigData;
+    getconfigData.WriteInt32(size);
+    getconfigData.WriteInt32(errorSize);
+    callStub.OnGetImsConfigInner(getconfigData, reply);
+    MessageParcel setFeatureData;
+    setFeatureData.WriteInt32(size);
+    setFeatureData.WriteInt32(errorSize);
+    callStub.OnSetImsFeatureValueInner(setFeatureData, reply);
+    MessageParcel getFeatureData;
+    getFeatureData.WriteInt32(size);
+    getFeatureData.WriteInt32(errorSize);
+    callStub.OnGetImsFeatureValueInner(getFeatureData, reply);
+    MessageParcel setMuteData;
+    setMuteData.WriteInt32(size);
+    setMuteData.WriteInt32(errorSize);
+    callStub.OnSetMuteInner(setMuteData, reply);
+    MessageParcel getMuteData;
+    getMuteData.WriteInt32(size);
+    getMuteData.WriteInt32(errorSize);
+    callStub.OnGetMuteInner(getMuteData, reply);
+    MessageParcel closeUssdData;
+    closeUssdData.WriteInt32(size);
+    closeUssdData.WriteInt32(errorSize);
+    callStub.OnCloseUnFinishedUssdInner(closeUssdData, reply);
+    MessageParcel clearCallsData;
+    MakeCallInfoParcelData(false, clearCallsData);
+    callStub.OnClearAllCallsInner(clearCallsData, reply);
+    MessageParcel updateMediaData;
+    MakeCallInfoParcelData(false, updateMediaData);
+    updateMediaData.WriteInt32(size);
+    callStub.OnUpdateCallMediaModeInner(updateMediaData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_006
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t errorSize = -1;
+    int32_t size = 1;
+    MessageParcel reply;
+    MessageParcel setPreviewData;
+    setPreviewData.WriteInt32(errorSize);
+    callStub.OnSetPreviewWindowInner(setPreviewData, reply);
+    MessageParcel setDisplayData;
+    setDisplayData.WriteInt32(errorSize);
+    callStub.OnSetDisplayWindowInner(setDisplayData, reply);
+    MessageParcel setCameraData;
+    setCameraData.WriteInt32(errorSize);
+    callStub.OnSetCameraZoomInner(setCameraData, reply);
+    MessageParcel setImageData;
+    setImageData.WriteInt32(errorSize);
+    callStub.OnSetPauseImageInner(setImageData, reply);
+    MessageParcel setDirectionData;
+    setDirectionData.WriteInt32(errorSize);
+    callStub.OnSetDeviceDirectionInner(setDirectionData, reply);
+
+    MessageParcel setEmergencyData;
+    setEmergencyData.WriteInt32(size);
+    setEmergencyData.WriteInt32(errorSize);
+    setEmergencyData.WriteInt32(size);
+    if (setEmergencyData.WriteString("123") && setEmergencyData.WriteString("456") &&
+        setEmergencyData.WriteInt32(size) && setEmergencyData.WriteInt32(size) &&
+        setEmergencyData.WriteInt32(size)) {
+        callStub.OnSetEmergencyCallList(setEmergencyData, reply);
+    }
+
+    MessageParcel registerData;
+    registerData.WriteInt32(size);
+    callStub.OnRegisterCallBackInner(registerData, reply);
+    MessageParcel unRegisterData;
+    unRegisterData.WriteInt32(errorSize);
+    callStub.OnUnRegisterCallBackInner(unRegisterData, reply);
+    MessageParcel inviteData;
+    registerData.WriteInt32(size);
+    inviteData.WriteInt32(errorSize);
+    callStub.OnInviteToConferenceInner(inviteData, reply);
+    MessageParcel startRttData;
+    startRttData.WriteInt32(size);
+    startRttData.WriteInt32(errorSize);
+    startRttData.WriteString("1");
+    callStub.OnStartRttInner(startRttData, reply);
+    MessageParcel stopRttData;
+    stopRttData.WriteInt32(size);
+    stopRttData.WriteInt32(errorSize);
+    callStub.OnStopRttInner(stopRttData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallService_001
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    CellularCallService cellularCall;
+    std::vector<std::u16string> args = { u"1", u"2" };
+    cellularCall.Dump(-1, args);
+    cellularCall.Dump(1, args);
+    cellularCall.GetServiceRunningState();
+    cellularCall.GetBindTime();
+    cellularCall.GetEndTime();
+    cellularCall.GetSpendTime();
+
+    CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
+    CellularCallInfo imsCallInfo = { .callType = CallType::TYPE_IMS };
+    CellularCallInfo errCallInfo = { .callType = CallType::TYPE_ERR_CALL };
+    cellularCall.Dial(csCallInfo);
+    cellularCall.Dial(imsCallInfo);
+    cellularCall.Dial(errCallInfo);
+
+    cellularCall.HangUp(csCallInfo, CallSupplementType::TYPE_HANG_UP_HOLD_WAIT);
+    cellularCall.HangUp(imsCallInfo, CallSupplementType::TYPE_HANG_UP_HOLD_WAIT);
+    cellularCall.HangUp(errCallInfo, CallSupplementType::TYPE_HANG_UP_HOLD_WAIT);
+
+    cellularCall.Reject(csCallInfo);
+    cellularCall.Reject(imsCallInfo);
+    cellularCall.Reject(errCallInfo);
+
+    cellularCall.Answer(csCallInfo);
+    cellularCall.Answer(imsCallInfo);
+    cellularCall.Answer(errCallInfo);
+
+    cellularCall.HoldCall(csCallInfo);
+    cellularCall.HoldCall(imsCallInfo);
+    cellularCall.HoldCall(errCallInfo);
+
+    cellularCall.UnHoldCall(csCallInfo);
+    cellularCall.UnHoldCall(imsCallInfo);
+    cellularCall.UnHoldCall(errCallInfo);
+
+    cellularCall.SwitchCall(csCallInfo);
+    cellularCall.SwitchCall(imsCallInfo);
+    cellularCall.SwitchCall(errCallInfo);
+
+    bool enabled = false;
+    std::string phoneNum = "000";
+    cellularCall.IsEmergencyPhoneNumber(INVALID_SLOTID, phoneNum, enabled);
+    cellularCall.IsEmergencyPhoneNumber(SIM1_SLOTID, phoneNum, enabled);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallService_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    CellularCallService cellularCall;
+    CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
+    CellularCallInfo imsCallInfo = { .callType = CallType::TYPE_IMS };
+    CellularCallInfo errCallInfo = { .callType = CallType::TYPE_ERR_CALL };
+    EmergencyCall ecc;
+    std::vector<EmergencyCall> eccVec;
+    eccVec.push_back(ecc);
+    cellularCall.SetEmergencyCallList(SIM1_SLOTID, eccVec);
+    cellularCall.CombineConference(csCallInfo);
+    cellularCall.CombineConference(imsCallInfo);
+    cellularCall.CombineConference(errCallInfo);
+
+    cellularCall.SeparateConference(csCallInfo);
+    cellularCall.SeparateConference(imsCallInfo);
+    cellularCall.SeparateConference(errCallInfo);
+
+    std::vector<std::string> numberList = { "111", "222" };
+    cellularCall.InviteToConference(SIM1_SLOTID, numberList);
+    cellularCall.KickOutFromConference(csCallInfo);
+    cellularCall.KickOutFromConference(imsCallInfo);
+    cellularCall.KickOutFromConference(errCallInfo);
+    cellularCall.HangUpAllConnection();
+    cellularCall.HangUpAllConnection(SIM1_SLOTID);
+
+    cellularCall.SetReadyToCall(SIM1_SLOTID, 0, true);
+    cellularCall.SetReadyToCall(SIM1_SLOTID, 1, true);
+    cellularCall.SetReadyToCall(SIM1_SLOTID, 3, true);
+    cellularCall.UpdateImsCallMode(csCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
+    cellularCall.StartDtmf('*', csCallInfo);
+    cellularCall.StartDtmf('*', imsCallInfo);
+    cellularCall.StartDtmf('*', errCallInfo);
+    cellularCall.StopDtmf(csCallInfo);
+    cellularCall.StopDtmf(imsCallInfo);
+    cellularCall.StopDtmf(errCallInfo);
+
+    cellularCall.PostDialProceed(csCallInfo, true);
+    cellularCall.PostDialProceed(imsCallInfo, true);
+    cellularCall.PostDialProceed(errCallInfo, true);
+    cellularCall.SendDtmf('*', csCallInfo);
+    cellularCall.SendDtmf('*', imsCallInfo);
+    cellularCall.SendDtmf('*', errCallInfo);
+    std::string msg = "";
+    cellularCall.StartRtt(SIM1_SLOTID, msg);
+    cellularCall.StopRtt(SIM1_SLOTID);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallService_003
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    CellularCallService cellularCall;
+    CallTransferInfo cTInfoDisable = { .settingType = CallTransferSettingType::CALL_TRANSFER_DISABLE };
+    CallTransferInfo cTInfoEnable = { .settingType = CallTransferSettingType::CALL_TRANSFER_ENABLE };
+    cellularCall.SetCallTransferInfo(SIM1_SLOTID, cTInfoDisable);
+    cellularCall.SetCallTransferInfo(SIM1_SLOTID, cTInfoEnable);
+    bool result = false;
+    cellularCall.CanSetCallTransferTime(SIM1_SLOTID, result);
+    cellularCall.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
+    cellularCall.SetCallWaiting(SIM1_SLOTID, true);
+    cellularCall.GetCallWaiting(SIM1_SLOTID);
+    CallRestrictionInfo crInfo;
+    cellularCall.SetCallRestriction(SIM1_SLOTID, crInfo);
+    cellularCall.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
+    std::string password = "1111";
+    cellularCall.SetCallRestrictionPassword(
+        SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING, password.c_str(), password.c_str());
+    cellularCall.SetDomainPreferenceMode(SIM1_SLOTID, 1);
+    cellularCall.GetDomainPreferenceMode(SIM1_SLOTID);
+    cellularCall.SetImsSwitchStatus(SIM1_SLOTID, true);
+    bool enabled = false;
+    cellularCall.GetImsSwitchStatus(SIM1_SLOTID, enabled);
+    std::string value = "";
+    cellularCall.SetImsConfig(SIM1_SLOTID, ImsConfigItem::ITEM_VIDEO_QUALITY, value);
+    int32_t state = 0;
+    cellularCall.SetVoNRState(SIM1_SLOTID, state);
+    cellularCall.GetVoNRState(SIM1_SLOTID, state);
+    cellularCall.SetImsConfig(SIM1_SLOTID, ImsConfigItem::ITEM_VIDEO_QUALITY, 1);
+    cellularCall.GetImsConfig(SIM1_SLOTID, ImsConfigItem::ITEM_VIDEO_QUALITY);
+    cellularCall.SetImsFeatureValue(SIM1_SLOTID, FeatureType::TYPE_VOICE_OVER_LTE, 1);
+    cellularCall.GetImsFeatureValue(SIM1_SLOTID, FeatureType::TYPE_VOICE_OVER_LTE);
+    std::u16string cameraId = u"";
+    cellularCall.CtrlCamera(cameraId, 111, 121);
+    cellularCall.SetPreviewWindow(0, 0, 0, 100, 100);
+    cellularCall.SetDisplayWindow(0, 0, 0, 100, 100);
+    cellularCall.SetCameraZoom(1.0);
+    std::u16string path = u"";
+    cellularCall.SetPauseImage(path);
+    cellularCall.SetDeviceDirection(0);
+    cellularCall.SetMute(SIM1_SLOTID, 0);
+    cellularCall.GetMute(SIM1_SLOTID);
+    cellularCall.CloseUnFinishedUssd(SIM1_SLOTID);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallService_004
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    CellularCallService cellularCall;
+    std::vector<CellularCallInfo> infos = {};
+    cellularCall.ClearAllCalls(infos);
+    cellularCall.IsNeedIms(SIM1_SLOTID);
+    cellularCall.GetCsControl(SIM1_SLOTID);
+    cellularCall.GetImsControl(SIM1_SLOTID);
+    std::shared_ptr<CSControl> csControl;
+    cellularCall.SetCsControl(SIM1_SLOTID, csControl);
+    std::shared_ptr<IMSControl> imsControl;
+    cellularCall.SetImsControl(SIM1_SLOTID, imsControl);
+    cellularCall.GetHandler(SIM1_SLOTID);
+    cellularCall.SetSrvccState(SrvccState::SRVCC_NONE);
+    cellularCall.GetSrvccState();
+    cellularCall.RegisterHandler();
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    cellularCall.StartCallManagerService();
+#endif
+    cellularCall.Init();
+    cellularCall.RegisterCoreServiceHandler();
+    cellularCall.CreateHandler();
+    cellularCall.SendEventRegisterHandler();
+
+    cellularCall.IsValidSlotId(SIM1_SLOTID);
+    CellularCallInfo imsCallInfo = { .callType = CallType::TYPE_IMS };
+    CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
+    cellularCall.UseImsForEmergency(imsCallInfo, true);
+    cellularCall.HandleCallManagerException();
+    cellularCall.HangUpWithCellularCallRestart(infos);
+    cellularCall.SetControl(imsCallInfo);
+    cellularCall.SetControl(csCallInfo);
+
+    sptr<ICallStatusCallback> callback;
+    cellularCall.RegisterCallManagerCallBack(callback);
+    cellularCall.UnRegisterCallManagerCallBack();
+    cellularCall.HandlerResetUnRegister();
+    cellularCall.OnStop();
+}
 } // namespace Telephony
 } // namespace OHOS
