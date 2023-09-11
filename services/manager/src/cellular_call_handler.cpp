@@ -1103,8 +1103,13 @@ void CellularCallHandler::GetCallTransferResponse(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("[slot%{public}d] cFQueryList is null", slotId_);
         return;
     }
+    SsRequestCommand ss;
+    int32_t ret = GetSsRequestCommand(cFQueryList->result.index, ss);
+    if (ret == TELEPHONY_SUCCESS) {
+        cFQueryList->result.reason = ss.cfReason;
+    }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(cFQueryList->result.index, flag);
+    ret = ConfirmAndRemoveSsRequestCommand(cFQueryList->result.index, flag);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }

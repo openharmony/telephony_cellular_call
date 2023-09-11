@@ -618,6 +618,7 @@ void CellularCallSupplement::EventGetCallTransferInfo(
     if (cFQueryList.result.result != TELEPHONY_SUCCESS && cFQueryList.callSize == 0) {
         CallForwardQueryResult failResult;
         failResult.result = cFQueryList.result.result;
+        failResult.reason = cFQueryList.result.reason;
         BuildCallForwardQueryInfo(failResult, message, flag);
     }
     for (auto queryResult : cFQueryList.calls) {
