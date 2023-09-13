@@ -19,7 +19,7 @@ CELLULAR_CALL_PATH = "../../.."
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ReportHungUpInfoFuzzTest") {
-  module_output_path = "cellular_call/ReportHungUpInfoFuzzTest"
+  module_output_path = "cellular_call/cellular_call"
   module_out_path = module_output_path
   fuzz_config_file =
       "${CELLULAR_CALL_PATH}/test/fuzztest/reporthungupinfo_fuzzer"
