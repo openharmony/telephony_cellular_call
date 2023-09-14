@@ -20,7 +20,7 @@ import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("GetCallRestrictionFuzzTest") {
-  module_output_path = "cellular_call/GetCallRestrictionFuzzTest"
+  module_output_path = "cellular_call/cellular_call"
   module_out_path = module_output_path
   fuzz_config_file =
       "${CELLULAR_CALL_PATH}/test/fuzztest/getcallrestriction_fuzzer"
