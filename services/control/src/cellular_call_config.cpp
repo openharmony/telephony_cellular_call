@@ -222,6 +222,13 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     TELEPHONY_LOGI("HandleSimRecordsLoaded slotId: %{public}d, sim state is :%{public}d", slotId, simState);
 }
 
+void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
+{
+    TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
+    ResetImsSwitch(slotId);
+    UpdateImsCapabilities(slotId, true);
+}
+
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
 {
     OperatorConfig operatorConfig;
@@ -237,8 +244,13 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
         return;
     }
 
-    ResetImsSwitch(slotId);
-    UpdateImsCapabilities(slotId, true);
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (hasSimCard) {
+        TELEPHONY_LOGD("Operator changed then reset ims slotId: %{public}d", slotId);
+        ResetImsSwitch(slotId);
+        UpdateImsCapabilities(slotId, true);
+    }
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
