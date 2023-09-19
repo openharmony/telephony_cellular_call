@@ -307,6 +307,13 @@ public:
     void HandleSimRecordsLoaded(int32_t slotId);
 
     /**
+     * HandleSimAccountLoaded
+     *
+     * @param slotId
+     */
+    void HandleSimAccountLoaded(int32_t slotId);
+
+    /**
      * Handle when operator config change.
      *
      * @param slotId

@@ -124,6 +124,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
     requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
+    requestFuncMap_[RadioEvent::RADIO_SIM_ACCOUNT_LOADED] = &CellularCallHandler::SimAccountLoadedReport;
     requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
@@ -586,6 +587,12 @@ void CellularCallHandler::SimRecordsLoadedReport(const AppExecFwk::InnerEvent::P
 {
     CellularCallConfig config;
     config.HandleSimRecordsLoaded(slotId_);
+}
+
+void CellularCallHandler::SimAccountLoadedReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    CellularCallConfig config;
+    config.HandleSimAccountLoaded(slotId_);
 }
 
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
