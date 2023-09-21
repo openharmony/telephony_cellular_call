@@ -79,6 +79,12 @@ ohos_shared_library("tel_cellular_call") {
     "samgr:samgr_proxy",
   ]
 
+  cflags_cc = [
+    "-fstack-protector-all",
+    "-O2",
+    "-D_FORTIFY_SOURCE=2",
+  ]
+
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
   }
