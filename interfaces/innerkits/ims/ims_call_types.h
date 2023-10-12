@@ -222,6 +222,10 @@ struct ImsCurrentCall {
      * Indicates alphanumeric representation of <number> corresponding to the entry found in phonebook;
      */
     std::string alpha = "";
+    /**
+     * Indicates the type of address, eg 145 = intl.
+     */
+    int32_t toa = 0;
 };
 
 /**
