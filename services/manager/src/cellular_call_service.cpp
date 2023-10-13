@@ -175,6 +175,8 @@ void CellularCallService::HandlerResetUnRegister()
             slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
+        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
+            slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
 #endif
@@ -216,6 +218,8 @@ void CellularCallService::RegisterCoreServiceHandler()
                 slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
             CoreManagerInner::GetInstance().RegisterCoreNotify(
                 slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
+            CoreManagerInner::GetInstance().RegisterCoreNotify(
+                slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
             CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
             CoreManagerInner::GetInstance().GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);

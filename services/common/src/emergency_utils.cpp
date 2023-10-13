@@ -47,13 +47,6 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
 {
     enabled = true;
     TELEPHONY_LOGI("IsEmergencyCallProcessing entry.");
-    std::vector<std::string> emergencyNumList = {
-        "110", "120", "119", "122", "112", "000", "911", "08", "118", "999",
-    };
-    if (std::find(emergencyNumList.begin(), emergencyNumList.end(), formatString) != emergencyNumList.end()) {
-        TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with local configuration data.");
-        return TELEPHONY_ERR_SUCCESS;
-    }
     CellularCallConfig config;
     ModuleServiceUtils dependDataObtain;
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);

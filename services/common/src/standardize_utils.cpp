@@ -61,5 +61,19 @@ void StandardizeUtils::ExtractAddressAndPostDial(const std::string &phoneString,
     }
 }
 
+std::vector<std::string> StandardizeUtils::Split(const std::string &str, const std::string &flag)
+{
+    std::vector<std::string> vec;
+    std::string::size_type start = 0;
+    std::string::size_type pos = 0;
+    while ((pos = str.find(flag, start)) != str.npos) {
+        vec.push_back(str.substr(start, pos - start));
+        start = pos + flag.size();
+    }
+    if (start != str.size()) {
+        vec.push_back(str.substr(start, str.size() - start));
+    }
+    return vec;
+}
 } // namespace Telephony
 } // namespace OHOS

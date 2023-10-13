@@ -126,6 +126,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
     requestFuncMap_[RadioEvent::RADIO_SIM_ACCOUNT_LOADED] = &CellularCallHandler::SimAccountLoadedReport;
     requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
+    requestFuncMap_[RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE] = &CellularCallHandler::ResidentNetworkChangeReport;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
@@ -593,6 +594,17 @@ void CellularCallHandler::SimAccountLoadedReport(const AppExecFwk::InnerEvent::P
 {
     CellularCallConfig config;
     config.HandleSimAccountLoaded(slotId_);
+}
+
+void CellularCallHandler::ResidentNetworkChangeReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<std::string>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    CellularCallConfig config;
+    config.HandleResidentNetworkChange(slotId_, *result);
 }
 
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
