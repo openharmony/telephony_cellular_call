@@ -308,6 +308,8 @@ public:
 
     void HandleResidentNetworkChange(int32_t slotId, std::string plmn);
 
+    void HandleNetworkStateChange(int32_t slotId);
+
     /**
      * HandleSimAccountLoaded
      *
@@ -326,7 +328,7 @@ public:
      * Get Ecc Call List
      *
      * @param slotId
-     * @return std::vector<std::string>
+     * @return std::vector<EmergencyCall>
      */
     std::vector<EmergencyCall> GetEccCallList(int32_t slotId);
 
@@ -462,7 +464,6 @@ public:
 
 private:
     static void InitDefaultOperatorConfig();
-    void UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc);
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);
     EmergencyCall BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from);
     void UniqueEccCallList(int32_t slotId, std::vector<EmergencyCall> &eccList);
@@ -497,6 +498,7 @@ private:
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
     static std::map<int32_t, std::string> curPlmn_;
+    static std::map<int32_t, RegServiceState> serviceState_;
     std::mutex mutex_;
     static std::mutex operatorMutex_;
     ConfigRequest configRequest_;

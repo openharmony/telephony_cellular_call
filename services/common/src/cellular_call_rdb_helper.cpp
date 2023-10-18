@@ -21,7 +21,7 @@
 namespace OHOS {
 namespace Telephony {
 static constexpr const char *GLOBAL_ECC_URI_SELECTION =
-    "datashare:///com.ohos.globaleccability/globalecc/ecc_list";
+    "datashare:///com.ohos.globaleccability/globalparams/ecc_list";
 
 CellularCallRdbHelper::CellularCallRdbHelper() : globalEccUri_(GLOBAL_ECC_URI_SELECTION) {}
 
@@ -73,7 +73,7 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
         result->GetColumnIndex(GlobalEccData::MCC, index);
         result->GetString(index, bean.mcc);
         result->GetColumnIndex(GlobalEccData::MNC, index);
-        result->GetString(index, bean.mnc);\
+        result->GetString(index, bean.mnc);
         result->GetColumnIndex(GlobalEccData::NUMERIC, index);
         result->GetString(index, bean.numeric);
         result->GetColumnIndex(GlobalEccData::ECC_WITH_CARD, index);

@@ -72,6 +72,7 @@ std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::allEccList_;
 std::map<int32_t, int32_t> CellularCallConfig::simState_;
 std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
+std::map<int32_t, RegServiceState> CellularCallConfig::serviceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
@@ -96,6 +97,8 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_VALUE_UNKNOWN));
+        CellularCallConfig::serviceState_.insert(std::pair<int, RegServiceState>(i,
+            RegServiceState::REG_STATE_UNKNOWN));
     }
 }
 
@@ -212,11 +215,6 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimStateChanged entry, slotId: %{public}d", slotId);
     if (CheckAndUpdateSimState(slotId)) {
-        if (curPlmn_[slotId].empty()) {
-            std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
-            std::string plmn = Str16ToStr8(u16Rplmn);
-            curPlmn_[slotId] = plmn;
-        }
         UpdateEccNumberList(slotId);
     }
 }
@@ -225,11 +223,6 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry, slotId: %{public}d", slotId);
     CheckAndUpdateSimState(slotId);
-    if (curPlmn_[slotId].empty()) {
-        std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
-        std::string plmn = Str16ToStr8(u16Rplmn);
-        curPlmn_[slotId] = plmn;
-    }
     UpdateEccNumberList(slotId);
 }
 
@@ -245,15 +238,32 @@ void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string
     UpdateEccNumberList(slotId);
 }
 
+void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
+{
+    TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
+    ModuleServiceUtils moduleUtils;
+    RegServiceState regState = moduleUtils.GetPsRegState(slotId);
+    if (serviceState_[slotId] == regState) {
+        TELEPHONY_LOGI("serviceState is not change, slotId: %{public}d", slotId);
+        return;
+    }
+    serviceState_[slotId] = regState;
+    CheckAndUpdateSimState(slotId);
+    UpdateEccNumberList(slotId);
+}
+
 void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 {
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<std::string> callList;
-    bool isRoaming = CoreManagerInner::GetInstance().GetPsRoamingState(slotId) >
-        static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN);
-    bool isHomeNetRegister = !hplmn.empty() && !isRoaming;
+    int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
+    bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
+        roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
+    ModuleServiceUtils moduleUtils;
+    bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
+    bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
     std::vector<GlobalEcc> eccVec;
     if (isHomeNetRegister && simState_[slotId] == SIM_PRESENT) {
         OperatorConfig operatorConfig;
@@ -268,8 +278,13 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
         }
     } else {
         if (curPlmn_[slotId].empty()) {
-            TELEPHONY_LOGE("curPlmn is empty");
-            return;
+            std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
+            std::string rplmn = Str16ToStr8(u16Rplmn);
+            if (rplmn.empty()) {
+                TELEPHONY_LOGE("rplmn is empty");
+                return;
+            }
+            curPlmn_[slotId] = rplmn;
         }
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec);
         if (!eccVec.empty()) {
@@ -295,11 +310,6 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true);
     CheckAndUpdateSimState(slotId);
-    if (curPlmn_[slotId].empty()) {
-        std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
-        std::string plmn = Str16ToStr8(u16Rplmn);
-        curPlmn_[slotId] = plmn;
-    }
     UpdateEccNumberList(slotId);
 }
 
@@ -752,9 +762,12 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
-    bool isRoaming = CoreManagerInner::GetInstance().GetPsRoamingState(slotId) >
-        static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN);
-    if (hasSim && !isRoaming && !hplmn.empty()) {
+    int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
+    bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
+        roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
+    ModuleServiceUtils moduleUtils;
+    bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
+    if (hasSim && isNetworkInService && !isRoaming && !hplmn.empty()) {
         std::vector<GlobalEcc> eccVec;
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
         if (!eccVec.empty()) {
@@ -780,7 +793,8 @@ void CellularCallConfig::UniqueEccCallList(int32_t slotId, std::vector<Emergency
         }
     }
     for (auto call : allEccList_[slotId]) {
-        TELEPHONY_LOGI("UniqueEccCallList end slotId %{public}d eccNum:%{public}s, mcc:%{public}s", slotId, call.eccNum.c_str(), call.mcc.c_str());
+        TELEPHONY_LOGI("UniqueEccCallList end slotId %{public}d eccNum:%{public}s, mcc:%{public}s",
+            slotId, call.eccNum.c_str(), call.mcc.c_str());
     }
 }
 
