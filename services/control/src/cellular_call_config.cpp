@@ -264,7 +264,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     ModuleServiceUtils moduleUtils;
     bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
     bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
-    std::vector<GlobalEcc> eccVec;
+    std::vector<EccNum> eccVec;
     if (isHomeNetRegister && simState_[slotId] == SIM_PRESENT) {
         OperatorConfig operatorConfig;
         CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
@@ -768,7 +768,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
     ModuleServiceUtils moduleUtils;
     bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
     if (hasSim && isNetworkInService && !isRoaming && !hplmn.empty()) {
-        std::vector<GlobalEcc> eccVec;
+        std::vector<EccNum> eccVec;
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
         if (!eccVec.empty()) {
             std::string ecc = eccVec[0].ecc_fake;

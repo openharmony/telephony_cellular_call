@@ -29,7 +29,7 @@
 #include "system_ability_definition.h"
 #include "uri.h"
 
-#include "global_ecc_data.h"
+#include "global_params_data.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -37,7 +37,7 @@ class CellularCallRdbHelper : public DelayedSingleton<CellularCallRdbHelper> {
     DECLARE_DELAYED_SINGLETON(CellularCallRdbHelper);
 
 public:
-    int32_t QueryEccList(const std::string &numeric, std::vector<GlobalEcc> &eccVec);
+    int32_t QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec);
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataAbilityHelper();

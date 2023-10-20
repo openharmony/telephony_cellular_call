@@ -21,7 +21,7 @@
 namespace OHOS {
 namespace Telephony {
 static constexpr const char *GLOBAL_ECC_URI_SELECTION =
-    "datashare:///com.ohos.globaleccability/globalparams/ecc_list";
+    "datashare:///com.ohos.globalparamsability/globalparams/ecc_data";
 
 CellularCallRdbHelper::CellularCallRdbHelper() : globalEccUri_(GLOBAL_ECC_URI_SELECTION) {}
 
@@ -40,10 +40,10 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbi
         TELEPHONY_LOGE("CellularCallRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
-    return DataShare::DataShareHelper::Creator(remoteObj, GLOBAL_ECC_URI);
+    return DataShare::DataShareHelper::Creator(remoteObj, GLOBAL_PARAMS_URI);
 }
 
-int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<GlobalEcc> &eccVec)
+int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec)
 {
     std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper();
     if (dataShareHelper == nullptr) {
@@ -52,7 +52,7 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
     }
     std::vector<std::string> columns;
     DataShare::DataSharePredicates predicates;
-    predicates.EqualTo(GlobalEccData::NUMERIC, numeric);
+    predicates.EqualTo(EccData::NUMERIC, numeric);
     std::shared_ptr<DataShare::DataShareResultSet> result =
         dataShareHelper->Query(globalEccUri_, predicates, columns);
     if (result == nullptr) {
@@ -62,25 +62,25 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
     }
     int rowCnt = 0;
     result->GetRowCount(rowCnt);
-    TELEPHONY_LOGI("CellularCallRdbHelper::query ecc_list rowCnt = %{public}d", rowCnt);
+    TELEPHONY_LOGI("CellularCallRdbHelper::query ecc_data rowCnt = %{public}d", rowCnt);
     for (int32_t index = 0; index < rowCnt; index++) {
-        GlobalEcc bean;
+        EccNum bean;
         result->GoToRow(index);
-        result->GetColumnIndex(GlobalEccData::ID, index);
+        result->GetColumnIndex(EccData::ID, index);
         result->GetInt(index, bean.id);
-        result->GetColumnIndex(GlobalEccData::NAME, index);
+        result->GetColumnIndex(EccData::NAME, index);
         result->GetString(index, bean.name);
-        result->GetColumnIndex(GlobalEccData::MCC, index);
+        result->GetColumnIndex(EccData::MCC, index);
         result->GetString(index, bean.mcc);
-        result->GetColumnIndex(GlobalEccData::MNC, index);
+        result->GetColumnIndex(EccData::MNC, index);
         result->GetString(index, bean.mnc);
-        result->GetColumnIndex(GlobalEccData::NUMERIC, index);
+        result->GetColumnIndex(EccData::NUMERIC, index);
         result->GetString(index, bean.numeric);
-        result->GetColumnIndex(GlobalEccData::ECC_WITH_CARD, index);
+        result->GetColumnIndex(EccData::ECC_WITH_CARD, index);
         result->GetString(index, bean.ecc_withcard);
-        result->GetColumnIndex(GlobalEccData::ECC_NO_CARD, index);
+        result->GetColumnIndex(EccData::ECC_NO_CARD, index);
         result->GetString(index, bean.ecc_nocard);
-        result->GetColumnIndex(GlobalEccData::ECC_FAKE, index);
+        result->GetColumnIndex(EccData::ECC_FAKE, index);
         result->GetString(index, bean.ecc_fake);
         eccVec.push_back(bean);
     }
