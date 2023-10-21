@@ -201,7 +201,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | L
     config.GetMute(SIM1_SLOTID);
     config.GetEmergencyCallList(SIM1_SLOTID);
     std::vector<EmergencyCall> eccVec = {};
-    config.SetEmergencyCallList(SIM1_SLOTID);
     config.SetEmergencyCallList(SIM1_SLOTID, eccVec);
     config.SetTempMode(SIM1_SLOTID);
     config.InitModeActive();

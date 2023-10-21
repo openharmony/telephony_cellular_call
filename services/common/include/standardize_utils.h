@@ -44,6 +44,8 @@ public:
 
     void ExtractAddressAndPostDial(const std::string &phoneString, std::string &networkAddress, std::string &postDial);
 
+    static std::vector<std::string> Split(const std::string &str, const std::string &flag);
+
     typedef std::uint64_t hash_t64;
 
     static hash_t64 Hash_(char const *hashStr)

@@ -254,7 +254,7 @@ public:
      * @param eccVec
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetEmergencyCallList(int32_t slotId, const std::vector<EmergencyCall> &eccVec);
+    int32_t SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec);
 
     /**
      * SetTempMode
@@ -306,6 +306,10 @@ public:
      */
     void HandleSimRecordsLoaded(int32_t slotId);
 
+    void HandleResidentNetworkChange(int32_t slotId, std::string plmn);
+
+    void HandleNetworkStateChange(int32_t slotId);
+
     /**
      * HandleSimAccountLoaded
      *
@@ -327,8 +331,6 @@ public:
      * @return std::vector<EmergencyCall>
      */
     std::vector<EmergencyCall> GetEccCallList(int32_t slotId);
-
-    int32_t SetEmergencyCallList(int32_t slotId);
 
     std::string GetMcc(int32_t slotId_);
 
@@ -462,12 +464,11 @@ public:
 
 private:
     static void InitDefaultOperatorConfig();
-    void UpdateEccWhenOperatorConfigChange(int32_t slotId, OperatorConfig &opc);
-    EmergencyCall BuildDefaultEmergencyCall(const std::string &number);
+    EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);
     EmergencyCall BuildEmergencyCall(int32_t slotId, const EmergencyInfo &from);
-    void UniqueEccCallList(int32_t slotId_);
-    void MergeEccCallList(int32_t slotId_);
-    bool IsNeedUpdateEccListWhenSimStateChanged(int32_t slotId);
+    void UniqueEccCallList(int32_t slotId, std::vector<EmergencyCall> &eccList);
+    void MergeEccCallList(int32_t slotId);
+    bool CheckAndUpdateSimState(int32_t slotId);
     int32_t ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc);
     void ParseBoolOperatorConfigs(
         int32_t slotId, std::map<int32_t, bool> &config, OperatorConfig &poc, std::string configName);
@@ -486,16 +487,18 @@ private:
     int32_t GetSwitchStatus(int32_t slotId) const;
     void SaveVoNRState(int32_t slotId, int32_t state);
     int32_t ObtainVoNRState(int32_t slotId);
+    void UpdateEccNumberList(int32_t slotId);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
-    static std::map<int32_t, std::vector<EmergencyCall>> eccListConfigMap_;
     static std::vector<EmergencyCall> eccList3gppHasSim_;
     static std::vector<EmergencyCall> eccList3gppNoSim_;
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
+    static std::map<int32_t, std::string> curPlmn_;
+    static std::map<int32_t, RegServiceState> serviceState_;
     std::mutex mutex_;
     static std::mutex operatorMutex_;
     ConfigRequest configRequest_;

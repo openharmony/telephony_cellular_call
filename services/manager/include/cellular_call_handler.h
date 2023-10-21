@@ -83,6 +83,10 @@ public:
 
     void SimAccountLoadedReport(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void ResidentNetworkChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void NetworkStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
+
     void DialResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void CommonResultEventHandling(const AppExecFwk::InnerEvent::Pointer &event, CellularCallEventInfo &eventInfo);
