@@ -46,7 +46,7 @@ std::string StandardizeUtils::FormatNumberAndToa(const std::string &phoneNumber,
     const int32_t TOA_INTER = 145;
     if (callToa == TOA_INTER && !phoneNumber.empty() && phoneNumber.front() != '+') {
         newString += '+';
-        for (char c : phoneString) {
+        for (char c : phoneNumber) {
             newString += c;
         }
     } else {
