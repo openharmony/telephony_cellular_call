@@ -44,7 +44,7 @@ public:
 
     /**
      * make sure there is a + in front of toa_international phone number
-     * 
+     *
      * @param string phone number
      * @param int32_t toa
     */
