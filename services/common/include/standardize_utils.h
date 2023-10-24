@@ -42,6 +42,14 @@ public:
      */
     std::string RemoveSeparatorsPhoneNumber(const std::string &phoneNum);
 
+    /**
+     * make sure there is a + in front of toa_international phone number
+     * 
+     * @param string phone number
+     * @param int32_t toa
+    */
+    std::string FormatNumberAndToa(const std::string &phoneNumber, const int32_t callToa);
+
     void ExtractAddressAndPostDial(const std::string &phoneString, std::string &networkAddress, std::string &postDial);
 
     static std::vector<std::string> Split(const std::string &str, const std::string &flag);

@@ -36,6 +36,25 @@ std::string StandardizeUtils::RemoveSeparatorsPhoneNumber(const std::string &pho
     return newString;
 }
 
+std::string StandardizeUtils::FormatNumberAndToa(const std::string &phoneNumber, const int32_t callToa)
+{
+    if (phoneNumber.empty()) {
+        TELEPHONY_LOGE("FormatNumberAndToa return, phoneNumber is empty.");
+        return phoneNumber;
+    }
+    std::string newString;
+    const int32_t TOA_INTER = 145;
+    if (callToa == TOA_INTER && !phoneNumber.empty() && phoneNumber.front() != '+') {
+        newString += '+';
+        for (char c : phoneNumber) {
+            newString += c;
+        }
+    } else {
+        newString = phoneNumber;
+    }
+    return newString;
+}
+
 void StandardizeUtils::ExtractAddressAndPostDial(const std::string &phoneString, std::string &networkAddress,
                                                  std::string &postDial)
 {
