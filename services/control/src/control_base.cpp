@@ -18,6 +18,7 @@
 #include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
+#include "core_service_client.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
 
@@ -27,11 +28,7 @@ const uint32_t WAIT_TIME_SECOND = 5;
 
 int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEcc)
 {
-    int32_t ret = CheckAirplaneModeScene(callInfo, isEcc);
-    if (ret != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("CheckAirplaneModeScene fail");
-        return ret;
-    }
+    HandleEcc(callInfo, isEcc, CheckAirplaneModeScene(callInfo, isEcc), CheckActivateSimScene(callInfo, isEcc));
     std::string dialString(callInfo.phoneNum);
     if (dialString.empty()) {
         TELEPHONY_LOGE("DialPreJudgment return, dialString is empty.");
@@ -115,32 +112,42 @@ void ControlBase::SetHangupReportIgnoredFlag(bool ignored)
     isIgnoredHangupReport_ = ignored;
 }
 
-int32_t ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc)
+bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc)
 {
     bool isAirplaneModeOn = false;
     ModuleServiceUtils moduleServiceUtils;
-    if (moduleServiceUtils.GetAirplaneMode(isAirplaneModeOn) == TELEPHONY_SUCCESS && isAirplaneModeOn) {
-        int32_t ret = HandleEcc(callInfo, isEcc);
-        if (ret != TELEPHONY_SUCCESS) {
-            TELEPHONY_LOGE("HandleEcc fail");
-            return ret;
-        }
-    }
-    return TELEPHONY_SUCCESS;
+    return moduleServiceUtils.GetAirplaneMode(isAirplaneModeOn) == TELEPHONY_SUCCESS && isAirplaneModeOn;
 }
 
-int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc)
+bool ControlBase::CheckActivateSimScene(const CellularCallInfo &callInfo, bool isEcc)
+{
+    bool isActivateSim = true;
+    isActivateSim = DelayedRefSingleton<CoreServiceClient>::GetInstance().IsSimActive(callInfo.slotId);
+    return isActivateSim;
+}
+
+int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, bool isAirplaneModeOn, bool isActivateSim)
 {
     if (!isEcc) {
         TELEPHONY_LOGE("HandleEcc airplane mode is not ecc");
         return TELEPHONY_ERR_AIRPLANE_MODE_ON;
     }
 
-    ModuleServiceUtils moduleServiceUtils;
-    int32_t ret = moduleServiceUtils.UpdateRadioOn(callInfo.slotId);
-    if (ret != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("UpdateRadioOn fail");
-        return ret;
+    int32_t ret = TELEPHONY_SUCCESS;
+    if (isAirplaneModeOn) {
+        ModuleServiceUtils moduleServiceUtils;
+        ret = moduleServiceUtils.UpdateRadioOn(callInfo.slotId);
+        if (ret != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGE("UpdateRadioOn fail");
+            return ret;
+        }
+    }
+    if (!isActivateSim) {
+        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(callInfo.slotId, true);
+        if (ret != TELEPHONY_SUCCESS) {
+            TELEPHONY_LOGE("UpdateRadioOn fail");
+            return ret;
+        }
     }
     std::unique_lock<std::mutex> lock(mutex_);
     CellularCallConfig cellularCallConfig;
