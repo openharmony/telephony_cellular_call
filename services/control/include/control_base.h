@@ -431,12 +431,17 @@ private:
     /**
      * Check call with airplane mode on
      */
-    int32_t CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc);
+    bool CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc);
+
+    /**
+     * check call with activate sim
+    */
+    bool CheckActivateSimScene(const CellularCallInfo &callInfo, bool isEcc);
 
     /**
      * Handle call with airplane mode on
      */
-    int32_t HandleEcc(const CellularCallInfo &callInfo, bool isEcc);
+    int32_t HandleEcc(const CellularCallInfo &callInfo, bool isEcc, bool isAirplaneModeOn, bool isActivateSim);
 
 private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
