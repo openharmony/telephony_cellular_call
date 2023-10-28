@@ -415,10 +415,8 @@ void CellularCallHandler::CommonResultEventHandling(
             eventInfo.eventId = RequestResultEventId::RESULT_SWAP_SEND_FAILED;
             break;
         case RadioEvent::RADIO_COMBINE_CALL:
-            eventInfo.eventId = RequestResultEventId::RESULT_COMBINE_SEND_FAILED;
-            break;
         case RadioEvent::RADIO_JOIN_CALL:
-            eventInfo.eventId = RequestResultEventId::RESULT_JOIN_SEND_FAILED;
+            eventInfo.eventId = RequestResultEventId::RESULT_COMBINE_SEND_FAILED;
             break;
         case RadioEvent::RADIO_SPLIT_CALL:
             eventInfo.eventId = RequestResultEventId::RESULT_SPLIT_SEND_FAILED;
