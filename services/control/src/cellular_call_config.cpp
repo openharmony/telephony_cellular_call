@@ -745,7 +745,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
         static_cast<int32_t>(eccListRadioMap_[slotId].size()));
     SimState simState = SimState::SIM_STATE_UNKNOWN;
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
-    bool hasSim = simState == SimState::SIM_STATE_NOT_READY || simState == SimState::SIM_STATE_LOADED;
+    bool hasSim = simState == SimState::SIM_STATE_READY || simState == SimState::SIM_STATE_LOADED;
     if (hasSim) {
         if (!mcc.empty()) {
             for (auto ecc : eccList3gppHasSim_) {
