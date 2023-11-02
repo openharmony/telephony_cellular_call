@@ -52,10 +52,20 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);
     std::vector<EmergencyCall> eccCallList = config.GetEccCallList(slotId);
     std::string mcc = config.GetMcc(slotId);
-    for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
-        if (mcc == it->mcc && formatString == it->eccNum) {
-            TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with sim data.");
-            return TELEPHONY_ERR_SUCCESS;
+    if (eccCallList.empty()) {
+        TELEPHONY_LOGI("eccCallList is nullptr.");
+        std::vector<std::string> eccList = { "110", "120", "119", "122", "112", "000", "911", "08", "118", "999" };
+        for (auto eccNum : eccList) {
+            if (formatString == eccNum) {
+                return TELEPHONY_ERR_SUCCESS;
+            }
+        }
+    } else {
+        for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
+            if (mcc == it->mcc && formatString == it->eccNum) {
+                TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with sim data.");
+                return TELEPHONY_ERR_SUCCESS;
+            }
         }
     }
     if (!countryIsoCode.empty()) {
