@@ -194,13 +194,6 @@ public:
 
     bool IsConnectedOut(TelCallState preState, TelCallState curState);
 
-    /**
-     * Ignore the hangup report when the hangup is caused by CallManager crash.
-     *
-     * @param ignored which decides whether to ignore the hangup report
-     */
-    void SetHangupReportIgnoredFlag(bool ignored);
-
     int32_t SetReadyToCall(int32_t slotId, bool isReadyToCall);
 
     /**
@@ -424,7 +417,6 @@ public:
     }
 
 protected:
-    bool isIgnoredHangupReport_ = false;
     bool isIgnoredIncomingCall_ = false;
 
 private:

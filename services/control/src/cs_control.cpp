@@ -571,9 +571,7 @@ int32_t CSControl::ReportHungUpInfo(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     callsReportInfo.slotId = slotId;
-    if (isIgnoredHangupReport_) {
-        SetHangupReportIgnoredFlag(false);
-    } else if (isIgnoredIncomingCall_) {
+    if (isIgnoredIncomingCall_) {
         isIgnoredIncomingCall_ = false;
     } else {
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);

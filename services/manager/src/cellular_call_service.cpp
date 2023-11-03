@@ -1273,12 +1273,10 @@ void CellularCallService::HandleCallManagerException()
     for (const auto &it : slotVector) {
         auto csControl = GetCsControl(it);
         if (csControl != nullptr) {
-            csControl->SetHangupReportIgnoredFlag(true);
             csControl->HangUpAllConnection(it);
         }
         auto imsControl = GetImsControl(it);
         if (imsControl != nullptr) {
-            imsControl->SetHangupReportIgnoredFlag(true);
             imsControl->HangUpAllConnection(it);
         }
     }
