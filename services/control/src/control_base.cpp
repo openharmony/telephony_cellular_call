@@ -106,12 +106,6 @@ bool ControlBase::IsConnectedOut(TelCallState preState, TelCallState curState)
     return false;
 }
 
-void ControlBase::SetHangupReportIgnoredFlag(bool ignored)
-{
-    TELEPHONY_LOGI("SetHangupReportIgnoredFlag ignored:%{public}d", ignored);
-    isIgnoredHangupReport_ = ignored;
-}
-
 bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc)
 {
     bool isAirplaneModeOn = false;
