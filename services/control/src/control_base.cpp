@@ -147,7 +147,7 @@ int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, boo
             return ret;
         }
         int32_t otherSlotId = callInfo.slotId == SLOT_0 ? SLOT_1 : SLOT_0;
-        if (!CheckActivateSimScene(otherSlotIdc)) {
+        if (!CheckActivateSimScene(otherSlotId)) {
             ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(otherSlotId, true);
         }
         if (ret != TELEPHONY_SUCCESS) {
