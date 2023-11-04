@@ -115,10 +115,9 @@ bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo)
 
 bool ControlBase::CheckActivateSimScene(int32_t slotId)
 {
-    
-    bool isActivateSim = true;
     bool hasSimCard = false;
     DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    bool isActivateSim = true;
     if (hasSimCard) {
         isActivateSim = DelayedRefSingleton<CoreServiceClient>::GetInstance().IsSimActive(slotId);
     }
