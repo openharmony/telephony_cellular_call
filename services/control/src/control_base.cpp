@@ -149,10 +149,10 @@ int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, boo
         int32_t otherSlotId = callInfo.slotId == SLOT_0 ? SLOT_1 : SLOT_0;
         if (!CheckActivateSimScene(otherSlotId)) {
             ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(otherSlotId, true);
-        }
-        if (ret != TELEPHONY_SUCCESS) {
-            TELEPHONY_LOGE("UpdateRadioOn fail");
-            return ret;
+            if (ret != TELEPHONY_SUCCESS) {
+                TELEPHONY_LOGE("UpdateRadioOn fail");
+                return ret;
+            }
         }
     }
     std::unique_lock<std::mutex> lock(mutex_);
