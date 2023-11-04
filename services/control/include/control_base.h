@@ -423,12 +423,12 @@ private:
     /**
      * Check call with airplane mode on
      */
-    bool CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc);
+    bool CheckAirplaneModeScene(const CellularCallInfo &callInfo);
 
     /**
      * check call with activate sim
     */
-    bool CheckActivateSimScene(const CellularCallInfo &callInfo, bool isEcc);
+    bool CheckActivateSimScene(int32_t slotId);
 
     /**
      * Handle call with airplane mode on

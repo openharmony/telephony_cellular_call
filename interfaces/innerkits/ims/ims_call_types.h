@@ -24,6 +24,8 @@
 namespace OHOS {
 namespace Telephony {
 const int32_t kMaxNumberLength = 255;
+const int32_t SLOT_0 = 0;
+const int32_t SLOT_1 = 1;
 
 /**
  * @brief Indicates the reason for rejecting the ims call.
