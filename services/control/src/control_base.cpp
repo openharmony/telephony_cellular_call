@@ -28,7 +28,7 @@ const uint32_t WAIT_TIME_SECOND = 5;
 
 int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEcc)
 {
-    HandleEcc(callInfo, isEcc, CheckAirplaneModeScene(callInfo, isEcc), CheckActivateSimScene(callInfo, isEcc));
+    HandleEcc(callInfo, isEcc, CheckAirplaneModeScene(callInfo), CheckActivateSimScene(callInfo.slotId));
     std::string dialString(callInfo.phoneNum);
     if (dialString.empty()) {
         TELEPHONY_LOGE("DialPreJudgment return, dialString is empty.");
@@ -106,17 +106,21 @@ bool ControlBase::IsConnectedOut(TelCallState preState, TelCallState curState)
     return false;
 }
 
-bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo, bool isEcc)
+bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo)
 {
     bool isAirplaneModeOn = false;
     ModuleServiceUtils moduleServiceUtils;
     return moduleServiceUtils.GetAirplaneMode(isAirplaneModeOn) == TELEPHONY_SUCCESS && isAirplaneModeOn;
 }
 
-bool ControlBase::CheckActivateSimScene(const CellularCallInfo &callInfo, bool isEcc)
+bool ControlBase::CheckActivateSimScene(int32_t slotId)
 {
+    bool hasSimCard = false;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
     bool isActivateSim = true;
-    isActivateSim = DelayedRefSingleton<CoreServiceClient>::GetInstance().IsSimActive(callInfo.slotId);
+    if (hasSimCard) {
+        isActivateSim = DelayedRefSingleton<CoreServiceClient>::GetInstance().IsSimActive(slotId);
+    }
     return isActivateSim;
 }
 
@@ -139,8 +143,16 @@ int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, boo
     if (!isActivateSim) {
         ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(callInfo.slotId, true);
         if (ret != TELEPHONY_SUCCESS) {
-            TELEPHONY_LOGE("UpdateRadioOn fail");
+            TELEPHONY_LOGE("UpdateSimState fail");
             return ret;
+        }
+        int32_t otherSlotId = callInfo.slotId == SLOT_0 ? SLOT_1 : SLOT_0;
+        if (!CheckActivateSimScene(otherSlotId)) {
+            ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(otherSlotId, true);
+            if (ret != TELEPHONY_SUCCESS) {
+                TELEPHONY_LOGE("UpdateSecondSimCardState fail");
+                return ret;
+            }
         }
     }
     std::unique_lock<std::mutex> lock(mutex_);
