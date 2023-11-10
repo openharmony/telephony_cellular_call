@@ -191,6 +191,7 @@ private:
     void SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void SendUnlockPinPukResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void CloseUnFinishedUssdResponse(const AppExecFwk::InnerEvent::Pointer &event);
+    void OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Pointer &event);
 
     void InitBasicFuncMap();
     void InitConfigFuncMap();

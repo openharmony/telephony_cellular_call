@@ -163,26 +163,24 @@ void CellularCallService::HandlerResetUnRegister()
         if (handler != nullptr) {
             handler.reset();
         }
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_ACCOUNT_LOADED);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
-            slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
-            slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
-            slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED);
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(
-            slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED);
+        CoreManagerInner &coreInner = CoreManagerInner::GetInstance();
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_ACCOUNT_LOADED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-        CoreManagerInner::GetInstance().UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
 #endif
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
@@ -200,37 +198,26 @@ void CellularCallService::RegisterCoreServiceHandler()
         int32_t slot = it.first;
         auto handler = it.second;
         if (handler != nullptr) {
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_SIM_STATE_CHANGE, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_SIM_ACCOUNT_LOADED, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED, nullptr);
-            CoreManagerInner::GetInstance().RegisterCoreNotify(
-                slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED, nullptr);
+            CoreManagerInner &coreInner = CoreManagerInner::GetInstance();
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_AVAIL, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NOT_AVAIL, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_STATE_CHANGE, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RECORDS_LOADED, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_ACCOUNT_LOADED, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_STATUS_INFO, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_USSD_NOTICE, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SS_NOTICE, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-            CoreManagerInner::GetInstance().RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
-            CoreManagerInner::GetInstance().GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
+            coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
 #endif
         }
         CellularCallConfig config;

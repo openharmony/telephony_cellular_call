@@ -129,6 +129,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE] = &CellularCallHandler::ResidentNetworkChangeReport;
     requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_ATTACHED] = &CellularCallHandler::NetworkStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] = &CellularCallHandler::NetworkStateChangeReport;
+    requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] = &CellularCallHandler::OnRilAdapterHostDied;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
@@ -1354,6 +1355,31 @@ void CellularCallHandler::CloseUnFinishedUssdResponse(const AppExecFwk::InnerEve
     }
     CellularCallSupplement supplement;
     supplement.EventCloseUnFinishedUssd(*result);
+}
+
+void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
+        return;
+    }
+    auto csControl = serviceInstance->GetCsControl(slotId_);
+    if (csControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] cs_control is null", slotId_);
+    } else if (csControl->ReportHangUpInfo(slotId_) != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("[slot%{public}d] fail to disconnect cs calls", slotId_);
+    } else {
+        serviceInstance->SetCsControl(slotId_, nullptr);
+    }
+    auto imsControl = serviceInstance->GetImsControl(slotId_);
+    if (imsControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
+    } else if (imsControl->ReportHangUpInfo(slotId_) != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("[slot%{public}d] fail to disconnect ims calls", slotId_);
+    } else {
+        serviceInstance->SetImsControl(slotId_, nullptr);
+    }
 }
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE

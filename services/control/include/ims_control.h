@@ -193,6 +193,14 @@ public:
 
     void DialAfterHold(int32_t slotId);
 
+    /**
+     * Report being hang up data
+     *
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on
+     * failure.
+     */
+    int32_t ReportHangUpInfo(int32_t slotId);
+
 private:
     /**
      * handle dial judgment
@@ -214,13 +222,6 @@ private:
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
     int32_t EncapsulateDial(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const;
-
-    /**
-     * Report being hung up data
-     *
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
-     */
-    int32_t ReportHungUpInfo(int32_t slotId);
 
     /**
      * Report Incoming info
