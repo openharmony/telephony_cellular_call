@@ -21,6 +21,7 @@
 #include "cellular_call_handler.h"
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
+#include "cellular_call_service.h"
 #include "hril_call_parcel.h"
 #include "ims_call_callback_proxy.h"
 #include "ims_call_callback_stub.h"
@@ -1748,6 +1749,17 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
         handler.SetDomainPreferenceModeResponse(event);
         handler.SetVoNRSwitchStatusResponse(responseEvent);
         ASSERT_EQ(handler.GetSlotId(), slotId);
+        handler.OnRilAdapterHostDied(event);
+        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+        if (serviceInstance != nullptr) {
+            std::shared_ptr<CSControl> csControl;
+            serviceInstance->SetCsControl(slotId, csControl);
+            std::shared_ptr<IMSControl> imsControl;
+            serviceInstance->SetImsControl(slotId, imsControl);
+            handler.OnRilAdapterHostDied(event);
+            ASSERT_TRUE(serviceInstance->GetCsControl(slotId) == nullptr);
+            ASSERT_TRUE(serviceInstance->GetCsControl(slotId) == nullptr);
+        }
     }
 }
 

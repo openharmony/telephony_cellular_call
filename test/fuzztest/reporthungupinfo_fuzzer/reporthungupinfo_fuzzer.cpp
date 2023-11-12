@@ -68,7 +68,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     iMSControl->HoldCall(slotId);
     iMSControl->UnHoldCall(slotId);
     iMSControl->SwitchCall(slotId);
-    iMSControl->ReportHungUpInfo(slotId);
+    iMSControl->ReportHangUpInfo(slotId);
     return;
 }
 } // namespace OHOS

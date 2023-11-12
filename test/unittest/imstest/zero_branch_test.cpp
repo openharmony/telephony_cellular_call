@@ -406,7 +406,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     csControl.CombineConference(SIM1_SLOTID);
     csControl.HangUpAllConnection(SIM1_SLOTID);
     csControl.GetConnectionMap();
-    csControl.ReportHungUpInfo(SIM1_SLOTID);
+    csControl.ReportHangUpInfo(SIM1_SLOTID);
     csControl.ReportIncomingInfo(SIM1_SLOTID, callInfoList);
     csControl.ReportUpdateInfo(SIM1_SLOTID, callInfoList);
     CallInfo callInfo;
@@ -481,7 +481,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest
     imsControl.ReportImsCallsData(SIM1_SLOTID, ImsCallList);
     CallInfoList callInfoList;
     imsControl.ReportCallsData(SIM1_SLOTID, callInfoList);
-    imsControl.ReportHungUpInfo(SIM1_SLOTID);
+    imsControl.ReportHangUpInfo(SIM1_SLOTID);
     imsControl.ReportIncomingInfo(SIM1_SLOTID, ImsCallList);
     imsControl.ReportUpdateInfo(SIM1_SLOTID, ImsCallList);
     ImsCurrentCall ImsCallInfo;

@@ -185,6 +185,13 @@ public:
 
     int32_t ReportHangUp(const std::vector<CellularCallInfo> &infos, int32_t slotId);
 
+    /**
+     * Report being hang up data
+     *
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t ReportHangUpInfo(int32_t slotId);
+
 private:
     /**
      * Calculate International Roaming
@@ -193,13 +200,6 @@ private:
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     bool CalculateInternationalRoaming(int32_t slotId) const;
-
-    /**
-     * Report being hung up data
-     *
-     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t ReportHungUpInfo(int32_t slotId);
 
     /**
      * Report Incoming info
