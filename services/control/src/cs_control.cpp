@@ -148,6 +148,12 @@ int32_t CSControl::EncapsulateDialCommon(int32_t slotId, const std::string &phon
      * OK (voice group call setup was successful)
      */
     CellularCallConnectionCS csConnection;
+    TELEPHONY_LOGI("Set Mute to false");
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("SetMute return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    DelayedSingleton<CellularCallService>::GetInstance()->SetMute(slotId, false);
     return csConnection.DialRequest(slotId, dialRequest);
 }
 
