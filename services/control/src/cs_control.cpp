@@ -17,6 +17,7 @@
 
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_register.h"
+#include "cellular_call_service.h"
 #include "module_service_utils.h"
 #include "securec.h"
 #include "standardize_utils.h"
