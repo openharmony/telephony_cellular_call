@@ -1155,14 +1155,13 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_002, Function | MediumTest | Level1)
 {
-    {
-        if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-            return;
-        }
-        int32_t ret = TELEPHONY_ERROR;
-        ret = imsCallPtr_->GetCallTransfer(SIM_SLOT_ID_1, DEFAULT_TRANSFER_TYPE);
-        EXPECT_EQ(TELEPHONY_SUCCESS, ret);
+    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
+        return;
     }
+    int32_t ret = TELEPHONY_ERROR;
+    ret = imsCallPtr_->GetCallTransfer(SIM_SLOT_ID_1, DEFAULT_TRANSFER_TYPE);
+    EXPECT_EQ(TELEPHONY_SUCCESS, ret);
+}
 
 /**
  * @tc.number   Telephony_ImsService_SetCallRestriction_001
