@@ -151,10 +151,22 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
     bool enabled = false;
     config.SetImsSwitchStatus(INVALID_SLOTID, enabled);
     config.SetImsSwitchStatus(SIM1_SLOTID, enabled);
+    config.volteSupported_[SIM1_SLOTID] = true;
+    config.volteSupported_[INVALID_SLOTID] = true;
+    config.volteProvisioningSupported_[SIM1_SLOTID] = true;
+    config.volteProvisioningSupported_[INVALID_SLOTID] = true;
+    config.SetImsSwitchStatus(INVALID_SLOTID, enabled);
+    config.SetImsSwitchStatus(SIM1_SLOTID, true);
+    config.volteSupported_[SIM1_SLOTID] = enabled;
+    config.volteSupported_[INVALID_SLOTID] = enabled;
+    config.volteProvisioningSupported_[SIM1_SLOTID] = enabled;
+    config.volteProvisioningSupported_[INVALID_SLOTID] = enabled;
     config.GetImsSwitchStatus(SIM1_SLOTID, enabled);
     int32_t state = 0;
     config.SetVoNRSwitchStatus(SIM1_SLOTID, state);
+    config.SetVoNRSwitchStatus(INVALID_SLOTID, state);
     config.GetVoNRSwitchStatus(SIM1_SLOTID, state);
+    config.GetVoNRSwitchStatus(SIM2_SLOTID, state);
     config.GetDomainPreferenceModeResponse(SIM1_SLOTID, 1);
     config.GetImsSwitchStatusResponse(SIM1_SLOTID, 1);
     config.GetPreferenceMode(SIM1_SLOTID);
@@ -223,6 +235,13 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | L
     OperatorConfig poc;
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
     config.UpdateImsCapabilities(SIM1_SLOTID, true);
+    bool enabled = false;
+    config.ChangeImsSwitchWithOperatorConfig(SIM1_SLOTID, true);
+    config.SaveImsSwitch(SIM1_SLOTID, true);
+    config.IsUtProvisioned(SIM1_SLOTID);
+    config.utProvisioningSupported_[SIM1_SLOTID] = true;
+    config.IsUtProvisioned(SIM1_SLOTID);
+    config.utProvisioningSupported_[SIM1_SLOTID] = enabled;
 }
 
 /**
@@ -473,7 +492,12 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
     CallInfoList callInfoList;
     csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+	csControl.connectionMap_.insert(std::make_pair(1,CellularCallConnectionCS()));
+    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.connectionMap_.insert(std::make_pair(1,CellularCallConnectionCS()));
     InitCsCallInfoList(callInfoList, 5);
+    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.connectionMap_.clear();
     csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
     bool enabled = false;
     csControl.Dial(cellularCallInfo, enabled);
@@ -506,6 +530,42 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     CallsReportInfo callsReportInfo;
     csControl.DeleteConnection(callsReportInfo, callInfoList);
     csControl.ReleaseAllConnection();
+}
+
+/**
+ * @tc.number   Telephony_CellularCallCsControl_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallCsControl_002, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CSControl csControl;
+    CellularCallInfo cellularCallInfo;
+    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
+    CellularCallInfo cellularCallInfo_new;
+    cellularCallInfo_new.callType = CallType::TYPE_CS;
+    std::vector<CellularCallInfo> infos;
+    bool enabled = false;
+    infos.emplace_back(cellularCallInfo);
+    infos.emplace_back(cellularCallInfo_new);
+    csControl.PostDialProceed(cellularCallInfo, true);
+    csControl.PostDialProceed(cellularCallInfo, enabled);
+    csControl.ExecutePostDial(SIM1_SLOTID, 0);
+    csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
+    cellularCallInfo.index = 1;
+    csControl.Answer(cellularCallInfo);
+    csControl.PostDialProceed(cellularCallInfo, true);
+    csControl.ExecutePostDial(SIM1_SLOTID, 0);
+    csControl.ExecutePostDial(SIM1_SLOTID, 1);
+    csControl.connectionMap_.clear();
+    for (uint16_t i = 0; i <= 7; ++i) {
+        csControl.connectionMap_.insert(std::make_pair(i, CellularCallConnectionCS()));
+    }
+    csControl.DialCdma(cellularCallInfo);
+    csControl.DialGsm(cellularCallInfo);
+    csControl.connectionMap_.clear();
+    csControl.ReportHangUp(infos, SIM1_SLOTID);
 }
 
 /**
@@ -640,11 +700,14 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumT
     ConfigRequest configReq;
     configReq.SetDomainPreferenceModeRequest(SIM1_SLOTID, 1);
     configReq.GetDomainPreferenceModeRequest(SIM1_SLOTID);
+    configReq.SetDomainPreferenceModeRequest(SIM2_SLOTID, 1);
+    configReq.GetDomainPreferenceModeRequest(SIM2_SLOTID);
     bool enabled = false;
     configReq.SetImsSwitchStatusRequest(SIM1_SLOTID, enabled);
     configReq.GetImsSwitchStatusRequest(SIM1_SLOTID);
     int32_t state = 0;
     configReq.SetVoNRSwitchStatusRequest(SIM1_SLOTID, state);
+    configReq.SetVoNRSwitchStatusRequest(SIM2_SLOTID, state);
     std::string value = "";
     configReq.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, value);
     configReq.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, 1);
@@ -668,9 +731,13 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumT
     configReq.SetDeviceDirectionRequest(1);
     configReq.SetMuteRequest(SIM1_SLOTID, 0);
     configReq.GetMuteRequest(SIM1_SLOTID);
+    configReq.SetMuteRequest(SIM2_SLOTID, 0);
+    configReq.GetMuteRequest(SIM2_SLOTID);
     std::vector<EmergencyCall> eccVec = {};
     configReq.GetEmergencyCallListRequest(SIM1_SLOTID);
     configReq.SetEmergencyCallListRequest(SIM1_SLOTID, eccVec);
+    configReq.GetEmergencyCallListRequest(SIM2_SLOTID);
+    configReq.SetEmergencyCallListRequest(SIM2_SLOTID, eccVec);
     ImsCapabilityList imsCapabilityList;
     configReq.UpdateImsCapabilities(SIM1_SLOTID, imsCapabilityList);
 }
@@ -1214,6 +1281,219 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
     cellularCall.UnRegisterCallManagerCallBack();
     cellularCall.HandlerResetUnRegister();
     cellularCall.OnStop();
+}
+
+/**
+ * @tc.number	Telephony_CellularCallSupplementRequestIms_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSupplementRequestIms_001, Function | MediumTest | Level3)
+{
+    SupplementRequestIms SRequestIms;
+    CallTransferInfo CTransferInfo;
+    std::string fac = "";
+    SRequestIms.SetClipRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0);
+    SRequestIms.GetClipRequest(SIM1_SLOTID, 0);
+    SRequestIms.SetClirRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0);
+    SRequestIms.GetClirRequest(SIM1_SLOTID, 0);
+    SRequestIms.GetCallTransferRequest(SIM1_SLOTID, 0, 0);
+    SRequestIms.SetCallTransferRequest(SIM1_SLOTID, CTransferInfo, ACTIVATE_ACTION, 0);
+    SRequestIms.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0);
+    std::string pw = "";
+    SRequestIms.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0);
+    SRequestIms.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0);
+    SRequestIms.GetCallWaitingRequest(SIM1_SLOTID, 0);
+    SRequestIms.SetColrRequest(SIM1_SLOTID, 0, 0);
+    SRequestIms.GetColrRequest(SIM1_SLOTID, 0);
+    SRequestIms.SetColpRequest(SIM1_SLOTID, 0, 0);
+    SRequestIms.GetColpRequest(SIM1_SLOTID, 0);
+    SRequestIms.GetMMIHandler(SIM1_SLOTID);
+}
+
+/**
+ * @tc.number	Telephony_CellularCallbaseconnection_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallbaseconnection_001, Function | MediumTest | Level3)
+{
+    BaseConnection BConnection;
+    char c = ' ';
+    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_CANCELED;
+    BConnection.ProcessNextChar(SIM1_SLOTID, c);
+    BConnection.GetLeftPostDialCallString();
+    BConnection.postDialCallString_ = "111111";
+    BConnection.ProcessNextChar(SIM1_SLOTID, c);
+    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
+    BConnection.ProcessNextChar(SIM1_SLOTID, c);
+    BConnection.GetLeftPostDialCallString();
+}
+/**
+ * @tc.number   Telephony_CellularCallHiSysEvent_001
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_001, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
+    std::string desc;
+    cellularCallHiSysEvent->WriteFoundationRestartFaultEvent(2);
+    CallBehaviorParameterInfo Info = { .callType = 1 };
+    CallResponseResult result = CallResponseResult::COMMAND_FAILURE;
+    cellularCallHiSysEvent->WriteDialCallBehaviorEvent(Info, result);
+    result = CallResponseResult::COMMAND_SUCCESS;
+    cellularCallHiSysEvent->WriteDialCallBehaviorEvent(Info, result);
+    Info = { .callType = 0 };
+    cellularCallHiSysEvent->WriteDialCallBehaviorEvent(Info, result);
+    Info = { .callType = 1 };
+    result = CallResponseResult::COMMAND_FAILURE;
+    cellularCallHiSysEvent->WriteHangUpCallBehaviorEvent(Info, result);
+    result = CallResponseResult::COMMAND_SUCCESS;
+    cellularCallHiSysEvent->WriteHangUpCallBehaviorEvent(Info, result);
+    Info = { .callType = 0 };
+    cellularCallHiSysEvent->WriteHangUpCallBehaviorEvent(Info, result);
+    cellularCallHiSysEvent->WriteIncomingCallFaultEvent(
+        0, 0, 0, static_cast<int32_t>(TELEPHONY_ERR_MEMCPY_FAIL), desc);
+    cellularCallHiSysEvent->WriteIncomingCallFaultEvent(0, 0, 0, -1, desc);
+    cellularCallHiSysEvent->JudgingIncomingTimeOut(0, 0, 0);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHiSysEvent_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_002, Function | MediumTest | Level3)
+{
+    // AccessToken token;
+    std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
+    CallErrorCode eventValue;
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(-1, eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_LOCAL_PTR_NULL), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_ARGUMENT_INVALID), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_WRITE_DATA_FAIL), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(
+        static_cast<int32_t>(TELEPHONY_ERR_PERMISSION_ERR), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(static_cast<int32_t>(TELEPHONY_ERR_MEMSET_FAIL), eventValue);
+    cellularCallHiSysEvent->TelephonyErrorCodeConversion(static_cast<int32_t>(TELEPHONY_ERR_MEMCPY_FAIL), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(-1, eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_INVALID_SLOT_ID), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_INVALID_CALLID), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_PHONE_NUMBER_EMPTY), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_NUMBER_OUT_OF_RANGE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_UNSUPPORTED_NETWORK_TYPE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_INVALID_DIAL_SCENE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_INVALID_VIDEO_STATE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_UNKNOW_DIAL_TYPE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(static_cast<int32_t>(CALL_ERR_UNKNOW_CALL_TYPE), eventValue);
+    cellularCallHiSysEvent->CallDataErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_CALL_OBJECT_IS_NULL), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(-1, eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(static_cast<int32_t>(CALL_ERR_DIAL_IS_BUSY), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_ILLEGAL_CALL_OPERATION), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_PHONE_CALLSTATE_NOTIFY_FAILED), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_SYSTEM_EVENT_HANDLE_FAILURE), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_CALL_COUNTS_EXCEED_LIMIT), eventValue);
+    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_GET_RADIO_STATE_FAILED), eventValue);
+}
+
+/**
+ * @tc.number	Telephony_CellularCallConnectionCs_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallConnectionCs_001, Function | MediumTest | Level3)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DialRequestStruct dialRequestStruct;
+    cellularCallConnectionCS.DialRequest(SIM2_SLOTID, dialRequestStruct);
+    cellularCallConnectionCS.HangUpRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.AnswerRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.AnswerRequest(SIM1_SLOTID);
+    cellularCallConnectionCS.RejectRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.HoldRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.UnHoldCallRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.SwitchCallRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.CombineConferenceRequest(SIM2_SLOTID, 0);
+    cellularCallConnectionCS.SeparateConferenceRequest(SIM2_SLOTID, 0, 0);
+    cellularCallConnectionCS.CallSupplementRequest(SIM2_SLOTID, CallSupplementType::TYPE_DEFAULT);
+    char cDtmfCode = ' ';
+    cellularCallConnectionCS.SendDtmfRequest(SIM2_SLOTID, cDtmfCode, 0);
+    cellularCallConnectionCS.StartDtmfRequest(SIM2_SLOTID, cDtmfCode, 0);
+    cellularCallConnectionCS.StopDtmfRequest(SIM2_SLOTID, 0);
+    cellularCallConnectionCS.GetCsCallsDataRequest(SIM2_SLOTID, 0);
+    cellularCallConnectionCS.GetCallFailReasonRequest(SIM2_SLOTID);
+    cellularCallConnectionCS.ProcessPostDialCallChar(SIM1_SLOTID, cDtmfCode);
+}
+
+/**
+ * @tc.number	Telephony_SupplementRequestCs_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | Level3)
+{
+    SupplementRequestCs supplementRequestCs;
+    std::string msg = "11111";
+    supplementRequestCs.SendUssdRequest(SIM1_SLOTID, msg);
+    supplementRequestCs.CloseUnFinishedUssdRequest(SIM1_SLOTID);
+}
+
+/**
+ * @tc.number	Telephony_StandardizeUtils_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Level3)
+{
+    StandardizeUtils standardizeUtils;
+    std::string phoneString = {0};
+    std::string networkAddress = "1111111";
+    std::string postDial = "11111111";
+    standardizeUtils.RemoveSeparatorsPhoneNumber(phoneString);
+    phoneString = "1111111,123321";
+    standardizeUtils.ExtractAddressAndPostDial(phoneString,networkAddress,postDial);
+    standardizeUtils.Split(phoneString, ",");
+}
+
+/**
+ * @tc.number	Telephony_MmiCodeUtils_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
+{
+    MMICodeUtils mmiCodeUtils;
+    bool enable = false;
+    mmiCodeUtils.IsNeedExecuteMmi("111111#", enable);
+    mmiCodeUtils.isNeedUseIms_ = true;
+    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    mmiCodeUtils.isNeedUseIms_ = false;
+    mmiCodeUtils.mmiData_.serviceCode = "11111";
+    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    mmiCodeUtils.mmiData_.serviceCode.clear();
+    mmiCodeUtils.mmiData_.fullString = "11111";
+    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    mmiCodeUtils.mmiData_.fullString.clear();
+    mmiCodeUtils.mmiData_.dialString = "11111#";
+    mmiCodeUtils.RegexMatchMmi("111111#");
 }
 } // namespace Telephony
 } // namespace OHOS
