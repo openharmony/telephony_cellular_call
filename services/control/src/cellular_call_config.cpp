@@ -765,9 +765,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
     int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
     bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
         roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
-    ModuleServiceUtils moduleUtils;
-    bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
-    if (hasSim && isNetworkInService && !isRoaming && !hplmn.empty()) {
+    if (hasSim && !isRoaming && !hplmn.empty()) {
         std::vector<EccNum> eccVec;
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
         if (!eccVec.empty()) {
