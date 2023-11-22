@@ -35,6 +35,7 @@
 #include "ims_test.h"
 #include "securec.h"
 #include "cellular_call_hisysevent.h"
+#include "standardize_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -44,6 +45,7 @@ namespace {
 const int32_t INVALID_SLOTID = 2;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
+const int32_t ACTIVATE_ACTION = 1;
 const std::string PHONE_NUMBER = "00000000";
 } // namespace
 
@@ -492,9 +494,9 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
     CallInfoList callInfoList;
     csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
-	csControl.connectionMap_.insert(std::make_pair(1,CellularCallConnectionCS()));
+    csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
     csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
-    csControl.connectionMap_.insert(std::make_pair(1,CellularCallConnectionCS()));
+    csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
     InitCsCallInfoList(callInfoList, 5);
     csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
     csControl.connectionMap_.clear();
@@ -1358,6 +1360,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_001, Function | MediumTest
         0, 0, 0, static_cast<int32_t>(TELEPHONY_ERR_MEMCPY_FAIL), desc);
     cellularCallHiSysEvent->WriteIncomingCallFaultEvent(0, 0, 0, -1, desc);
     cellularCallHiSysEvent->JudgingIncomingTimeOut(0, 0, 0);
+    CallForwardingInfo cfInfo;
+    cellularCallHiSysEvent->GetCallForwardingInfo(cfInfo);
 }
 
 /**
@@ -1469,7 +1473,7 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
     std::string postDial = "11111111";
     standardizeUtils.RemoveSeparatorsPhoneNumber(phoneString);
     phoneString = "1111111,123321";
-    standardizeUtils.ExtractAddressAndPostDial(phoneString,networkAddress,postDial);
+    standardizeUtils.ExtractAddressAndPostDial(phoneString, networkAddress, postDial);
     standardizeUtils.Split(phoneString, ",");
 }
 
