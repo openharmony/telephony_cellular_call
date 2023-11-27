@@ -229,10 +229,6 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string plmn)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleResidentNetworkChange entry, slotId: %{public}d", slotId);
-    if (curPlmn_[slotId] == plmn) {
-        TELEPHONY_LOGE("plmn is not change.");
-        return;
-    }
     curPlmn_[slotId] = plmn;
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
