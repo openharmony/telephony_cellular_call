@@ -55,10 +55,10 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
     if (eccCallList.empty()) {
         TELEPHONY_LOGI("eccCallList is nullptr.");
         std::vector<std::string> eccList = { "110", "120", "119", "122", "112", "000", "911", "08", "118", "999" };
-        for (auto eccNum : eccList) {
-            if (formatString == eccNum) {
-                return TELEPHONY_ERR_SUCCESS;
-            }
+        if (std::any_of(eccList.begin(), eccList.end(), [&formatString](std::string eccNum) {
+            return eccNum == formatString;
+        })) {
+            return TELEPHONY_ERR_SUCCESS;
         }
     } else {
         for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
