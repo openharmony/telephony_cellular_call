@@ -131,17 +131,16 @@ int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, boo
         return TELEPHONY_ERR_AIRPLANE_MODE_ON;
     }
 
-    int32_t ret = TELEPHONY_SUCCESS;
     if (isAirplaneModeOn) {
         ModuleServiceUtils moduleServiceUtils;
-        ret = moduleServiceUtils.UpdateRadioOn(callInfo.slotId);
+        int32_t ret = moduleServiceUtils.UpdateRadioOn(callInfo.slotId);
         if (ret != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("UpdateRadioOn fail");
             return ret;
         }
     }
     if (!isActivateSim) {
-        ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(callInfo.slotId, true);
+        int32_t ret = DelayedRefSingleton<CoreServiceClient>::GetInstance().SetActiveSim(callInfo.slotId, true);
         if (ret != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("UpdateSimState fail");
             return ret;
