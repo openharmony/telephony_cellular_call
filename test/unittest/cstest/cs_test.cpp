@@ -37,7 +37,7 @@ namespace Telephony {
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
-const int32_t INVALID_SLOTID = -1;
+const int32_t INVALID_SLOTID = 0xFF;
 const int32_t INVALID_HANG_UP_TYPE = -1;
 const int32_t SUCCESS_RESULT = 0;
 const int32_t ERROR_RESULT = 1;

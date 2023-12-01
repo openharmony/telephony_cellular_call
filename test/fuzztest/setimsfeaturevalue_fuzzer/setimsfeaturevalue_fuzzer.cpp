@@ -31,6 +31,9 @@ constexpr int32_t INT_NUM = 2;
 constexpr int32_t VEDIO_STATE_NUM = 2;
 constexpr int32_t OFFSET_SIZE = 11;
 constexpr size_t MAX_NUMBER_LEN = 99;
+constexpr int32_t IMS_CONFIG_ITEM_NUM = 2;
+constexpr int32_t FEATURE_TYPE_NUM = 3;
+constexpr int32_t MAX_SIZE = 10;
 
 bool IsServiceInited()
 {
@@ -150,8 +153,11 @@ void GetImsConfig(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t item = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
     MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(MAX_SIZE);
+    dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(item);
     dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
@@ -165,9 +171,12 @@ void SetImsConfig(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t item = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
     std::string value(reinterpret_cast<const char *>(data), size);
     MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(MAX_SIZE);
+    dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(item);
     dataMessageParcel.WriteString(value);
     dataMessageParcel.RewindRead(0);
@@ -181,8 +190,11 @@ void GetImsFeatureValue(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t type = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t type = static_cast<int32_t>(size % FEATURE_TYPE_NUM);
     MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(MAX_SIZE);
+    dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(type);
     dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
@@ -196,9 +208,12 @@ void SetImsFeatureValue(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t type = static_cast<int32_t>(size);
+    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t type = static_cast<int32_t>(size % FEATURE_TYPE_NUM);
     int32_t value = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(MAX_SIZE);
+    dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(type);
     dataMessageParcel.WriteInt32(value);
     dataMessageParcel.WriteBuffer(data, size);

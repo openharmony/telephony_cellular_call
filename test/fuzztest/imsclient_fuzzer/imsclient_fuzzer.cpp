@@ -29,6 +29,7 @@ using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
 constexpr int32_t SERVICE_STATE_RUNNING = 1;
+constexpr int32_t IMS_CONFIG_ITEM_NUM = 2;
 
 bool IsServiceInited()
 {
@@ -135,7 +136,7 @@ void TestImsCallClientWithSettingFunction(
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t index = static_cast<int32_t>(size % 3);
-    int32_t item = static_cast<int32_t>(size % 3);
+    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
     int32_t value = static_cast<int32_t>(size % 4);
     int32_t type = static_cast<int32_t>(size % 4);
     imsCallClient->SetImsConfig(static_cast<ImsConfigItem>(item), number);
@@ -250,7 +251,7 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     int32_t mode = static_cast<int32_t>(size % 2);
     int32_t slotId = static_cast<int32_t>(size % 2);
     int32_t index = static_cast<int32_t>(size % 3);
-    int32_t item = static_cast<int32_t>(size % 3);
+    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
     int32_t value = static_cast<int32_t>(size % 4);
     int32_t type = static_cast<int32_t>(size % 4);
     proxy->SetImsConfig(static_cast<ImsConfigItem>(item), number);

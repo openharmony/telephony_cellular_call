@@ -23,6 +23,12 @@ config("public_config_ims_call_api") {
 }
 
 ohos_shared_library("tel_ims_call_api") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  branch_protector_ret = "pac_ret"
   version_script = "tel_ims_call_api.versionscript"
   sources = [ "${SUBSYSTEM_DIR}/services/ims_service_interaction/src/ims_call_callback_proxy.cpp" ]
 
