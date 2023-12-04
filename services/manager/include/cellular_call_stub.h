@@ -171,13 +171,40 @@ private:
     int32_t OnSetReadyToCallInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On UpdateImsCallMode Inner
+     * On SendUpdateCallMediaModeRequest Inner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnUpdateCallMediaModeInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSendUpdateCallMediaModeRequestInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On SendUpdateCallMediaModeResponse Inner
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnSendUpdateCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On Cancel Call Upgrade Inner
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnCancelCallUpgradeInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On Request Camera Capabilities Inner
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnRequestCameraCapabilitiesInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On Register Call Back Inner
@@ -416,13 +443,13 @@ private:
     int32_t OnGetImsFeatureValueInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On Ctrl Camera Inner
+     * On Control Camera Inner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnCtrlCameraInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnControlCameraInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On Set Preview Window Inner
@@ -452,13 +479,13 @@ private:
     int32_t OnSetCameraZoomInner(MessageParcel &data, MessageParcel &reply);
 
     /**
-     * On Set Pause Image Inner
+     * On Set Pause Picture Inner
      *
      * @param data send data
      * @param reply Received data
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t OnSetPauseImageInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnSetPausePictureInner(MessageParcel &data, MessageParcel &reply);
 
     /**
      * On Set Device Direction Inner

@@ -314,24 +314,6 @@ int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &Kic
     return connection.KickOutFromConferenceRequest(slotId, index);
 }
 
-int32_t IMSControl::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
-{
-    TELEPHONY_LOGI("UpdateImsCallMode entry");
-    auto pConnection =
-        FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
-    if (pConnection == nullptr) {
-        TELEPHONY_LOGE("IMSControl::UpdateImsCallMode, error type: connection is null");
-        return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
-    }
-    bool bContinue = pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
-        pConnection->GetStatus() == TelCallState::CALL_STATUS_ACTIVE;
-    if (!bContinue) {
-        TELEPHONY_LOGE("IMSControl::UpdateImsCallMode return, error type: call state error.");
-        return CALL_ERR_CALL_STATE;
-    }
-    return pConnection->UpdateCallMediaModeRequest(callInfo, mode);
-}
-
 int32_t IMSControl::StartRtt(int32_t slotId, const std::string &msg)
 {
     TELEPHONY_LOGI("StartRtt entry");
@@ -497,7 +479,23 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.state = static_cast<TelCallState>(callInfo.state);
     callReportInfo.voiceDomain = callInfo.voiceDomain;
     callReportInfo.callType = CallType::TYPE_IMS;
-    callReportInfo.callMode = callInfo.callType ? VideoStateType::TYPE_VIDEO : VideoStateType::TYPE_VOICE;
+    switch (callInfo.callType) {
+        case ImsCallType::TEL_IMS_CALL_TYPE_VOICE:
+            callReportInfo.callMode = VideoStateType::TYPE_VOICE;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_TX:
+            callReportInfo.callMode = VideoStateType::TYPE_SEND_ONLY;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_RX:
+            callReportInfo.callMode = VideoStateType::TYPE_RECEIVE_ONLY;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT:
+            callReportInfo.callMode = VideoStateType::TYPE_VIDEO;
+            break;
+        default:
+            callReportInfo.callMode = VideoStateType::TYPE_VOICE;
+            break;
+    }
     callReportInfo.mpty = callInfo.mpty;
     return callReportInfo;
 }

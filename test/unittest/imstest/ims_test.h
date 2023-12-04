@@ -27,10 +27,12 @@
 #include "ims_core_service_client.h"
 #include "ims_core_service_proxy.h"
 #include "iservice_registry.h"
+#include "surface_utils.h"
 #include "system_ability_definition.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_permission.h"
 #include "token_setproc.h"
+#include "ims_video_call_control.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -145,12 +147,16 @@ public:
     int32_t GetImsConfig(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t GetImsFeatureValue(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t CtrlCamera(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t ControlCamera(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetPreviewWindow(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetDisplayWindow(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetCameraZoom(const sptr<CellularCallInterface> &telephonyService) const;
-    int32_t SetPauseImage(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SetPausePicture(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t SetDeviceDirection(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SendUpdateCallMediaModeRequest(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t SendUpdateCallMediaModeResponse(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t CancelCallUpgrade(const sptr<CellularCallInterface> &telephonyService) const;
+    int32_t RequestCameraCapabilities(const sptr<CellularCallInterface> &telephonyService) const;
     int32_t InputNumForInterface(const sptr<CellularCallInterface> &telephonyService) const;
 
     bool HasSimCard(int32_t slotId)

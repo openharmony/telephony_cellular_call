@@ -147,66 +147,6 @@ int32_t ConfigRequest::GetImsFeatureValueRequest(FeatureType type, int32_t &valu
     return imsCallClient->GetImsFeatureValue(type, value);
 }
 
-int32_t ConfigRequest::CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->CtrlCamera(cameraId, callingUid, callingPid);
-}
-
-int32_t ConfigRequest::SetPreviewWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->SetPreviewWindow(x, y, z, width, height);
-}
-
-int32_t ConfigRequest::SetDisplayWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->SetDisplayWindow(x, y, z, width, height);
-}
-
-int32_t ConfigRequest::SetCameraZoomRequest(float zoomRatio)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->SetCameraZoom(zoomRatio);
-}
-
-int32_t ConfigRequest::SetPauseImageRequest(const std::u16string &path)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->SetPauseImage(path);
-}
-
-int32_t ConfigRequest::SetDeviceDirectionRequest(int32_t rotation)
-{
-    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
-    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
-        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
-        return CALL_ERR_RESOURCE_UNAVAILABLE;
-    }
-    return imsCallClient->SetDeviceDirection(rotation);
-}
-
 int32_t ConfigRequest::SetMuteRequest(int32_t slotId, int32_t mute)
 {
     if (moduleUtils_.NeedCallImsService()) {

@@ -128,15 +128,6 @@ public:
     int32_t HangUpAllConnection(int32_t slotId) override;
 
     /**
-     * Update Call Media Mode
-     *
-     * @param CellularCallInfo
-     * @param ImsCallMode
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode);
-
-    /**
      * Start Rtt
      *
      * @param msg

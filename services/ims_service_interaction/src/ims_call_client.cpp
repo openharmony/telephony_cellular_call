@@ -260,13 +260,40 @@ int32_t ImsCallClient::KickOutFromConference(int32_t slotId, int32_t index)
     return imsCallProxy_->KickOutFromConference(slotId, index);
 }
 
-int32_t ImsCallClient::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
+int32_t ImsCallClient::SendUpdateCallMediaModeRequest(const ImsCallInfo &callInfo, ImsCallType callType)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->UpdateImsCallMode(callInfo, mode);
+    return imsCallProxy_->SendUpdateCallMediaModeRequest(callInfo, callType);
+}
+
+int32_t ImsCallClient::SendUpdateCallMediaModeResponse(const ImsCallInfo &callInfo, ImsCallType callType)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->SendUpdateCallMediaModeResponse(callInfo, callType);
+}
+
+int32_t ImsCallClient::CancelCallUpgrade(int32_t slotId, int32_t callIndex)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->CancelCallUpgrade(slotId, callIndex);
+}
+
+int32_t ImsCallClient::RequestCameraCapabilities(int32_t slotId, int32_t callIndex)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->RequestCameraCapabilities(slotId, callIndex);
 }
 
 int32_t ImsCallClient::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
@@ -431,31 +458,33 @@ int32_t ImsCallClient::GetMute(int32_t slotId)
     return imsCallProxy_->GetMute(slotId);
 }
 
-int32_t ImsCallClient::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
+int32_t ImsCallClient::ControlCamera(int32_t slotId, int32_t callIndex, const std::string &cameraId)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->CtrlCamera(cameraId, callingUid, callingPid);
+    return imsCallProxy_->ControlCamera(slotId, callIndex, cameraId);
 }
 
-int32_t ImsCallClient::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t ImsCallClient::SetPreviewWindow(
+    int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetPreviewWindow(x, y, z, width, height);
+    return imsCallProxy_->SetPreviewWindow(slotId, callIndex, surfaceID, surface);
 }
 
-int32_t ImsCallClient::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t ImsCallClient::SetDisplayWindow(
+    int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetDisplayWindow(x, y, z, width, height);
+    return imsCallProxy_->SetDisplayWindow(slotId, callIndex, surfaceID, surface);
 }
 
 int32_t ImsCallClient::SetCameraZoom(float zoomRatio)
@@ -467,22 +496,22 @@ int32_t ImsCallClient::SetCameraZoom(float zoomRatio)
     return imsCallProxy_->SetCameraZoom(zoomRatio);
 }
 
-int32_t ImsCallClient::SetPauseImage(const std::u16string &path)
+int32_t ImsCallClient::SetPausePicture(int32_t slotId, int32_t callIndex, const std::string &path)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetPauseImage(path);
+    return imsCallProxy_->SetPausePicture(slotId, callIndex, path);
 }
 
-int32_t ImsCallClient::SetDeviceDirection(int32_t rotation)
+int32_t ImsCallClient::SetDeviceDirection(int32_t slotId, int32_t callIndex, int32_t rotation)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    return imsCallProxy_->SetDeviceDirection(rotation);
+    return imsCallProxy_->SetDeviceDirection(slotId, callIndex, rotation);
 }
 
 int32_t ImsCallClient::SetClip(int32_t slotId, int32_t action, int32_t index)

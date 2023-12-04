@@ -135,15 +135,6 @@ public:
     int32_t CallSupplementRequest(int32_t slotId, CallSupplementType type);
 
     /**
-     * UpdateImsCallMode Request
-     *
-     * @param CellularCallInfo
-     * @param ImsCallMode
-     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
-     */
-    int32_t UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode);
-
-    /**
      * StartRtt Request
      *
      * @param slotId

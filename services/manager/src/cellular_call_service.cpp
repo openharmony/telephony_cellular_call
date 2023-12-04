@@ -23,6 +23,7 @@
 #include "common_event_support.h"
 #include "emergency_utils.h"
 #include "ims_call_client.h"
+#include "ims_video_call_control.h"
 #include "module_service_utils.h"
 #include "radio_event.h"
 #include "string_ex.h"
@@ -682,14 +683,44 @@ int32_t CellularCallService::HangUpAllConnection(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallService::UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode)
+int32_t CellularCallService::SendUpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode)
 {
-    auto control = GetImsControl(callInfo.slotId);
-    if (control == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::UpdateImsCallMode return, control is nullptr");
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    return control->UpdateImsCallMode(callInfo, mode);
+    return videoCallControl->SendUpdateCallMediaModeRequest(callInfo, mode);
+}
+
+int32_t CellularCallService::SendUpdateCallMediaModeResponse(const CellularCallInfo &callInfo, ImsCallMode mode)
+{
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SendUpdateCallMediaModeResponse(callInfo, mode);
+}
+
+int32_t CellularCallService::CancelCallUpgrade(int32_t slotId, int32_t callIndex)
+{
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->CancelCallUpgrade(slotId, callIndex);
+}
+
+int32_t CellularCallService::RequestCameraCapabilities(int32_t slotId, int32_t callIndex)
+{
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->RequestCameraCapabilities(slotId, callIndex);
 }
 
 int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &callInfo)
@@ -1123,40 +1154,66 @@ std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler(int32_t slo
     return handlerMap_[slotId];
 }
 
-int32_t CellularCallService::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
+int32_t CellularCallService::ControlCamera(int32_t slotId, int32_t index, const std::string &cameraId)
 {
-    CellularCallConfig config;
-    return config.CtrlCamera(cameraId, callingUid, callingPid);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->ControlCamera(slotId, index, cameraId);
 }
 
-int32_t CellularCallService::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t CellularCallService::SetPreviewWindow(
+    int32_t slotId, int32_t index, const std::string &surfaceId, sptr<Surface> surface)
 {
-    CellularCallConfig config;
-    return config.SetPreviewWindow(x, y, z, width, height);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SetPreviewWindow(slotId, index, surfaceId, surface);
 }
 
-int32_t CellularCallService::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t CellularCallService::SetDisplayWindow(
+    int32_t slotId, int32_t index, const std::string &surfaceId, sptr<Surface> surface)
 {
-    CellularCallConfig config;
-    return config.SetDisplayWindow(x, y, z, width, height);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SetDisplayWindow(slotId, index, surfaceId, surface);
 }
 
 int32_t CellularCallService::SetCameraZoom(float zoomRatio)
 {
-    CellularCallConfig config;
-    return config.SetCameraZoom(zoomRatio);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SetCameraZoom(zoomRatio);
 }
 
-int32_t CellularCallService::SetPauseImage(const std::u16string &path)
+int32_t CellularCallService::SetPausePicture(int32_t slotId, int32_t index, const std::string &path)
 {
-    CellularCallConfig config;
-    return config.SetPauseImage(path);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SetPausePicture(slotId, index, path);
 }
 
-int32_t CellularCallService::SetDeviceDirection(int32_t rotation)
+int32_t CellularCallService::SetDeviceDirection(int32_t slotId, int32_t callIndex, int32_t rotation)
 {
-    CellularCallConfig config;
-    return config.SetDeviceDirection(rotation);
+    auto videoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    if (videoCallControl == nullptr) {
+        TELEPHONY_LOGE("videoCallControl is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return videoCallControl->SetDeviceDirection(slotId, callIndex, rotation);
 }
 
 int32_t CellularCallService::SetMute(int32_t slotId, int32_t mute)

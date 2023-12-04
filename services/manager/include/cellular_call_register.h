@@ -74,8 +74,6 @@ public:
 
     void ReportInviteToConferenceResult(int32_t result);
 
-    void ReportUpdateCallMediaModeResult(int32_t result);
-
     void ReportGetCallDataResult(int32_t result);
 
     void ReportStartDtmfResult(int32_t result);
@@ -103,6 +101,20 @@ public:
     void ReportPostDialChar(char c);
 
     void ReportPostDialDelay(std::string str);
+
+    void ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveInfo &callModeInfo);
+
+    void ReceiveUpdateCallMediaModeResponse(ImsCallModeReceiveInfo &callModeInfo);
+
+    void HandleCallSessionEventChanged(ImsCallSessionEventInfo &callSessionEventInfo);
+
+    void HandlePeerDimensionsChanged(ImsCallPeerDimensionsInfo &callPeerDimensionsInfo);
+
+    void HandleCallDataUsageChanged(ImsCallDataUsageInfo &callDataUsageInfo);
+
+    void HandleCameraCapabilitiesChanged(CameraCapabilitiesInfo &cameraCapabilitiesInfo);
+
+    ImsCallMode ConverToImsCallMode(ImsCallType callType);
 
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;

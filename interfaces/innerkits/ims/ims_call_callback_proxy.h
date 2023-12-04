@@ -71,6 +71,14 @@ public:
     /****************** conference ******************/
     int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    /****************** call modify ******************/
+    int32_t ReceiveUpdateCallMediaModeResponse(
+        int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse) override;
+    int32_t ReceiveUpdateCallMediaModeRequest(int32_t slotId, const ImsCallModeReceiveInfo &callModeRequest) override;
+    int32_t CallSessionEventChanged(int32_t slotId, const ImsCallSessionEventInfo &callSessionEventInfo) override;
+    int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) override;
+    int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) override;
+    int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) override;
 
 private:
     int32_t SendResponseInfo(int32_t eventId, MessageParcel &in);

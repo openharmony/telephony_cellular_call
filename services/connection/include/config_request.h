@@ -114,64 +114,6 @@ public:
     int32_t GetImsFeatureValueRequest(FeatureType type, int32_t &value);
 
     /**
-     * Ctrl Camera Request
-     *
-     * @param cameraId
-     * @param callingUid
-     * @param callingPid
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t CtrlCameraRequest(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid);
-
-    /**
-     * Set Preview Window Request
-     *
-     * @param x
-     * @param y
-     * @param z
-     * @param width
-     * @param height
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetPreviewWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height);
-
-    /**
-     * Set Display Window Request
-     *
-     * @param x
-     * @param y
-     * @param z
-     * @param width
-     * @param height
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetDisplayWindowRequest(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height);
-
-    /**
-     * Set Camera Zoom Request
-     *
-     * @param zoomRatio
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetCameraZoomRequest(float zoomRatio);
-
-    /**
-     * Set Pause Image Request
-     *
-     * @param path
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetPauseImageRequest(const std::u16string &path);
-
-    /**
-     * Set Device Direction Request
-     *
-     * @param rotation
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t SetDeviceDirectionRequest(int32_t rotation);
-
-    /**
      * SetMuteRequest
      *
      * @param slotId

@@ -476,6 +476,97 @@ int32_t ImsCallCallbackProxy::InviteToConferenceResponse(int32_t slotId, const H
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_INVITE_TO_CONFERENCE), in);
 }
 
+int32_t ImsCallCallbackProxy::ReceiveUpdateCallMediaModeRequest(
+    int32_t slotId, const ImsCallModeReceiveInfo &callModeRequest)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&callModeRequest, sizeof(ImsCallModeReceiveInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callModeRequest fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_REQUEST), in);
+}
+
+int32_t ImsCallCallbackProxy::ReceiveUpdateCallMediaModeResponse(
+    int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&callModeResponse, sizeof(ImsCallModeReceiveInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callModeResponse fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(
+        static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_RESPONSE), in);
+}
+
+int32_t ImsCallCallbackProxy::CallSessionEventChanged(
+    int32_t slotId, const ImsCallSessionEventInfo &callSessionEventInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&callSessionEventInfo, sizeof(ImsCallSessionEventInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callSessionEventInfo fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_SESSION_EVENT_CHANGED), in);
+}
+
+int32_t ImsCallCallbackProxy::PeerDimensionsChanged(
+    int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&callPeerDimensionsInfo, sizeof(ImsCallPeerDimensionsInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callPeerDimensionsInfo fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_PEER_DIMENSIONS_CHANGED), in);
+}
+
+int32_t ImsCallCallbackProxy::CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&callDataUsageInfo, sizeof(ImsCallDataUsageInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callDataUsageInfo fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_DATA_USAGE_CHANGED), in);
+}
+
+int32_t ImsCallCallbackProxy::CameraCapabilitiesChanged(
+    int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteRawData((const void *)&cameraCapabilitiesInfo, sizeof(CameraCapabilitiesInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write cameraCapabilitiesInfo fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(
+        static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CAMERA_CAPABILITIES_CHANGED), in);
+}
+
 int32_t ImsCallCallbackProxy::SendResponseInfo(int32_t eventId, MessageParcel &in)
 {
     MessageOption option;

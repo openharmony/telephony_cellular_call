@@ -69,6 +69,18 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
         &ImsCallCallbackStub::OnCombineConferenceResponseInner;
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_INVITE_TO_CONFERENCE)] =
         &ImsCallCallbackStub::OnInviteToConferenceResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_REQUEST)] =
+        &ImsCallCallbackStub::OnReceiveUpdateCallMediaModeRequestInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_RESPONSE)] =
+        &ImsCallCallbackStub::OnReceiveUpdateCallMediaModeResponseInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_SESSION_EVENT_CHANGED)] =
+        &ImsCallCallbackStub::OnCallSessionEventChangedInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_PEER_DIMENSIONS_CHANGED)] =
+        &ImsCallCallbackStub::OnPeerDimensionsChangedInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_DATA_USAGE_CHANGED)] =
+        &ImsCallCallbackStub::OnCallDataUsageChangedInner;
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CAMERA_CAPABILITIES_CHANGED)] =
+        &ImsCallCallbackStub::OnCameraCapabilitiesChangedInner;
 }
 
 void ImsCallCallbackStub::InitConfigFuncMap()
@@ -657,6 +669,78 @@ int32_t ImsCallCallbackStub::OnInviteToConferenceResponseInner(MessageParcel &da
     return TELEPHONY_SUCCESS;
 }
 
+int32_t ImsCallCallbackStub::OnReceiveUpdateCallMediaModeRequestInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const ImsCallModeReceiveInfo *>(data.ReadRawData(sizeof(ImsCallModeReceiveInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(ReceiveUpdateCallMediaModeRequest(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnReceiveUpdateCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const ImsCallModeReceiveInfo *>(data.ReadRawData(sizeof(ImsCallModeReceiveInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(ReceiveUpdateCallMediaModeResponse(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnCallSessionEventChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const ImsCallSessionEventInfo *>(data.ReadRawData(sizeof(ImsCallSessionEventInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(CallSessionEventChanged(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnPeerDimensionsChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const ImsCallPeerDimensionsInfo *>(data.ReadRawData(sizeof(ImsCallPeerDimensionsInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(PeerDimensionsChanged(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnCallDataUsageChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const ImsCallDataUsageInfo *>(data.ReadRawData(sizeof(ImsCallDataUsageInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(CallDataUsageChanged(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnCameraCapabilitiesChangedInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const CameraCapabilitiesInfo *>(data.ReadRawData(sizeof(CameraCapabilitiesInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(CameraCapabilitiesChanged(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t ImsCallCallbackStub::DialResponse(int32_t slotId, const HRilRadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
@@ -1189,6 +1273,95 @@ int32_t ImsCallCallbackStub::InviteToConferenceResponse(int32_t slotId, const HR
     return SendEvent(slotId, RadioEvent::RADIO_JOIN_CALL, info);
 }
 
+int32_t ImsCallCallbackStub::ReceiveUpdateCallMediaModeRequest(
+    int32_t slotId, const ImsCallModeReceiveInfo &callModeRequest)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_REQUEST, callModeRequest);
+}
+
+int32_t ImsCallCallbackStub::ReceiveUpdateCallMediaModeResponse(
+    int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_RESPONSE, callModeResponse);
+}
+
+int32_t ImsCallCallbackStub::CallSessionEventChanged(
+    int32_t slotId, const ImsCallSessionEventInfo &callSessionEventInfo)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<ImsCallSessionEventInfo> responseInfo = std::make_shared<ImsCallSessionEventInfo>();
+    *responseInfo = callSessionEventInfo;
+    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED, responseInfo);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::PeerDimensionsChanged(
+    int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<ImsCallPeerDimensionsInfo> responseInfo = std::make_shared<ImsCallPeerDimensionsInfo>();
+    *responseInfo = callPeerDimensionsInfo;
+    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_PEER_DIMENSIONS_CHANGED, responseInfo);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<ImsCallDataUsageInfo> responseInfo = std::make_shared<ImsCallDataUsageInfo>();
+    *responseInfo = callDataUsageInfo;
+    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED, responseInfo);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::CameraCapabilitiesChanged(
+    int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<CameraCapabilitiesInfo> responseInfo = std::make_shared<CameraCapabilitiesInfo>();
+    *responseInfo = cameraCapabilitiesInfo;
+    bool ret = handler->SendEvent(RadioEvent::RADIO_CAMERA_CAPABILITIES_CHANGED, responseInfo);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t ImsCallCallbackStub::GetSsRequestCommand(int32_t slotId, int32_t index, SsRequestCommand &ss)
 {
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
@@ -1256,6 +1429,23 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const Ss
     ssResponseInfo->message = resultInfo.message;
     AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(eventId, ssResponseInfo, resultInfo.index);
     bool ret = handler->SendEvent(response);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const ImsCallModeReceiveInfo &callModeInfo)
+{
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    std::shared_ptr<ImsCallModeReceiveInfo> info = std::make_shared<ImsCallModeReceiveInfo>();
+    *info = callModeInfo;
+    bool ret = handler->SendEvent(eventId, info);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;

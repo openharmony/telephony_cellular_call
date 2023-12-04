@@ -304,18 +304,6 @@ void CellularCallRegister::ReportInviteToConferenceResult(int32_t result)
     callManagerCallBack_->InviteToConferenceResult(result);
 }
 
-void CellularCallRegister::ReportUpdateCallMediaModeResult(int32_t result)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (callManagerCallBack_ == nullptr) {
-        TELEPHONY_LOGE("ReportUpdateCallMediaModeResult return, callManagerCallBack_ is nullptr, report fail!");
-        return;
-    }
-    CallMediaModeResponse response;
-    response.result = result;
-    callManagerCallBack_->ReceiveUpdateCallMediaModeResponse(response);
-}
-
 void CellularCallRegister::ReportGetCallDataResult(int32_t result)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -428,6 +416,114 @@ void CellularCallRegister::ReportPostDialDelay(std::string str)
         return;
     }
     callManagerCallBack_->ReportPostDialDelay(str);
+}
+
+void CellularCallRegister::ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveInfo &callModeInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReceiveUpdateCallMediaModeRequest return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    CallModeReportInfo response;
+    response.callIndex = callModeInfo.callIndex;
+    response.result = static_cast<VideoRequestResultType>(callModeInfo.result);
+    ImsCallMode callMode = ConverToImsCallMode(callModeInfo.callType);
+    response.callMode = callMode;
+    callManagerCallBack_->ReceiveUpdateCallMediaModeRequest(response);
+}
+
+void CellularCallRegister::ReceiveUpdateCallMediaModeResponse(ImsCallModeReceiveInfo &callModeInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReceiveUpdateCallMediaModeResponse return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    CallModeReportInfo response;
+    response.callIndex = callModeInfo.callIndex;
+    response.result = static_cast<VideoRequestResultType>(callModeInfo.result);
+    ImsCallMode callMode = ConverToImsCallMode(callModeInfo.callType);
+    response.callMode = callMode;
+    callManagerCallBack_->ReceiveUpdateCallMediaModeResponse(response);
+}
+
+void CellularCallRegister::HandleCallSessionEventChanged(ImsCallSessionEventInfo &callSessionEventInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("HandleCallSessionEventChanged return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    CallSessionReportInfo response;
+    response.index = callSessionEventInfo.callIndex;
+    response.eventId = static_cast<CallSessionEventId>(callSessionEventInfo.eventType);
+    callManagerCallBack_->HandleCallSessionEventChanged(response);
+}
+
+void CellularCallRegister::HandlePeerDimensionsChanged(ImsCallPeerDimensionsInfo &callPeerDimensionsInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("HandlePeerDimensionsChanged return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    PeerDimensionsReportInfo response;
+    response.index = callPeerDimensionsInfo.callIndex;
+    response.width = callPeerDimensionsInfo.width;
+    response.height = callPeerDimensionsInfo.height;
+    callManagerCallBack_->HandlePeerDimensionsChanged(response);
+}
+
+void CellularCallRegister::HandleCallDataUsageChanged(ImsCallDataUsageInfo &callDataUsageInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("HandleCallDataUsageChanged return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    int64_t response = callDataUsageInfo.dataUsage;
+    callManagerCallBack_->HandleCallDataUsageChanged(response);
+}
+
+void CellularCallRegister::HandleCameraCapabilitiesChanged(CameraCapabilitiesInfo &cameraCapabilitiesInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("HandleCameraCapabilitiesChanged return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    CameraCapabilitiesReportInfo response;
+    response.index = cameraCapabilitiesInfo.callIndex;
+    response.width = cameraCapabilitiesInfo.width;
+    response.height = cameraCapabilitiesInfo.height;
+    callManagerCallBack_->HandleCameraCapabilitiesChanged(response);
+}
+
+ImsCallMode CellularCallRegister::ConverToImsCallMode(ImsCallType callType)
+{
+    ImsCallMode callMode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
+    switch (callType) {
+        case ImsCallType::TEL_IMS_CALL_TYPE_VOICE:
+            callMode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_TX:
+            callMode = ImsCallMode::CALL_MODE_SEND_ONLY;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_RX:
+            callMode = ImsCallMode::CALL_MODE_RECEIVE_ONLY;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT:
+            callMode = ImsCallMode::CALL_MODE_SEND_RECEIVE;
+            break;
+        case ImsCallType::TEL_IMS_CALL_TYPE_PAUSE:
+            callMode = ImsCallMode::CALL_MODE_VIDEO_PAUSED;
+            break;
+        default:
+            TELEPHONY_LOGE("unknown callType");
+            break;
+    }
+    return callMode;
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -662,36 +662,6 @@ int32_t CellularCallConfig::GetImsFeatureValue(FeatureType type)
     return ret;
 }
 
-int32_t CellularCallConfig::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
-{
-    return configRequest_.CtrlCameraRequest(cameraId, callingUid, callingPid);
-}
-
-int32_t CellularCallConfig::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
-{
-    return configRequest_.SetPreviewWindowRequest(x, y, z, width, height);
-}
-
-int32_t CellularCallConfig::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
-{
-    return configRequest_.SetDisplayWindowRequest(x, y, z, width, height);
-}
-
-int32_t CellularCallConfig::SetCameraZoom(float zoomRatio)
-{
-    return configRequest_.SetCameraZoomRequest(zoomRatio);
-}
-
-int32_t CellularCallConfig::SetPauseImage(const std::u16string &path)
-{
-    return configRequest_.SetPauseImageRequest(path);
-}
-
-int32_t CellularCallConfig::SetDeviceDirection(int32_t rotation)
-{
-    return configRequest_.SetDeviceDirectionRequest(rotation);
-}
-
 void CellularCallConfig::SetTempMode(int32_t slotId)
 {
     modeMap_[slotId] = modeTempMap_[slotId];

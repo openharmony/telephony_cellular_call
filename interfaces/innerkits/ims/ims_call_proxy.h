@@ -38,7 +38,10 @@ public:
     int32_t CombineConference(int32_t slotId) override;
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList) override;
     int32_t KickOutFromConference(int32_t slotId, int32_t index) override;
-    int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) override;
+    int32_t SendUpdateCallMediaModeRequest(const ImsCallInfo &callInfo, ImsCallType callType) override;
+    int32_t SendUpdateCallMediaModeResponse(const ImsCallInfo &callInfo, ImsCallType callType) override;
+    int32_t CancelCallUpgrade(int32_t slotId, int32_t callIndex) override;
+    int32_t RequestCameraCapabilities(int32_t slotId, int32_t callIndex) override;
     int32_t GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag) override;
     int32_t GetLastCallFailReason(int32_t slotId) override;
 
@@ -60,12 +63,14 @@ public:
     int32_t SetMute(int32_t slotId, int32_t mute) override;
     int32_t GetMute(int32_t slotId) override;
 
-    int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) override;
-    int32_t SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) override;
-    int32_t SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) override;
+    int32_t ControlCamera(int32_t slotId, int32_t callIndex, const std::string &cameraId) override;
+    int32_t SetPreviewWindow(
+        int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface) override;
+    int32_t SetDisplayWindow(
+        int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface) override;
     int32_t SetCameraZoom(float zoomRatio) override;
-    int32_t SetPauseImage(const std::u16string &path) override;
-    int32_t SetDeviceDirection(int32_t rotation) override;
+    int32_t SetPausePicture(int32_t slotId, int32_t callIndex, const std::string &path) override;
+    int32_t SetDeviceDirection(int32_t slotId, int32_t callIndex, int32_t rotation) override;
 
     int32_t SetClip(int32_t slotId, int32_t action, int32_t index) override;
     int32_t GetClip(int32_t slotId, int32_t index) override;

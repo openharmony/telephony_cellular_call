@@ -36,6 +36,9 @@ constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t SERIAL_NUM = 3;
 constexpr int32_t ERROR_NUM = 15;
 constexpr int32_t TYPE_NUM = 5;
+constexpr int32_t CALL_INDEX_NUM = 8;
+constexpr int32_t REQUEST_NUM = 6;
+constexpr int32_t VIDEO_CALL_EVENT_NUM = 4;
 
 bool IsServiceInited()
 {
@@ -334,6 +337,88 @@ void TestCFCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallba
     stub->OnGetCallTransferResponseInner(cfData, cfReply);
 }
 
+void TestICCbWithCallMediaModeRequestReport(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel callMediaModeRequestData;
+    MessageParcel callMediaModeRequestReply;
+    ImsCallModeReceiveInfo callModeRequest;
+    callModeRequest.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    callModeRequest.result = static_cast<ImsCallModeRequestResult>(size % REQUEST_NUM);
+    callModeRequest.callType = static_cast<ImsCallType>(size % TYPE_NUM);
+    callMediaModeRequestData.WriteInt32(slotId);
+    callMediaModeRequestData.WriteRawData((const void *)&callModeRequest, sizeof(ImsCallModeReceiveInfo));
+    stub->OnReceiveUpdateCallMediaModeRequestInner(callMediaModeRequestData, callMediaModeRequestReply);
+}
+
+void TestICCbWithCallMediaModeResponseReport(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel callMediaModeResponseData;
+    MessageParcel callMediaModeResponseReply;
+    ImsCallModeReceiveInfo callModeResponse;
+    callModeResponse.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    callModeResponse.result = static_cast<ImsCallModeRequestResult>(size % REQUEST_NUM);
+    callModeResponse.callType = static_cast<ImsCallType>(size % TYPE_NUM);
+    callMediaModeResponseData.WriteInt32(slotId);
+    callMediaModeResponseData.WriteRawData((const void *)&callModeResponse, sizeof(ImsCallModeReceiveInfo));
+    stub->OnReceiveUpdateCallMediaModeResponseInner(callMediaModeResponseData, callMediaModeResponseReply);
+}
+
+void TestICCbWithCallSessionEventChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel callSessionData;
+    MessageParcel callSessionReply;
+    ImsCallSessionEventInfo callSessionEventInfo;
+    callSessionEventInfo.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    callSessionEventInfo.eventType = static_cast<VideoCallEventType>(size % VIDEO_CALL_EVENT_NUM);
+    callSessionData.WriteInt32(slotId);
+    callSessionData.WriteRawData((const void *)&callSessionEventInfo, sizeof(ImsCallSessionEventInfo));
+    stub->OnCallSessionEventChangedInner(callSessionData, callSessionReply);
+}
+
+void TestICCbWithPeerDimensionsChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel callPeerDimensionsData;
+    MessageParcel callPeerDimensionsReply;
+    ImsCallPeerDimensionsInfo callPeerDimensionsInfo;
+    callPeerDimensionsInfo.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    callPeerDimensionsInfo.width = static_cast<int32_t>(size);
+    callPeerDimensionsInfo.height = static_cast<int32_t>(size);
+    callPeerDimensionsData.WriteInt32(slotId);
+    callPeerDimensionsData.WriteRawData((const void *)&callPeerDimensionsInfo, sizeof(ImsCallPeerDimensionsInfo));
+    stub->OnPeerDimensionsChangedInner(callPeerDimensionsData, callPeerDimensionsReply);
+}
+
+void TestICCbWithCallDataUsageChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel callDataUsageIData;
+    MessageParcel callDataUsageIReply;
+    ImsCallDataUsageInfo callDataUsageInfo;
+    callDataUsageInfo.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    callDataUsageInfo.dataUsage = static_cast<int64_t>(size);
+    callDataUsageIData.WriteInt32(slotId);
+    callDataUsageIData.WriteRawData((const void *)&callDataUsageInfo, sizeof(ImsCallDataUsageInfo));
+    stub->OnCallDataUsageChangedInner(callDataUsageIData, callDataUsageIReply);
+}
+
+void TestICCbWithCameraCapabilitiesChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+{
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    MessageParcel cameraCapabilitiesData;
+    MessageParcel cameraCapabilitiesReply;
+    CameraCapabilitiesInfo cameraCapabilitiesInfo;
+    cameraCapabilitiesInfo.callIndex = static_cast<int32_t>(size % CALL_INDEX_NUM);
+    cameraCapabilitiesInfo.width = static_cast<int32_t>(size);
+    cameraCapabilitiesInfo.height = static_cast<int32_t>(size);
+    cameraCapabilitiesData.WriteInt32(slotId);
+    cameraCapabilitiesData.WriteRawData((const void *)&cameraCapabilitiesInfo, sizeof(CameraCapabilitiesInfo));
+    stub->OnCameraCapabilitiesChangedInner(cameraCapabilitiesData, cameraCapabilitiesReply);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -356,6 +441,13 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     TestImsUTCallbackFunction(data, size, stub);
     TestUTCallbackFunction(data, size, stub);
     TestCFCallbackFunction(data, size, stub);
+    // IMS video call callback test(ICCb: ImsCallCallback)
+    TestICCbWithCallMediaModeRequestReport(data, size, stub);
+    TestICCbWithCallMediaModeResponseReport(data, size, stub);
+    TestICCbWithCallSessionEventChanged(data, size, stub);
+    TestICCbWithPeerDimensionsChanged(data, size, stub);
+    TestICCbWithCallDataUsageChanged(data, size, stub);
+    TestICCbWithCameraCapabilitiesChanged(data, size, stub);
 }
 } // namespace OHOS
 

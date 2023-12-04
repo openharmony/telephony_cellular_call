@@ -23,6 +23,7 @@
 #include "ims_call_client.h"
 #include "ims_call_proxy.h"
 #include "securec.h"
+#include "surface_utils.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::Telephony;
@@ -30,6 +31,16 @@ namespace OHOS {
 static bool g_isInited = false;
 constexpr int32_t SERVICE_STATE_RUNNING = 1;
 constexpr int32_t IMS_CONFIG_ITEM_NUM = 2;
+enum {
+    NUM_ONE = 1,
+    NUM_TWO,
+    NUM_THREE,
+    NUM_FOUR,
+    NUM_FIVE,
+    NUM_SIX,
+    NUM_SEVEN,
+    NUM_EIGHT,
+};
 
 bool IsServiceInited()
 {
@@ -55,10 +66,10 @@ void TestImsCallClientWithCallInfo(
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
     std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % 2);
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t videoState = static_cast<int32_t>(size % 3);
-    int32_t index = static_cast<int32_t>(size % 3);
+    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t videoState = static_cast<int32_t>(size % NUM_THREE);
+    int32_t index = static_cast<int32_t>(size % NUM_THREE);
     const char *cDtmfCode = number.c_str();
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
@@ -73,7 +84,6 @@ void TestImsCallClientWithCallInfo(
     imsCallClient->Answer(callInfo);
     imsCallClient->Reject(callInfo);
     imsCallClient->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
-    imsCallClient->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
     imsCallClient->InviteToConference(slotId, numberList);
     imsCallClient->KickOutFromConference(slotId, index);
     imsCallClient->StartDtmf(slotId, *cDtmfCode, index);
@@ -92,28 +102,35 @@ void TestImsCallClientWithCallInfo(
 void TestImsCallClientWithSlotAndType(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t callType = static_cast<int32_t>(size % 2);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t callType = static_cast<int32_t>(size % NUM_TWO);
     std::string info(reinterpret_cast<const char *>(data), size);
-    int32_t x = static_cast<int32_t>(size % 3);
-    int32_t y = static_cast<int32_t>(size % 3);
-    int32_t z = static_cast<int32_t>(size % 4);
-    int32_t width = static_cast<int32_t>(size % 4);
-    int32_t height = static_cast<int32_t>(size % 5);
-    int32_t callingUid = static_cast<int32_t>(size % 5);
-    int32_t callingPid = static_cast<int32_t>(size % 6);
-    int32_t mode = static_cast<int32_t>(size % 6);
+    int32_t mode = static_cast<int32_t>(size % NUM_SIX);
     imsCallClient->HoldCall(slotId, callType);
     imsCallClient->UnHoldCall(slotId, callType);
     imsCallClient->SwitchCall(slotId, callType);
     imsCallClient->CombineConference(slotId);
     imsCallClient->GetImsCallsDataRequest(slotId, callType);
     imsCallClient->GetLastCallFailReason(slotId);
-    imsCallClient->CtrlCamera(Str8ToStr16(info), callingUid, callingPid);
-    imsCallClient->SetPreviewWindow(x, y, z, width, height);
-    imsCallClient->SetDisplayWindow(x, y, z, width, height);
-    imsCallClient->SetPauseImage(Str8ToStr16(info));
-    imsCallClient->SetDeviceDirection(mode);
+    imsCallClient->ControlCamera(slotId, index, info);
+    imsCallClient->SetPausePicture(slotId, index, info);
+    if (info.empty() || info[0] < '0' || info[0] > '9') {
+        info = "";
+        imsCallClient->SetPreviewWindow(slotId, index, info, nullptr);
+        imsCallClient->SetDisplayWindow(slotId, index, info, nullptr);
+    } else {
+        int len = static_cast<int>(info.length());
+        std::string subSurfaceId = info;
+        if (len >= 1) {
+            subSurfaceId = info.substr(0, 1);
+        }
+        uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
+        auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
+        imsCallClient->SetPreviewWindow(slotId, index, subSurfaceId, surface);
+        imsCallClient->SetDisplayWindow(slotId, index, subSurfaceId, surface);
+    }
+    imsCallClient->SetDeviceDirection(slotId, index, mode);
     imsCallClient->SetCameraZoom(mode);
     ImsCapabilityList imsCapabilityList;
     ImsCapability capbility;
@@ -133,12 +150,12 @@ void TestImsCallClientWithSettingFunction(
     }
     size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
     std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % 2);
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t index = static_cast<int32_t>(size % 3);
+    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_THREE);
     int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
-    int32_t value = static_cast<int32_t>(size % 4);
-    int32_t type = static_cast<int32_t>(size % 4);
+    int32_t value = static_cast<int32_t>(size % NUM_FOUR);
+    int32_t type = static_cast<int32_t>(size % NUM_FOUR);
     imsCallClient->SetImsConfig(static_cast<ImsConfigItem>(item), number);
     imsCallClient->SetImsConfig(static_cast<ImsConfigItem>(item), value);
     imsCallClient->GetImsConfig(static_cast<ImsConfigItem>(item));
@@ -165,6 +182,60 @@ void TestImsCallClientWithSettingFunction(
     imsCallClient->GetCallRestriction(slotId, number, index);
 }
 
+void TestImsCallClientWithCallMediaModeRequest(
+    const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
+{
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
+    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
+        return;
+    }
+    ImsCallType callMode = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    imsCallClient->SendUpdateCallMediaModeRequest(callInfo, callMode);
+}
+
+void TestImsCallClientWithCallMediaModeResponse(
+    const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
+{
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
+    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
+        return;
+    }
+    ImsCallType callMode = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    imsCallClient->SendUpdateCallMediaModeResponse(callInfo, callMode);
+}
+
+void TestImsCallClientWithCancelCallUpgrade(
+    const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
+{
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    imsCallClient->CancelCallUpgrade(slotId, index);
+}
+
+void TestImsCallClientWithRequestCameraCapabilities(
+    const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
+{
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    imsCallClient->RequestCameraCapabilities(slotId, index);
+}
+
 void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
     ImsCallInfo callInfo;
@@ -173,10 +244,10 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
     std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % 2);
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t videoState = static_cast<int32_t>(size % 3);
-    int32_t index = static_cast<int32_t>(size % 3);
+    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t videoState = static_cast<int32_t>(size % NUM_THREE);
+    int32_t index = static_cast<int32_t>(size % NUM_THREE);
     const char *cDtmfCode = number.c_str();
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
@@ -190,7 +261,6 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
     proxy->HangUp(callInfo);
     proxy->Answer(callInfo);
     proxy->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
-    proxy->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
     proxy->InviteToConference(slotId, numberList);
     proxy->KickOutFromConference(slotId, index);
     proxy->StartDtmf(slotId, *cDtmfCode, index);
@@ -208,28 +278,35 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
 
 void TestImsCallProxyWithSlotAndType(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t callType = static_cast<int32_t>(size % 2);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t callType = static_cast<int32_t>(size % NUM_TWO);
     std::string info(reinterpret_cast<const char *>(data), size);
-    int32_t x = static_cast<int32_t>(size % 3);
-    int32_t y = static_cast<int32_t>(size % 3);
-    int32_t z = static_cast<int32_t>(size % 4);
-    int32_t width = static_cast<int32_t>(size % 4);
-    int32_t height = static_cast<int32_t>(size % 5);
-    int32_t callingUid = static_cast<int32_t>(size % 5);
-    int32_t callingPid = static_cast<int32_t>(size % 6);
-    int32_t mode = static_cast<int32_t>(size % 6);
+    int32_t mode = static_cast<int32_t>(size % NUM_SIX);
     proxy->HoldCall(slotId, callType);
     proxy->UnHoldCall(slotId, callType);
     proxy->SwitchCall(slotId, callType);
     proxy->CombineConference(slotId);
     proxy->GetImsCallsDataRequest(slotId, callType);
     proxy->GetLastCallFailReason(slotId);
-    proxy->CtrlCamera(Str8ToStr16(info), callingUid, callingPid);
-    proxy->SetPreviewWindow(x, y, z, width, height);
-    proxy->SetDisplayWindow(x, y, z, width, height);
-    proxy->SetPauseImage(Str8ToStr16(info));
-    proxy->SetDeviceDirection(mode);
+    proxy->ControlCamera(slotId, index, info);
+    proxy->SetPausePicture(slotId, index, info);
+    if (info.empty() || info[0] < '0' || info[0] > '9') {
+        info = "";
+        proxy->SetPreviewWindow(slotId, index, info, nullptr);
+        proxy->SetDisplayWindow(slotId, index, info, nullptr);
+    } else {
+        int len = static_cast<int>(info.length());
+        std::string subSurfaceId = info;
+        if (len >= 1) {
+            subSurfaceId = info.substr(0, 1);
+        }
+        uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
+        auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
+        proxy->SetPreviewWindow(slotId, index, subSurfaceId, surface);
+        proxy->SetDisplayWindow(slotId, index, subSurfaceId, surface);
+    }
+    proxy->SetDeviceDirection(slotId, index, mode);
     proxy->SetCameraZoom(mode);
     ImsCapabilityList imsCapabilityList;
     ImsCapability capbility;
@@ -248,12 +325,12 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     }
     size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
     std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % 2);
-    int32_t slotId = static_cast<int32_t>(size % 2);
-    int32_t index = static_cast<int32_t>(size % 3);
+    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_THREE);
     int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
-    int32_t value = static_cast<int32_t>(size % 4);
-    int32_t type = static_cast<int32_t>(size % 4);
+    int32_t value = static_cast<int32_t>(size % NUM_FOUR);
+    int32_t type = static_cast<int32_t>(size % NUM_FOUR);
     proxy->SetImsConfig(static_cast<ImsConfigItem>(item), number);
     proxy->SetImsConfig(static_cast<ImsConfigItem>(item), value);
     proxy->GetImsConfig(static_cast<ImsConfigItem>(item));
@@ -280,6 +357,57 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     proxy->GetCallRestriction(slotId, number, index);
 }
 
+void TestImsCallProxyWithCallMediaModeRequest(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+{
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
+    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
+        return;
+    }
+    ImsCallType callType = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    proxy->SendUpdateCallMediaModeRequest(callInfo, callType);
+}
+
+void TestImsCallProxyWithCallMediaModeResponse(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+{
+    ImsCallInfo callInfo;
+    if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
+        return;
+    }
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
+    std::string number(reinterpret_cast<const char *>(data), length);
+    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
+    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
+        return;
+    }
+    ImsCallType callType = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    proxy->SendUpdateCallMediaModeResponse(callInfo, callType);
+}
+
+void TestImsCallProxyWithCancelCallUpgrade(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+{
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    proxy->CancelCallUpgrade(slotId, index);
+}
+
+void TestImsCallProxyWithRequestCameraCapabilities(
+    const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+{
+    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
+    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    proxy->RequestCameraCapabilities(slotId, index);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -295,6 +423,10 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     TestImsCallClientWithCallInfo(data, size, imsCallClient);
     TestImsCallClientWithSlotAndType(data, size, imsCallClient);
     TestImsCallClientWithSettingFunction(data, size, imsCallClient);
+    TestImsCallClientWithCallMediaModeRequest(data, size, imsCallClient);
+    TestImsCallClientWithCallMediaModeResponse(data, size, imsCallClient);
+    TestImsCallClientWithCancelCallUpgrade(data, size, imsCallClient);
+    TestImsCallClientWithRequestCameraCapabilities(data, size, imsCallClient);
 
     auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (managerPtr == nullptr) {
@@ -311,6 +443,10 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     TestImsCallProxyWithCallInfo(data, size, proxy);
     TestImsCallProxyWithSlotAndType(data, size, proxy);
     TestImsCallProxyWithSettingFunction(data, size, proxy);
+    TestImsCallProxyWithCallMediaModeRequest(data, size, proxy);
+    TestImsCallProxyWithCallMediaModeResponse(data, size, proxy);
+    TestImsCallProxyWithCancelCallUpgrade(data, size, proxy);
+    TestImsCallProxyWithRequestCameraCapabilities(data, size, proxy);
     proxy.clear();
     proxy = nullptr;
 }

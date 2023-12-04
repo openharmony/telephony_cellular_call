@@ -379,6 +379,64 @@ public:
      */
     virtual int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
 
+    /**
+     * @brief ReceiveUpdateCallMediaModeRequest the result of receive update call media mode by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param callModeResponse Indicates info of received.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t ReceiveUpdateCallMediaModeRequest(
+        int32_t slotId, const ImsCallModeReceiveInfo &callModeRequest) = 0;
+
+    /**
+     * @brief ReceiveUpdateCallMediaModeResponse the result of send update call media mode by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param callModeResponse Indicates info of received.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t ReceiveUpdateCallMediaModeResponse(
+        int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse) = 0;
+
+    /**
+     * CallSessionEventChanged report call session event change to up layer
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param callSessionEventInfo Indicates info of call session info.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t CallSessionEventChanged(int32_t slotId, const ImsCallSessionEventInfo &callSessionEventInfo) = 0;
+
+    /**
+     * PeerDimensionsChanged report ims video call peer dimensions changed to up layer
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param callPeerDimensionsInfo include video window width and height info.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) = 0;
+
+    /**
+     * CallDataUsageChanged report ims call data usage changed to up layer
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param callDataUsageInfo Indicates ims call data usage info.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) = 0;
+
+    /**
+     * CameraCapabilitiesChanged report camera capabilities changed to up layer
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param cameraCapabilitiesInfo Indicates ims video call camera capabilities info
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };
