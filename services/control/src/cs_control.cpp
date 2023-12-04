@@ -433,7 +433,10 @@ int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfo
     CallsReportInfo callsReportInfo;
     for (int32_t i = 0; i < callInfoList.callSize; ++i) {
         CallReportInfo reportInfo = EncapsulationCallReportInfo(slotId, callInfoList.calls[i]);
-
+        if (callInfoList.callSize == 1 && reportInfo.state == TelCallState::CALL_STATUS_WAITING) {
+            TELEPHONY_LOGI("only one call, report incoming state instead of waiting state");
+            reportInfo.state = TelCallState::CALL_STATUS_INCOMING;
+        }
         auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
             connectionMap_, callInfoList.calls[i].index);
         if (pConnection == nullptr) {
