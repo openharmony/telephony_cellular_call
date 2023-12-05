@@ -79,6 +79,8 @@ public:
 
     void SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void FactoryReset(const AppExecFwk::InnerEvent::Pointer &event);
+
     void SimRecordsLoadedReport(const AppExecFwk::InnerEvent::Pointer &event);
 
     void SimAccountLoadedReport(const AppExecFwk::InnerEvent::Pointer &event);

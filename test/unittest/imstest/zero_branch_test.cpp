@@ -178,6 +178,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
     config.GetImsConfig(ImsConfigItem::ITEM_VIDEO_QUALITY);
     config.SetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE, 1);
     config.GetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE);
+    config.HandleFactoryReset(0);
+    config.HandleFactoryReset(1);
 }
 
 /**

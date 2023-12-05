@@ -284,6 +284,13 @@ public:
     void HandleSimStateChanged(int32_t slotId);
 
     /**
+     * HandleFactoryReset
+     *
+     * @param slotId
+     */
+    void HandleFactoryReset(int32_t slotId);
+
+    /**
      * HandleSetLteImsSwitchResult
      *
      * @param slotId

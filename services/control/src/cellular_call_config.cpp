@@ -21,6 +21,7 @@
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
 #include "core_manager_inner.h"
+#include "core_service_client.h"
 #include "module_service_utils.h"
 #include "parameters.h"
 #include "standardize_utils.h"
@@ -219,6 +220,34 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
     }
 }
 
+void CellularCallConfig::HandleFactoryReset(int32_t slotId)
+{
+    TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset entry, slotId: %{public}d", slotId);
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
+        return;
+    }
+    bool hasSimCard = false;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
+        TELEPHONY_LOGE("return due to no sim card");
+        return;
+    }
+    // Set VoLTE to default
+    int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
+    TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset entry, ret: %{public}d", ret);
+    if (ret == SAVE_IMS_SWITCH_SUCCESS_CHANGED) {
+        TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset ImsSwitch success");
+    } else {
+        if (ret == SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED) {
+            TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset ImsSwitch status do not change");
+        } else {
+            TELEPHONY_LOGE("CellularCallConfig::HandleFactoryReset ImsSwitchfailed");
+        }
+    }
+    UpdateImsCapabilities(slotId, true);
+}
+
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry, slotId: %{public}d", slotId);
@@ -393,7 +422,7 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
 {
     bool isGbaValid = IsGbaValid(slotId);
     ImsCapabilityList imsCapabilityList;
-
+    TELEPHONY_LOGI("CellularCallConfig::UpdateImsCapabilities entry");
     UpdateImsVoiceCapabilities(slotId, isGbaValid, imsCapabilityList);
     if (needUpdateUtCapability) {
         UpdateImsUtCapabilities(slotId, isGbaValid, imsCapabilityList);
@@ -401,7 +430,6 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
     configRequest_.SetImsSwitchStatusRequest(slotId, IsNeedTurnOnIms(imsCapabilityList));
 }
-
 bool CellularCallConfig::IsGbaValid(int32_t slotId)
 {
     if (imsGbaRequired_[slotId]) {

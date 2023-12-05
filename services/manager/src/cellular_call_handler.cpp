@@ -130,6 +130,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_ATTACHED] = &CellularCallHandler::NetworkStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] = &CellularCallHandler::NetworkStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] = &CellularCallHandler::OnRilAdapterHostDied;
+    requestFuncMap_[RadioEvent::RADIO_FACTORY_RESET] = &CellularCallHandler::FactoryReset;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
@@ -583,6 +584,12 @@ void CellularCallHandler::SimStateChangeReport(const AppExecFwk::InnerEvent::Poi
 {
     CellularCallConfig config;
     config.HandleSimStateChanged(slotId_);
+}
+
+void CellularCallHandler::FactoryReset(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    CellularCallConfig config;
+    config.HandleFactoryReset(slotId_);
 }
 
 void CellularCallHandler::SimRecordsLoadedReport(const AppExecFwk::InnerEvent::Pointer &event)
