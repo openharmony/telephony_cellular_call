@@ -65,6 +65,16 @@ void CellularCallHandler::InitBasicFuncMap()
     requestFuncMap_[RadioEvent::RADIO_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
     requestFuncMap_[RadioEvent::RADIO_CURRENT_CALLS] = &CellularCallHandler::GetCsCallsDataResponse;
     requestFuncMap_[RadioEvent::RADIO_GET_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
+    requestFuncMap_[RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_REQUEST] =
+        &CellularCallHandler::ReceiveUpdateCallMediaModeRequest;
+    requestFuncMap_[RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_RESPONSE] =
+        &CellularCallHandler::ReceiveUpdateCallMediaModeResponse;
+    requestFuncMap_[RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED] = &CellularCallHandler::HandleCallSessionEventChanged;
+    requestFuncMap_[RadioEvent::RADIO_CALL_PEER_DIMENSIONS_CHANGED] =
+        &CellularCallHandler::HandlePeerDimensionsChanged;
+    requestFuncMap_[RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED] = &CellularCallHandler::HandleCallDataUsageChanged;
+    requestFuncMap_[RadioEvent::RADIO_CAMERA_CAPABILITIES_CHANGED] =
+        &CellularCallHandler::HandleCameraCapabilitiesChanged;
 
     requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
     requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
@@ -634,6 +644,90 @@ void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer
         return;
     }
     registerInstance_->ReportStopDtmfResult(static_cast<int32_t>(result->error));
+}
+
+void CellularCallHandler::ReceiveUpdateCallMediaModeRequest(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallModeReceiveInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReceiveUpdateCallMediaModeRequest(*result);
+}
+
+void CellularCallHandler::ReceiveUpdateCallMediaModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallModeReceiveInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReceiveUpdateCallMediaModeResponse(*result);
+}
+
+void CellularCallHandler::HandleCallSessionEventChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallSessionEventInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->HandleCallSessionEventChanged(*result);
+}
+
+void CellularCallHandler::HandlePeerDimensionsChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallPeerDimensionsInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->HandlePeerDimensionsChanged(*result);
+}
+
+void CellularCallHandler::HandleCallDataUsageChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallDataUsageInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->HandleCallDataUsageChanged(*result);
+}
+
+void CellularCallHandler::HandleCameraCapabilitiesChanged(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<CameraCapabilitiesInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->HandleCameraCapabilitiesChanged(*result);
 }
 
 void CellularCallHandler::SetSlotId(int32_t id)

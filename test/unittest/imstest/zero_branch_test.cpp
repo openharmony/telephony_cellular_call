@@ -47,6 +47,7 @@ const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t ACTIVATE_ACTION = 1;
 const std::string PHONE_NUMBER = "00000000";
+const int32_t DEFAULT_INDEX = 1;
 } // namespace
 
 class DemoHandler : public AppExecFwk::EventHandler {
@@ -178,30 +179,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
     config.GetImsConfig(ImsConfigItem::ITEM_VIDEO_QUALITY);
     config.SetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE, 1);
     config.GetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE);
-}
-
-/**
- * @tc.number   Telephony_CellularCallConfig_002
- * @tc.name     Test error branch
- * @tc.desc     Function test
- */
-HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | Level3)
-{
-    AccessToken token;
-    CellularCallConfig config;
-    std::u16string cameraId = u"";
-    int32_t x = 0;
-    int32_t y = 0;
-    int32_t z = 0;
-    int32_t width = 10;
-    int32_t height = 10;
-    config.CtrlCamera(cameraId, 0, 0);
-    config.SetPreviewWindow(x, y, z, width, height);
-    config.SetDisplayWindow(x, y, z, width, height);
-    config.SetCameraZoom(1.0);
-    std::u16string path = u"";
-    config.SetPauseImage(path);
-    config.SetDeviceDirection(1);
 }
 
 /**
@@ -608,7 +585,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_001, Function | MediumTest
     imsControl.RestoreConnection(infos, SIM2_SLOTID);
     imsControl.ReportHangUp(infos, SIM1_SLOTID);
     imsControl.ReportHangUp(infos, SIM2_SLOTID);
-    imsControl.UpdateImsCallMode(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     imsControl.HoldCall(SIM1_SLOTID);
     imsControl.UnHoldCall(SIM1_SLOTID);
     imsControl.SwitchCall(SIM1_SLOTID);
@@ -658,6 +634,32 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest
 }
 
 /**
+ * @tc.number   Telephony_ImsVideoCallControl_001
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    auto imsVideoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    std::string cameraId = "";
+    imsVideoCallControl->ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId);
+    std::string surfaceId = "";
+    imsVideoCallControl->SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
+    imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
+    imsVideoCallControl->SetCameraZoom(1.0);
+    std::string path = "";
+    imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path);
+    imsVideoCallControl->SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0);
+    CellularCallInfo cellularCallInfo;
+    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
+    imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
+    imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
+    imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
+    imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX);
+}
+
+/**
  * @tc.number   Telephony_CellularCallConnectionIms_001
  * @tc.name     Test error branch
  * @tc.desc     Function test
@@ -679,8 +681,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList);
     callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0);
     callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT);
-    CellularCallInfo callInfo;
-    callConn.UpdateCallMediaModeRequest(callInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     std::string msg = "";
     callConn.StartRttRequest(SIM1_SLOTID, msg);
     callConn.StopRttRequest(SIM1_SLOTID);
@@ -717,20 +717,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumT
     configReq.SetImsFeatureValueRequest(FeatureType::TYPE_VOICE_OVER_LTE, 1);
     int32_t imsFeature = 0;
     configReq.GetImsFeatureValueRequest(FeatureType::TYPE_VOICE_OVER_LTE, imsFeature);
-
-    std::u16string cameraId = u"";
-    int32_t x = 0;
-    int32_t y = 0;
-    int32_t z = 0;
-    int32_t width = 10;
-    int32_t height = 10;
-    std::u16string path = u"";
-    configReq.CtrlCameraRequest(cameraId, 0, 0);
-    configReq.SetPreviewWindowRequest(x, y, z, width, height);
-    configReq.SetDisplayWindowRequest(x, y, z, width, height);
-    configReq.SetCameraZoomRequest(1.0);
-    configReq.SetPauseImageRequest(path);
-    configReq.SetDeviceDirectionRequest(1);
     configReq.SetMuteRequest(SIM1_SLOTID, 0);
     configReq.GetMuteRequest(SIM1_SLOTID);
     configReq.SetMuteRequest(SIM2_SLOTID, 0);
@@ -856,7 +842,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_002, Function | MediumTest | Lev
 
     MessageParcel cameraData;
     cameraData.WriteInt32(size);
-    callStub.OnCtrlCameraInner(cameraData, reply);
+    callStub.OnControlCameraInner(cameraData, reply);
 }
 
 /**
@@ -1015,10 +1001,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_005, Function | MediumTest | Lev
     MessageParcel clearCallsData;
     MakeCallInfoParcelData(false, clearCallsData);
     callStub.OnClearAllCallsInner(clearCallsData, reply);
-    MessageParcel updateMediaData;
-    MakeCallInfoParcelData(false, updateMediaData);
-    updateMediaData.WriteInt32(size);
-    callStub.OnUpdateCallMediaModeInner(updateMediaData, reply);
 }
 
 /**
@@ -1044,7 +1026,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Lev
     callStub.OnSetCameraZoomInner(setCameraData, reply);
     MessageParcel setImageData;
     setImageData.WriteInt32(errorSize);
-    callStub.OnSetPauseImageInner(setImageData, reply);
+    callStub.OnSetPausePictureInner(setImageData, reply);
     MessageParcel setDirectionData;
     setDirectionData.WriteInt32(errorSize);
     callStub.OnSetDeviceDirectionInner(setDirectionData, reply);
@@ -1054,8 +1036,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Lev
     setEmergencyData.WriteInt32(errorSize);
     setEmergencyData.WriteInt32(size);
     if (setEmergencyData.WriteString("123") && setEmergencyData.WriteString("456") &&
-        setEmergencyData.WriteInt32(size) && setEmergencyData.WriteInt32(size) &&
-        setEmergencyData.WriteInt32(size)) {
+        setEmergencyData.WriteInt32(size) && setEmergencyData.WriteInt32(size) && setEmergencyData.WriteInt32(size)) {
         callStub.OnSetEmergencyCallList(setEmergencyData, reply);
     }
 
@@ -1078,6 +1059,42 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Lev
     stopRttData.WriteInt32(size);
     stopRttData.WriteInt32(errorSize);
     callStub.OnStopRttInner(stopRttData, reply);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_007
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallStub_007, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t size = 1;
+    MessageParcel reply;
+    MessageParcel callMediaModeRequestData;
+    MakeCallInfoParcelData(false, callMediaModeRequestData);
+    ImsCallMode requestMode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
+    callMediaModeRequestData.WriteInt32(static_cast<int32_t>(requestMode));
+    callStub.OnSendUpdateCallMediaModeRequestInner(callMediaModeRequestData, reply);
+
+    MessageParcel callMediaModeResponseData;
+    MakeCallInfoParcelData(false, callMediaModeResponseData);
+    ImsCallMode responseMode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
+    callMediaModeResponseData.WriteInt32(static_cast<int32_t>(responseMode));
+    callStub.OnSendUpdateCallMediaModeResponseInner(callMediaModeResponseData, reply);
+
+    MessageParcel callUpgradeData;
+    callUpgradeData.WriteInt32(size);
+    callUpgradeData.WriteInt32(SIM1_SLOTID);
+    callUpgradeData.WriteInt32(DEFAULT_INDEX);
+    callStub.OnCancelCallUpgradeInner(callUpgradeData, reply);
+
+    MessageParcel cameraCapabilitiesData;
+    cameraCapabilitiesData.WriteInt32(size);
+    cameraCapabilitiesData.WriteInt32(SIM1_SLOTID);
+    cameraCapabilitiesData.WriteInt32(DEFAULT_INDEX);
+    callStub.OnRequestCameraCapabilitiesInner(cameraCapabilitiesData, reply);
 }
 
 /**
@@ -1169,7 +1186,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | 
     cellularCall.SetReadyToCall(SIM1_SLOTID, 0, true);
     cellularCall.SetReadyToCall(SIM1_SLOTID, 1, true);
     cellularCall.SetReadyToCall(SIM1_SLOTID, 3, true);
-    cellularCall.UpdateImsCallMode(csCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.StartDtmf('*', csCallInfo);
     cellularCall.StartDtmf('*', imsCallInfo);
     cellularCall.StartDtmf('*', errCallInfo);
@@ -1195,7 +1211,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | 
  */
 HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | Level3)
 {
-    // AccessToken token;
+    AccessToken token;
     CellularCallService cellularCall;
     CallTransferInfo cTInfoDisable = { .settingType = CallTransferSettingType::CALL_TRANSFER_DISABLE };
     CallTransferInfo cTInfoEnable = { .settingType = CallTransferSettingType::CALL_TRANSFER_ENABLE };
@@ -1226,17 +1242,21 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | 
     cellularCall.GetImsConfig(SIM1_SLOTID, ImsConfigItem::ITEM_VIDEO_QUALITY);
     cellularCall.SetImsFeatureValue(SIM1_SLOTID, FeatureType::TYPE_VOICE_OVER_LTE, 1);
     cellularCall.GetImsFeatureValue(SIM1_SLOTID, FeatureType::TYPE_VOICE_OVER_LTE);
-    std::u16string cameraId = u"";
-    cellularCall.CtrlCamera(cameraId, 111, 121);
-    cellularCall.SetPreviewWindow(0, 0, 0, 100, 100);
-    cellularCall.SetDisplayWindow(0, 0, 0, 100, 100);
+    std::string cameraId = "";
+    cellularCall.ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId);
+    std::string surfaceId = "";
+    cellularCall.SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
+    cellularCall.SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
     cellularCall.SetCameraZoom(1.0);
-    std::u16string path = u"";
-    cellularCall.SetPauseImage(path);
-    cellularCall.SetDeviceDirection(0);
-    cellularCall.SetMute(SIM1_SLOTID, 0);
-    cellularCall.GetMute(SIM1_SLOTID);
-    cellularCall.CloseUnFinishedUssd(SIM1_SLOTID);
+    std::string path = "";
+    cellularCall.SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path);
+    cellularCall.SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0);
+    CellularCallInfo cellularCallInfo;
+    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
+    cellularCall.SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
+    cellularCall.SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
+    cellularCall.CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
+    cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX);
 }
 
 /**
@@ -1248,6 +1268,9 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
 {
     // AccessToken token;
     CellularCallService cellularCall;
+    cellularCall.SetMute(SIM1_SLOTID, 0);
+    cellularCall.GetMute(SIM1_SLOTID);
+    cellularCall.CloseUnFinishedUssd(SIM1_SLOTID);
     std::vector<CellularCallInfo> infos = {};
     cellularCall.ClearAllCalls(infos);
     cellularCall.IsNeedIms(SIM1_SLOTID);

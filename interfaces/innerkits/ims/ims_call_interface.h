@@ -21,6 +21,7 @@
 #include "ims_call_types.h"
 #include "ims_feature.h"
 #include "iremote_broker.h"
+#include "surface.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -118,14 +119,42 @@ public:
     virtual int32_t KickOutFromConference(int32_t slotId, int32_t index) = 0;
 
     /**
-     * @brief IMS UpdateImsCallMode interface
+     * @brief IMS SendUpdateCallMediaModeRequest interface
      *
      * @param ImsCallInfo Indicates the call detail information, contains phone number, slot id,
      * video state, call index
-     * @param ImsCallMode Indicates the call media mode, like audio only, send only .etc.
+     * @param ImsCallType Indicates the call media mode, like audio only, send only .etc.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode) = 0;
+    virtual int32_t SendUpdateCallMediaModeRequest(const ImsCallInfo &callInfo, ImsCallType callType) = 0;
+
+    /**
+     * @brief IMS SendUpdateCallMediaModeResponse interface
+     *
+     * @param ImsCallInfo Indicates the call detail information, contains phone number, slot id,
+     * video state, call index
+     * @param ImsCallType Indicates the call media mode, like audio only, send only .etc.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t SendUpdateCallMediaModeResponse(const ImsCallInfo &callInfo, ImsCallType callType) = 0;
+
+    /**
+     * @brief Cancel Call Upgrade
+     *
+     * @param slotId Indicates the slot id
+     * @param Indicates Indicates the call index number.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t CancelCallUpgrade(int32_t slotId, int32_t callIndex) = 0;
+
+    /**
+     * @brief Request Camera Capabilities
+     *
+     * @param slotId Indicates the slot id
+     * @param callIndex Indicates the call index number.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t RequestCameraCapabilities(int32_t slotId, int32_t callIndex) = 0;
 
     /**
      * @brief Get Ims Calls Data Request
@@ -290,36 +319,36 @@ public:
     /**
      * @brief IMS CtrlCamera interface
      *
+     * @param slotId[in], The slot id
+     * @param callIndex Indicates the call index number.
      * @param cameraId The id of the camera
-     * @param callingUid the UID of call
-     * @param callingPid the PID if call
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) = 0;
+    virtual int32_t ControlCamera(int32_t slotId, int32_t callIndex, const std::string &cameraId) = 0;
 
     /**
      * @brief Set a window which used to display a preview of camera capturing
      *
-     * @param x X coordinate of window
-     * @param y Y coordinate of window
-     * @param z Z coordinate of window
-     * @param width the width of window
-     * @param height the height of window
+     * @param slotId[in], The slot id
+     * @param callIndex Indicates the call index number.
+     * @param surfaceID Surface id of window object
+     * @param surface The surface object of window
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) = 0;
+    virtual int32_t SetPreviewWindow(
+        int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface) = 0;
 
     /**
      * @brief Set a window which used to display the viedo which is received from remote
      *
-     * @param x X coordinate of window
-     * @param y Y coordinate of window
-     * @param z Z coordinate of window
-     * @param width the width of window
-     * @param height the height of window
+     * @param slotId[in], The slot id
+     * @param callIndex Indicates the call index number.
+     * @param surfaceID Surface id of window object
+     * @param surface The surface object of window
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) = 0;
+    virtual int32_t SetDisplayWindow(
+        int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface) = 0;
 
     /**
      * @brief Set camera zoom ratio
@@ -330,20 +359,24 @@ public:
     virtual int32_t SetCameraZoom(float zoomRatio) = 0;
 
     /**
-     * @brief Set a image which will be displayed when the video signal is paused
+     * @brief Set a picture which will be displayed when the video signal is paused
      *
+     * @param slotId[in], The slot id
+     * @param callIndex Indicates the call index number.
      * @param path the dispalyed image path
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetPauseImage(const std::u16string &path) = 0;
+    virtual int32_t SetPausePicture(int32_t slotId, int32_t callIndex, const std::string &path) = 0;
 
     /**
      * @brief Set the device orientation
      *
+     * @param slotId[in], The slot id
+     * @param callIndex Indicates the call index number.
      * @param rotation The device orientation, in degrees
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SetDeviceDirection(int32_t rotation) = 0;
+    virtual int32_t SetDeviceDirection(int32_t slotId, int32_t callIndex, int32_t rotation) = 0;
 
     /**
      * @brief SetClip IMS SetClip interface

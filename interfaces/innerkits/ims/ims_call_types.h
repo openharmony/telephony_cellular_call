@@ -113,6 +113,70 @@ enum ImsCallType {
      * Indicates the ImsCall type is VT.
      */
     TEL_IMS_CALL_TYPE_VT,
+    /**
+     * Indicates the ImsCall type is VT call pause.
+     */
+    TEL_IMS_CALL_TYPE_PAUSE,
+};
+
+/**
+ * @brief Indicates the type of video call event.
+ */
+enum VideoCallEventType {
+    /**
+     * Indicates the camera event failure type.
+     */
+    EVENT_CAMERA_FAILURE = 0,
+    /**
+     * Indicates the camera event ready type.
+     */
+    EVENT_CAMERA_READY,
+    /**
+     * Indicates the display surface release type.
+     */
+    EVENT_RELEASE_DISPLAY_SURFACE = 100,
+    /**
+     * Indicates the preview surface release type.
+     */
+    EVENT_RELEASE_PREVIEW_SURFACE,
+};
+
+/**
+ * @brief Indicates the result of ImsCall mode request.
+ */
+enum ImsCallModeRequestResult {
+    /**
+     * Indicates the ImsCall Mode request success.
+     */
+    MODIFY_REQUEST_SUCCESS = 0,
+    /**
+     * Indicates the ImsCall Mode request fail.
+     */
+    MODIFY_REQUEST_FAIL,
+    /**
+     * Indicates the ImsCall Mode request invalid.
+     */
+    MODIFY_REQUEST_INVALID,
+    /**
+     * Indicates the ImsCall Mode request timeout.
+     */
+    MODIFY_REQUEST_TIMED_OUT,
+    /**
+     * Indicates the ImsCall Mode request reject by remote.
+     */
+    MODIFY_REQUEST_REJECTED_BY_REMOTE,
+    /**
+     * Indicates the ImsCall Mode request cancel.
+     */
+    MODIFY_REQUEST_CANCEL,
+    /**
+     * Indicates the ImsCall Mode downgrade RTP time out.
+     */
+    MODIFY_DOWNGRADE_RTP_OR_RTCP_TIMEOUT = 100,
+    /**
+     * Indicates the ImsCall Mode downgrade RTP and RTCP time out.
+     */
+    MODIFY_DOWNGRADE_RTP_AND_RTCP_TIMEOUT,
 };
 
 /**
@@ -153,7 +217,7 @@ struct ImsCallInfo {
      */
     int32_t slotId = 0;
     /**
-     * Indicates the video state,when the audio state is 0 represents audio and 1 represents video.
+     * Indicates the video state,when the audio state is 0 represents audio and 3 represents video.
      */
     int32_t videoState = 0;
     /**
@@ -246,6 +310,96 @@ struct ImsCurrentCallList {
      * Indicates the call status information list.
      */
     std::vector<ImsCurrentCall> calls {};
+};
+
+/**
+ * @brief Indicates the call mode information.
+ */
+struct ImsCallModeReceiveInfo {
+    /**
+     * Indicates connection Index of call.
+     */
+    int32_t callIndex = 0;
+    /**
+     * Indicates response result.
+     */
+    ImsCallModeRequestResult result = ImsCallModeRequestResult::MODIFY_REQUEST_SUCCESS;
+    /**
+     * Indicates the call type:
+     * - 0: Voice call
+     * - 1: VT_TX Video call: send one-way video, two-way voice
+     * - 2: VT_RX Video call: one-way receiving video, two-way voice
+     * - 3: VT Video call: two-way video, two-way voice
+     */
+    ImsCallType callType = ImsCallType::TEL_IMS_CALL_TYPE_VOICE;
+};
+
+/**
+ * @brief Indicates the call session event information.
+ */
+struct ImsCallSessionEventInfo {
+    /**
+     * Indicates connection Index of call.
+     */
+    int32_t callIndex = 0;
+    /**
+     * Indicates the call  session event type:
+     * - 0: Indicates the camera event failure type.
+     * - 1: Indicates the camera event ready type.
+     * - 2: Indicates the display surface release type.
+     * - 3: Indicates the preview surface release type.
+     */
+    VideoCallEventType eventType = VideoCallEventType::EVENT_CAMERA_FAILURE;
+};
+
+/**
+ * @brief Indicates the video window width and height in video call.
+ */
+struct ImsCallPeerDimensionsInfo {
+    /**
+     * Indicates connection Index of call.
+     */
+    int32_t callIndex = 0;
+    /**
+     * the width of video window
+     */
+    int32_t width = 0;
+    /**
+     * the height of video window
+     */
+    int32_t height = 0;
+};
+
+/**
+ * @brief Indicates the ims video call data usage info
+ */
+struct ImsCallDataUsageInfo {
+    /**
+     * Indicates connection Index of call.
+     */
+    int32_t callIndex = 0;
+    /**
+     * the data usage info
+     */
+    int64_t dataUsage = 0;
+};
+
+/**
+ * @brief Indicates camera capabilities info in ims video call
+ */
+struct CameraCapabilitiesInfo {
+    /**
+     * Indicates connection Index of call.
+     */
+    int32_t callIndex = 0;
+    /**
+     * the width of video window
+     */
+    int32_t width = 0;
+    /**
+     * the height of video window
+     */
+    int32_t height = 0;
 };
 } // namespace Telephony
 } // namespace OHOS

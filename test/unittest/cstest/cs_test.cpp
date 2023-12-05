@@ -84,8 +84,6 @@ void CsTest::SetUp(void)
         &CsTest::KickOutFromConference;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION)] =
         &CsTest::HangUpAllConnection;
-    requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::UPDATE_CALL_MEDIA_MODE)] =
-        &CsTest::UpdateImsCallMode;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::REGISTER_CALLBACK)] =
         &CsTest::RegisterCallBack;
     requestFuncMap_[static_cast<int32_t>(CellularCallInterfaceCode::UNREGISTER_CALLBACK)] =
@@ -268,29 +266,6 @@ int32_t CsTest::HangUpAllConnection(const sptr<CellularCallInterface> &telephony
 {
     std::cout << "test HangUpAllConnection entry." << std::endl;
     return telephonyService->HangUpAllConnection();
-}
-
-int32_t CsTest::UpdateImsCallMode(const sptr<CellularCallInterface> &telephonyService) const
-{
-    std::cout << "test UpdateImsCallMode entry." << std::endl;
-    CellularCallInfo callInfo;
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-        std::cout << "UpdateImsCallMode return, memset_s failed. \n";
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    std::cout << "please enter the need update phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.callType = CallType::TYPE_IMS;
-    int32_t slotId = 0;
-    std::cout << "please enter the slotId:(0   1)";
-    std::cin >> slotId;
-    callInfo.slotId = slotId;
-    std::cout << "please enter the need update index:";
-    std::cin >> callInfo.index;
-    std::cout << "please enter the mode:";
-    int32_t mode = 0;
-    std::cin >> mode;
-    return telephonyService->UpdateImsCallMode(callInfo, static_cast<ImsCallMode>(mode));
 }
 
 int32_t CsTest::RegisterCallBack(const sptr<CellularCallInterface> &telephonyService) const
@@ -548,12 +523,12 @@ int32_t CsTest::InputNumForInterface(const sptr<CellularCallInterface> &telephon
         std::cout << "\n**********Unit Test Start**********\n"
                      "Usage: please input a cmd num:\n"
                      "1:Dial\n2:HangUp\n3:Reject\n4:Answer\n5:HoldCall\n6:UnHoldCall\n7:SwitchCall\n"
-                     "8:IsEmergencyPhoneNumber\n9:CombineConference\n10:SeparateConference\n11:InviteToConference\n"
-                     "12:KickOutFromConference\n13:HangUpAllConnection\n14:UpdateImsCallMode\n"
-                     "15:RegisterCallBack\n16:UnRegisterCallBack\n100:StartDtmf\n101:StopDtmf\n102:SendDtmf\n"
-                     "103:StartRtt\n104:StopRtt\n200:SetCallTransferInfo\n201:GetCallTransferInfo\n"
+                     "8:IsEmergencyPhoneNumber\n10:CombineConference\n11:SeparateConference\n12:InviteToConference\n"
+                     "13:KickOutFromConference\n14:HangUpAllConnection\n"
+                     "17:RegisterCallBack\n18:UnRegisterCallBack\n100:StartDtmf\n101:StopDtmf\n102:SendDtmf\n"
+                     "104:StartRtt\n105:StopRtt\n200:SetCallTransferInfo\n201:GetCallTransferInfo\n"
                      "203:SetCallWaiting\n204:GetCallWaiting\n205:SetCallRestriction\n"
-                     "206:GetCallRestriction\n208:SetCallRestrictionPassword\n311:SetMute\n312:GetMute\n"
+                     "206:GetCallRestriction\n208:SetCallRestrictionPassword\n309:SetMute\n310:GetMute\n"
                      "1000:Exit\n"
                      "***********************************\n"
                      "Your choice: ";

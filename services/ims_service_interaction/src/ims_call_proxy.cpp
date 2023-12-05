@@ -230,7 +230,7 @@ int32_t ImsCallProxy::KickOutFromConference(int32_t slotId, int32_t index)
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_KICK_OUT_CONFERENCE));
 }
 
-int32_t ImsCallProxy::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode)
+int32_t ImsCallProxy::SendUpdateCallMediaModeRequest(const ImsCallInfo &callInfo, ImsCallType callType)
 {
     MessageParcel in;
     if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
@@ -241,11 +241,67 @@ int32_t ImsCallProxy::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode
         TELEPHONY_LOGE("[slot%{public}d]Write callInfo fail!", callInfo.slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(mode)) {
+    if (!in.WriteInt32(static_cast<int32_t>(callType))) {
         TELEPHONY_LOGE("[slot%{public}d]Write mode fail!", callInfo.slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(callInfo.slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_UPDATE_CALL_MEDIA_MODE));
+    return SendRequest(
+        callInfo.slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SEND_CALL_MEDIA_MODE_REQUEST));
+}
+
+int32_t ImsCallProxy::SendUpdateCallMediaModeResponse(const ImsCallInfo &callInfo, ImsCallType callType)
+{
+    MessageParcel in;
+    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
+        TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", callInfo.slotId);
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteRawData((const void *)&callInfo, sizeof(ImsCallInfo))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callInfo fail!", callInfo.slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(static_cast<int32_t>(callType))) {
+        TELEPHONY_LOGE("[slot%{public}d]Write mode fail!", callInfo.slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(
+        callInfo.slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SEND_CALL_MEDIA_MODE_RESPONSE));
+}
+
+int32_t ImsCallProxy::CancelCallUpgrade(int32_t slotId, int32_t callIndex)
+{
+    MessageParcel in;
+    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
+        TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write slotId fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callIndex fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_CANCEL_CALL_UPGRADE));
+}
+
+int32_t ImsCallProxy::RequestCameraCapabilities(int32_t slotId, int32_t callIndex)
+{
+    MessageParcel in;
+    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
+        TELEPHONY_LOGE("[slot%{public}d]Write descriptor token fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    }
+    if (!in.WriteInt32(slotId)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write slotId fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callIndex fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_REQUEST_CAMERA_CAPABILITIES));
 }
 
 int32_t ImsCallProxy::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
@@ -500,86 +556,72 @@ int32_t ImsCallProxy::GetMute(int32_t slotId)
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_GET_MUTE));
 }
 
-int32_t ImsCallProxy::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid)
+int32_t ImsCallProxy::ControlCamera(int32_t slotId, int32_t callIndex, const std::string &cameraId)
 {
     MessageParcel in;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("Write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
     }
-    if (!in.WriteString16(cameraId)) {
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("Write callIndex fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteString(cameraId)) {
         TELEPHONY_LOGE("Write cameraId fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(callingUid)) {
-        TELEPHONY_LOGE("Write callingUid fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteInt32(callingPid)) {
-        TELEPHONY_LOGE("Write callingPid fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_CTRL_CAMERA));
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_CTRL_CAMERA));
 }
 
-int32_t ImsCallProxy::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t ImsCallProxy::SetPreviewWindow(
+    int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface)
 {
     MessageParcel in;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("Write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
     }
-    if (!in.WriteInt32(x)) {
-        TELEPHONY_LOGE("Write x fail!");
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("Write callIndex fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(y)) {
-        TELEPHONY_LOGE("Write y fail!");
+    if (!in.WriteString(surfaceID)) {
+        TELEPHONY_LOGE("Write surface id fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(z)) {
-        TELEPHONY_LOGE("Write z fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    if (surface != nullptr) {
+        sptr<IBufferProducer> producer = surface->GetProducer();
+        if (producer != nullptr) {
+            in.WriteRemoteObject(producer->AsObject());
+        }
     }
-    if (!in.WriteInt32(width)) {
-        TELEPHONY_LOGE("Write width fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteInt32(height)) {
-        TELEPHONY_LOGE("Write height fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_PREVIEW_WINDOW));
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_PREVIEW_WINDOW));
 }
 
-int32_t ImsCallProxy::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height)
+int32_t ImsCallProxy::SetDisplayWindow(
+    int32_t slotId, int32_t callIndex, const std::string &surfaceID, sptr<Surface> surface)
 {
     MessageParcel in;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("Write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
     }
-    if (!in.WriteInt32(x)) {
-        TELEPHONY_LOGE("Write x fail!");
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("Write callIndex fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(y)) {
-        TELEPHONY_LOGE("Write y fail!");
+    if (!in.WriteString(surfaceID)) {
+        TELEPHONY_LOGE("Write surface id fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    if (!in.WriteInt32(z)) {
-        TELEPHONY_LOGE("Write z fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    if (surface != nullptr) {
+        sptr<IBufferProducer> producer = surface->GetProducer();
+        if (producer != nullptr) {
+            in.WriteRemoteObject(producer->AsObject());
+        }
     }
-    if (!in.WriteInt32(width)) {
-        TELEPHONY_LOGE("Write width fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    if (!in.WriteInt32(height)) {
-        TELEPHONY_LOGE("Write height fail!");
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_DISPLAY_WINDOW));
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_DISPLAY_WINDOW));
 }
 
 int32_t ImsCallProxy::SetCameraZoom(float zoomRatio)
@@ -596,32 +638,40 @@ int32_t ImsCallProxy::SetCameraZoom(float zoomRatio)
     return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_CAMERA_ZOOM));
 }
 
-int32_t ImsCallProxy::SetPauseImage(const std::u16string &path)
+int32_t ImsCallProxy::SetPausePicture(int32_t slotId, int32_t callIndex, const std::string &path)
 {
     MessageParcel in;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("Write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
     }
-    if (!in.WriteString16(path)) {
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("Write callIndex fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteString(path)) {
         TELEPHONY_LOGE("Write path fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_PAUSE_IMAGE));
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_PAUSE_IMAGE));
 }
 
-int32_t ImsCallProxy::SetDeviceDirection(int32_t rotation)
+int32_t ImsCallProxy::SetDeviceDirection(int32_t slotId, int32_t callIndex, int32_t rotation)
 {
     MessageParcel in;
-    if (!in.WriteInterfaceToken(ImsCallProxy::GetDescriptor())) {
-        TELEPHONY_LOGE("Write descriptor token fail!");
-        return TELEPHONY_ERR_WRITE_DESCRIPTOR_TOKEN_FAIL;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteInt32(callIndex)) {
+        TELEPHONY_LOGE("Write callIndex fail!");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(rotation)) {
         TELEPHONY_LOGE("Write rotation fail!");
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
-    return SendRequest(in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_DEVICE_DIRECTION));
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_DEVICE_DIRECTION));
 }
 
 int32_t ImsCallProxy::SetClip(int32_t slotId, int32_t action, int32_t index)

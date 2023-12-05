@@ -40,7 +40,7 @@ struct DialRequestStruct {
 
 // GSM Association Non-confidential Official Document IR.92 - IMS Profile for Voice and SMS
 struct ImsDialInfoStruct : public DialRequestStruct {
-    int32_t videoState = 0; // 0: audio 1:video
+    int32_t videoState = 0; // 0: audio 3:video
     bool bEmergencyCall = false;
     bool bImsCallFirst = false;
     bool bRoaming = false;

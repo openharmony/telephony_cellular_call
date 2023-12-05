@@ -75,6 +75,14 @@ public:
     /****************** conference ******************/
     int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
     int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    /****************** call modify ******************/
+    int32_t ReceiveUpdateCallMediaModeResponse(
+        int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse) override;
+    int32_t ReceiveUpdateCallMediaModeRequest(int32_t slotId, const ImsCallModeReceiveInfo &callModeRequest) override;
+    int32_t CallSessionEventChanged(int32_t slotId, const ImsCallSessionEventInfo &callSessionEventInfo) override;
+    int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) override;
+    int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) override;
+    int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) override;
 
 private:
     void InitFuncMap();
@@ -127,8 +135,17 @@ private:
     int32_t OnCombineConferenceResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnInviteToConferenceResponseInner(MessageParcel &data, MessageParcel &reply);
 
+    /****************** call modify ******************/
+    int32_t OnReceiveUpdateCallMediaModeRequestInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnReceiveUpdateCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnCallSessionEventChangedInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnPeerDimensionsChangedInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnCallDataUsageChangedInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnCameraCapabilitiesChangedInner(MessageParcel &data, MessageParcel &reply);
+
     int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
     int32_t SendEvent(int32_t slotId, int32_t eventId, const SsBaseResult &resultInfo);
+    int32_t SendEvent(int32_t slotId, int32_t eventId, const ImsCallModeReceiveInfo &callModeInfo);
 
 private:
     using RequestFuncType = int32_t (ImsCallCallbackStub::*)(MessageParcel &data, MessageParcel &reply);

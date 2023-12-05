@@ -218,13 +218,40 @@ public:
     int32_t SetReadyToCall(int32_t slotId, int32_t callType, bool isReadyToCall) override;
 
     /**
-     * IMS Update Call Media Mode
+     * IMS Send Update Call Media Mode Request
      *
      * @param CellularCallInfo
      * @param ImsCallMode
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UpdateImsCallMode(const CellularCallInfo &callInfo, ImsCallMode mode) override;
+    int32_t SendUpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode) override;
+
+    /**
+     * IMS Send Update Call Media Mode Response
+     *
+     * @param CellularCallInfo
+     * @param ImsCallMode
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SendUpdateCallMediaModeResponse(const CellularCallInfo &callInfo, ImsCallMode mode) override;
+
+    /**
+     * Cancel Call Upgrade
+     *
+     * @param slotId the slot id
+     * @param callIndex the call index number.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t CancelCallUpgrade(int32_t slotId, int32_t callIndex) override;
+
+    /**
+     * Request Camera Capabilities
+     *
+     * @param slotId the slot id
+     * @param callIndex the call index number.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t RequestCameraCapabilities(int32_t slotId, int32_t callIndex) override;
 
     /**
      * Register CallManager CallBack
@@ -461,38 +488,38 @@ public:
     int32_t GetImsFeatureValue(int32_t slotId, FeatureType type) override;
 
     /**
-     * CtrlCamera
+     * ControlCamera
      *
+     * @param slotId[in], The slot id
+     * @param index Indicates the call index number.
      * @param cameraId
-     * @param callingUid
-     * @param callingPid
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t CtrlCamera(const std::u16string &cameraId, int32_t callingUid, int32_t callingPid) override;
+    int32_t ControlCamera(int32_t slotId, int32_t index, const std::string &cameraId) override;
 
     /**
      * SetPreviewWindow
      *
-     * @param x
-     * @param y
-     * @param z
-     * @param width
-     * @param height
+     * @param slotId[in], The slot id
+     * @param index Indicates the call index number.
+     * @param surfaceID Surface id of window object
+     * @param surface The surface object of window
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) override;
+    int32_t SetPreviewWindow(
+        int32_t slotId, int32_t index, const std::string &surfaceId, sptr<Surface> surface) override;
 
     /**
      * SetDisplayWindow
      *
-     * @param x
-     * @param y
-     * @param z
-     * @param width
-     * @param height
+     * @param slotId[in], The slot id
+     * @param index Indicates the call index number.
+     * @param surfaceID Surface id of window object
+     * @param surface The surface object of window
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width, int32_t height) override;
+    int32_t SetDisplayWindow(
+        int32_t slotId, int32_t index, const std::string &surfaceId, sptr<Surface> surface) override;
 
     /**
      * SetCameraZoom
@@ -503,20 +530,24 @@ public:
     int32_t SetCameraZoom(float zoomRatio) override;
 
     /**
-     * SetPauseImage
+     * SetPausePicture
      *
+     * @param slotId[in], The slot id
+     * @param index Indicates the call index number.
      * @param path
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetPauseImage(const std::u16string &path) override;
+    int32_t SetPausePicture(int32_t slotId, int32_t index, const std::string &path) override;
 
     /**
      * SetDeviceDirection
      *
+     * @param slotId[in], The slot id
+     * @param index Indicates the call index number.
      * @param rotation
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetDeviceDirection(int32_t rotation) override;
+    int32_t SetDeviceDirection(int32_t slotId, int32_t index, int32_t rotation) override;
 
     /**
      * SetMute

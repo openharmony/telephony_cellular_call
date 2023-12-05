@@ -165,7 +165,6 @@ void ReportSetImsConfigResult(const uint8_t *data, size_t size)
     cellularCallRegister->ReportGetMuteResult(muteControlResponse);
     cellularCallRegister->ReportSetMuteResult(muteControlResponse);
     cellularCallRegister->ReportInviteToConferenceResult(result);
-    cellularCallRegister->ReportUpdateCallMediaModeResult(result);
     cellularCallRegister->ReportGetCallDataResult(result);
     cellularCallRegister->ReportStartDtmfResult(result);
     cellularCallRegister->ReportStopDtmfResult(result);
@@ -177,6 +176,75 @@ void ReportSetImsConfigResult(const uint8_t *data, size_t size)
     cellularCallRegister->IsCallManagerCallBackRegistered();
 }
 
+void ReportUpdateCallMediaMode(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ImsCallModeReceiveInfo reportCallModeInfo;
+    reportCallModeInfo.callIndex = static_cast<int32_t>(size);
+    reportCallModeInfo.result = static_cast<ImsCallModeRequestResult>(size);
+    reportCallModeInfo.callType = static_cast<ImsCallType>(static_cast<int32_t>(size % BOOL_NUM));
+    cellularCallRegister->ReceiveUpdateCallMediaModeRequest(reportCallModeInfo);
+    cellularCallRegister->ReceiveUpdateCallMediaModeResponse(reportCallModeInfo);
+}
+
+void ReportCallSessionEventChanged(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ImsCallSessionEventInfo reportCallSessionInfo;
+    reportCallSessionInfo.callIndex = static_cast<int32_t>(size);
+    reportCallSessionInfo.eventType = static_cast<VideoCallEventType>(static_cast<int32_t>(size % BOOL_NUM));
+    cellularCallRegister->HandleCallSessionEventChanged(reportCallSessionInfo);
+}
+
+void ReportPeerDimensionsChanged(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ImsCallPeerDimensionsInfo reportCallPeerDimensionsInfo;
+    reportCallPeerDimensionsInfo.callIndex = static_cast<int32_t>(size);
+    reportCallPeerDimensionsInfo.width = static_cast<int32_t>(size);
+    reportCallPeerDimensionsInfo.height = static_cast<int32_t>(size);
+    cellularCallRegister->HandlePeerDimensionsChanged(reportCallPeerDimensionsInfo);
+}
+
+void ReportCallDataUsageChanged(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ImsCallDataUsageInfo reportCallDataUsageInfo;
+    reportCallDataUsageInfo.callIndex = static_cast<int32_t>(size);
+    reportCallDataUsageInfo.dataUsage = static_cast<int64_t>(size);
+    cellularCallRegister->HandleCallDataUsageChanged(reportCallDataUsageInfo);
+}
+
+void ReportCameraCapabilitiesChanged(const uint8_t *data, size_t size)
+{
+    if (!IsServiceInited()) {
+        return;
+    }
+
+    std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    CameraCapabilitiesInfo reportCameraCapabilitiesInfo;
+    reportCameraCapabilitiesInfo.callIndex = static_cast<int32_t>(size);
+    reportCameraCapabilitiesInfo.width = static_cast<int32_t>(size);
+    reportCameraCapabilitiesInfo.height = static_cast<int32_t>(size);
+    cellularCallRegister->HandleCameraCapabilitiesChanged(reportCameraCapabilitiesInfo);
+}
+
 void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size == 0) {
@@ -186,6 +254,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     ReportCallsInfo(data, size);
     ReportSetRestrictionResult(data, size);
     ReportSetImsConfigResult(data, size);
+    ReportUpdateCallMediaMode(data, size);
+    ReportCallSessionEventChanged(data, size);
+    ReportPeerDimensionsChanged(data, size);
+    ReportCallDataUsageChanged(data, size);
+    ReportCameraCapabilitiesChanged(data, size);
 }
 } // namespace OHOS
 

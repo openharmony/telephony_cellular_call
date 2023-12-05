@@ -95,7 +95,6 @@ void CellularCallStub::InitDialFuncMap()
     requestFuncMap_[CellularCallInterfaceCode::KICK_OUT_CONFERENCE] = &CellularCallStub::OnKickOutFromConferenceInner;
     requestFuncMap_[CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_READY_TO_CALL] = &CellularCallStub::OnSetReadyToCallInner;
-    requestFuncMap_[CellularCallInterfaceCode::UPDATE_CALL_MEDIA_MODE] = &CellularCallStub::OnUpdateCallMediaModeInner;
     requestFuncMap_[CellularCallInterfaceCode::CLEAR_ALL_CALLS] = &CellularCallStub::OnClearAllCallsInner;
 }
 
@@ -130,12 +129,19 @@ void CellularCallStub::InitConfigFuncMap()
 
 void CellularCallStub::InitVideoFuncMap()
 {
-    requestFuncMap_[CellularCallInterfaceCode::CTRL_CAMERA] = &CellularCallStub::OnCtrlCameraInner;
+    requestFuncMap_[CellularCallInterfaceCode::CTRL_CAMERA] = &CellularCallStub::OnControlCameraInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_PREVIEW_WINDOW] = &CellularCallStub::OnSetPreviewWindowInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_DISPLAY_WINDOW] = &CellularCallStub::OnSetDisplayWindowInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_CAMERA_ZOOM] = &CellularCallStub::OnSetCameraZoomInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_PAUSE_IMAGE] = &CellularCallStub::OnSetPauseImageInner;
+    requestFuncMap_[CellularCallInterfaceCode::SET_PAUSE_IMAGE] = &CellularCallStub::OnSetPausePictureInner;
     requestFuncMap_[CellularCallInterfaceCode::SET_DEVICE_DIRECTION] = &CellularCallStub::OnSetDeviceDirectionInner;
+    requestFuncMap_[CellularCallInterfaceCode::SEND_CALL_MEDIA_MODE_REQUEST] =
+        &CellularCallStub::OnSendUpdateCallMediaModeRequestInner;
+    requestFuncMap_[CellularCallInterfaceCode::SEND_CALL_MEDIA_MODE_RESPONSE] =
+        &CellularCallStub::OnSendUpdateCallMediaModeResponseInner;
+    requestFuncMap_[CellularCallInterfaceCode::CANCEL_CALL_UPGRADE] = &CellularCallStub::OnCancelCallUpgradeInner;
+    requestFuncMap_[CellularCallInterfaceCode::REQUEST_CAMERA_CAPABILITY] =
+        &CellularCallStub::OnRequestCameraCapabilitiesInner;
 }
 
 void CellularCallStub::InitSupplementFuncMap()
@@ -493,23 +499,73 @@ int32_t CellularCallStub::OnSetReadyToCallInner(MessageParcel &data, MessageParc
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnUpdateCallMediaModeInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnSendUpdateCallMediaModeRequestInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnUpdateCallMediaModeInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnSendUpdateCallMediaModeRequestInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("OnUpdateCallMediaModeInner data size error");
+        TELEPHONY_LOGE("OnSendUpdateCallMediaModeRequestInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
     auto pCallInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
     if (pCallInfo == nullptr) {
-        TELEPHONY_LOGE("OnUpdateCallMediaModeInner return, pCallInfo is nullptr.");
+        TELEPHONY_LOGE("OnSendUpdateCallMediaModeRequestInner return, pCallInfo is nullptr.");
         return TELEPHONY_ERR_ARGUMENT_INVALID;
     }
     auto mode = static_cast<ImsCallMode>(data.ReadInt32());
 
-    reply.WriteInt32(UpdateImsCallMode(*pCallInfo, mode));
+    reply.WriteInt32(SendUpdateCallMediaModeRequest(*pCallInfo, mode));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSendUpdateCallMediaModeResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnSendUpdateCallMediaModeResponseInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("OnSendUpdateCallMediaModeResponseInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    auto pCallInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
+    if (pCallInfo == nullptr) {
+        TELEPHONY_LOGE("OnSendUpdateCallMediaModeResponseInner return, pCallInfo is nullptr.");
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    auto mode = static_cast<ImsCallMode>(data.ReadInt32());
+
+    reply.WriteInt32(SendUpdateCallMediaModeResponse(*pCallInfo, mode));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnCancelCallUpgradeInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnCancelCallUpgradeInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("OnCancelCallUpgradeInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    reply.WriteInt32(CancelCallUpgrade(slotId, callIndex));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnRequestCameraCapabilitiesInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnRequestCameraCapabilitiesInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("OnRequestCameraCapabilitiesInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    reply.WriteInt32(RequestCameraCapabilities(slotId, callIndex));
     return TELEPHONY_SUCCESS;
 }
 
@@ -944,20 +1000,19 @@ int32_t CellularCallStub::OnGetImsFeatureValueInner(MessageParcel &data, Message
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnCtrlCameraInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnControlCameraInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnCtrlCameraInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnControlCameraInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnCtrlCameraInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnControlCameraInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
-    std::u16string cameraId = data.ReadString16();
-    auto callingPid = IPCSkeleton::GetCallingPid();
-    auto callingUid = IPCSkeleton::GetCallingUid();
-
-    reply.WriteInt32(CtrlCamera(cameraId, callingUid, callingPid));
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    std::string cameraId = data.ReadString();
+    reply.WriteInt32(ControlCamera(slotId, callIndex, cameraId));
     return TELEPHONY_SUCCESS;
 }
 
@@ -970,13 +1025,17 @@ int32_t CellularCallStub::OnSetPreviewWindowInner(MessageParcel &data, MessagePa
         TELEPHONY_LOGE("CellularCallStub::OnSetPreviewWindowInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
-    int32_t x = data.ReadInt32();
-    int32_t y = data.ReadInt32();
-    int32_t z = data.ReadInt32();
-    int32_t width = data.ReadInt32();
-    int32_t height = data.ReadInt32();
-
-    reply.WriteInt32(SetPreviewWindow(x, y, z, width, height));
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    const std::string surfaceID = data.ReadString();
+    sptr<Surface> surface = nullptr;
+    sptr<IRemoteObject> object = data.ReadRemoteObject();
+    if (object != nullptr) {
+        sptr<IBufferProducer> producer = iface_cast<IBufferProducer>(object);
+        surface = Surface::CreateSurfaceAsProducer(producer);
+    }
+    TELEPHONY_LOGI("surfaceId:%{public}s", surfaceID.c_str());
+    reply.WriteInt32(SetPreviewWindow(slotId, callIndex, surfaceID, surface));
     return TELEPHONY_SUCCESS;
 }
 
@@ -989,13 +1048,17 @@ int32_t CellularCallStub::OnSetDisplayWindowInner(MessageParcel &data, MessagePa
         TELEPHONY_LOGE("CellularCallStub::OnSetDisplayWindowInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
-    int32_t x = data.ReadInt32();
-    int32_t y = data.ReadInt32();
-    int32_t z = data.ReadInt32();
-    int32_t width = data.ReadInt32();
-    int32_t height = data.ReadInt32();
-
-    reply.WriteInt32(SetDisplayWindow(x, y, z, width, height));
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    const std::string surfaceID = data.ReadString();
+    sptr<Surface> surface = nullptr;
+    sptr<IRemoteObject> object = data.ReadRemoteObject();
+    if (object != nullptr) {
+        sptr<IBufferProducer> producer = iface_cast<IBufferProducer>(object);
+        surface = Surface::CreateSurfaceAsProducer(producer);
+    }
+    TELEPHONY_LOGI("surfaceId:%{public}s", surfaceID.c_str());
+    reply.WriteInt32(SetDisplayWindow(slotId, callIndex, surfaceID, surface));
     return TELEPHONY_SUCCESS;
 }
 
@@ -1014,18 +1077,19 @@ int32_t CellularCallStub::OnSetCameraZoomInner(MessageParcel &data, MessageParce
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallStub::OnSetPauseImageInner(MessageParcel &data, MessageParcel &reply)
+int32_t CellularCallStub::OnSetPausePictureInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnSetPauseImageInner entry");
+    TELEPHONY_LOGI("CellularCallStub::OnSetPausePictureInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnSetPauseImageInner data size error");
+        TELEPHONY_LOGE("CellularCallStub::OnSetPausePictureInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
-    std::u16string imagePath = data.ReadString16();
-
-    reply.WriteInt32(SetPauseImage(imagePath));
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
+    std::string imagePath = data.ReadString();
+    reply.WriteInt32(SetPausePicture(slotId, callIndex, imagePath));
     return TELEPHONY_SUCCESS;
 }
 
@@ -1038,9 +1102,10 @@ int32_t CellularCallStub::OnSetDeviceDirectionInner(MessageParcel &data, Message
         TELEPHONY_LOGE("CellularCallStub::OnSetDeviceDirectionInner data size error");
         return TELEPHONY_ERR_FAIL;
     }
+    int32_t slotId = data.ReadInt32();
+    int32_t callIndex = data.ReadInt32();
     int32_t rotation = data.ReadInt32();
-
-    reply.WriteInt32(SetDeviceDirection(rotation));
+    reply.WriteInt32(SetDeviceDirection(slotId, callIndex, rotation));
     return TELEPHONY_SUCCESS;
 }
 

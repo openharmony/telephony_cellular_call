@@ -143,6 +143,18 @@ public:
 
     void SrvccStateCompleted();
 
+    void ReceiveUpdateCallMediaModeRequest(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void ReceiveUpdateCallMediaModeResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void HandleCallSessionEventChanged(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void HandlePeerDimensionsChanged(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void HandleCallDataUsageChanged(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void HandleCameraCapabilitiesChanged(const AppExecFwk::InnerEvent::Pointer &event);
+
     /**
      * request the ut command index which will be used to report the result
      *

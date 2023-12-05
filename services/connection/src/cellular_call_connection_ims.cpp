@@ -257,36 +257,6 @@ int32_t CellularCallConnectionIMS::CallSupplementRequest(int32_t slotId, CallSup
     return TELEPHONY_SUCCESS;
 }
 
-int32_t CellularCallConnectionIMS::UpdateCallMediaModeRequest(const CellularCallInfo &callInfo, ImsCallMode mode)
-{
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGD("call ims service");
-        ImsCallInfo imsCallInfo;
-        if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
-            TELEPHONY_LOGE("return, memset_s error.");
-            return TELEPHONY_ERR_MEMSET_FAIL;
-        }
-        if (static_cast<int32_t>(strlen(callInfo.phoneNum) + 1) > kMaxNumberLength) {
-            return TELEPHONY_ERR_STRCPY_FAIL;
-        }
-        errno_t result = strcpy_s(imsCallInfo.phoneNum, strlen(callInfo.phoneNum) + 1,
-                                  callInfo.phoneNum);
-        if (result != EOK) {
-            TELEPHONY_LOGE("return, strcpy_s fail.");
-            return TELEPHONY_ERR_STRCPY_FAIL;
-        }
-        imsCallInfo.slotId = callInfo.slotId;
-        imsCallInfo.index = callInfo.index;
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->UpdateImsCallMode(imsCallInfo, mode);
-    }
-    TELEPHONY_LOGE("ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
-}
-
 int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
     if (moduleUtils_.NeedCallImsService()) {
