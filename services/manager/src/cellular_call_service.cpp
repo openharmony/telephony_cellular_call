@@ -180,6 +180,7 @@ void CellularCallService::HandlerResetUnRegister()
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
 #endif
@@ -216,6 +217,7 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
             coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
@@ -370,6 +372,8 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
+        CellularCallConfig config;
+        config.HandleFactoryReset(callInfo.slotId);
         return imsControl->HangUp(callInfo, type);
     }
     TELEPHONY_LOGE("CellularCallService::HangUp return, call type error.");
