@@ -179,6 +179,7 @@ void CellularCallService::HandlerResetUnRegister()
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
 #endif
