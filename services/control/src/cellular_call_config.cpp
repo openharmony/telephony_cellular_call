@@ -222,7 +222,6 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 
 void CellularCallConfig::HandleFactoryReset(int32_t slotId)
 {
-    TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset entry, slotId: %{public}d", slotId);
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return;
@@ -235,16 +234,7 @@ void CellularCallConfig::HandleFactoryReset(int32_t slotId)
     }
     // Set VoLTE to default
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
-    TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset entry, ret: %{public}d", ret);
-    if (ret == SAVE_IMS_SWITCH_SUCCESS_CHANGED) {
-        TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset ImsSwitch success");
-    } else {
-        if (ret == SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED) {
-            TELEPHONY_LOGI("CellularCallConfig::HandleFactoryReset ImsSwitch status do not change");
-        } else {
-            TELEPHONY_LOGE("CellularCallConfig::HandleFactoryReset ImsSwitchfailed");
-        }
-    }
+    TELEPHONY_LOGI("Save ims switch ret: %{public}d", ret);
     UpdateImsCapabilities(slotId, true);
 }
 
@@ -422,7 +412,7 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
 {
     bool isGbaValid = IsGbaValid(slotId);
     ImsCapabilityList imsCapabilityList;
-    TELEPHONY_LOGI("CellularCallConfig::UpdateImsCapabilities entry");
+    TELEPHONY_LOGI("UpdateImsCapabilities entry");
     UpdateImsVoiceCapabilities(slotId, isGbaValid, imsCapabilityList);
     if (needUpdateUtCapability) {
         UpdateImsUtCapabilities(slotId, isGbaValid, imsCapabilityList);
