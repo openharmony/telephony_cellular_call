@@ -292,6 +292,10 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         serviceInstance->SetImsControl(slotId_, nullptr);
         return;
     }
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGI("[slot%{public}d] Ignore to report ims call state change during srvcc", slotId_);
+        return;
+    }
     if (imsCallInfoList.callSize == 1) {
         if (imsControl == nullptr) {
             imsControl = std::make_shared<IMSControl>();
@@ -849,10 +853,6 @@ void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::P
 
 void CellularCallHandler::ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (srvccState_ == SrvccState::STARTED) {
-        TELEPHONY_LOGI("[slot%{public}d] Ignore to report ims call state change cause by srvcc started", slotId_);
-        return;
-    }
     GetImsCallData(event);
 }
 
