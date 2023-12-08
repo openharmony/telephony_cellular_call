@@ -246,10 +246,6 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         serviceInstance->SetCsControl(slotId_, nullptr);
         return;
     }
-    if (srvccState_ == SrvccState::STARTED) {
-        TELEPHONY_LOGI("[slot%{public}d] Ignore to report ims call state change during srvcc", slotId_);
-        return;
-    }
     if (isInCsRedial_) {
         TELEPHONY_LOGI("[slot%{public}d] Ignore cs call state change during cs redial", slotId_);
         return;
@@ -294,6 +290,10 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
             CellularCallIncomingFinishTrace(imsCallInfo.state);
         }
         serviceInstance->SetImsControl(slotId_, nullptr);
+        return;
+    }
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGI("[slot%{public}d] Ignore to report ims call state change during srvcc", slotId_);
         return;
     }
     if (imsCallInfoList.callSize == 1) {
