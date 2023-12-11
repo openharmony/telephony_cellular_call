@@ -1,3 +1,47 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
  * Copyright (C) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1167,7 +1211,7 @@ int32_t CellularCallStub::OnClearAllCallsInner(MessageParcel &data, MessageParce
     for (int32_t i = 0; i < size; i++) {
         CellularCallInfo *callInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
         if (callInfo == nullptr) {
-            TELEPHONY_LOGE("callinfo is nullptr");
+            TELEPHONY_LOGE("callInfo is nullptr");
             return TELEPHONY_ERR_ARGUMENT_INVALID;
         }
         callInfos.push_back(*callInfo);
