@@ -1166,6 +1166,10 @@ int32_t CellularCallStub::OnClearAllCallsInner(MessageParcel &data, MessageParce
     std::vector<CellularCallInfo> callInfos;
     for (int32_t i = 0; i < size; i++) {
         CellularCallInfo *callInfo = (CellularCallInfo *)data.ReadRawData(sizeof(CellularCallInfo));
+        if (callInfo == nullptr) {
+            TELEPHONY_LOGE("callinfo is nullptr");
+            return TELEPHONY_ERR_ARGUMENT_INVALID;
+        }
         callInfos.push_back(*callInfo);
     }
     reply.WriteInt32(ClearAllCalls(callInfos));
