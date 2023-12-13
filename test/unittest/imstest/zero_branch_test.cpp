@@ -165,6 +165,9 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
     config.volteProvisioningSupported_[SIM1_SLOTID] = enabled;
     config.volteProvisioningSupported_[INVALID_SLOTID] = enabled;
     config.GetImsSwitchStatus(SIM1_SLOTID, enabled);
+    config.saveImsSwitchStatusToLocalForPowerOn(SIM1_SLOTID);
+    config.saveImsSwitchStatusToLocal(SIM1_SLOTID, true);
+    config.GetImsSwitchStatus(SIM1_SLOTID, enabled);
     int32_t state = 0;
     config.SetVoNRSwitchStatus(SIM1_SLOTID, state);
     config.SetVoNRSwitchStatus(INVALID_SLOTID, state);
@@ -184,11 +187,11 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
 }
 
 /**
- * @tc.number   Telephony_CellularCallConfig_003
+ * @tc.number   Telephony_CellularCallConfig_002
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | Level3)
+HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallConfig config;
@@ -223,6 +226,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_003, Function | MediumTest | L
     config.utProvisioningSupported_[SIM1_SLOTID] = true;
     config.IsUtProvisioned(SIM1_SLOTID);
     config.utProvisioningSupported_[SIM1_SLOTID] = enabled;
+    config.ResetImsSwitch(SIM1_SLOTID);
+    config.HandleSimAccountLoaded(SIM1_SLOTID);
 }
 
 /**
