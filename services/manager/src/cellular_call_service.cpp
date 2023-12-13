@@ -372,8 +372,6 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp imsControl is nullptr");
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
-        CellularCallConfig config;
-        config.HandleFactoryReset(callInfo.slotId);
         return imsControl->HangUp(callInfo, type);
     }
     TELEPHONY_LOGE("CellularCallService::HangUp return, call type error.");
