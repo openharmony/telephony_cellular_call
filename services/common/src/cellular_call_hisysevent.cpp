@@ -34,6 +34,10 @@ static constexpr const char *HANG_UP_EVENT = "HANG_UP";
 static constexpr const char *CALL_END_EXCEPTION_EVENT = "CALL_END_EXCEPTION";
 static constexpr const char *FOUNDATION_RESTART_EVENT = "FOUNDATION_RESTART";
 static constexpr const char *VONR_SWITCH_STATE_EVENT = "VONR_SWITCH_STATE";
+static constexpr const char *CALL_MODE_SEND_REQUEST_EVENT = "CALL_MODE_SEND_REQUEST";
+static constexpr const char *CALL_MODE_SEND_RESPONSE_EVENT = "CALL_MODE_SEND_RESPONSE";
+static constexpr const char *CALL_MODE_RECEIVE_RESPONSE_EVENT = "CALL_MODE_RECEIVE_RESPONSE";
+static constexpr const char *CALL_MODE_RECEIVE_REQUEST_EVENT = "CALL_MODE_RECEIVE_REQUEST";
 
 // KEY
 static constexpr const char *MODULE_NAME_KEY = "MODULE";
@@ -50,6 +54,7 @@ static constexpr const char *SWITCH_KEY = "SWITCH_KEY";
 
 // VALUE
 static constexpr const char *CELLULAR_CALL_MODULE = "CELLULAR_CALL";
+static const int32_t INVALID_VALUE = -1;
 static const int32_t CS_CALL_TYPE = 0;
 static const int32_t IMS_CALL_TYPE = 1;
 static const int32_t VOICE_TYPE = 0;
@@ -183,6 +188,35 @@ void CellularCallHiSysEvent::WriteHangUpFaultEvent(
 void CellularCallHiSysEvent::WriteVoNRSwitchChangeEvent(const int32_t enable)
 {
     HiWriteBehaviorEvent(VONR_SWITCH_STATE_EVENT, SWITCH_KEY, enable);
+}
+
+void CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
+    const CallModeBehaviorType type, const CallBehaviorParameterInfo &info, const int32_t requestResult)
+{
+    std::string imsCallModeEvent = "";
+    switch (type) {
+        case CallModeBehaviorType::SEND_REQUEST_EVENT:
+            imsCallModeEvent = CALL_MODE_SEND_REQUEST_EVENT;
+            break;
+        case CallModeBehaviorType::SEND_RESPONSE_EVENT:
+            imsCallModeEvent = CALL_MODE_SEND_RESPONSE_EVENT;
+            break;
+        case CallModeBehaviorType::RECEIVE_REQUEST_EVENT:
+            imsCallModeEvent = CALL_MODE_RECEIVE_REQUEST_EVENT;
+            break;
+        case CallModeBehaviorType::RECEIVE_RESPONSE_EVENT:
+            imsCallModeEvent = CALL_MODE_RECEIVE_RESPONSE_EVENT;
+            break;
+        default:
+            break;
+    }
+    if (requestResult == INVALID_VALUE) {
+        HiWriteBehaviorEvent(imsCallModeEvent, MODULE_NAME_KEY, CELLULAR_CALL_MODULE, SLOT_ID_KEY, info.slotId,
+            CALL_TYPE_KEY, info.callType, VIDEO_STATE_KEY, info.videoState);
+    } else {
+        HiWriteBehaviorEvent(imsCallModeEvent, MODULE_NAME_KEY, CELLULAR_CALL_MODULE, SLOT_ID_KEY, info.slotId,
+            CALL_TYPE_KEY, info.callType, VIDEO_STATE_KEY, info.videoState, RESULT_KEY, requestResult);
+    }
 }
 
 int32_t CellularCallHiSysEvent::ErrorCodeConversion(const int32_t errCode, CallErrorCode &eventValue)

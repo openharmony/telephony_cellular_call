@@ -15,11 +15,14 @@
 
 #include "ims_video_call_control.h"
 
+#include "cellular_call_hisysevent.h"
 #include "ims_call_client.h"
 #include "securec.h"
 
 namespace OHOS {
 namespace Telephony {
+const int32_t INVALID_VALUE = -1;
+
 ImsVideoCallControl::ImsVideoCallControl()
 {
     TELEPHONY_LOGD("ImsVideoCallControl start");
@@ -120,6 +123,16 @@ int32_t ImsVideoCallControl::SendUpdateCallMediaModeRequest(const CellularCallIn
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
+        struct CallBehaviorParameterInfo info = { 0 };
+        auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+        if (callHiSysEvent == nullptr) {
+            TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        callHiSysEvent->GetCallParameterInfo(info);
+        info.videoState = static_cast<ImsCallMode>(mode);
+        CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
+            CallModeBehaviorType::SEND_REQUEST_EVENT, info, INVALID_VALUE);
         ImsCallInfo imsCallInfo;
         if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");
@@ -152,6 +165,16 @@ int32_t ImsVideoCallControl::SendUpdateCallMediaModeResponse(const CellularCallI
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
+        struct CallBehaviorParameterInfo info = { 0 };
+        auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+        if (callHiSysEvent == nullptr) {
+            TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        callHiSysEvent->GetCallParameterInfo(info);
+        info.videoState = static_cast<ImsCallMode>(mode);
+        CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
+            CallModeBehaviorType::SEND_RESPONSE_EVENT, info, INVALID_VALUE);
         ImsCallInfo imsCallInfo;
         if (memset_s(&imsCallInfo, sizeof(imsCallInfo), 0, sizeof(imsCallInfo)) != EOK) {
             TELEPHONY_LOGE("return, memset_s error.");

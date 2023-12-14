@@ -659,6 +659,13 @@ void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer
 
 void CellularCallHandler::ReceiveUpdateCallMediaModeRequest(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    struct CallBehaviorParameterInfo info = { 0 };
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallParameterInfo(info);
     auto result = event->GetSharedObject<ImsCallModeReceiveInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
@@ -669,10 +676,20 @@ void CellularCallHandler::ReceiveUpdateCallMediaModeRequest(const AppExecFwk::In
         return;
     }
     registerInstance_->ReceiveUpdateCallMediaModeRequest(*result);
+    int32_t requestResult = static_cast<ImsCallModeRequestResult>(result->result);
+    CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
+        CallModeBehaviorType::RECEIVE_REQUEST_EVENT, info, requestResult);
 }
 
 void CellularCallHandler::ReceiveUpdateCallMediaModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    struct CallBehaviorParameterInfo info = { 0 };
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallParameterInfo(info);
     auto result = event->GetSharedObject<ImsCallModeReceiveInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
@@ -683,6 +700,10 @@ void CellularCallHandler::ReceiveUpdateCallMediaModeResponse(const AppExecFwk::I
         return;
     }
     registerInstance_->ReceiveUpdateCallMediaModeResponse(*result);
+    info.videoState = static_cast<ImsCallType>(result->callType);
+    int32_t requestResult = static_cast<ImsCallModeRequestResult>(result->result);
+    CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
+        CallModeBehaviorType::RECEIVE_RESPONSE_EVENT, info, requestResult);
 }
 
 void CellularCallHandler::HandleCallSessionEventChanged(const AppExecFwk::InnerEvent::Pointer &event)

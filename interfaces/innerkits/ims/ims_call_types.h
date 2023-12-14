@@ -292,6 +292,14 @@ struct ImsCurrentCall {
      * Indicates the type of address, eg 145 = intl.
      */
     int32_t toa = 0;
+    /**
+     * Indicates the color tone type.
+     */
+    int32_t toneType = 0;
+    /**
+     * Indicates the initial type of this call.
+     */
+    int32_t callInitialType = 0;
 };
 
 /**

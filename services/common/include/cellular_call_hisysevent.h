@@ -57,6 +57,13 @@ struct CallBehaviorParameterInfo {
     int32_t incomingVideoState = 0;
 };
 
+enum class CallModeBehaviorType {
+    SEND_REQUEST_EVENT = 0,
+    SEND_RESPONSE_EVENT,
+    RECEIVE_REQUEST_EVENT,
+    RECEIVE_RESPONSE_EVENT,
+};
+
 struct CallForwardingInfo {
     int32_t slotId = 0;
     bool enable = false;
@@ -79,6 +86,8 @@ public:
     static void WriteIncomingCallFaultEvent(const int32_t slotId, const int32_t callType, const int32_t videoState,
         const int32_t errCode, const std::string &desc);
     static void WriteVoNRSwitchChangeEvent(const int32_t enable);
+    static void WriteImsCallModeBehaviorEvent(
+        const CallModeBehaviorType type, const CallBehaviorParameterInfo &info, const int32_t requestResult);
     void SetCallParameterInfo(const int32_t slotId, const int32_t callType, const int32_t videoState);
     void SetIncomingCallParameterInfo(const int32_t incomingCallType, const int32_t incomingVideoState);
     void GetCallParameterInfo(CallBehaviorParameterInfo &info);
