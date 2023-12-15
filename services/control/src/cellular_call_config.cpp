@@ -32,12 +32,10 @@ namespace OHOS {
 namespace Telephony {
 const int32_t SIM_PRESENT = 1;
 const int32_t SIM_ABSENT = 0;
-const int32_t IMS_SWITCH_VALUE_DISABLED = 0;
-const int32_t IMS_SWITCH_VALUE_ENABLED = 1;
-const int32_t IMS_SWITCH_VALUE_UNKNOWN = -1;
+const int32_t IMS_SWITCH_STATUS_UNKNOWN = -1;
 const int32_t IMS_SWITCH_STATUS_OFF = 0;
 const int32_t IMS_SWITCH_STATUS_ON = 1;
-const int32_t VONR_SWITCH_VALUE_UNKNOWN = -1;
+const int32_t VONR_SWITCH_STATUS_UNKNOWN = -1;
 const int32_t VONR_SWITCH_STATUS_OFF = 0;
 const int32_t VONR_SWITCH_STATUS_ON = 1;
 const int32_t SAVE_IMS_SWITCH_FAILED = 0;
@@ -48,6 +46,7 @@ const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int MCC_LEN = 3;
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
+const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
 const std::string VONR_STATE = "persist.telephony.vonrswitch";
 
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
@@ -97,7 +96,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
             std::pair<int, std::vector<std::string>>(i, IMS_CALL_DISCONNECT_REASONINFO_MAPPING_CONFIG));
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
-        CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_VALUE_UNKNOWN));
+        CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_STATUS_UNKNOWN));
         CellularCallConfig::serviceState_.insert(std::pair<int, RegServiceState>(i,
             RegServiceState::REG_STATE_UNKNOWN));
     }
@@ -128,8 +127,7 @@ int32_t CellularCallConfig::GetDomainPreferenceMode(int32_t slotId)
 
 int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 {
-    TELEPHONY_LOGI(
-        "CellularCallConfig::SetImsSwitchStatus entry, slotId: %{public}d, active: %{public}d", slotId, active);
+    TELEPHONY_LOGI("entry, slotId:%{public}d, active:%{public}d", slotId, active);
     if (!volteSupported_[slotId]) {
         TELEPHONY_LOGE("Enable ims switch failed due to volte is not supported.");
         return CALL_ERR_VOLTE_NOT_SUPPORT;
@@ -176,7 +174,7 @@ int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
             enabled = imsSwitchStatus;
         }
     } else {
-        TELEPHONY_LOGE("do not find hideImsSwitch");
+        TELEPHONY_LOGI("do not find hideImsSwitch");
         int32_t imsSwitchStatus = GetSwitchStatus(slotId);
         enabled = imsSwitchStatus;
     }
@@ -322,6 +320,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 {
     TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
+    saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true);
     CheckAndUpdateSimState(slotId);
@@ -404,6 +403,8 @@ void CellularCallConfig::ResetImsSwitch(int32_t slotId)
             slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
         if (ret != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGE("SaveImsSwitch failed");
+        } else {
+            saveImsSwitchStatusToLocal(slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
         }
     }
 }
@@ -559,23 +560,47 @@ bool CellularCallConfig::ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool 
 
 int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue)
 {
-    int32_t lastImsSwitchValue;
+    int32_t lastImsSwitchValue = IMS_SWITCH_STATUS_UNKNOWN;
     int32_t queryRet = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, lastImsSwitchValue);
     if (queryRet != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("query ims switch failed");
         return SAVE_IMS_SWITCH_FAILED;
     }
-
     if (imsSwitchValue == lastImsSwitchValue) {
         TELEPHONY_LOGI("ims switch status do not change, imsSwitchValue: %{public}d", imsSwitchValue);
         return SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED;
     }
     int32_t saveRet = CoreManagerInner::GetInstance().SaveImsSwitch(slotId, imsSwitchValue);
     if (saveRet != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("save ims switch failed!");
+        TELEPHONY_LOGE("save ims switch status to database failed!");
         return SAVE_IMS_SWITCH_FAILED;
     }
+    saveImsSwitchStatusToLocal(slotId, imsSwitchValue);
     return SAVE_IMS_SWITCH_SUCCESS_CHANGED;
+}
+
+void CellularCallConfig::saveImsSwitchStatusToLocalForPowerOn(int32_t slotId)
+{
+    int32_t imsSwitchStatus = IMS_SWITCH_STATUS_UNKNOWN;
+    int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
+    if (ret != TELEPHONY_SUCCESS || imsSwitchStatus == IMS_SWITCH_STATUS_UNKNOWN) {
+        TELEPHONY_LOGI("get ims switch state failed from database, return operator config default value");
+        imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
+    }
+
+    TELEPHONY_LOGI(
+        "save slotId[%{public}d] imsSwitchStatus:%{public}d to local for Power on", slotId, imsSwitchStatus);
+    std::string imsSwitchStateKey = IMSSWITCH_STATE + std::to_string(slotId);
+    std::string imsSwitchState = std::to_string(imsSwitchStatus);
+    SetParameter(imsSwitchStateKey.c_str(), imsSwitchState.c_str());
+}
+
+void CellularCallConfig::saveImsSwitchStatusToLocal(int32_t slotId, int32_t imsSwitchStatus)
+{
+    TELEPHONY_LOGI("save slotId[%{public}d] imsSwitchStatus:%{public}d to local", slotId, imsSwitchStatus);
+    std::string imsSwitchStateKey = IMSSWITCH_STATE + std::to_string(slotId);
+    std::string imsSwitchState = std::to_string(imsSwitchStatus);
+    SetParameter(imsSwitchStateKey.c_str(), imsSwitchState.c_str());
 }
 
 void CellularCallConfig::SaveVoNRState(int32_t slotId, int32_t state)
@@ -590,7 +615,6 @@ void CellularCallConfig::SaveVoNRState(int32_t slotId, int32_t state)
 int32_t CellularCallConfig::ObtainVoNRState(int32_t slotId)
 {
     std::string vonrStateKey = VONR_STATE + std::to_string(slotId);
-
     int32_t vonrState = GetIntParameter(vonrStateKey.c_str(), VONR_SWITCH_STATUS_ON);
     TELEPHONY_LOGI("slotId: %{public}d, switchState: %{public}d", slotId, vonrState);
     return vonrState;
@@ -632,14 +656,18 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 
 int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
 {
-    TELEPHONY_LOGI("CellularCallConfig::GetSwitchStatus entry, slotId: %{public}d", slotId);
-    int32_t imsSwitchStatus = IMS_SWITCH_VALUE_UNKNOWN;
-    int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
-    if (ret != TELEPHONY_SUCCESS || imsSwitchStatus == IMS_SWITCH_VALUE_UNKNOWN) {
-        TELEPHONY_LOGW("get ims switch failed, return default ims switch in operator config");
-        imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
+    int32_t imsSwitchStatus = IMS_SWITCH_STATUS_UNKNOWN;
+    std::string imsSwitchStateKey = IMSSWITCH_STATE + std::to_string(slotId);
+    imsSwitchStatus = GetIntParameter(imsSwitchStateKey.c_str(), IMS_SWITCH_STATUS_UNKNOWN);
+    if (imsSwitchStatus == IMS_SWITCH_STATUS_UNKNOWN) {
+        TELEPHONY_LOGI("get ims switch state failed from local, try to get it from database");
+        int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
+        if (ret != TELEPHONY_SUCCESS || imsSwitchStatus == IMS_SWITCH_STATUS_UNKNOWN) {
+            TELEPHONY_LOGI("get ims switch state failed from database, return operator config default value");
+            imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
+        }
     }
-    TELEPHONY_LOGI("imsSwitchStatus : %{public}d", imsSwitchStatus);
+    TELEPHONY_LOGI("slotId[%{public}d] GetSwitchStatus imsSwitchStatus:%{public}d", slotId, imsSwitchStatus);
     return imsSwitchStatus;
 }
 
@@ -856,7 +884,7 @@ std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 
 int32_t CellularCallConfig::BooleanToImsSwitchValue(bool value)
 {
-    return value ? IMS_SWITCH_VALUE_ENABLED : IMS_SWITCH_VALUE_DISABLED;
+    return value ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
 }
 
 bool CellularCallConfig::GetImsSwitchOnByDefaultConfig(int32_t slotId)

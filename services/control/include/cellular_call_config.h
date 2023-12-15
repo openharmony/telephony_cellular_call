@@ -434,6 +434,8 @@ private:
     bool ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active);
     int32_t SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue);
     int32_t GetSwitchStatus(int32_t slotId) const;
+    void saveImsSwitchStatusToLocalForPowerOn(int32_t slotId);
+    void saveImsSwitchStatusToLocal(int32_t slotId, int32_t imsSwitchStatus);
     void SaveVoNRState(int32_t slotId, int32_t state);
     int32_t ObtainVoNRState(int32_t slotId);
     void UpdateEccNumberList(int32_t slotId);
