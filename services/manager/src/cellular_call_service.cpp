@@ -53,11 +53,6 @@ CellularCallService::~CellularCallService()
 bool CellularCallService::Init()
 {
     TELEPHONY_LOGD("CellularCallService::Init start");
-    eventLoop_ = AppExecFwk::EventRunner::Create("CellularCallServiceLoop");
-    if (eventLoop_ == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::Init return, failed to create EventRunner");
-        return false;
-    }
     CreateHandler();
     SendEventRegisterHandler();
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -89,9 +84,6 @@ void CellularCallService::OnStart()
         return;
     }
     state_ = ServiceRunningState::STATE_RUNNING;
-    if (eventLoop_ != nullptr) {
-        eventLoop_->Run();
-    }
     bool ret = Publish(DelayedSingleton<CellularCallService>::GetInstance().get());
     if (!ret) {
         TELEPHONY_LOGE("CellularCallService::OnStart Publish failed!");
@@ -105,9 +97,6 @@ void CellularCallService::OnStart()
 void CellularCallService::OnStop()
 {
     TELEPHONY_LOGD("CellularCallService stop service");
-    if (eventLoop_ != nullptr) {
-        eventLoop_.reset();
-    }
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     state_ = ServiceRunningState::STATE_STOPPED;
     HandlerResetUnRegister();
@@ -139,7 +128,7 @@ void CellularCallService::CreateHandler()
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
     for (const auto &it : slotVector) {
-        auto handler = std::make_shared<CellularCallHandler>(eventLoop_, subscriberInfo);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         TELEPHONY_LOGI("setSlotId:%{public}d", it);
         handler->SetSlotId(it);
         handler->RegisterImsCallCallbackHandler();

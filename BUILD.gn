@@ -80,6 +80,7 @@ ohos_shared_library("tel_cellular_call") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
+    "ffrt:libffrt",
     "graphic_2d:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",

@@ -37,9 +37,8 @@ const int32_t MAX_REQUEST_COUNT = 50;
 // message was null, mean report the default message to user which have been define at CellularCallSupplement
 const std::string DEFAULT_NULL_MESSAGE = "";
 
-CellularCallHandler::CellularCallHandler(
-    const std::shared_ptr<AppExecFwk::EventRunner> &runner, const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
-    : AppExecFwk::EventHandler(runner), CommonEventSubscriber(subscriberInfo)
+CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
+    : TelEventHandler("CellularCallHandler"), CommonEventSubscriber(subscriberInfo)
 {
     InitBasicFuncMap();
     InitConfigFuncMap();

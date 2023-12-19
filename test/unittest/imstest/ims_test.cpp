@@ -1810,11 +1810,10 @@ HWTEST_F(ImsTest, cellular_call_CellularCallConfig_0001, Function | MediumTest |
  */
 HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
 {
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("ims_test");
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler handler { runner, subscriberInfo };
+    CellularCallHandler handler { subscriberInfo };
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
@@ -1855,11 +1854,10 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
  */
 HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest | Level3)
 {
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("ims_test");
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler handler { runner, subscriberInfo };
+    CellularCallHandler handler { subscriberInfo };
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
