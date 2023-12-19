@@ -21,6 +21,7 @@
 #include "ims_error.h"
 #include "radio_event.h"
 #include "supplement_request_cs.h"
+#include "tel_event_handler.h"
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
 
@@ -790,7 +791,7 @@ int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const HRilRadioR
     *responseInfo = info;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SWAP_CALL, responseInfo, IMS_CALL);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -818,7 +819,7 @@ int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioRes
     responseInfo->flag = callIndex;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SEND_DTMF, responseInfo, IMS_CALL);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -841,7 +842,7 @@ int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    bool ret = handler->SendEvent(RadioEvent::RADIO_IMS_CALL_STATUS_INFO);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_IMS_CALL_STATUS_INFO);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -865,7 +866,7 @@ int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const ImsCu
     }
     auto imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
     *imsCurrentCallList = callList;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_IMS_GET_CALL_DATA, imsCurrentCallList);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_IMS_GET_CALL_DATA, imsCurrentCallList);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -893,7 +894,7 @@ int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, int32_t active
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    handler->SendEvent(RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, active);
+    TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, active);
     return TELEPHONY_SUCCESS;
 }
 
@@ -913,7 +914,7 @@ int32_t ImsCallCallbackStub::CallRingBackReport(int32_t slotId, const RingbackVo
     }
     auto ringbackVoice = std::make_shared<RingbackVoice>();
     *ringbackVoice = info;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_RINGBACK_VOICE, ringbackVoice);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_CALL_RINGBACK_VOICE, ringbackVoice);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -956,7 +957,7 @@ int32_t ImsCallCallbackStub::LastCallFailReasonResponse(int32_t slotId, const Di
             break;
         }
     }
-    bool ret = handler->SendEvent(RadioEvent::RADIO_GET_CALL_FAIL_REASON, detailsInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_GET_CALL_FAIL_REASON, detailsInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -992,7 +993,7 @@ int32_t ImsCallCallbackStub::GetClipResponse(int32_t slotId, const GetClipResult
     clipResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_CALL_CLIP, clipResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1022,7 +1023,7 @@ int32_t ImsCallCallbackStub::GetClirResponse(int32_t slotId, const GetClirResult
     clirResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_CALL_CLIR, clirResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1070,7 +1071,7 @@ int32_t ImsCallCallbackStub::GetCallTransferResponse(int32_t slotId, const CallF
     BuildCallForwardInfo(cFQueryList, *callTransferResponse);
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_CALL_FORWARD, callTransferResponse, cFQueryList.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1128,7 +1129,7 @@ int32_t ImsCallCallbackStub::GetCallRestrictionResponse(int32_t slotId, const Ca
     callRestrictionResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(
         RadioEvent::RADIO_GET_CALL_RESTRICTION, callRestrictionResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1176,7 +1177,7 @@ int32_t ImsCallCallbackStub::GetCallWaitingResponse(int32_t slotId, const CallWa
     callWaitResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_GET_CALL_WAIT, callWaitResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1224,7 +1225,7 @@ int32_t ImsCallCallbackStub::GetColrResponse(int32_t slotId, const GetColrResult
     colrResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_IMS_GET_COLR, colrResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1255,7 +1256,7 @@ int32_t ImsCallCallbackStub::GetColpResponse(int32_t slotId, const GetColpResult
     colpResponse->result.message = result.result.message;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_IMS_GET_COLP, colpResponse, result.result.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1300,7 +1301,7 @@ int32_t ImsCallCallbackStub::CallSessionEventChanged(
     }
     std::shared_ptr<ImsCallSessionEventInfo> responseInfo = std::make_shared<ImsCallSessionEventInfo>();
     *responseInfo = callSessionEventInfo;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1319,7 +1320,7 @@ int32_t ImsCallCallbackStub::PeerDimensionsChanged(
     }
     std::shared_ptr<ImsCallPeerDimensionsInfo> responseInfo = std::make_shared<ImsCallPeerDimensionsInfo>();
     *responseInfo = callPeerDimensionsInfo;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_PEER_DIMENSIONS_CHANGED, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_CALL_PEER_DIMENSIONS_CHANGED, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1337,7 +1338,7 @@ int32_t ImsCallCallbackStub::CallDataUsageChanged(int32_t slotId, const ImsCallD
     }
     std::shared_ptr<ImsCallDataUsageInfo> responseInfo = std::make_shared<ImsCallDataUsageInfo>();
     *responseInfo = callDataUsageInfo;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1356,7 +1357,7 @@ int32_t ImsCallCallbackStub::CameraCapabilitiesChanged(
     }
     std::shared_ptr<CameraCapabilitiesInfo> responseInfo = std::make_shared<CameraCapabilitiesInfo>();
     *responseInfo = cameraCapabilitiesInfo;
-    bool ret = handler->SendEvent(RadioEvent::RADIO_CAMERA_CAPABILITIES_CHANGED, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_CAMERA_CAPABILITIES_CHANGED, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1409,7 +1410,7 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HR
     }
     std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
     *responseInfo = info;
-    bool ret = handler->SendEvent(eventId, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, eventId, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1430,7 +1431,7 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const Ss
     ssResponseInfo->reason = resultInfo.reason;
     ssResponseInfo->message = resultInfo.message;
     AppExecFwk::InnerEvent::Pointer response = AppExecFwk::InnerEvent::Get(eventId, ssResponseInfo, resultInfo.index);
-    bool ret = handler->SendEvent(response);
+    bool ret = TelEventHandler::SendTelEvent(handler, response);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -1447,7 +1448,7 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const Im
     }
     std::shared_ptr<ImsCallModeReceiveInfo> info = std::make_shared<ImsCallModeReceiveInfo>();
     *info = callModeInfo;
-    bool ret = handler->SendEvent(eventId, info);
+    bool ret = TelEventHandler::SendTelEvent(handler, eventId, info);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;

@@ -690,7 +690,6 @@ private:
     int64_t endTime_ = 0L;
     int64_t spendTime_ = 0L;
     ServiceRunningState state_;
-    std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::map<int32_t, std::shared_ptr<CellularCallHandler>> handlerMap_;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
