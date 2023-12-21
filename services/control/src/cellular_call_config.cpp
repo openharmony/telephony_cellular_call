@@ -656,9 +656,8 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 
 int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
 {
-    int32_t imsSwitchStatus = IMS_SWITCH_STATUS_UNKNOWN;
     std::string imsSwitchStateKey = IMSSWITCH_STATE + std::to_string(slotId);
-    imsSwitchStatus = GetIntParameter(imsSwitchStateKey.c_str(), IMS_SWITCH_STATUS_UNKNOWN);
+    int32_t imsSwitchStatus = GetIntParameter(imsSwitchStateKey.c_str(), IMS_SWITCH_STATUS_UNKNOWN);
     if (imsSwitchStatus == IMS_SWITCH_STATUS_UNKNOWN) {
         TELEPHONY_LOGI("get ims switch state failed from local, try to get it from database");
         int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
