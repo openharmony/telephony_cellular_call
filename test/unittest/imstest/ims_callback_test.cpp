@@ -55,8 +55,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
         EventFwk::MatchingSkills matchingSkills;
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        std::shared_ptr<AppExecFwk::EventRunner> eventLoop = AppExecFwk::EventRunner::Create("Imstest");
-        auto handler = std::make_shared<CellularCallHandler>(eventLoop, subscriberInfo);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         handler->SetSlotId(slotId);
         handler->RegisterImsCallCallbackHandler();
         HRilRadioResponseInfo rilRadioResponse;
@@ -109,8 +108,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest
         EventFwk::MatchingSkills matchingSkills;
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        std::shared_ptr<AppExecFwk::EventRunner> eventLoop = AppExecFwk::EventRunner::Create("Imstest");
-        auto handler = std::make_shared<CellularCallHandler>(eventLoop, subscriberInfo);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         handler->SetSlotId(slotId);
         handler->RegisterImsCallCallbackHandler();
         GetClipResult clipResult;
@@ -164,8 +162,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0003, Function | MediumTest
         EventFwk::MatchingSkills matchingSkills;
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        std::shared_ptr<AppExecFwk::EventRunner> eventLoop = AppExecFwk::EventRunner::Create("Imstest");
-        auto handler = std::make_shared<CellularCallHandler>(eventLoop, subscriberInfo);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         handler->SetSlotId(slotId);
         handler->RegisterImsCallCallbackHandler();
         ImsCallModeReceiveInfo callModeReceiveInfo;

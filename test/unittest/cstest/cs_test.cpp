@@ -2443,11 +2443,10 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest |
         return;
     }
 
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler firstHandler { runner, subscriberInfo };
+    CellularCallHandler firstHandler { subscriberInfo };
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -2495,11 +2494,10 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest |
         return;
     }
 
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler secondHandler { runner, subscriberInfo };
+    CellularCallHandler secondHandler { subscriberInfo };
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -2555,11 +2553,10 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest |
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
-    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create("cs_test");
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler thirdhandler { runner, subscriberInfo };
+    CellularCallHandler thirdhandler { subscriberInfo };
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;

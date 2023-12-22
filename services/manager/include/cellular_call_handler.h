@@ -28,11 +28,12 @@
 #include "cs_control.h"
 #include "ims_call_types.h"
 #include "ims_control.h"
+#include "tel_event_handler.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
-class CellularCallHandler : public AppExecFwk::EventHandler, public EventFwk::CommonEventSubscriber {
+class CellularCallHandler : public TelEventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
      * CellularCallHandler constructor
@@ -40,8 +41,7 @@ public:
      * @param runner
      * @param subscriberInfo
      */
-    explicit CellularCallHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner,
-        const EventFwk::CommonEventSubscribeInfo &subscriberInfo);
+    explicit CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo);
 
     /**
      * ~CellularCallHandler destructor
