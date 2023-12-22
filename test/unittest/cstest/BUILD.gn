@@ -47,7 +47,7 @@ ohos_unittest("tel_cellular_call_cs_test") {
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",

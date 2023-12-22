@@ -38,6 +38,7 @@
                 "data_share",
                 "eventhandler",
                 "graphic_2d",
+                "graphic_surface",
                 "hilog",
                 "hisysevent",
                 "hitrace",
