@@ -29,7 +29,7 @@ CellularCallRdbHelper::~CellularCallRdbHelper() = default;
 
 std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbilityHelper()
 {
-    TELEPHONY_LOGI("Create data ability helper");
+    TELEPHONY_LOGD("Create data ability helper");
     sptr<ISystemAbilityManager> saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (saManager == nullptr) {
         TELEPHONY_LOGE("CellularCallRdbHelper GetSystemAbilityManager failed.");
@@ -62,7 +62,7 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
     }
     int rowCnt = 0;
     result->GetRowCount(rowCnt);
-    TELEPHONY_LOGI("CellularCallRdbHelper::query ecc_data rowCnt = %{public}d", rowCnt);
+    TELEPHONY_LOGD("CellularCallRdbHelper::query ecc_data rowCnt = %{public}d", rowCnt);
     for (int32_t index = 0; index < rowCnt; index++) {
         EccNum bean;
         result->GoToRow(index);
