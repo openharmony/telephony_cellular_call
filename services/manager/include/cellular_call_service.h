@@ -601,6 +601,14 @@ public:
     std::shared_ptr<IMSControl> GetImsControl(int32_t slotId);
 
     /**
+     * Get SatelliteControl
+     *
+     * @param slotId
+     * @return shared_ptr SatelliteControl
+     */
+    std::shared_ptr<SatelliteControl> GetSatelliteControl(int32_t slotId);
+
+    /**
      * Set SetCsControl
      *
      * @param slotId
@@ -615,6 +623,14 @@ public:
      * @param  shared_ptr IMSControl
      */
     void SetImsControl(int32_t slotId, const std::shared_ptr<IMSControl> &imsControl);
+
+    /**
+     * Set SatelliteControl
+     *
+     * @param slotId
+     * @param  shared_ptr SatelliteControl
+     */
+    void SetSatelliteControl(int32_t slotId, const std::shared_ptr<SatelliteControl> &satelliteControl);
 
     /**
      * Get Handler
@@ -685,7 +701,14 @@ private:
 
     int32_t SetControl(const CellularCallInfo &info);
 
+    int32_t DialNormalCall(const CellularCallInfo &callInfo, bool isEcc);
+
 private:
+    enum class SatelliteState {
+        SATELLITE_OFF,
+        SATELLITE_ON,
+    };
+
     int64_t bindTime_ = 0L;
     int64_t endTime_ = 0L;
     int64_t spendTime_ = 0L;
@@ -694,6 +717,7 @@ private:
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
+    std::map<int32_t, std::shared_ptr<SatelliteControl>> satelliteControlMap_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;

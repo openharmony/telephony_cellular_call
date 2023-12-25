@@ -70,6 +70,13 @@
                         "header_files": []
                     },
                     "name":"//base/telephony/cellular_call/interfaces/innerkits/ims:tel_ims_call_api"
+                },
+                {
+                    "header": {
+                        "header_base" : "//base/telephony/cellular_call/interfaces/innerkits/satellite",
+                        "header_files": []
+                    },
+                    "name":"//base/telephony/cellular_call/interfaces/innerkits/satellite:tel_satellite_call_api"
                 }
             ],
             "test": [

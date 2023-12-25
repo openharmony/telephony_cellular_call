@@ -37,6 +37,7 @@ ohos_fuzztest("GetCsCallDataFuzzTest") {
   deps = [
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
 
   external_deps = [
