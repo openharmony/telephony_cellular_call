@@ -47,7 +47,7 @@ ohos_fuzztest("AnswerRequestFuzzTest") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

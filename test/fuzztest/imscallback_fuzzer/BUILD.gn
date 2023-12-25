@@ -48,7 +48,7 @@ ohos_fuzztest("ImsCallbackFuzzTest") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "drivers_interface_ril:hril_innerkits",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_single",
