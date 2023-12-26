@@ -25,12 +25,15 @@
 #include "operator_config_types.h"
 #include "radio_event.h"
 #include "resource_utils.h"
+#include "satellite_call_client.h"
+#include "satellite_radio_event.h"
 #include "securec.h"
 
 namespace OHOS {
 namespace Telephony {
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
+const uint32_t GET_SATELLITE_CALL_DATA_ID = 10003;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
 const int64_t DELAY_TIME = 100;
 const int32_t MAX_REQUEST_COUNT = 50;
@@ -44,6 +47,7 @@ CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInf
     InitConfigFuncMap();
     InitSupplementFuncMap();
     InitActiveReportFuncMap();
+    InitSatelliteCallFuncMap();
 }
 
 void CellularCallHandler::InitBasicFuncMap()
@@ -146,12 +150,34 @@ void CellularCallHandler::InitActiveReportFuncMap()
 #endif
 }
 
+void CellularCallHandler::InitSatelliteCallFuncMap()
+{
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_CALL_STATE_CHANGED] =
+        &CellularCallHandler::SatelliteCallStatusInfoReport;
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_DIAL] = &CellularCallHandler::DialSatelliteResponse;
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_HANGUP] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_ANSWER] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_REJECT] = &CellularCallHandler::CommonResultResponse;
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_GET_CALL_DATA] =
+        &CellularCallHandler::GetSatelliteCallsDataResponse;
+    requestFuncMap_[GET_SATELLITE_CALL_DATA_ID] = &CellularCallHandler::GetSatelliteCallsDataRequest;
+}
+
 void CellularCallHandler::RegisterImsCallCallbackHandler()
 {
     // Register IMS
     std::shared_ptr<ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
     if (imsCallClient != nullptr) {
         imsCallClient->RegisterImsCallCallbackHandler(slotId_, shared_from_this());
+    }
+}
+
+void CellularCallHandler::RegisterSatelliteCallCallbackHandler()
+{
+    // Register Satellite
+    std::shared_ptr<SatelliteCallClient> satelliteCallClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    if (satelliteCallClient != nullptr) {
+        satelliteCallClient->RegisterSatelliteCallCallbackHandler(slotId_, shared_from_this());
     }
 }
 
@@ -197,6 +223,11 @@ void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &e
 void CellularCallHandler::GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event)
 {
     this->SendEvent(GET_IMS_CALL_DATA_ID, 0, Priority::HIGH);
+}
+
+void CellularCallHandler::GetSatelliteCallData(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    this->SendEvent(GET_SATELLITE_CALL_DATA_ID, 0, Priority::HIGH);
 }
 
 void CellularCallHandler::CellularCallIncomingStartTrace(const int32_t state)
@@ -403,6 +434,112 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
         CellularCallHiSysEvent::WriteDialCallBehaviorEvent(info, CallResponseResult::COMMAND_FAILURE);
     } else {
         CellularCallHiSysEvent::WriteDialCallBehaviorEvent(info, CallResponseResult::COMMAND_SUCCESS);
+    }
+}
+
+void CellularCallHandler::DialSatelliteResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    struct CallBehaviorParameterInfo satelliteCallInfo = { 0 };
+    auto callHiSysEvent = DelayedSingleton<CellularCallHiSysEvent>::GetInstance();
+    if (callHiSysEvent == nullptr) {
+        TELEPHONY_LOGE("CellularCallHiSysEvent is null.");
+        return;
+    }
+    callHiSysEvent->GetCallParameterInfo(satelliteCallInfo);
+    if (result->error != HRilErrType::NONE) {
+        TELEPHONY_LOGE("[slot%{public}d] dial error:%{public}d", slotId_, result->error);
+        CellularCallEventInfo eventInfo;
+        eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+
+        if (result->error == HRilErrType::HRIL_ERR_CMD_NO_CARRIER) {
+            eventInfo.eventId = RequestResultEventId::RESULT_DIAL_NO_CARRIER;
+        } else {
+            eventInfo.eventId = RequestResultEventId::RESULT_DIAL_SEND_FAILED;
+        }
+        if (registerInstance_ == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+            return;
+        }
+        registerInstance_->ReportEventResultInfo(eventInfo);
+        CellularCallHiSysEvent::WriteDialCallBehaviorEvent(satelliteCallInfo, CallResponseResult::COMMAND_FAILURE);
+    } else {
+        CellularCallHiSysEvent::WriteDialCallBehaviorEvent(satelliteCallInfo, CallResponseResult::COMMAND_SUCCESS);
+    }
+}
+
+void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto satelliteCallInfoList = event->GetSharedObject<SatelliteCurrentCallList>();
+    if (satelliteCallInfoList == nullptr) {
+        TELEPHONY_LOGE(
+            "[slot%{public}d] Cannot get the SatelliteCurrentCallList, need to get rilResponseInfo", slotId_);
+        auto rilResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
+        if (rilResponseInfo == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] SatelliteCurrentCallList and rilResponseInfo are null", slotId_);
+            return;
+        }
+        if (rilResponseInfo->error == HRilErrType::NONE) {
+            TELEPHONY_LOGE("[slot%{public}d] Failed to query the call list but no reason!", slotId_);
+            return;
+        }
+        CellularCallEventInfo eventInfo;
+        eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
+        eventInfo.eventId = RequestResultEventId::RESULT_GET_CURRENT_CALLS_FAILED;
+        if (registerInstance_ == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+            return;
+        }
+        registerInstance_->ReportEventResultInfo(eventInfo);
+        return;
+    }
+    ReportSatelliteCallsData(*satelliteCallInfoList);
+}
+
+void CellularCallHandler::ReportSatelliteCallsData(const SatelliteCurrentCallList &callInfoList)
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
+        return;
+    }
+    auto satelliteControl = serviceInstance->GetSatelliteControl(slotId_);
+    SatelliteCurrentCall callInfo;
+    std::vector<SatelliteCurrentCall>::const_iterator it = callInfoList.calls.begin();
+    for (; it != callInfoList.calls.end(); ++it) {
+        callInfo.state = (*it).state;
+    }
+    TELEPHONY_LOGI("[slot%{public}d] callInfoList.callSize:%{public}d", slotId_, callInfoList.callSize);
+    CellularCallIncomingStartTrace(callInfo.state);
+    if (callInfoList.callSize == 0) {
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] satelliteControl is null", slotId_);
+            CellularCallIncomingFinishTrace(callInfo.state);
+            return;
+        }
+        if (satelliteControl->ReportSatelliteCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+            CellularCallIncomingFinishTrace(callInfo.state);
+        }
+        serviceInstance->SetSatelliteControl(slotId_, nullptr);
+        return;
+    }
+    if (callInfoList.callSize == 1) {
+        if (satelliteControl == nullptr) {
+            satelliteControl = std::make_shared<SatelliteControl>();
+            serviceInstance->SetSatelliteControl(slotId_, satelliteControl);
+        }
+    }
+    if (satelliteControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] satelliteControl is null", slotId_);
+        CellularCallIncomingFinishTrace(callInfo.state);
+        return;
+    }
+    if (satelliteControl->ReportSatelliteCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+        CellularCallIncomingFinishTrace(callInfo.state);
     }
 }
 
@@ -793,6 +930,13 @@ void CellularCallHandler::GetImsCallsDataRequest(const AppExecFwk::InnerEvent::P
     connectionIms.GetImsCallsDataRequest(slotId_, lastCallsDataFlag_);
 }
 
+void CellularCallHandler::GetSatelliteCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    lastCallsDataFlag_ = CurrentTimeMillis();
+    CellularCallConnectionSatellite connectionSatellite;
+    connectionSatellite.GetSatelliteCallsDataRequest(slotId_, lastCallsDataFlag_);
+}
+
 void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event)
 {
     CellularCallConnectionCS connectionCs;
@@ -874,6 +1018,15 @@ void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::P
 void CellularCallHandler::ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
     GetImsCallData(event);
+}
+
+void CellularCallHandler::SatelliteCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (srvccState_ == SrvccState::STARTED) {
+        TELEPHONY_LOGI("[slot%{public}d] Ignore to report satellite call state change cause by srvcc started", slotId_);
+        return;
+    }
+    GetSatelliteCallData(event);
 }
 
 void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)

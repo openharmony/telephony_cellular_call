@@ -75,6 +75,13 @@ public:
     bool GetImsUtSupportState(int32_t slotId);
 
     /**
+     * Get Satellite status
+     *
+     * @return Satellite status
+     */
+    bool GetSatelliteStatus();
+
+    /**
      * Get slot info
      *
      * @return slot id

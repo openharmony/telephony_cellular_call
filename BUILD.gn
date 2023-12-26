@@ -32,6 +32,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/connection/src/base_request.cpp",
     "services/connection/src/cellular_call_connection_cs.cpp",
     "services/connection/src/cellular_call_connection_ims.cpp",
+    "services/connection/src/cellular_call_connection_satellite.cpp",
     "services/connection/src/config_request.cpp",
     "services/connection/src/supplement_request_cs.cpp",
     "services/connection/src/supplement_request_ims.cpp",
@@ -42,6 +43,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/control/src/ims_control.cpp",
     "services/control/src/ims_video_call_control.cpp",
     "services/control/src/mmi_code_message.cpp",
+    "services/control/src/satellite_control.cpp",
     "services/ims_service_interaction/src/ims_call_callback_stub.cpp",
     "services/ims_service_interaction/src/ims_call_client.cpp",
     "services/ims_service_interaction/src/ims_call_proxy.cpp",
@@ -50,10 +52,14 @@ ohos_shared_library("tel_cellular_call") {
     "services/manager/src/cellular_call_register.cpp",
     "services/manager/src/cellular_call_service.cpp",
     "services/manager/src/cellular_call_stub.cpp",
+    "services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
+    "services/satellite_service_interaction/src/satellite_call_client.cpp",
+    "services/satellite_service_interaction/src/satellite_call_proxy.cpp",
   ]
 
   include_dirs = [
     "interfaces/innerkits/ims",
+    "interfaces/innerkits/satellite",
     "services/common/include",
     "services/manager/include",
     "services/control/include",

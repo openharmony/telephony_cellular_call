@@ -15,12 +15,11 @@
 
 #include "module_service_utils.h"
 
-#include "ipc_skeleton.h"
-#include "string_ex.h"
-
 #include "cellular_call_config.h"
 #include "cellular_call_register.h"
 #include "ims_call_client.h"
+#include "ipc_skeleton.h"
+#include "string_ex.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_types.h"
 
@@ -75,6 +74,11 @@ std::string ModuleServiceUtils::GetNetworkCountryCode(int32_t slotId)
     std::u16string countryCode;
     CoreManagerInner::GetInstance().GetIsoCountryCodeForNetwork(slotId, countryCode);
     return Str16ToStr8(countryCode);
+}
+
+bool ModuleServiceUtils::GetSatelliteStatus()
+{
+    return CoreManagerInner::GetInstance().IsSatelliteEnabled();
 }
 
 bool ModuleServiceUtils::GetImsRegistrationState(int32_t slotId)
