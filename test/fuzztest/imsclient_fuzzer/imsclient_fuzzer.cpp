@@ -115,16 +115,16 @@ void TestImsCallClientWithSlotAndType(
     imsCallClient->GetLastCallFailReason(slotId);
     imsCallClient->ControlCamera(slotId, index, info);
     imsCallClient->SetPausePicture(slotId, index, info);
-    if (info.empty() || info[0] < '0' || info[0] > '9') {
-        info = "";
-        imsCallClient->SetPreviewWindow(slotId, index, info, nullptr);
-        imsCallClient->SetDisplayWindow(slotId, index, info, nullptr);
+    int len = static_cast<int>(info.length());
+    std::string subSurfaceId = info;
+    if (len >= 1) {
+        subSurfaceId = info.substr(0, 1);
+    }
+    if (subSurfaceId.empty() || subSurfaceId[0] < '0' || subSurfaceId[0] > '9') {
+        subSurfaceId = "";
+        imsCallClient->SetPreviewWindow(slotId, index, subSurfaceId, nullptr);
+        imsCallClient->SetDisplayWindow(slotId, index, subSurfaceId, nullptr);
     } else {
-        int len = static_cast<int>(info.length());
-        std::string subSurfaceId = info;
-        if (len >= 1) {
-            subSurfaceId = info.substr(0, 1);
-        }
         uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
         auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
         imsCallClient->SetPreviewWindow(slotId, index, subSurfaceId, surface);
@@ -291,16 +291,16 @@ void TestImsCallProxyWithSlotAndType(const uint8_t *data, size_t size, const spt
     proxy->GetLastCallFailReason(slotId);
     proxy->ControlCamera(slotId, index, info);
     proxy->SetPausePicture(slotId, index, info);
-    if (info.empty() || info[0] < '0' || info[0] > '9') {
-        info = "";
-        proxy->SetPreviewWindow(slotId, index, info, nullptr);
-        proxy->SetDisplayWindow(slotId, index, info, nullptr);
+    int len = static_cast<int>(info.length());
+    std::string subSurfaceId = info;
+    if (len >= 1) {
+        subSurfaceId = info.substr(0, 1);
+    }
+    if (subSurfaceId.empty() || subSurfaceId[0] < '0' || subSurfaceId[0] > '9') {
+        subSurfaceId = "";
+        proxy->SetPreviewWindow(slotId, index, subSurfaceId, nullptr);
+        proxy->SetDisplayWindow(slotId, index, subSurfaceId, nullptr);
     } else {
-        int len = static_cast<int>(info.length());
-        std::string subSurfaceId = info;
-        if (len >= 1) {
-            subSurfaceId = info.substr(0, 1);
-        }
         uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
         auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
         proxy->SetPreviewWindow(slotId, index, subSurfaceId, surface);

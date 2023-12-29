@@ -78,15 +78,15 @@ void SetPreviewWindow(const uint8_t *data, size_t size)
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(index);
-    if (surfaceId.empty() || surfaceId[0] < '0' || surfaceId[0] > '9') {
-        surfaceId = "";
-        dataMessageParcel.WriteString(surfaceId);
+    int len = static_cast<int>(surfaceId.length());
+    std::string subSurfaceId = surfaceId;
+    if (len >= 1) {
+        subSurfaceId = surfaceId.substr(0, 1);
+    }
+    if (subSurfaceId.empty() || subSurfaceId[0] < '0' || subSurfaceId[0] > '9') {
+        subSurfaceId = "";
+        dataMessageParcel.WriteString(subSurfaceId);
     } else {
-        int len = static_cast<int>(surfaceId.length());
-        std::string subSurfaceId = surfaceId;
-        if (len >= 1) {
-            subSurfaceId = surfaceId.substr(0, 1);
-        }
         dataMessageParcel.WriteString(subSurfaceId);
         uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
         auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
@@ -116,15 +116,15 @@ void SetDisplayWindow(const uint8_t *data, size_t size)
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(index);
-    if (surfaceId.empty() || surfaceId[0] < '0' || surfaceId[0] > '9') {
-        surfaceId = "";
-        dataMessageParcel.WriteString(surfaceId);
+    int len = static_cast<int>(surfaceId.length());
+    std::string subSurfaceId = surfaceId;
+    if (len >= 1) {
+        subSurfaceId = surfaceId.substr(0, 1);
+    }
+    if (subSurfaceId.empty() || subSurfaceId[0] < '0' || subSurfaceId[0] > '9') {
+        subSurfaceId = "";
+        dataMessageParcel.WriteString(subSurfaceId);
     } else {
-        int len = static_cast<int>(surfaceId.length());
-        std::string subSurfaceId = surfaceId;
-        if (len >= 1) {
-            subSurfaceId = surfaceId.substr(0, 1);
-        }
         dataMessageParcel.WriteString(subSurfaceId);
         uint64_t tmpSurfaceId = std::stoull(subSurfaceId);
         auto surface = SurfaceUtils::GetInstance()->GetSurface(tmpSurfaceId);
