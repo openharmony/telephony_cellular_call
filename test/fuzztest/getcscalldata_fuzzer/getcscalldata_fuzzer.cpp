@@ -59,11 +59,15 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
 
     handle->GetCsCallData(event);
     handle->GetImsCallData(event);
+    handle->GetSatelliteCallData(event);
     handle->ImsCallStatusInfoReport(event);
+    handle->SatelliteCallStatusInfoReport(event);
     handle->CellularCallIncomingStartTrace(state);
     handle->GetCsCallsDataResponse(event);
     handle->GetImsCallsDataResponse(event);
+    handle->GetSatelliteCallsDataResponse(event);
     handle->DialResponse(event);
+    handle->DialSatelliteResponse(event);
     handle->SendDtmfResponse(event);
     handle->StartDtmfResponse(event);
     handle->SimStateChangeReport(event);
@@ -74,6 +78,7 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
     handle->CurrentTimeMillis();
     handle->GetCsCallsDataRequest(event);
     handle->GetImsCallsDataRequest(event);
+    handle->GetSatelliteCallsDataRequest(event);
     handle->ReportCsCallsData(infoList);
 }
 
@@ -89,6 +94,11 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     ImsCurrentCallList infoList;
     info.number = number;
     infoList.calls.push_back(info);
+
+    SatelliteCurrentCall satelliteInfo;
+    SatelliteCurrentCallList satelliteInfoList;
+    satelliteInfo.number = number;
+    satelliteInfoList.calls.push_back(satelliteInfo);
 
     handle->RegisterHandler(event);
     handle->SetDomainPreferenceModeResponse(event);
@@ -109,6 +119,7 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->GetCallWaitingResponse(event);
     handle->GetClirResponse(event);
     handle->ReportImsCallsData(infoList);
+    handle->ReportSatelliteCallsData(satelliteInfoList);
     handle->SetClirResponse(event);
     handle->GetClipResponse(event);
     handle->SetCallTransferInfoResponse(event);

@@ -22,6 +22,7 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "ims_control.h"
+#include "satellite_control.h"
 #include "securec.h"
 #include "system_ability_definition.h"
 
@@ -69,6 +70,17 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     iMSControl->UnHoldCall(slotId);
     iMSControl->SwitchCall(slotId);
     iMSControl->ReportHangUpInfo(slotId);
+
+    auto satelliteControl = std::make_shared<SatelliteControl>();
+    callInfo.callType = CallType::TYPE_SATELLITE;
+    satelliteControl->Dial(callInfo, isEcc);
+    satelliteControl->HangUp(callInfo, type);
+    satelliteControl->Answer(callInfo);
+    satelliteControl->Reject(callInfo);
+    satelliteControl->HoldCall(slotId);
+    satelliteControl->UnHoldCall(slotId);
+    satelliteControl->SwitchCall(slotId);
+    satelliteControl->ReportHungUpInfo(slotId);
     return;
 }
 } // namespace OHOS

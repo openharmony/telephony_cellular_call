@@ -21,6 +21,7 @@
 #include "radio_event.h"
 #include "satellite_call_client.h"
 #include "satellite_radio_event.h"
+#include "tel_event_handler.h"
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
 
@@ -205,7 +206,7 @@ int32_t SatelliteCallCallbackStub::CallStateChangeReport(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    bool ret = handler->SendEvent(SatelliteRadioEvent::SATELLITE_RADIO_CALL_STATE_CHANGED);
+    bool ret = TelEventHandler::SendTelEvent(handler, SatelliteRadioEvent::SATELLITE_RADIO_CALL_STATE_CHANGED);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -230,7 +231,8 @@ int32_t SatelliteCallCallbackStub::GetSatelliteCallsDataResponse(
     }
     auto satelliteCurrentCallList = std::make_shared<SatelliteCurrentCallList>();
     *satelliteCurrentCallList = callList;
-    bool ret = handler->SendEvent(SatelliteRadioEvent::SATELLITE_RADIO_GET_CALL_DATA, satelliteCurrentCallList);
+    bool ret = TelEventHandler::SendTelEvent(
+        handler, SatelliteRadioEvent::SATELLITE_RADIO_GET_CALL_DATA, satelliteCurrentCallList);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
@@ -247,7 +249,7 @@ int32_t SatelliteCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, co
     }
     std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
     *responseInfo = info;
-    bool ret = handler->SendEvent(eventId, responseInfo);
+    bool ret = TelEventHandler::SendTelEvent(handler, eventId, responseInfo);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;

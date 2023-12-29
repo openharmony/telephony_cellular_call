@@ -19,5 +19,6 @@ group("unittest") {
   deps += [
     "unittest/cstest:tel_cellular_call_cs_test",
     "unittest/imstest:tel_cellular_call_ims_test",
+    "unittest/satellitetest:tel_cellular_call_satellite_test",
   ]
 }
