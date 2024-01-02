@@ -82,6 +82,7 @@ int32_t CellularCallConnectionCS::AnswerRequest(int32_t slotId)
             CALL_ERR_RESOURCE_UNAVAILABLE, "cellular service handle is nullptr");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
     }
+    CoreManagerInner::GetInstance().SetMute(slotId, RadioEvent::RADIO_SET_CMUT, false, handle);
     CoreManagerInner::GetInstance().Answer(slotId, RadioEvent::RADIO_ACCEPT_CALL, handle);
     return TELEPHONY_SUCCESS;
 }
