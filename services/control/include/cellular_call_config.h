@@ -20,6 +20,7 @@
 #include <mutex>
 
 #include "config_request.h"
+#include "global_params_data.h"
 #include "operator_config_types.h"
 #include "sim_state_type.h"
 #include "telephony_log_wrapper.h"
@@ -439,6 +440,8 @@ private:
     void SaveVoNRState(int32_t slotId, int32_t state);
     int32_t ObtainVoNRState(int32_t slotId);
     void UpdateEccNumberList(int32_t slotId);
+    void GetEccListFromResult(const std::vector<EccNum> &eccVec,
+        std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
