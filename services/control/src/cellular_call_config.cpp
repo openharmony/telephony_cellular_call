@@ -265,12 +265,24 @@ void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
     UpdateEccNumberList(slotId);
 }
 
+void CellularCallConfig::GetEccListFromResult(const std::vector<EccNum> &eccVec,
+    std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
+{
+    if (!eccVec.empty()) {
+        std::string eccWithCard = eccVec[0].ecc_withcard;
+        callListWithCard = StandardizeUtils::Split(eccWithCard, ",");
+        std::string eccNoCard = eccVec[0].ecc_nocard;
+        callListNoCard = StandardizeUtils::Split(eccNoCard, ",");
+    }
+}
+
 void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 {
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
-    std::vector<std::string> callList;
+    std::vector<std::string> callListWithCard;
+    std::vector<std::string> callListNoCard;
     int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
     bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
         roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
@@ -281,13 +293,11 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     if (isHomeNetRegister && simState_[slotId] == SIM_PRESENT) {
         OperatorConfig operatorConfig;
         CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
-        callList = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
-        if (callList.empty()) {
+        callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY];
+        callListNoCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_NO_CARD_STRING_ARRAY];
+        if (callListWithCard.empty()) {
             DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
-            if (!eccVec.empty()) {
-                std::string ecc = eccVec[0].ecc_withcard;
-                callList = StandardizeUtils::Split(ecc, ",");
-            }
+            GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
         }
     } else {
         if (curPlmn_[slotId].empty()) {
@@ -300,19 +310,14 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
             curPlmn_[slotId] = rplmn;
         }
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec);
-        if (!eccVec.empty()) {
-            std::string ecc = simState_[slotId] == SIM_PRESENT ? eccVec[0].ecc_withcard : eccVec[0].ecc_nocard;
-            callList = StandardizeUtils::Split(ecc, ",");
-        }
+        GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
     }
     std::vector<EmergencyCall> eccInfoList;
-    for (auto it : callList) {
-        TELEPHONY_LOGI("it, slotId: %{public}d, eccNum:%{public}s", slotId, it.c_str());
-        if (simState_[slotId] == SIM_PRESENT) {
-            eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD));
-        } else {
-            eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_NO_CARD));
-        }
+    for (auto it : callListWithCard) {
+        eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD));
+    }
+    for (auto it : callListNoCard) {
+        eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_NO_CARD));
     }
     SetEmergencyCallList(slotId, eccInfoList);
 }
@@ -715,9 +720,9 @@ void CellularCallConfig::InitModeActive()
     eccList3gppNoSim_.clear();
     allEccList_.clear();
     eccList3gppHasSim_.push_back(BuildDefaultEmergencyCall("112", SimpresentType::TYPE_HAS_CARD));
-    eccList3gppHasSim_.push_back(BuildDefaultEmergencyCall("991", SimpresentType::TYPE_HAS_CARD));
+    eccList3gppHasSim_.push_back(BuildDefaultEmergencyCall("911", SimpresentType::TYPE_HAS_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("112", SimpresentType::TYPE_NO_CARD));
-    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("991", SimpresentType::TYPE_NO_CARD));
+    eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("911", SimpresentType::TYPE_NO_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("000", SimpresentType::TYPE_NO_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("08", SimpresentType::TYPE_NO_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("110", SimpresentType::TYPE_NO_CARD));
@@ -729,12 +734,20 @@ void CellularCallConfig::InitModeActive()
 
 EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType)
 {
+    TELEPHONY_LOGD("BuildDefaultEmergencyCall, eccNum:%{public}s", number.c_str());
     EmergencyCall emergencyCall;
     emergencyCall.eccNum = number;
     emergencyCall.eccType = EccType::TYPE_CATEGORY;
     emergencyCall.simpresent = simType;
     emergencyCall.mcc = "";
     emergencyCall.abnormalService = AbnormalServiceType::TYPE_ALL;
+    std::string::size_type pos = number.find('+');
+    if (pos != std::string::npos) {
+        int32_t startOps = 0;
+        std::string category = number.substr(startOps, pos);
+        emergencyCall.eccType = static_cast<EccType>(std::atoi(category.c_str()));
+        emergencyCall.eccNum = number.substr(pos, number.size());
+    }
     return emergencyCall;
 }
 
