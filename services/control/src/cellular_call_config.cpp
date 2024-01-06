@@ -659,7 +659,7 @@ int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
     return modeMap_[slotId];
 }
 
-int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
+int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId)
 {
     std::string imsSwitchStateKey = IMSSWITCH_STATE + std::to_string(slotId);
     int32_t imsSwitchStatus = GetIntParameter(imsSwitchStateKey.c_str(), IMS_SWITCH_STATUS_UNKNOWN);
@@ -670,6 +670,8 @@ int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId) const
             TELEPHONY_LOGI("get ims switch state failed from database, return operator config default value");
             imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
         }
+        // save DB or operator config default ims switch status to local
+        saveImsSwitchStatusToLocal(slotId, imsSwitchStatus);
     }
     TELEPHONY_LOGI("slotId[%{public}d] GetSwitchStatus imsSwitchStatus:%{public}d", slotId, imsSwitchStatus);
     return imsSwitchStatus;
