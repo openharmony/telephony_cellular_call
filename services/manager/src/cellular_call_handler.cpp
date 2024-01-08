@@ -33,8 +33,8 @@ namespace OHOS {
 namespace Telephony {
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
-const uint32_t GET_SATELLITE_CALL_DATA_ID = 10003;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
+const uint32_t GET_SATELLITE_CALL_DATA_ID = 10005;
 const int64_t DELAY_TIME = 100;
 const int32_t MAX_REQUEST_COUNT = 50;
 // message was null, mean report the default message to user which have been define at CellularCallSupplement
