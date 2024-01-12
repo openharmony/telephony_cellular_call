@@ -293,8 +293,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     if (isHomeNetRegister && simState_[slotId] == SIM_PRESENT) {
         OperatorConfig operatorConfig;
         CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
-        callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY];
-        callListNoCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_NO_CARD_STRING_ARRAY];
+        callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
         if (callListWithCard.empty()) {
             DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
             GetEccListFromResult(eccVec, callListWithCard, callListNoCard);

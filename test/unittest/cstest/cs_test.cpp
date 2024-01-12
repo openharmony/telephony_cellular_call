@@ -668,8 +668,8 @@ HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function 
     OperatorConfig opc;
     if (HasSimCard(SIM1_SLOTID)) {
         DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM1_SLOTID, opc);
-        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY) != opc.stringArrayValue.end()) {
-            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY]) {
+        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
+            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
                 bool enabled = false;
                 int32_t errorCode = telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, number, enabled);
                 EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
@@ -678,8 +678,8 @@ HWTEST_F(CsTest, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function 
     }
     if (HasSimCard(SIM2_SLOTID)) {
         DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM2_SLOTID, opc);
-        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY) != opc.stringArrayValue.end()) {
-            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_WITH_CARD_STRING_ARRAY]) {
+        if (opc.stringArrayValue.find(KEY_EMERGENCY_CALL_STRING_ARRAY) != opc.stringArrayValue.end()) {
+            for (auto number : opc.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY]) {
                 bool enabled = false;
                 int32_t errorCode = telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, number, enabled);
                 EXPECT_EQ(TELEPHONY_SUCCESS, errorCode);
