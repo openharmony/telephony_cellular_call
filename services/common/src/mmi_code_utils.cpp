@@ -41,7 +41,7 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNee
     }
 
     // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
-    if ((analyseString.find('*') == 0 || analyseString.find('#') == 0) && analyseString.back() == '#') {
+    if ((analyseString.front() == '*' || analyseString.front() == '#') && analyseString.back() == '#') {
         TELEPHONY_LOGI("analyseString start with * or # and end with #");
         mmiData_.fullString = analyseString;
         return true;
