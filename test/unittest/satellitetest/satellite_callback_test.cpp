@@ -70,6 +70,8 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function 
         satelliteCallList.callSize = 0;
         ASSERT_EQ(callCallbackProxy->GetSatelliteCallsDataResponse(slotId, satelliteCallList), TELEPHONY_SUCCESS);
     }
+    DelayedSingleton<SatelliteCallClient>::GetInstance()->UnInit();
+    DelayedSingleton<SatelliteCallClient>::DestroyInstance();
 }
 
 /**
