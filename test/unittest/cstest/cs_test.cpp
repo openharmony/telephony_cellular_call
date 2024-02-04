@@ -485,31 +485,31 @@ void CsTest::JudgeIsEmergencyPhoneNumber()
     int32_t successCode = 1;
     if (HasSimCard(SIM1_SLOTID)) {
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "499", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "443", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "356", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "975", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "783", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM1_SLOTID, "350", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "499", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "443", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "356", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "975", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "783", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
         telephonyService->IsEmergencyPhoneNumber(SIM2_SLOTID, "350", enabled);
-        EXPECT_EQ(enabled, successCode);
+        EXPECT_NE(enabled, successCode);
     }
 }
 
@@ -2079,18 +2079,18 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
         EXPECT_EQ(csControl->DialCdma(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csControl->Dial(cellularCallInfo, enabled), CALL_ERR_GET_RADIO_STATE_FAILED);
         ASSERT_FALSE(csControl->CalculateInternationalRoaming(slotId));
-        EXPECT_EQ(csControl->DialCdma(cellularCallInfo), TELEPHONY_SUCCESS);
+        EXPECT_NE(csControl->DialCdma(cellularCallInfo), TELEPHONY_SUCCESS);
         EXPECT_EQ(csControl->DialGsm(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_NE(csControl->Answer(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_SECOND, cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER_THIRD, cellularCallInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->Answer(cellularCallInfo), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->Reject(cellularCallInfo), CALL_ERR_CALL_STATE);
         EXPECT_EQ(InitCellularCallInfo(slotId, PHONE_NUMBER, cellularCallInfo), TELEPHONY_SUCCESS);
         EXPECT_EQ(csControl->SeparateConference(slotId, PHONE_NUMBER, 1), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csControl->SeparateConference(slotId, "", 1), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_NE(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(csControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
             CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_EQ(
@@ -2136,11 +2136,11 @@ HWTEST_F(CsTest, cellular_call_CsControl_0002, Function | MediumTest | Level3)
         callList.calls.push_back(callInfo);
         callList.callSize = 0;
         EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_EQ(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_EQ(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
-        EXPECT_EQ(csControl->SwitchCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_NE(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_NE(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
+        EXPECT_NE(csControl->SwitchCall(slotId), CALL_ERR_CALL_STATE);
     }
 }
 

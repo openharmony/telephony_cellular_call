@@ -51,8 +51,6 @@ public:
 void BranchTest::SetUpTestCase()
 {
     std::cout << "---------- CellularCallService start ------------" << std::endl;
-    DelayedSingleton<CellularCallService>::GetInstance()->Init();
-    DelayedSingleton<SatelliteCallClient>::GetInstance()->Init();
 }
 
 void BranchTest::TearDownTestCase() {}
