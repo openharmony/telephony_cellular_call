@@ -15,8 +15,8 @@
 
 #include "cs_test.h"
 
-#define private public
-#define protected public
+#define PRIVATE public
+#define PROTECTED public
 #include "cellular_call_callback.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_proxy.h"
