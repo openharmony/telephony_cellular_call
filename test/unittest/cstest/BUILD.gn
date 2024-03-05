@@ -20,7 +20,10 @@ ohos_unittest("tel_cellular_call_cs_test") {
   part_name = "cellular_call"
   test_module = "tel_cellular_call_cs_test"
   module_out_path = part_name + "/" + test_module
-  sources = [ "cs_test.cpp" ]
+  sources = [
+    "cs_calloperation_test.cpp",
+    "cs_test.cpp",
+  ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
