@@ -36,7 +36,9 @@ constexpr int32_t EVENT_ID_NUM = 20;
 
 bool IsServiceInited()
 {
-    DelayedSingleton<CellularCallService>::GetInstance()->OnStart();
+    if (!g_isInited) {
+        DelayedSingleton<CellularCallService>::GetInstance()->OnStart();
+    }
     if (!g_isInited && (static_cast<int32_t>(DelayedSingleton<CellularCallService>::GetInstance()->state_) ==
                            static_cast<int32_t>(ServiceRunningState::STATE_RUNNING))) {
         g_isInited = true;
