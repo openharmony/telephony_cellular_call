@@ -46,7 +46,7 @@ int32_t EmergencyUtils::IsEmergencyCall(int32_t slotId, const std::string &phone
 int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::string &formatString, bool &enabled)
 {
     enabled = true;
-    TELEPHONY_LOGI("IsEmergencyCallProcessing entry.");
+    TELEPHONY_LOGD("IsEmergencyCallProcessing entry.");
     CellularCallConfig config;
     ModuleServiceUtils dependDataObtain;
     std::string countryIsoCode = dependDataObtain.GetNetworkCountryCode(slotId);
@@ -69,7 +69,7 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
         }
     }
     if (!countryIsoCode.empty()) {
-        TELEPHONY_LOGI("IsEmergencyCallProcessing countryIsoCode is not empty");
+        TELEPHONY_LOGD("IsEmergencyCallProcessing countryIsoCode is not empty");
         i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
         transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
         enabled = shortNumberInfo.IsEmergencyNumber(formatString, countryIsoCode);

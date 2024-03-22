@@ -202,7 +202,7 @@ int32_t ConfigRequest::GetEmergencyCallListRequest(int32_t slotId)
 
 int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<EmergencyCall> &eccVec)
 {
-    TELEPHONY_LOGI("SetEmergencyCallListRequest start ");
+    TELEPHONY_LOGD("SetEmergencyCallListRequest start ");
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         TELEPHONY_LOGE("SetEmergencyCallListRequest return, error type: handle is nullptr.");
@@ -211,7 +211,9 @@ int32_t ConfigRequest::SetEmergencyCallListRequest(int32_t slotId, std::vector<E
     int32_t errorCode = TELEPHONY_ERR_FAIL;
     errorCode = CoreManagerInner::GetInstance().SetEmergencyCallList(
         slotId, RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST, eccVec, handle);
-    TELEPHONY_LOGI("SetEmergencyCallListRequest end %{public}d", errorCode);
+    if (errorCode != TELEPHONY_ERR_SUCCESS) {
+        TELEPHONY_LOGE("SetEmergencyCallListRequest end fail, errorCode: %{public}d", errorCode);
+    }
     return errorCode;
 }
 

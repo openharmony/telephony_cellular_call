@@ -308,7 +308,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     for (; it != imsCallInfoList.calls.end(); ++it) {
         imsCallInfo.state = (*it).state;
     }
-    TELEPHONY_LOGI("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
+    TELEPHONY_LOGD("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
     CellularCallIncomingStartTrace(imsCallInfo.state);
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     if (imsCallInfoList.callSize == 0) {

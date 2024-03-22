@@ -870,7 +870,7 @@ int32_t CellularCallStub::OnSetImsSwitchStatusInner(MessageParcel &data, Message
 
 int32_t CellularCallStub::OnGetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply)
 {
-    TELEPHONY_LOGI("CellularCallStub::OnGetImsSwitchStatusInner entry");
+    TELEPHONY_LOGD("CellularCallStub::OnGetImsSwitchStatusInner entry");
     int32_t size = data.ReadInt32();
     size = ((size > MAX_SIZE) ? 0 : size);
     if (size <= 0) {
