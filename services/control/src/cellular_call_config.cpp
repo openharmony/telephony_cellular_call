@@ -446,11 +446,15 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
 {
     bool imsSwitch = false;
     GetImsSwitchStatus(slotId, imsSwitch);
+    bool isVolteProvisioned = IsVolteProvisioned(slotId);
     ImsCapability volteCapability;
     volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
-    volteCapability.enable = volteSupported_[slotId] && isGbaValid && imsSwitch && IsVolteProvisioned(slotId);
+    volteCapability.enable = volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
+    TELEPHONY_LOGI("slotId = %{public}d, volteSupported = %{public}d, isGbaValid = %{public}d, "
+        "imsSwitch = %{public}d, isVolteProvisioned = %{public}d",
+        slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
 
     int32_t vonrSwitch = VONR_SWITCH_STATUS_OFF;
     GetVoNRSwitchStatus(slotId, vonrSwitch);
