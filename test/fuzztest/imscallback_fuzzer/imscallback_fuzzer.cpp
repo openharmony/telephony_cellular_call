@@ -30,7 +30,6 @@
 using namespace OHOS::Telephony;
 namespace OHOS {
 static bool g_isInited = false;
-constexpr int32_t SERVICE_STATE_RUNNING = 1;
 constexpr int32_t SLOT_NUM = 2;
 constexpr int32_t BOOL_NUM = 2;
 constexpr int32_t SERIAL_NUM = 3;
@@ -46,10 +45,10 @@ bool IsServiceInited()
     if (service == nullptr) {
         return g_isInited;
     }
-    if (service->GetServiceRunningState() != SERVICE_STATE_RUNNING) {
-        service->OnStart();
+    if (service->state_ != ServiceRunningState::STATE_RUNNING) {
+        service->state_ = ServiceRunningState::STATE_RUNNING;
     }
-    if (!g_isInited && service->GetServiceRunningState() == SERVICE_STATE_RUNNING) {
+    if (!g_isInited && service->state_ == ServiceRunningState::STATE_RUNNING) {
         g_isInited = true;
     }
     return g_isInited;
