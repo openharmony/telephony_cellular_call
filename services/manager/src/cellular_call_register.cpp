@@ -377,8 +377,8 @@ void CellularCallRegister::ReportMmiCodeResult(const MmiCodeInfo &info)
 
 void CellularCallRegister::ReportSetEmergencyCallListResponse(const SetEccListResponse &response)
 {
-    TELEPHONY_LOGI("ReportSetEmergencyCallListResponse entry result:%{public}d, value:%{public}d",
-        response.result, response.value);
+    TELEPHONY_LOGD("ReportSetEmergencyCallListResponse entry result:%{public}d, value:%{public}d", response.result,
+        response.value);
 }
 
 bool CellularCallRegister::IsCallManagerCallBackRegistered()

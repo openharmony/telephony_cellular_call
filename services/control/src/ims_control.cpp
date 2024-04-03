@@ -460,7 +460,7 @@ int32_t IMSControl::ReportUpdateInfo(int32_t slotId, const ImsCurrentCallList &c
 
 CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const ImsCurrentCall &callInfo)
 {
-    TELEPHONY_LOGI("EncapsulationCallReportInfo entry");
+    TELEPHONY_LOGD("EncapsulationCallReportInfo entry");
     CallReportInfo callReportInfo;
     if (memset_s(&callReportInfo, sizeof(callReportInfo), 0, sizeof(callReportInfo)) != EOK) {
         TELEPHONY_LOGE("EncapsulationCallReportInfo return, memset_s fail.");

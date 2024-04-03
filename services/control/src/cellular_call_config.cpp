@@ -676,7 +676,7 @@ int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId)
         // save DB or operator config default ims switch status to local
         saveImsSwitchStatusToLocal(slotId, imsSwitchStatus);
     }
-    TELEPHONY_LOGI("slotId[%{public}d] GetSwitchStatus imsSwitchStatus:%{public}d", slotId, imsSwitchStatus);
+    TELEPHONY_LOGD("slotId[%{public}d] GetSwitchStatus imsSwitchStatus:%{public}d", slotId, imsSwitchStatus);
     return imsSwitchStatus;
 }
 
@@ -764,7 +764,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
         ecc.mcc = mcc;
         tempEccList[slotId].push_back(ecc);
     }
-    TELEPHONY_LOGI("MergeEccCallList merge radio slotId  %{public}d size  %{public}d", slotId,
+    TELEPHONY_LOGD("MergeEccCallList merge radio slotId  %{public}d size  %{public}d", slotId,
         static_cast<int32_t>(eccListRadioMap_[slotId].size()));
     SimState simState = SimState::SIM_STATE_UNKNOWN;
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
@@ -814,8 +814,8 @@ void CellularCallConfig::UniqueEccCallList(int32_t slotId, std::vector<Emergency
         }
     }
     for (auto call : allEccList_[slotId]) {
-        TELEPHONY_LOGI("UniqueEccCallList end slotId %{public}d eccNum:%{public}s, mcc:%{public}s",
-            slotId, call.eccNum.c_str(), call.mcc.c_str());
+        TELEPHONY_LOGD("UniqueEccCallList end slotId %{public}d eccNum:%{public}s, mcc:%{public}s", slotId,
+            call.eccNum.c_str(), call.mcc.c_str());
     }
 }
 
@@ -829,7 +829,7 @@ std::string CellularCallConfig::GetMcc(int32_t slotId)
     if (len >= MCC_LEN) {
         mcc = imsi.substr(0, MCC_LEN);
     }
-    TELEPHONY_LOGI("getMcc slotd %{public}d mcc %{public}s end", slotId, mcc.c_str());
+    TELEPHONY_LOGD("getMcc slotd %{public}d mcc %{public}s end", slotId, mcc.c_str());
     return mcc;
 }
 
@@ -850,7 +850,7 @@ int32_t CellularCallConfig::GetEmergencyCallList(int32_t slotId)
 
 int32_t CellularCallConfig::SetEmergencyCallList(int32_t slotId, std::vector<EmergencyCall> &eccVec)
 {
-    TELEPHONY_LOGI("SetEmergencyCallList start %{public}d", slotId);
+    TELEPHONY_LOGD("SetEmergencyCallList start %{public}d", slotId);
     return configRequest_.SetEmergencyCallListRequest(slotId, eccVec);
 }
 
@@ -894,7 +894,7 @@ std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
     std::lock_guard<std::mutex> lock(mutex_);
     TELEPHONY_LOGD("GetEccCallList size %{publiic}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
-        TELEPHONY_LOGI("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
+        TELEPHONY_LOGD("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
     }
     return allEccList_[slotId];
 }
