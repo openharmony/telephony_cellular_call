@@ -72,11 +72,11 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
 void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
-    HRilRadioResponseInfo rilRadioResponse;
+    RadioResponseInfo rilRadioResponse;
     rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
     rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
     rilRadioResponse.error = static_cast<ErrType>(size % ERROR_NUM);
-    rilRadioResponse.type = static_cast<HRilResponseTypes>(size % TYPE_NUM);
+    rilRadioResponse.type = static_cast<ResponseTypes>(size % TYPE_NUM);
     MessageParcel answerData;
     MessageParcel answerReply;
     answerData.WriteInt32(slotId);
@@ -100,26 +100,26 @@ void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallC
     MessageParcel sendDtmfData;
     MessageParcel sendDtmfReply;
     sendDtmfData.WriteInt32(slotId);
-    sendDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    sendDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnSendDtmfResponseInner(sendDtmfData, sendDtmfReply);
 
     MessageParcel startDtmfData;
     MessageParcel startDtmfReply;
     startDtmfData.WriteInt32(slotId);
-    startDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    startDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnStartDtmfResponseInner(startDtmfData, startDtmfReply);
 
     MessageParcel stopDtmfData;
     MessageParcel stopDtmfReply;
     stopDtmfData.WriteInt32(slotId);
-    stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnStopDtmfResponseInner(stopDtmfData, stopDtmfReply);
 
     MessageParcel imsCallsData;
     MessageParcel imsCallsReply;
     slotId = ERROR_NUM;
     imsCallsData.WriteInt32(slotId);
-    imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply);
 }
 
@@ -164,16 +164,16 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
 void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
-    HRilRadioResponseInfo rilRadioResponse;
+    RadioResponseInfo rilRadioResponse;
     rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
     rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
     rilRadioResponse.error = static_cast<ErrType>(size % ERROR_NUM);
-    rilRadioResponse.type = static_cast<HRilResponseTypes>(size % TYPE_NUM);
+    rilRadioResponse.type = static_cast<ResponseTypes>(size % TYPE_NUM);
 
     MessageParcel setImsSwitchData;
     MessageParcel setImsSwitchReply;
     setImsSwitchData.WriteInt32(slotId);
-    setImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    setImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnSetImsSwitchResponseInner(setImsSwitchData, setImsSwitchReply);
 
     MessageParcel holdCallData;
@@ -194,7 +194,7 @@ void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCal
     MessageParcel getImsSwitchData;
     MessageParcel getImsSwitchReply;
     getImsSwitchData.WriteInt32(slotId);
-    getImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo));
+    getImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo));
     stub->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply);
 }
 

@@ -36,7 +36,7 @@ public:
      * @param info Indicates dial action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t DialResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t DialResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief HangUpResponse the result of hang up by ims.
@@ -46,7 +46,7 @@ public:
      * @param info Indicates hang up action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t HangUpResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief RejectWithReasonResponse the result of reject with reason by ims.
@@ -56,7 +56,7 @@ public:
      * @param info Indicates reject action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t RejectWithReasonResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief AnswerResponse the result of answer by ims.
@@ -66,7 +66,7 @@ public:
      * @param info Indicates answer action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t AnswerResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief HoldCallResponse the result of hold call by ims.
@@ -76,7 +76,7 @@ public:
      * @param info Indicates hold action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t HoldCallResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief UnHoldCallResponse the result of unhold call by ims.
@@ -86,7 +86,7 @@ public:
      * @param info Indicates unhold action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t UnHoldCallResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief SwitchCallResponse the result of switch call by ims.
@@ -96,7 +96,7 @@ public:
      * @param info Indicates switch action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t SwitchCallResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief StartDtmfResponse the result of start dtmf by ims.
@@ -106,7 +106,7 @@ public:
      * @param info Indicates start action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
     /**
      * @brief SendDtmfResponse the result of send dtmf by ims.
      *
@@ -116,7 +116,7 @@ public:
      * @param callIndex Indicates the call index number.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex) = 0;
+    virtual int32_t SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex) = 0;
 
     /**
      * @brief StopDtmfResponse the result of stop dtmf by ims.
@@ -126,7 +126,7 @@ public:
      * @param info Indicates stop action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t StopDtmfResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief CallStateChangeReport receive call state changed notification with slotId by ims.
@@ -145,7 +145,7 @@ public:
      * @param info Indicates get action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t GetImsCallsDataResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief GetImsCallsDataResponse the result of get ims calls data by ims.
@@ -165,7 +165,7 @@ public:
      * @param info Indicates set action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief GetImsSwitchResponse the result of get ims switch by ims.
@@ -175,7 +175,7 @@ public:
      * @param info Indicates get action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t GetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief GetImsSwitchResponse the result of get ims switch by ims.
@@ -367,7 +367,7 @@ public:
      * @param info Indicates get action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief InviteToConferenceResponse the result of get invite to conference by ims.
@@ -377,7 +377,7 @@ public:
      * @param info Indicates get action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t InviteToConferenceResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief ReceiveUpdateCallMediaModeRequest the result of receive update call media mode by ims.

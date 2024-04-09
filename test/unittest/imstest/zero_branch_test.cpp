@@ -358,13 +358,13 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_003, Function | MediumTest
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
     callSup.EventSetCallTransferInfo(0, message, 0);
     callSup.EventSetCallTransferInfo(0, message, 1);
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     callSup.EventSendUssd(responseInfo);
     SsNoticeInfo ssNoticeInfo;
     callSup.EventSsNotify(ssNoticeInfo);
     UssdNoticeInfo ussdNoticeInfo;
     callSup.EventUssdNotify(ussdNoticeInfo);
-    HRilRadioResponseInfo response;
+    RadioResponseInfo response;
     callSup.EventCloseUnFinishedUssd(response);
     callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
     callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);

@@ -763,7 +763,7 @@ void CellularCallSupplement::EventSetBarringPassword(int32_t result, const std::
 int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cfInfo)
 {
     int32_t result = CheckSetCallTransferInfo(cfInfo);
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     if (result != TELEPHONY_SUCCESS) {
         return result;
@@ -840,7 +840,7 @@ int32_t CellularCallSupplement::SetCallTransferInfoByIms(
     int32_t slotId, const CallTransferInfo &cfInfo, const std::shared_ptr<SsRequestCommand> &command)
 {
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
@@ -914,7 +914,7 @@ bool CellularCallSupplement::NeedUseImsToHandle(int32_t slotId)
 
 int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
 {
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
@@ -988,7 +988,7 @@ int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)
 
 int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &cRInfo)
 {
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     std::string fac;
     int32_t result = CheckCallRestrictionType(fac, cRInfo.fac);
@@ -1036,7 +1036,7 @@ int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRes
 int32_t CellularCallSupplement::SetCallRestrictionByIms(
     int32_t slotId, std::string &fac, int32_t mode, std::string &pw, const std::shared_ptr<SsRequestCommand> &command)
 {
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
@@ -1303,7 +1303,7 @@ int32_t CellularCallSupplement::SendUssd(int32_t slotId, const std::string &msg)
     return result;
 }
 
-void CellularCallSupplement::EventSendUssd(const HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventSendUssd(const RadioResponseInfo &responseInfo)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -1567,7 +1567,7 @@ int32_t CellularCallSupplement::CloseUnFinishedUssd(int32_t slotId)
     return supplementRequestCs_.CloseUnFinishedUssdRequest(slotId);
 }
 
-void CellularCallSupplement::EventCloseUnFinishedUssd(const HRilRadioResponseInfo &responseInfo)
+void CellularCallSupplement::EventCloseUnFinishedUssd(const RadioResponseInfo &responseInfo)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {

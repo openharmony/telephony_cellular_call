@@ -57,7 +57,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function 
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
         callClient->RegisterSatelliteCallCallbackHandler(slotId, handler);
-        HRilRadioResponseInfo rilRadioResponse;
+        RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
 
         ASSERT_EQ(callCallbackProxy->DialSatelliteResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -90,36 +90,36 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function |
         if (!HasSimCard(slotId)) {
             continue;
         }
-        HRilRadioResponseInfo rilRadioResponse;
+        RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel answerData;
         MessageParcel answerReply;
         ASSERT_TRUE(answerData.WriteInt32(slotId));
-        ASSERT_TRUE(answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnAnswerResponseInner(answerData, answerReply), TELEPHONY_SUCCESS);
 
         MessageParcel dialData;
         MessageParcel dialReply;
         ASSERT_TRUE(dialData.WriteInt32(slotId));
-        ASSERT_TRUE(dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnDialResponseInner(dialData, dialReply), TELEPHONY_SUCCESS);
 
         MessageParcel CallsData;
         MessageParcel CallsReply;
         ASSERT_TRUE(CallsData.WriteInt32(slotId));
-        ASSERT_TRUE(CallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(CallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnGetSatelliteCallsDataResponseInner(CallsData, CallsReply), TELEPHONY_SUCCESS);
 
         MessageParcel hangupData;
         MessageParcel hangupReply;
         ASSERT_TRUE(hangupData.WriteInt32(slotId));
-        ASSERT_TRUE(hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnHangUpResponseInner(hangupData, hangupReply), TELEPHONY_SUCCESS);
 
         MessageParcel rejectData;
         MessageParcel rejectReply;
         ASSERT_TRUE(rejectData.WriteInt32(slotId));
-        ASSERT_TRUE(rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnRejectResponseInner(rejectData, rejectReply), TELEPHONY_SUCCESS);
 
         MessageParcel statechangeData;

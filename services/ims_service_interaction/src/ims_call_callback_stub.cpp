@@ -166,7 +166,7 @@ int32_t ImsCallCallbackStub::OnRemoteRequest(
 int32_t ImsCallCallbackStub::OnDialResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -178,7 +178,7 @@ int32_t ImsCallCallbackStub::OnDialResponseInner(MessageParcel &data, MessagePar
 int32_t ImsCallCallbackStub::OnHangUpResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -190,7 +190,7 @@ int32_t ImsCallCallbackStub::OnHangUpResponseInner(MessageParcel &data, MessageP
 int32_t ImsCallCallbackStub::OnRejectResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -202,7 +202,7 @@ int32_t ImsCallCallbackStub::OnRejectResponseInner(MessageParcel &data, MessageP
 int32_t ImsCallCallbackStub::OnAnswerResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -214,7 +214,7 @@ int32_t ImsCallCallbackStub::OnAnswerResponseInner(MessageParcel &data, MessageP
 int32_t ImsCallCallbackStub::OnHoldCallResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -226,7 +226,7 @@ int32_t ImsCallCallbackStub::OnHoldCallResponseInner(MessageParcel &data, Messag
 int32_t ImsCallCallbackStub::OnUnHoldCallResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -238,7 +238,7 @@ int32_t ImsCallCallbackStub::OnUnHoldCallResponseInner(MessageParcel &data, Mess
 int32_t ImsCallCallbackStub::OnSwitchCallResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -250,7 +250,7 @@ int32_t ImsCallCallbackStub::OnSwitchCallResponseInner(MessageParcel &data, Mess
 int32_t ImsCallCallbackStub::OnStartDtmfResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -263,7 +263,7 @@ int32_t ImsCallCallbackStub::OnSendDtmfResponseInner(MessageParcel &data, Messag
 {
     int32_t slotId = data.ReadInt32();
     int32_t callIndex = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -275,7 +275,7 @@ int32_t ImsCallCallbackStub::OnSendDtmfResponseInner(MessageParcel &data, Messag
 int32_t ImsCallCallbackStub::OnStopDtmfResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -294,7 +294,7 @@ int32_t ImsCallCallbackStub::OnCallStateChangeReportInner(MessageParcel &data, M
 int32_t ImsCallCallbackStub::OnSetImsSwitchResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -306,7 +306,7 @@ int32_t ImsCallCallbackStub::OnSetImsSwitchResponseInner(MessageParcel &data, Me
 int32_t ImsCallCallbackStub::OnGetImsSwitchResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         int32_t active = data.ReadInt32();
@@ -320,7 +320,7 @@ int32_t ImsCallCallbackStub::OnGetImsSwitchResponseInner(MessageParcel &data, Me
 int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         auto callList = std::make_shared<ImsCurrentCallList>();
@@ -651,7 +651,7 @@ int32_t ImsCallCallbackStub::OnGetColpResponseInner(MessageParcel &data, Message
 int32_t ImsCallCallbackStub::OnCombineConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -663,7 +663,7 @@ int32_t ImsCallCallbackStub::OnCombineConferenceResponseInner(MessageParcel &dat
 int32_t ImsCallCallbackStub::OnInviteToConferenceResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -744,50 +744,50 @@ int32_t ImsCallCallbackStub::OnCameraCapabilitiesChangedInner(MessageParcel &dat
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::DialResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::DialResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_DIAL, info);
 }
 
-int32_t ImsCallCallbackStub::HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::HangUpResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_HANGUP_CONNECT, info);
 }
 
-int32_t ImsCallCallbackStub::RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::RejectWithReasonResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_REJECT_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::AnswerResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_ACCEPT_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::HoldCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_HOLD_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::UnHoldCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_ACTIVE_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    std::shared_ptr<RadioResponseInfo> responseInfo = std::make_shared<RadioResponseInfo>();
     *responseInfo = info;
     AppExecFwk::InnerEvent::Pointer response =
         AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SWAP_CALL, responseInfo, IMS_CALL);
@@ -799,13 +799,13 @@ int32_t ImsCallCallbackStub::SwitchCallResponse(int32_t slotId, const HRilRadioR
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_START_DTMF, info);
 }
 
-int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex)
+int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
@@ -813,7 +813,7 @@ int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioRes
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    std::shared_ptr<RadioResponseInfo> responseInfo = std::make_shared<RadioResponseInfo>();
 
     *responseInfo = info;
     responseInfo->flag = callIndex;
@@ -827,7 +827,7 @@ int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const HRilRadioRes
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::StopDtmfResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_STOP_DTMF, info);
@@ -850,7 +850,7 @@ int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_IMS_GET_CALL_DATA, info);
@@ -874,13 +874,13 @@ int32_t ImsCallCallbackStub::GetImsCallsDataResponse(int32_t slotId, const ImsCu
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_SET_IMS_SWITCH_STATUS, info);
 }
 
-int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, info);
@@ -1264,13 +1264,13 @@ int32_t ImsCallCallbackStub::GetColpResponse(int32_t slotId, const GetColpResult
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_COMBINE_CALL, info);
 }
 
-int32_t ImsCallCallbackStub::InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::InviteToConferenceResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_JOIN_CALL, info);
@@ -1401,14 +1401,14 @@ void ImsCallCallbackStub::BuildCallForwardInfo(
     cFQueryResultList.result.message = cFQueryList.result.message;
 }
 
-int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const RadioResponseInfo &info)
 {
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    std::shared_ptr<RadioResponseInfo> responseInfo = std::make_shared<RadioResponseInfo>();
     *responseInfo = info;
     bool ret = TelEventHandler::SendTelEvent(handler, eventId, responseInfo);
     if (!ret) {

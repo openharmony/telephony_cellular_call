@@ -349,7 +349,7 @@ void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::P
     auto callInfoList = event->GetSharedObject<CallInfoList>();
     if (callInfoList == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] Cannot get the callInfoList, need to get rilResponseInfo", slotId_);
-        auto rilResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
+        auto rilResponseInfo = event->GetSharedObject<RadioResponseInfo>();
         if (rilResponseInfo == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] callInfoList and rilResponseInfo are null", slotId_);
             return;
@@ -378,7 +378,7 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
     auto imsCallInfoList = event->GetSharedObject<ImsCurrentCallList>();
     if (imsCallInfoList == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] Cannot get the imsCallInfoList, need to get rilResponseInfo", slotId_);
-        auto rilResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
+        auto rilResponseInfo = event->GetSharedObject<RadioResponseInfo>();
         if (rilResponseInfo == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] callInfoList and rilResponseInfo are null", slotId_);
             return;
@@ -399,7 +399,7 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
 
 void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -439,7 +439,7 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
 
 void CellularCallHandler::DialSatelliteResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -478,7 +478,7 @@ void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerE
     if (satelliteCallInfoList == nullptr) {
         TELEPHONY_LOGE(
             "[slot%{public}d] Cannot get the SatelliteCurrentCallList, need to get rilResponseInfo", slotId_);
-        auto rilResponseInfo = event->GetSharedObject<HRilRadioResponseInfo>();
+        auto rilResponseInfo = event->GetSharedObject<RadioResponseInfo>();
         if (rilResponseInfo == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] SatelliteCurrentCallList and rilResponseInfo are null", slotId_);
             return;
@@ -583,7 +583,7 @@ void CellularCallHandler::CommonResultEventHandling(
 
 void CellularCallHandler::CommonResultResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -657,7 +657,7 @@ void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer 
 
 void CellularCallHandler::SwapCallResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -691,7 +691,7 @@ void CellularCallHandler::SwapCallResponse(const AppExecFwk::InnerEvent::Pointer
 
 void CellularCallHandler::SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -718,7 +718,7 @@ void CellularCallHandler::SendDtmfResponse(const AppExecFwk::InnerEvent::Pointer
 
 void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -781,7 +781,7 @@ void CellularCallHandler::NetworkStateChangeReport(const AppExecFwk::InnerEvent:
 
 void CellularCallHandler::StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -945,7 +945,7 @@ void CellularCallHandler::RegisterHandler(const AppExecFwk::InnerEvent::Pointer 
 
 void CellularCallHandler::SetDomainPreferenceModeResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto info = event->GetSharedObject<RadioResponseInfo>();
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
         return;
@@ -980,7 +980,7 @@ void CellularCallHandler::GetDomainPreferenceModeResponse(const AppExecFwk::Inne
 
 void CellularCallHandler::SetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto info = event->GetSharedObject<RadioResponseInfo>();
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
         return;
@@ -997,7 +997,7 @@ void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEven
 
 void CellularCallHandler::SetVoNRSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto info = event->GetSharedObject<RadioResponseInfo>();
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
         return;
@@ -1042,7 +1042,7 @@ void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Point
 
 void CellularCallHandler::SetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto info = event->GetSharedObject<RadioResponseInfo>();
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
         return;
@@ -1062,7 +1062,7 @@ void CellularCallHandler::GetMuteResponse(const AppExecFwk::InnerEvent::Pointer 
     auto mute = event->GetSharedObject<int32_t>();
     if (mute == nullptr) {
         TELEPHONY_LOGI("[slot%{public}d] mute is null", slotId_);
-        auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+        auto info = event->GetSharedObject<RadioResponseInfo>();
         if (info == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
             return;
@@ -1092,7 +1092,7 @@ void CellularCallHandler::GetEmergencyCallListResponse(const AppExecFwk::InnerEv
 
 void CellularCallHandler::SetEmergencyCallListResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto info = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto info = event->GetSharedObject<RadioResponseInfo>();
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
         return;
@@ -1509,7 +1509,7 @@ void CellularCallHandler::SetBarringPasswordResponse(const AppExecFwk::InnerEven
 
 void CellularCallHandler::SendUssdResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;
@@ -1622,7 +1622,7 @@ int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand
 
 void CellularCallHandler::CloseUnFinishedUssdResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    auto result = event->GetSharedObject<HRilRadioResponseInfo>();
+    auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
         return;

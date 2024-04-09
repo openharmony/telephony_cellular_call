@@ -1825,7 +1825,7 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
         auto event = AppExecFwk::InnerEvent::Get(0);
         handler.GetImsCallsDataResponse(event);
         handler.GetImsCallsDataRequest(event);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
         rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         auto responseEvent = AppExecFwk::InnerEvent::Get(0, rilRadioResponse);
         handler.SetDomainPreferenceModeResponse(responseEvent);

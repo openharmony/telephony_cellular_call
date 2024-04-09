@@ -29,19 +29,19 @@ public:
     virtual ~SatelliteCallCallbackProxy() = default;
 
     /****************** call basic ******************/
-    int32_t DialSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t HangUpSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t RejectSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t AnswerSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t DialSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t HangUpSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t RejectSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t AnswerSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t CallStateChangeReport(int32_t slotId) override;
-    int32_t GetSatelliteCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetSatelliteCallsDataResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t GetSatelliteCallsDataResponse(int32_t slotId, const SatelliteCurrentCallList &callList) override;
 
 private:
     int32_t SendResponseInfo(int32_t eventId, MessageParcel &in);
     int32_t WriteCommonInfo(int32_t slotId, const std::string &funcName, MessageParcel &in);
     int32_t WriteCommonInfo(
-        int32_t slotId, const std::string &funcName, MessageParcel &in, const HRilRadioResponseInfo &info);
+        int32_t slotId, const std::string &funcName, MessageParcel &in, const RadioResponseInfo &info);
     int32_t WriteSsBaseResultCommonInfo(
         int32_t slotId, const std::string &funcName, MessageParcel &in, const SsBaseResult &ssResult);
 

@@ -1204,7 +1204,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest |
         }
         firstHandler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
         rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         firstHandler.CellularCallIncomingStartTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
         firstHandler.CellularCallIncomingFinishTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
@@ -1255,7 +1255,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest |
         }
         secondHandler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
         rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         secondHandler.CommonResultResponse(event);
         auto rejectEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_REJECT_CALL, rilRadioResponse);

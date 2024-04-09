@@ -472,9 +472,9 @@ public:
      *
      * 3GPP TS 3GPP TS 22.030 V16.0.0 (2020-07) 6.5 Supplementary Services Control
      *
-     * @param HRilRadioResponseInfo
+     * @param RadioResponseInfo
      */
-    void EventSendUssd(const HRilRadioResponseInfo &responseInfo);
+    void EventSendUssd(const RadioResponseInfo &responseInfo);
 
     /**
      * Ss notify
@@ -493,9 +493,9 @@ public:
     /**
      * Close Unfinished ussd result
      *
-     * @param HRilRadioResponseInfo
+     * @param RadioResponseInfo
      */
-    void EventCloseUnFinishedUssd(const HRilRadioResponseInfo &responseInfo);
+    void EventCloseUnFinishedUssd(const RadioResponseInfo &responseInfo);
 
 private:
     /**

@@ -32,12 +32,12 @@ public:
     int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
     /****************** call basic ******************/
-    int32_t DialSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t HangUpSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t RejectSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t AnswerSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t DialSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t HangUpSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t RejectSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t AnswerSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t CallStateChangeReport(int32_t slotId) override;
-    int32_t GetSatelliteCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetSatelliteCallsDataResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t GetSatelliteCallsDataResponse(int32_t slotId, const SatelliteCurrentCallList &callList) override;
 
 private:
@@ -51,7 +51,7 @@ private:
     int32_t OnAnswerResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetSatelliteCallsDataResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnCallStateChangeReportInner(MessageParcel &data, MessageParcel &reply);
-    int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
+    int32_t SendEvent(int32_t slotId, int32_t eventId, const RadioResponseInfo &info);
 
 private:
     using RequestFuncType = int32_t (SatelliteCallCallbackStub::*)(MessageParcel &data, MessageParcel &reply);
