@@ -19,8 +19,8 @@
 #include <string>
 
 #include "cellular_call_data_struct.h"
-#include "hril_call_parcel.h"
-#include "hril_types.h"
+#include "tel_ril_call_parcel.h"
+#include "tel_ril_types.h"
 #include "ims_call_types.h"
 #include "module_service_utils.h"
 #include "supplement_request_cs.h"

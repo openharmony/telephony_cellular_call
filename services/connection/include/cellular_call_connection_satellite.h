@@ -17,7 +17,7 @@
 #define CELLULAR_CALL_CONNECTION_SATELLITE_H
 
 #include "base_connection.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 
 namespace OHOS {
 namespace Telephony {

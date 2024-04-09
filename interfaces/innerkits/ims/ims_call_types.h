@@ -18,7 +18,7 @@
 
 #include "call_manager_errors.h"
 #include "call_manager_inner_type.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_core_service_types.h"
 
 namespace OHOS {

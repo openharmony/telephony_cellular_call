@@ -239,7 +239,7 @@ public:
      * @param slotId
      * @param result
      */
-    void HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result);
+    void HandleSetLteImsSwitchResult(int32_t slotId, ErrType result);
 
     /**
      * HandleSetVoNRSwitchResult
@@ -247,7 +247,7 @@ public:
      * @param slotId
      * @param result
      */
-    void HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType result);
+    void HandleSetVoNRSwitchResult(int32_t slotId, ErrType result);
 
     /**
      * HandleSimRecordsLoaded

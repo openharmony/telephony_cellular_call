@@ -20,7 +20,7 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "satellite_call_callback_proxy.h"
 #include "satellite_call_callback_stub.h"
 #include "satellite_call_client.h"
@@ -58,7 +58,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function 
         auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
         callClient->RegisterSatelliteCallCallbackHandler(slotId, handler);
         HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
 
         ASSERT_EQ(callCallbackProxy->DialSatelliteResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->HangUpSatelliteResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -91,7 +91,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function |
             continue;
         }
         HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel answerData;
         MessageParcel answerReply;
         ASSERT_TRUE(answerData.WriteInt32(slotId));

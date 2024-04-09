@@ -26,7 +26,7 @@
 #include "config_request.h"
 #include "core_service_client.h"
 #include "cs_control.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "operator_config_types.h"
 #include "radio_event.h"
 #include "securec.h"

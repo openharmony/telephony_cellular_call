@@ -17,7 +17,7 @@
 #define TELEPHONY_SATELLITE_CALL_CALLBACK_INTERFACE_H
 
 #include "call_manager_inner_type.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "iremote_broker.h"
 #include "satellite_call_types.h"
 #include "telephony_types.h"

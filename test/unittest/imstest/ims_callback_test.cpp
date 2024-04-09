@@ -20,7 +20,7 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_call_callback_proxy.h"
 #include "ims_call_callback_stub.h"
 #include "ims_call_client.h"
@@ -59,7 +59,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
         handler->SetSlotId(slotId);
         handler->RegisterImsCallCallbackHandler();
         HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         ASSERT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -203,7 +203,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest 
             continue;
         }
         HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel answerData;
         MessageParcel answerReply;
         ASSERT_TRUE(answerData.WriteInt32(slotId));
@@ -259,7 +259,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest 
             continue;
         }
         HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel sendDtmfData;
         MessageParcel sendDtmfReply;
         ASSERT_TRUE(sendDtmfData.WriteInt32(slotId));

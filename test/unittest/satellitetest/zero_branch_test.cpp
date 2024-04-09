@@ -22,7 +22,7 @@
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
 #include "gtest/gtest.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "satellite_call_client.h"
 #include "satellite_control.h"
 #include "satellite_test.h"

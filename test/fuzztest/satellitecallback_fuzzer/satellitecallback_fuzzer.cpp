@@ -72,7 +72,7 @@ void TestSatelliteCallCallbackFunction(const uint8_t *data, size_t size, sptr<Sa
     HRilRadioResponseInfo rilRadioResponse;
     rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
     rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
-    rilRadioResponse.error = static_cast<HRilErrType>(size % ERROR_NUM);
+    rilRadioResponse.error = static_cast<ErrType>(size % ERROR_NUM);
     rilRadioResponse.type = static_cast<HRilResponseTypes>(size % TYPE_NUM);
     MessageParcel answerData;
     MessageParcel answerReply;

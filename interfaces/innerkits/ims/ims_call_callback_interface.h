@@ -17,7 +17,7 @@
 #define TELEPHONY_IMS_CALL_CALLBACK_INTERFACE_H
 
 #include "call_manager_inner_type.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_call_types.h"
 #include "iremote_broker.h"
 #include "telephony_types.h"

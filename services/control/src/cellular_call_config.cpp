@@ -628,19 +628,19 @@ int32_t CellularCallConfig::ObtainVoNRState(int32_t slotId)
     return vonrState;
 }
 
-void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, HRilErrType result)
+void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, ErrType result)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleSetLteImsSwitchResult entry, slotId: %{public}d", slotId);
-    if (result != HRilErrType::NONE) {
+    if (result != ErrType::NONE) {
         TELEPHONY_LOGE("HandleSetLteImsSwitchResult set ims switch to modem failed!");
         // need to reset the Ims Switch parameter and notify APP to update UI.
     }
 }
 
-void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, HRilErrType result)
+void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, ErrType result)
 {
     TELEPHONY_LOGD("CellularCallConfig::HandleSetVoNRSwitchResult entry, slotId: %{public}d", slotId);
-    if (result != HRilErrType::NONE) {
+    if (result != ErrType::NONE) {
         TELEPHONY_LOGE("HandleSetVoNRSwitchResult set vonr switch to modem failed!");
         return;
     }

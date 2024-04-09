@@ -21,7 +21,7 @@
 #include "cellular_call_data_struct.h"
 #include "telephony_log_wrapper.h"
 #include "base_connection.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "mmi_code_utils.h"
 
 namespace OHOS {

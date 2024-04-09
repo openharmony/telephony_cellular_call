@@ -764,7 +764,7 @@ int32_t CellularCallSupplement::SetCallTransferInfo(int32_t slotId, const CallTr
 {
     int32_t result = CheckSetCallTransferInfo(cfInfo);
     HRilRadioResponseInfo responseInfo;
-    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     if (result != TELEPHONY_SUCCESS) {
         return result;
     }
@@ -841,7 +841,7 @@ int32_t CellularCallSupplement::SetCallTransferInfoByIms(
 {
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     HRilRadioResponseInfo responseInfo;
-    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -915,7 +915,7 @@ bool CellularCallSupplement::NeedUseImsToHandle(int32_t slotId)
 int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
 {
     HRilRadioResponseInfo responseInfo;
-    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
@@ -989,7 +989,7 @@ int32_t CellularCallSupplement::GetCallWaiting(int32_t slotId)
 int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &cRInfo)
 {
     HRilRadioResponseInfo responseInfo;
-    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     std::string fac;
     int32_t result = CheckCallRestrictionType(fac, cRInfo.fac);
     if (result != TELEPHONY_SUCCESS) {
@@ -1037,7 +1037,7 @@ int32_t CellularCallSupplement::SetCallRestrictionByIms(
     int32_t slotId, std::string &fac, int32_t mode, std::string &pw, const std::shared_ptr<SsRequestCommand> &command)
 {
     HRilRadioResponseInfo responseInfo;
-    responseInfo.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+    responseInfo.error = ErrType::ERR_GENERIC_FAILURE;
     auto handler = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
@@ -1575,7 +1575,7 @@ void CellularCallSupplement::EventCloseUnFinishedUssd(const HRilRadioResponseInf
         return;
     }
     int32_t result = TELEPHONY_ERROR;
-    if (responseInfo.error == HRilErrType::NONE) {
+    if (responseInfo.error == ErrType::NONE) {
         result = TELEPHONY_SUCCESS;
     } else {
         result = TELEPHONY_ERR_RIL_CMD_FAIL;
