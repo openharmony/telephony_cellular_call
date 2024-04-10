@@ -718,8 +718,10 @@ void CellularCallConfig::SetTempMode(int32_t slotId)
 
 void CellularCallConfig::InitModeActive()
 {
+    TELEPHONY_LOGI("InitModeActive");
     int32_t slotId = DEFAULT_SIM_SLOT_ID;
     modeMap_[slotId] = DomainPreferenceMode::IMS_PS_VOICE_PREFERRED;
+    std::lock_guard<std::mutex> lock(mutex_);
     eccListRadioMap_.clear();
     eccList3gppHasSim_.clear();
     eccList3gppNoSim_.clear();

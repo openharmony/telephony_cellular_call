@@ -570,6 +570,7 @@ int32_t ImsCallCallbackProxy::CameraCapabilitiesChanged(
 
 int32_t ImsCallCallbackProxy::SendResponseInfo(int32_t eventId, MessageParcel &in)
 {
+    TELEPHONY_LOGI("SendResponseInfo eventId = %{public}d", eventId);
     MessageOption option;
     MessageParcel out;
     sptr<IRemoteObject> remote = Remote();
