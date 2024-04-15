@@ -153,7 +153,7 @@ void CellularCallService::CreateHandler()
 
 void CellularCallService::HandlerResetUnRegister()
 {
-    TELEPHONY_LOGD("HandlerResetUnRegister");
+    TELEPHONY_LOGI("HandlerResetUnRegister");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -191,7 +191,7 @@ void CellularCallService::HandlerResetUnRegister()
 
 void CellularCallService::RegisterCoreServiceHandler()
 {
-    TELEPHONY_LOGD("RegisterCoreServiceHandle");
+    TELEPHONY_LOGI("RegisterCoreServiceHandle");
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
