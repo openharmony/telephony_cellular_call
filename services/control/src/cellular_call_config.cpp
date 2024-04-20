@@ -462,7 +462,7 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = volteCapability.enable && IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
+    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 }
 
