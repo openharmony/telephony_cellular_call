@@ -17,7 +17,7 @@
 #define TELEPHONY_SATELLITE_CALL_CALLBACK_INTERFACE_H
 
 #include "call_manager_inner_type.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "iremote_broker.h"
 #include "satellite_call_types.h"
 #include "telephony_types.h"
@@ -36,7 +36,7 @@ public:
      * @param info Indicates dial action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t DialSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t DialSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief HangUpSatelliteResponse the result of hang up by satellite.
@@ -46,7 +46,7 @@ public:
      * @param info Indicates hang up action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t HangUpSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t HangUpSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief RejectSatelliteResponse the result of reject with reason by satellite.
@@ -56,7 +56,7 @@ public:
      * @param info Indicates reject action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t RejectSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t RejectSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief AnswerSatelliteResponse the result of answer by satellite.
@@ -66,7 +66,7 @@ public:
      * @param info Indicates answer action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t AnswerSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t AnswerSatelliteResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief CallStateChangeReport receive call state changed notification with slotId by satellite.
@@ -85,7 +85,7 @@ public:
      * @param info Indicates get action was success or failure.
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
-    virtual int32_t GetSatelliteCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) = 0;
+    virtual int32_t GetSatelliteCallsDataResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
 
     /**
      * @brief GetSatelliteCallsDataResponse the result of get ims calls data by satellite.

@@ -41,7 +41,7 @@ int32_t ImsCall::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
 
     // IMS demo callback response info
     int32_t slotId = callInfo.slotId;
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -56,7 +56,7 @@ int32_t ImsCall::HangUp(const ImsCallInfo &callInfo)
 
     // IMS demo callback response info
     int32_t slotId = callInfo.slotId;
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -71,7 +71,7 @@ int32_t ImsCall::RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectRe
 
     // IMS demo callback response info
     int32_t slotId = callInfo.slotId;
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -86,7 +86,7 @@ int32_t ImsCall::Answer(const ImsCallInfo &callInfo)
 
     // IMS demo callback response info
     int32_t slotId = callInfo.slotId;
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -100,7 +100,7 @@ int32_t ImsCall::HoldCall(int32_t slotId, int32_t callType)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -114,7 +114,7 @@ int32_t ImsCall::UnHoldCall(int32_t slotId, int32_t callType)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -128,7 +128,7 @@ int32_t ImsCall::SwitchCall(int32_t slotId, int32_t callType)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -142,7 +142,7 @@ int32_t ImsCall::CombineConference(int32_t slotId)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -156,7 +156,7 @@ int32_t ImsCall::InviteToConference(int32_t slotId, const std::vector<std::strin
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -170,7 +170,7 @@ int32_t ImsCall::KickOutFromConference(int32_t slotId, int32_t index)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -185,7 +185,7 @@ int32_t ImsCall::UpdateImsCallMode(const ImsCallInfo &callInfo, ImsCallMode mode
 
     // IMS demo callback response info
     int32_t slotId = callInfo.slotId;
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -199,7 +199,7 @@ int32_t ImsCall::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFla
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -231,7 +231,7 @@ int32_t ImsCall::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -249,7 +249,7 @@ int32_t ImsCall::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -267,7 +267,7 @@ int32_t ImsCall::StopDtmf(int32_t slotId, int32_t index)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -281,7 +281,7 @@ int32_t ImsCall::StartRtt(int32_t slotId, const std::string &msg)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -295,7 +295,7 @@ int32_t ImsCall::StopRtt(int32_t slotId)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -309,7 +309,7 @@ int32_t ImsCall::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -323,7 +323,7 @@ int32_t ImsCall::GetDomainPreferenceMode(int32_t slotId)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -337,7 +337,7 @@ int32_t ImsCall::SetImsSwitchStatus(int32_t slotId, int32_t active)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -351,7 +351,7 @@ int32_t ImsCall::GetImsSwitchStatus(int32_t slotId)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -365,7 +365,7 @@ int32_t ImsCall::SetImsConfig(ImsConfigItem item, const std::string &value)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -380,7 +380,7 @@ int32_t ImsCall::SetImsConfig(ImsConfigItem item, int32_t value)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -395,7 +395,7 @@ int32_t ImsCall::GetImsConfig(ImsConfigItem item)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -410,7 +410,7 @@ int32_t ImsCall::SetImsFeatureValue(FeatureType type, int32_t value)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -425,7 +425,7 @@ int32_t ImsCall::GetImsFeatureValue(FeatureType type, int32_t &value)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -473,7 +473,7 @@ int32_t ImsCall::CtrlCamera(const std::u16string &cameraId, int32_t callingUid, 
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -488,7 +488,7 @@ int32_t ImsCall::SetPreviewWindow(int32_t x, int32_t y, int32_t z, int32_t width
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -503,7 +503,7 @@ int32_t ImsCall::SetDisplayWindow(int32_t x, int32_t y, int32_t z, int32_t width
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -518,7 +518,7 @@ int32_t ImsCall::SetCameraZoom(float zoomRatio)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -533,7 +533,7 @@ int32_t ImsCall::SetPauseImage(const std::u16string &path)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -548,7 +548,7 @@ int32_t ImsCall::SetDeviceDirection(int32_t rotation)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     int32_t slotId = 0;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
@@ -563,7 +563,7 @@ int32_t ImsCall::SetClip(int32_t slotId, int32_t action)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -591,7 +591,7 @@ int32_t ImsCall::SetClir(int32_t slotId, int32_t action)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -620,7 +620,7 @@ int32_t ImsCall::SetCallTransfer(
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -648,7 +648,7 @@ int32_t ImsCall::SetCallRestriction(int32_t slotId, const std::string &fac, int3
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -676,7 +676,7 @@ int32_t ImsCall::SetCallWaiting(int32_t slotId, bool activate, int32_t classType
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -704,7 +704,7 @@ int32_t ImsCall::SetColr(int32_t slotId, int32_t presentation)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -732,7 +732,7 @@ int32_t ImsCall::SetColp(int32_t slotId, int32_t action)
     // IMS demo send request info
 
     // IMS demo callback response info
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsCallCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCallCallback is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;

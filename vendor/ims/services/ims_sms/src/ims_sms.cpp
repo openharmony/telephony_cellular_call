@@ -56,7 +56,7 @@ int32_t ImsSms::ImsSetSmsConfig(int32_t slotId, int32_t imsSmsConfig)
 
     // IMS demo callback response info
     std::lock_guard<std::mutex> lock(mutex_);
-    HRilRadioResponseInfo info;
+    RadioResponseInfo info;
     if (imsSmsCallback_ == nullptr) {
         TELEPHONY_LOGE("imsSmsCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;

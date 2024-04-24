@@ -26,7 +26,7 @@
 #include "config_request.h"
 #include "core_service_client.h"
 #include "cs_control.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "operator_config_types.h"
 #include "radio_event.h"
 #include "securec.h"
@@ -1204,8 +1204,8 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest |
         }
         firstHandler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
-        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
+        rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         firstHandler.CellularCallIncomingStartTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
         firstHandler.CellularCallIncomingFinishTrace(static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING));
         firstHandler.GetCsCallsDataResponse(event);
@@ -1255,15 +1255,15 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest |
         }
         secondHandler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
-        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
+        rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         secondHandler.CommonResultResponse(event);
         auto rejectEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_REJECT_CALL, rilRadioResponse);
         secondHandler.CommonResultResponse(rejectEvent);
         auto supplementEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_CALL_SUPPLEMENT, rilRadioResponse);
         secondHandler.CommonResultResponse(supplementEvent);
 
-        rilRadioResponse->error = HRilErrType::NONE;
+        rilRadioResponse->error = ErrType::NONE;
         auto hangupConnectEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_HANGUP_CONNECT, rilRadioResponse);
         secondHandler.CommonResultResponse(hangupConnectEvent);
         auto acceptEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_ACCEPT_CALL, rilRadioResponse);

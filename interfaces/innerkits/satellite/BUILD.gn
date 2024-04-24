@@ -37,6 +37,7 @@ ohos_shared_library("tel_satellite_call_api") {
   external_deps = [
     "c_utils:utils",
     "call_manager:tel_call_manager_api",
+    "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "hilog:libhilog",
     "init:libbegetutil",

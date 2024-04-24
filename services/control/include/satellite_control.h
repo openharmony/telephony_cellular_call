@@ -19,7 +19,7 @@
 #include "call_manager_inner_type.h"
 #include "cellular_call_connection_satellite.h"
 #include "control_base.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "satellite_call_types.h"
 
 namespace OHOS {

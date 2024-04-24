@@ -85,7 +85,7 @@ int32_t SatelliteCallCallbackStub::OnRemoteRequest(
 int32_t SatelliteCallCallbackStub::OnDialResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -97,7 +97,7 @@ int32_t SatelliteCallCallbackStub::OnDialResponseInner(MessageParcel &data, Mess
 int32_t SatelliteCallCallbackStub::OnHangUpResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -109,7 +109,7 @@ int32_t SatelliteCallCallbackStub::OnHangUpResponseInner(MessageParcel &data, Me
 int32_t SatelliteCallCallbackStub::OnRejectResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -121,7 +121,7 @@ int32_t SatelliteCallCallbackStub::OnRejectResponseInner(MessageParcel &data, Me
 int32_t SatelliteCallCallbackStub::OnAnswerResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -140,7 +140,7 @@ int32_t SatelliteCallCallbackStub::OnCallStateChangeReportInner(MessageParcel &d
 int32_t SatelliteCallCallbackStub::OnGetSatelliteCallsDataResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const HRilRadioResponseInfo *>(data.ReadRawData(sizeof(HRilRadioResponseInfo)));
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
     if (info == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
         auto callList = std::make_shared<SatelliteCurrentCallList>();
@@ -173,25 +173,25 @@ int32_t SatelliteCallCallbackStub::OnGetSatelliteCallsDataResponseInner(MessageP
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SatelliteCallCallbackStub::DialSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::DialSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, SatelliteRadioEvent::SATELLITE_RADIO_DIAL, info);
 }
 
-int32_t SatelliteCallCallbackStub::HangUpSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::HangUpSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, SatelliteRadioEvent::SATELLITE_RADIO_HANGUP, info);
 }
 
-int32_t SatelliteCallCallbackStub::RejectSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::RejectSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, SatelliteRadioEvent::SATELLITE_RADIO_REJECT, info);
 }
 
-int32_t SatelliteCallCallbackStub::AnswerSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::AnswerSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, SatelliteRadioEvent::SATELLITE_RADIO_ANSWER, info);
@@ -214,7 +214,7 @@ int32_t SatelliteCallCallbackStub::CallStateChangeReport(int32_t slotId)
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SatelliteCallCallbackStub::GetSatelliteCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::GetSatelliteCallsDataResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, SatelliteRadioEvent::SATELLITE_RADIO_GET_CALL_DATA, info);
@@ -240,14 +240,14 @@ int32_t SatelliteCallCallbackStub::GetSatelliteCallsDataResponse(
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SatelliteCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const RadioResponseInfo &info)
 {
     auto handler = DelayedSingleton<SatelliteCallClient>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    std::shared_ptr<HRilRadioResponseInfo> responseInfo = std::make_shared<HRilRadioResponseInfo>();
+    std::shared_ptr<RadioResponseInfo> responseInfo = std::make_shared<RadioResponseInfo>();
     *responseInfo = info;
     bool ret = TelEventHandler::SendTelEvent(handler, eventId, responseInfo);
     if (!ret) {

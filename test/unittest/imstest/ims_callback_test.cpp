@@ -20,7 +20,7 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_call_callback_proxy.h"
 #include "ims_call_callback_stub.h"
 #include "ims_call_client.h"
@@ -58,8 +58,8 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         handler->SetSlotId(slotId);
         handler->RegisterImsCallCallbackHandler();
-        HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        RadioResponseInfo rilRadioResponse;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         ASSERT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -202,42 +202,42 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest 
         if (!HasSimCard(slotId)) {
             continue;
         }
-        HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        RadioResponseInfo rilRadioResponse;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel answerData;
         MessageParcel answerReply;
         ASSERT_TRUE(answerData.WriteInt32(slotId));
-        ASSERT_TRUE(answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(answerData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnAnswerResponseInner(answerData, answerReply), TELEPHONY_SUCCESS);
 
         MessageParcel dialData;
         MessageParcel dialReply;
         ASSERT_TRUE(dialData.WriteInt32(slotId));
-        ASSERT_TRUE(dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(dialData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnDialResponseInner(dialData, dialReply), TELEPHONY_SUCCESS);
 
         MessageParcel imsCallsData;
         MessageParcel imsCallsReply;
         ASSERT_TRUE(imsCallsData.WriteInt32(slotId));
-        ASSERT_TRUE(imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(imsCallsData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply), TELEPHONY_SUCCESS);
 
         MessageParcel hangupData;
         MessageParcel hangupReply;
         ASSERT_TRUE(hangupData.WriteInt32(slotId));
-        ASSERT_TRUE(hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(hangupData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnHangUpResponseInner(hangupData, hangupReply), TELEPHONY_SUCCESS);
 
         MessageParcel holdCallData;
         MessageParcel holdCallReply;
         ASSERT_TRUE(holdCallData.WriteInt32(slotId));
-        ASSERT_TRUE(holdCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(holdCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnHoldCallResponseInner(holdCallData, holdCallReply), TELEPHONY_SUCCESS);
 
         MessageParcel rejectData;
         MessageParcel rejectReply;
         ASSERT_TRUE(rejectData.WriteInt32(slotId));
-        ASSERT_TRUE(rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(rejectData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stub->OnRejectResponseInner(rejectData, rejectReply), TELEPHONY_SUCCESS);
     }
 }
@@ -258,48 +258,48 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest 
         if (!HasSimCard(slotId)) {
             continue;
         }
-        HRilRadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        RadioResponseInfo rilRadioResponse;
+        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         MessageParcel sendDtmfData;
         MessageParcel sendDtmfReply;
         ASSERT_TRUE(sendDtmfData.WriteInt32(slotId));
-        ASSERT_TRUE(sendDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(sendDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_GE(stubTestTwo->OnSendDtmfResponseInner(sendDtmfData, sendDtmfReply), TELEPHONY_SUCCESS);
 
         MessageParcel setImsSwitchData;
         MessageParcel setImsSwitchReply;
         ASSERT_TRUE(setImsSwitchData.WriteInt32(slotId));
-        ASSERT_TRUE(setImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(setImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnSetImsSwitchResponseInner(setImsSwitchData, setImsSwitchReply), TELEPHONY_SUCCESS);
 
         MessageParcel startDtmfData;
         MessageParcel startDtmfReply;
         ASSERT_TRUE(startDtmfData.WriteInt32(slotId));
-        ASSERT_TRUE(startDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(startDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnStartDtmfResponseInner(startDtmfData, startDtmfReply), TELEPHONY_SUCCESS);
 
         MessageParcel stopDtmfData;
         MessageParcel stopDtmfReply;
         ASSERT_TRUE(stopDtmfData.WriteInt32(slotId));
-        ASSERT_TRUE(stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(stopDtmfData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnStopDtmfResponseInner(stopDtmfData, stopDtmfReply), TELEPHONY_SUCCESS);
 
         MessageParcel switchCallData;
         MessageParcel switchCallReply;
         ASSERT_TRUE(switchCallData.WriteInt32(slotId));
-        ASSERT_TRUE(switchCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(switchCallData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnSwitchCallResponseInner(switchCallData, switchCallReply), TELEPHONY_SUCCESS);
 
         MessageParcel unholdData;
         MessageParcel unholdReply;
         ASSERT_TRUE(unholdData.WriteInt32(slotId));
-        ASSERT_TRUE(unholdData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(unholdData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnUnHoldCallResponseInner(unholdData, unholdReply), TELEPHONY_SUCCESS);
 
         MessageParcel getImsSwitchData;
         MessageParcel getImsSwitchReply;
         ASSERT_TRUE(getImsSwitchData.WriteInt32(slotId));
-        ASSERT_TRUE(getImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(HRilRadioResponseInfo)));
+        ASSERT_TRUE(getImsSwitchData.WriteRawData((const void *)&rilRadioResponse, sizeof(RadioResponseInfo)));
         ASSERT_EQ(stubTestTwo->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply), TELEPHONY_SUCCESS);
     }
 }

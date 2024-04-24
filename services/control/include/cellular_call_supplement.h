@@ -19,8 +19,8 @@
 #include <string>
 
 #include "cellular_call_data_struct.h"
-#include "hril_call_parcel.h"
-#include "hril_types.h"
+#include "tel_ril_call_parcel.h"
+#include "tel_ril_types.h"
 #include "ims_call_types.h"
 #include "module_service_utils.h"
 #include "supplement_request_cs.h"
@@ -472,9 +472,9 @@ public:
      *
      * 3GPP TS 3GPP TS 22.030 V16.0.0 (2020-07) 6.5 Supplementary Services Control
      *
-     * @param HRilRadioResponseInfo
+     * @param RadioResponseInfo
      */
-    void EventSendUssd(const HRilRadioResponseInfo &responseInfo);
+    void EventSendUssd(const RadioResponseInfo &responseInfo);
 
     /**
      * Ss notify
@@ -493,9 +493,9 @@ public:
     /**
      * Close Unfinished ussd result
      *
-     * @param HRilRadioResponseInfo
+     * @param RadioResponseInfo
      */
-    void EventCloseUnFinishedUssd(const HRilRadioResponseInfo &responseInfo);
+    void EventCloseUnFinishedUssd(const RadioResponseInfo &responseInfo);
 
 private:
     /**

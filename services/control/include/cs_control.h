@@ -18,7 +18,7 @@
 
 #include "call_manager_inner_type.h"
 
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "cellular_call_connection_cs.h"
 #include "control_base.h"
 

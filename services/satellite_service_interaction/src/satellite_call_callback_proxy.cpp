@@ -24,7 +24,7 @@ SatelliteCallCallbackProxy::SatelliteCallCallbackProxy(const sptr<IRemoteObject>
     : IRemoteProxy<SatelliteCallCallbackInterface>(impl)
 {}
 
-int32_t SatelliteCallCallbackProxy::DialSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackProxy::DialSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -34,7 +34,7 @@ int32_t SatelliteCallCallbackProxy::DialSatelliteResponse(int32_t slotId, const 
     return SendResponseInfo(static_cast<int32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_DIAL), in);
 }
 
-int32_t SatelliteCallCallbackProxy::HangUpSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackProxy::HangUpSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -44,7 +44,7 @@ int32_t SatelliteCallCallbackProxy::HangUpSatelliteResponse(int32_t slotId, cons
     return SendResponseInfo(static_cast<int32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_HANG_UP), in);
 }
 
-int32_t SatelliteCallCallbackProxy::RejectSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackProxy::RejectSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -54,7 +54,7 @@ int32_t SatelliteCallCallbackProxy::RejectSatelliteResponse(int32_t slotId, cons
     return SendResponseInfo(static_cast<int32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_REJECT), in);
 }
 
-int32_t SatelliteCallCallbackProxy::AnswerSatelliteResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackProxy::AnswerSatelliteResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -74,7 +74,7 @@ int32_t SatelliteCallCallbackProxy::CallStateChangeReport(int32_t slotId)
     return SendResponseInfo(static_cast<int32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_CALL_STATE_CHANGE), in);
 }
 
-int32_t SatelliteCallCallbackProxy::GetSatelliteCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t SatelliteCallCallbackProxy::GetSatelliteCallsDataResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -138,13 +138,13 @@ int32_t SatelliteCallCallbackProxy::WriteCommonInfo(int32_t slotId, const std::s
 }
 
 int32_t SatelliteCallCallbackProxy::WriteCommonInfo(
-    int32_t slotId, const std::string &funcName, MessageParcel &in, const HRilRadioResponseInfo &info)
+    int32_t slotId, const std::string &funcName, MessageParcel &in, const RadioResponseInfo &info)
 {
     int32_t ret = WriteCommonInfo(slotId, funcName, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(RadioResponseInfo))) {
         TELEPHONY_LOGE("[slot%{public}d]%{public}s:Write info fail!", slotId, funcName.c_str());
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }

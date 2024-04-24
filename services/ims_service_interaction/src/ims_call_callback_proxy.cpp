@@ -23,7 +23,7 @@ namespace Telephony {
 ImsCallCallbackProxy::ImsCallCallbackProxy(const sptr<IRemoteObject> &impl)
     : IRemoteProxy<ImsCallCallbackInterface>(impl) {}
 
-int32_t ImsCallCallbackProxy::DialResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::DialResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -33,7 +33,7 @@ int32_t ImsCallCallbackProxy::DialResponse(int32_t slotId, const HRilRadioRespon
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_DIAL), in);
 }
 
-int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -43,7 +43,7 @@ int32_t ImsCallCallbackProxy::HangUpResponse(int32_t slotId, const HRilRadioResp
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_HANG_UP), in);
 }
 
-int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -53,7 +53,7 @@ int32_t ImsCallCallbackProxy::RejectWithReasonResponse(int32_t slotId, const HRi
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_REJECT), in);
 }
 
-int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -63,7 +63,7 @@ int32_t ImsCallCallbackProxy::AnswerResponse(int32_t slotId, const HRilRadioResp
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_ANSWER), in);
 }
 
-int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -73,7 +73,7 @@ int32_t ImsCallCallbackProxy::HoldCallResponse(int32_t slotId, const HRilRadioRe
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_HOLD), in);
 }
 
-int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -83,7 +83,7 @@ int32_t ImsCallCallbackProxy::UnHoldCallResponse(int32_t slotId, const HRilRadio
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_UN_HOLD), in);
 }
 
-int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -93,7 +93,7 @@ int32_t ImsCallCallbackProxy::SwitchCallResponse(int32_t slotId, const HRilRadio
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SWITCH), in);
 }
 
-int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -103,7 +103,7 @@ int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const HRilRadioR
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF), in);
 }
 
-int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex)
+int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -116,7 +116,7 @@ int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const HRilRadioRe
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SEND_DTMF), in);
 }
 
-int32_t ImsCallCallbackProxy::StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::StopDtmfResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -136,7 +136,7 @@ int32_t ImsCallCallbackProxy::CallStateChangeReport(int32_t slotId)
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_STATE_CHANGE), in);
 }
 
-int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -171,7 +171,7 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsC
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA), in);
 }
 
-int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -182,7 +182,7 @@ int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const HRilRad
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SET_SWITCH_STATUS), in);
 }
 
-int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::GetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -457,7 +457,7 @@ int32_t ImsCallCallbackProxy::GetColpResponse(int32_t slotId, const GetColpResul
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLP), in);
 }
 
-int32_t ImsCallCallbackProxy::CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -467,7 +467,7 @@ int32_t ImsCallCallbackProxy::CombineConferenceResponse(int32_t slotId, const HR
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_COMBINE_CONFERENCE), in);
 }
 
-int32_t ImsCallCallbackProxy::InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info)
+int32_t ImsCallCallbackProxy::InviteToConferenceResponse(int32_t slotId, const RadioResponseInfo &info)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
@@ -598,13 +598,13 @@ int32_t ImsCallCallbackProxy::WriteCommonInfo(int32_t slotId, const std::string 
 }
 
 int32_t ImsCallCallbackProxy::WriteCommonInfo(
-    int32_t slotId, const std::string &funcName, MessageParcel &in, const HRilRadioResponseInfo &info)
+    int32_t slotId, const std::string &funcName, MessageParcel &in, const RadioResponseInfo &info)
 {
     int32_t ret = WriteCommonInfo(slotId, funcName, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteRawData((const void *)&info, sizeof(HRilRadioResponseInfo))) {
+    if (!in.WriteRawData((const void *)&info, sizeof(RadioResponseInfo))) {
         TELEPHONY_LOGE("[slot%{public}d]%{public}s:Write info fail!", slotId, funcName.c_str());
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }

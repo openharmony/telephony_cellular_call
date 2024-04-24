@@ -32,27 +32,27 @@ public:
     int OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
     /****************** call basic ******************/
-    int32_t DialResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t HangUpResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t RejectWithReasonResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t AnswerResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t HoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t UnHoldCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t SwitchCallResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t DialResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t HangUpResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t RejectWithReasonResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t AnswerResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t HoldCallResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t UnHoldCallResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t SwitchCallResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t CallStateChangeReport(int32_t slotId) override;
-    int32_t GetImsCallsDataResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t GetImsCallsDataResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
     int32_t LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details) override;
     int32_t CallRingBackReport(int32_t slotId, const RingbackVoice &info) override;
 
     /****************** dtmf rtt ******************/
-    int32_t StartDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t SendDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info, int32_t callIndex) override;
-    int32_t StopDtmfResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex) override;
+    int32_t StopDtmfResponse(int32_t slotId, const RadioResponseInfo &info) override;
 
     /****************** ims config ******************/
-    int32_t SetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t GetImsSwitchResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t GetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) override;
     int32_t SetMuteResponse(int32_t slotId, const MuteControlResponse &response) override;
 
@@ -73,8 +73,8 @@ public:
     int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
 
     /****************** conference ******************/
-    int32_t CombineConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
-    int32_t InviteToConferenceResponse(int32_t slotId, const HRilRadioResponseInfo &info) override;
+    int32_t CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t InviteToConferenceResponse(int32_t slotId, const RadioResponseInfo &info) override;
     /****************** call modify ******************/
     int32_t ReceiveUpdateCallMediaModeResponse(
         int32_t slotId, const ImsCallModeReceiveInfo &callModeResponse) override;
@@ -143,7 +143,7 @@ private:
     int32_t OnCallDataUsageChangedInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnCameraCapabilitiesChangedInner(MessageParcel &data, MessageParcel &reply);
 
-    int32_t SendEvent(int32_t slotId, int32_t eventId, const HRilRadioResponseInfo &info);
+    int32_t SendEvent(int32_t slotId, int32_t eventId, const RadioResponseInfo &info);
     int32_t SendEvent(int32_t slotId, int32_t eventId, const SsBaseResult &resultInfo);
     int32_t SendEvent(int32_t slotId, int32_t eventId, const ImsCallModeReceiveInfo &callModeInfo);
 

@@ -22,7 +22,7 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_call_callback_proxy.h"
 #include "ims_call_callback_stub.h"
 #include "ims_call_client.h"
@@ -1825,8 +1825,8 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest 
         auto event = AppExecFwk::InnerEvent::Get(0);
         handler.GetImsCallsDataResponse(event);
         handler.GetImsCallsDataRequest(event);
-        auto rilRadioResponse = std::make_shared<HRilRadioResponseInfo>();
-        rilRadioResponse->error = HRilErrType::HRIL_ERR_GENERIC_FAILURE;
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
+        rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
         auto responseEvent = AppExecFwk::InnerEvent::Get(0, rilRadioResponse);
         handler.SetDomainPreferenceModeResponse(responseEvent);
         handler.GetDomainPreferenceModeResponse(event);

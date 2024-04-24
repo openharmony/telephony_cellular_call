@@ -26,7 +26,7 @@
 #include "control_base.h"
 #include "cs_control.h"
 #include "gtest/gtest.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "ims_call_callback_proxy.h"
 #include "ims_call_callback_stub.h"
 #include "ims_call_client.h"
@@ -212,8 +212,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | L
     config.IsReadyToCall(INVALID_SLOTID);
 
     config.HandleSimStateChanged(SIM1_SLOTID);
-    config.HandleSetLteImsSwitchResult(SIM1_SLOTID, HRilErrType::NONE);
-    config.HandleSetVoNRSwitchResult(SIM1_SLOTID, HRilErrType::NONE);
+    config.HandleSetLteImsSwitchResult(SIM1_SLOTID, ErrType::NONE);
+    config.HandleSetVoNRSwitchResult(SIM1_SLOTID, ErrType::NONE);
     config.HandleSimRecordsLoaded(SIM1_SLOTID);
     config.HandleOperatorConfigChanged(SIM1_SLOTID);
     OperatorConfig poc;
@@ -358,13 +358,13 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_003, Function | MediumTest
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
     callSup.EventSetCallTransferInfo(0, message, 0);
     callSup.EventSetCallTransferInfo(0, message, 1);
-    HRilRadioResponseInfo responseInfo;
+    RadioResponseInfo responseInfo;
     callSup.EventSendUssd(responseInfo);
     SsNoticeInfo ssNoticeInfo;
     callSup.EventSsNotify(ssNoticeInfo);
     UssdNoticeInfo ussdNoticeInfo;
     callSup.EventUssdNotify(ussdNoticeInfo);
-    HRilRadioResponseInfo response;
+    RadioResponseInfo response;
     callSup.EventCloseUnFinishedUssd(response);
     callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
     callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);

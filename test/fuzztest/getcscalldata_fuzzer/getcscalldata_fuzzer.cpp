@@ -21,7 +21,7 @@
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_service.h"
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "radio_event.h"
 #include "securec.h"
 #include "system_ability_definition.h"

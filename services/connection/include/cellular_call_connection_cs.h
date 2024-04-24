@@ -16,7 +16,7 @@
 #ifndef CELLULAR_CALL_CONNECTION_CS_H
 #define CELLULAR_CALL_CONNECTION_CS_H
 
-#include "hril_call_parcel.h"
+#include "tel_ril_call_parcel.h"
 #include "base_connection.h"
 
 namespace OHOS {
