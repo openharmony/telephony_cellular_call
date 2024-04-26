@@ -92,7 +92,10 @@ int32_t SatelliteCallCallbackProxy::GetSatelliteCallsDataResponse(
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
-    if (!in.WriteInt32(callList.callSize) || !in.WriteInt32(callList.flag)) {
+    if (!in.WriteInt32(callList.callSize)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(callList.flag)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     if (!in.WriteInt32(static_cast<int32_t>(callList.calls.size()))) {
