@@ -877,6 +877,7 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
             break;
         }
     }
+    std::lock_guard<std::mutex> lock(simStateLock_);
     bool result = (simState_[slotId] != simStateForEcc);
     simState_[slotId] = simStateForEcc;
     return result;
