@@ -290,7 +290,12 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
     bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
     std::vector<EccNum> eccVec;
-    if (isHomeNetRegister && simState_[slotId] == SIM_PRESENT) {
+    bool isSimPresent = false;
+    {
+        std::lock_guard<std::mutex> lock(simStateLock_);
+        isSimPresent = simState_[slotId] == SIM_PRESENT;
+    }
+    if (isHomeNetRegister && isSimPresent) {
         OperatorConfig operatorConfig;
         CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
         callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
@@ -873,6 +878,7 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
             break;
         }
     }
+    std::lock_guard<std::mutex> lock(simStateLock_);
     bool result = (simState_[slotId] != simStateForEcc);
     simState_[slotId] = simStateForEcc;
     return result;
