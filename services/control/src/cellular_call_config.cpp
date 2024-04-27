@@ -293,7 +293,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     bool isSimPresent = false;
     {
         std::lock_guard<std::mutex> lock(simStateLock_);
-        isSimPresent = simState_[slotId] == SIM_PRESENT
+        isSimPresent = simState_[slotId] == SIM_PRESENT;
     }
     if (isHomeNetRegister && isSimPresent) {
         OperatorConfig operatorConfig;
