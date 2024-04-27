@@ -444,18 +444,6 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
 void CellularCallConfig::UpdateImsVoiceCapabilities(
     int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
 {
-    bool imsSwitch = false;
-    GetImsSwitchStatus(slotId, imsSwitch);
-    bool isVolteProvisioned = IsVolteProvisioned(slotId);
-    ImsCapability volteCapability;
-    volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
-    volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
-    volteCapability.enable = volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
-    imsCapabilityList.imsCapabilities.push_back(volteCapability);
-    TELEPHONY_LOGI("slotId = %{public}d, volteSupported = %{public}d, isGbaValid = %{public}d, "
-        "imsSwitch = %{public}d, isVolteProvisioned = %{public}d",
-        slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
-
     int32_t vonrSwitch = VONR_SWITCH_STATUS_OFF;
     GetVoNRSwitchStatus(slotId, vonrSwitch);
     bool vonrSwitchEnabled = vonrSwitch == VONR_SWITCH_STATUS_ON;
@@ -464,6 +452,19 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
     vonrCapability.enable = IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
+
+    bool imsSwitch = false;
+    GetImsSwitchStatus(slotId, imsSwitch);
+    bool isVolteProvisioned = IsVolteProvisioned(slotId);
+    ImsCapability volteCapability;
+    volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
+    volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
+    volteCapability.enable = vonrCapability.enable
+        || (volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned);
+    imsCapabilityList.imsCapabilities.push_back(volteCapability);
+    TELEPHONY_LOGI("slotId = %{public}d, vonrCapability = %{public}d, volteSupported = %{public}d, "
+        "isGbaValid = %{public}d, imsSwitch = %{public}d, isVolteProvisioned = %{public}d",
+        slotId, vonrCapability.enable, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
 }
 
 void CellularCallConfig::UpdateImsUtCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
