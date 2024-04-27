@@ -454,6 +454,7 @@ private:
     static std::map<int32_t, std::string> curPlmn_;
     static std::map<int32_t, RegServiceState> serviceState_;
     std::mutex mutex_;
+    std::mutex simStateLock_;
     static std::mutex operatorMutex_;
     ConfigRequest configRequest_;
     static std::map<int32_t, bool> imsSwitchOnByDefault_;
