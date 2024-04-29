@@ -92,6 +92,9 @@ int32_t SatelliteCallCallbackProxy::GetSatelliteCallsDataResponse(
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
+    if (!in.WriteInt32(slotId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
     if (!in.WriteInt32(callList.callSize)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
