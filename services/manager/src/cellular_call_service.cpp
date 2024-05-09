@@ -1447,7 +1447,7 @@ void CellularCallService::HandleCellularControlException(const CellularCallInfo 
         TELEPHONY_LOGE("HandleCellularControlException return, GetInstance() is nullptr.");
         return;
     }
-    callsReportInfo.slotId = callInfoslotId;
+    callsReportInfo.slotId = callInfo.slotId;
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
 }
 
