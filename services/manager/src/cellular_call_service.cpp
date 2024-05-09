@@ -1437,7 +1437,7 @@ void CellularCallService::HangUpWithCellularCallRestart(const std::vector<Cellul
     }
 }
 
-void CellularCallService::HandleCellularControlException(const CellularCallInfo & callInfo)
+void CellularCallService::HandleCellularControlException(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("HandleCellularControlException entry");
     CallsReportInfo callsReportInfo;
@@ -1451,7 +1451,7 @@ void CellularCallService::HandleCellularControlException(const CellularCallInfo 
     DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
 }
 
-CallReportInfo CellularCallService::EncapsulationCallReportInfo(const CellularCallInfo & callInfo)
+CallReportInfo CellularCallService::EncapsulationCallReportInfo(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGD("EncapsulationCallReportInfo entry");
     CallReportInfo callReportInfo;

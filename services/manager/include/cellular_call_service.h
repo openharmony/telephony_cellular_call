@@ -703,9 +703,9 @@ private:
 
     int32_t DialNormalCall(const CellularCallInfo &callInfo, bool isEcc);
 
-    void HandleCellularControlException(const CellularCallInfo & callInfo);
+    void HandleCellularControlException(const CellularCallInfo &callInfo);
 
-    CallReportInfo EncapsulationCallReportInfo(const CellularCallInfo & callInfo);
+    CallReportInfo EncapsulationCallReportInfo(const CellularCallInfo &callInfo);
 
 private:
     enum class SatelliteState {
