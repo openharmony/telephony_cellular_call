@@ -27,6 +27,7 @@
 #include "module_service_utils.h"
 #include "radio_event.h"
 #include "satellite_call_client.h"
+#include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
@@ -377,6 +378,7 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
             TELEPHONY_LOGE("CellularCallService::HangUp return, satelliteControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp satelliteControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->HangUp(callInfo, type);
@@ -386,6 +388,7 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
             TELEPHONY_LOGE("CellularCallService::HangUp return, csControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp csControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->HangUp(callInfo, type);
@@ -395,6 +398,7 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
             TELEPHONY_LOGE("CellularCallService::HangUp return, imsControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "HangUp imsControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->HangUp(callInfo, type);
@@ -426,6 +430,7 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Reject return, satelliteControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "Reject satelliteControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->Reject(callInfo);
@@ -435,6 +440,7 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Reject return, csControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "Reject csControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Reject(callInfo);
@@ -444,6 +450,7 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Reject return, imsControl is nullptr");
             CellularCallHiSysEvent::WriteHangUpFaultEvent(
                 callInfo.slotId, callInfo.callId, TELEPHONY_ERR_LOCAL_PTR_NULL, "Reject imsControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->Reject(callInfo);
@@ -476,6 +483,7 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Answer return, satelliteControl is nullptr");
             CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
                 TELEPHONY_ERR_LOCAL_PTR_NULL, "satelliteControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->Answer(callInfo);
@@ -485,6 +493,7 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Answer return, csControl is nullptr");
             CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
                 TELEPHONY_ERR_LOCAL_PTR_NULL, "csControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->Answer(callInfo);
@@ -494,6 +503,7 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
             TELEPHONY_LOGE("CellularCallService::Answer return, imsControl is nullptr");
             CellularCallHiSysEvent::WriteAnswerCallFaultEvent(callInfo.slotId, callInfo.callId, callInfo.videoState,
                 TELEPHONY_ERR_LOCAL_PTR_NULL, "imsControl is nullptr");
+            HandleCellularControlException(callInfo);
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return imsControl->Answer(callInfo);
@@ -1426,6 +1436,45 @@ void CellularCallService::HangUpWithCellularCallRestart(const std::vector<Cellul
             imsControl->ReleaseAllConnection();
         }
     }
+}
+
+void CellularCallService::HandleCellularControlException(const CellularCallInfo &callInfo)
+{
+    TELEPHONY_LOGI("HandleCellularControlException entry");
+    CallsReportInfo callsReportInfo;
+    CallReportInfo reportInfo = EncapsulationCallReportInfo(callInfo);
+    callsReportInfo.callVec.push_back(reportInfo);
+    if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("HandleCellularControlException return, GetInstance() is nullptr.");
+        return;
+    }
+    callsReportInfo.slotId = callInfo.slotId;
+    DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
+}
+
+CallReportInfo CellularCallService::EncapsulationCallReportInfo(const CellularCallInfo &callInfo)
+{
+    TELEPHONY_LOGD("EncapsulationCallReportInfo entry");
+    CallReportInfo callReportInfo;
+    if (memset_s(&callReportInfo, sizeof(callReportInfo), 0, sizeof(callReportInfo)) != EOK) {
+        TELEPHONY_LOGE("EncapsulationCallReportInfo return, memset_s fail.");
+        return callReportInfo;
+    }
+
+    size_t cpyLen = strlen(callInfo.phoneNum) + 1;
+    if (cpyLen > static_cast<size_t>(kMaxNumberLen + 1)) {
+        TELEPHONY_LOGE("EncapsulationCallReportInfo return, strcpy_s fail.");
+        return callReportInfo;
+    }
+    if (strcpy_s(callReportInfo.accountNum, cpyLen, callInfo.phoneNum) != EOK) {
+        TELEPHONY_LOGE("EncapsulationCallReportInfo return, strcpy_s fail.");
+        return callReportInfo;
+    }
+    callReportInfo.index = callInfo.index;
+    callReportInfo.accountId = callInfo.slotId;
+    callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+    callReportInfo.callType = callInfo.callType;
+    return callReportInfo;
 }
 
 CellularCallService::SystemAbilityStatusChangeListener::SystemAbilityStatusChangeListener(
