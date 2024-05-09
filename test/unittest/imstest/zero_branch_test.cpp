@@ -1304,6 +1304,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
     CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
     cellularCall.UseImsForEmergency(imsCallInfo, true);
     cellularCall.HandleCallManagerException();
+    cellularCall.HandleCellularControlException(imsCallInfo);
+    cellularCall.HandleCellularControlException(csCallInfo);
     cellularCall.HangUpWithCellularCallRestart(infos);
     cellularCall.SetControl(imsCallInfo);
     cellularCall.SetControl(csCallInfo);
