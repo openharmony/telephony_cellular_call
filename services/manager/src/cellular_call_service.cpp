@@ -27,6 +27,7 @@
 #include "module_service_utils.h"
 #include "radio_event.h"
 #include "satellite_call_client.h"
+#include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 
