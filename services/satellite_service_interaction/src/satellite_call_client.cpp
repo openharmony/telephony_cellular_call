@@ -55,7 +55,7 @@ void SatelliteCallClient::UnInit()
 
 sptr<SatelliteCallInterface> SatelliteCallClient::GetSatelliteCallProxy()
 {
-    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     if (satelliteCallProxy_ != nullptr) {
         return satelliteCallProxy_;
     }
@@ -196,7 +196,7 @@ int32_t SatelliteCallClient::ReConnectService()
 
 void SatelliteCallClient::Clean()
 {
-    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     if (satelliteCallProxy_ != nullptr) {
         satelliteCallProxy_.clear();
         satelliteCallProxy_ = nullptr;
