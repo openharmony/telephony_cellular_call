@@ -412,6 +412,14 @@ public:
 
     bool IsReadyToCall(int32_t slotId);
 
+    /**
+     * update ims capability to modem.
+     *
+     * @param slotId
+     * @param needUpdateUtCapability update ut capability or not
+     */
+    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
+
 private:
     static void InitDefaultOperatorConfig();
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);
@@ -423,7 +431,6 @@ private:
     void ParseBoolOperatorConfigs(
         int32_t slotId, std::map<int32_t, bool> &config, OperatorConfig &poc, std::string configName);
     void ResetImsSwitch(int32_t slotId);
-    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
     void UpdateImsUtCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
     void UpdateImsVoiceCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
     bool IsGbaValid(int32_t slotId);

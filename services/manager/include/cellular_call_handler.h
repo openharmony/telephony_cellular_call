@@ -183,6 +183,8 @@ public:
 
     int32_t GetSsRequestCommand(int32_t index, SsRequestCommand &ss);
 
+    void NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event);
+
 public:
     const uint32_t REGISTER_HANDLER_ID = 10003;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
