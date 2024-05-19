@@ -144,6 +144,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
     requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] = &CellularCallHandler::NetworkStateChangeReport;
     requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] = &CellularCallHandler::OnRilAdapterHostDied;
     requestFuncMap_[RadioEvent::RADIO_FACTORY_RESET] = &CellularCallHandler::FactoryReset;
+    requestFuncMap_[RadioEvent::RADIO_NV_REFRESH_FINISHED] = &CellularCallHandler::NvCfgFinishedIndication;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
@@ -1693,5 +1694,11 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
     }
 }
 #endif
+
+void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    CellularCallConfig config;
+    config.UpdateImsCapabilities(slotId_, true);
+}
 } // namespace Telephony
 } // namespace OHOS

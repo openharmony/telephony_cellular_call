@@ -49,6 +49,7 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_CALL_PEER_DIMENSIONS_CHANGED,
     IMS_CALL_DATA_USAGE_CHANGED,
     IMS_CALL_CAMERA_CAPABILITIES_CHANGED,
+    IMS_NV_CONFIG_REFRESHED,
 
     /****************** dtmf rtt ******************/
     IMS_START_DTMF,
