@@ -92,6 +92,38 @@ public:
      * RegisterHandler
      */
     void RegisterHandler();
+
+    /**
+     * SendDtmfRequest
+     *
+     * @param slotId
+     * @param char cDtmfCode
+     * @param index
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
+
+    /**
+     * StartDtmfRequest
+     *
+     * @param slotId
+     * @param char cDtmfCode
+     * @param index
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const;
+
+    /**
+     * StopDtmfRequest
+     *
+     * @param slotId
+     * @param index
+     * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t StopDtmfRequest(int32_t slotId, int32_t index) const;
+
+private:
+    virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 };
 } // namespace Telephony
 } // namespace OHOS

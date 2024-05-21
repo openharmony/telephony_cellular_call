@@ -110,5 +110,74 @@ void CellularCallConnectionSatellite::RegisterHandler()
 {
     DelayedSingleton<CellularCallService>::GetInstance()->RegisterHandler();
 }
+
+int32_t CellularCallConnectionSatellite::SendDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
+{
+    TELEPHONY_LOGI("CellularCallConnectionSatellite::SendDtmfRequest start.");
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("SendDtmfRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().SendDTMF(slotId, RadioEvent::RADIO_SEND_DTMF, cDtmfCode, index, handle);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConnectionSatellite::StartDtmfRequest(int32_t slotId, char cDtmfCode, int32_t index) const
+{
+    TELEPHONY_LOGD("CellularCallConnectionSatellite::StartDtmfRequest start.");
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("StartDtmfRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StartDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StartDTMF(slotId, RadioEvent::RADIO_START_DTMF, cDtmfCode, index, handle);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConnectionSatellite::StopDtmfRequest(int32_t slotId, int32_t index) const
+{
+    TELEPHONY_LOGI("CellularCallConnectionSatellite::StopDtmfRequest start.");
+    if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
+        TELEPHONY_LOGE("StopDtmfRequest return, error type: GetInstance() is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+    if (handle == nullptr) {
+        TELEPHONY_LOGE("StopDtmfRequest return, error type: handle is nullptr.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    CoreManagerInner::GetInstance().StopDTMF(slotId, RadioEvent::RADIO_STOP_DTMF, index, handle);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConnectionSatellite::ProcessPostDialCallChar(int32_t slotId, char c)
+{
+    if (StandardizeUtils::IsDtmfKey(c)) {
+        SendDtmfRequest(slotId, c, GetIndex());
+    } else if (StandardizeUtils::IsPauseKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_PAUSE);
+        auto cellularCallHandle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
+        if (cellularCallHandle == nullptr) {
+            TELEPHONY_LOGE("SendDtmfRequest return, error type: handle is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        std::shared_ptr<PostDialData> postDial = std::make_shared<PostDialData>();
+        postDial->callId = GetIndex();
+        postDial->isIms = false;
+        cellularCallHandle->SendEvent(EVENT_EXECUTE_POST_DIAL, postDial, PAUSE_DELAY_TIME);
+    } else if (StandardizeUtils::IsWaitKey(c)) {
+        SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_DELAY);
+    }
+    return TELEPHONY_SUCCESS;
+}
 } // namespace Telephony
 } // namespace OHOS
