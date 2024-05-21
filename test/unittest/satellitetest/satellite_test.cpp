@@ -224,11 +224,11 @@ HWTEST_F(SatelliteTest, Satellite_call_RejectCall_0001, Function | MediumTest | 
     }
 }
 /**
- * @tc.number   cellular_call_StartDtmf_0001
+ * @tc.number   Satellite_call_StartDtmf_0001
  * @tc.name     Test for startDtmf function by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -259,11 +259,11 @@ HWTEST_F(SatelliteTest, cellular_call_StartDtmf_0001, Function | MediumTest | Le
 }
 
 /**
- * @tc.number   cellular_call_StartDtmf_0002
+ * @tc.number   Satellite_call_StartDtmf_0002
  * @tc.name     Test for startDtmf function with invalid slot by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_StartDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -293,11 +293,11 @@ HWTEST_F(SatelliteTest, cellular_call_StartDtmf_0002, Function | MediumTest | Le
 }
 
 /**
- * @tc.number   cellular_call_StopDtmf_0001
+ * @tc.number   Satellite_call_StopDtmf_0001
  * @tc.name     Test for stopDtmf function by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -326,11 +326,11 @@ HWTEST_F(SatelliteTest, cellular_call_StopDtmf_0001, Function | MediumTest | Lev
 }
 
 /**
- * @tc.number   cellular_call_StopDtmf_0002
+ * @tc.number   Satellite_call_StopDtmf_0002
  * @tc.name     Test for stopDtmf function with invalid slot by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_StopDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -359,11 +359,11 @@ HWTEST_F(SatelliteTest, cellular_call_StopDtmf_0002, Function | MediumTest | Lev
 }
 
 /**
- * @tc.number   cellular_call_SendDtmf_0001
+ * @tc.number   Satellite_call_SendDtmf_0001
  * @tc.name     Test for sendDtmf function by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -394,11 +394,11 @@ HWTEST_F(SatelliteTest, cellular_call_SendDtmf_0001, Function | MediumTest | Lev
 }
 
 /**
- * @tc.number   cellular_call_SendDtmf_0002
+ * @tc.number   Satellite_call_SendDtmf_0002
  * @tc.name     Test for sendDtmf function with invalid slot by satellite
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SendDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
