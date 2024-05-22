@@ -340,7 +340,7 @@ ImsConnectionMap IMSControl::GetConnectionMap()
 
 int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
-    if (callInfoList.callSize <= 0 && !connectionMap_.empty()) {
+    if (callInfoList.callSize <= 0) {
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
         return ReportIncomingInfo(slotId, callInfoList);
@@ -357,7 +357,7 @@ int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfo
 
 int32_t IMSControl::ReportHangUpInfo(int32_t slotId)
 {
-    TELEPHONY_LOGD("ReportHangUpInfo entry");
+    TELEPHONY_LOGI("ReportHangUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo reportInfo = it.second.GetCallReportInfo();
@@ -365,6 +365,13 @@ int32_t IMSControl::ReportHangUpInfo(int32_t slotId)
         reportInfo.accountId = slotId;
         callsReportInfo.callVec.push_back(reportInfo);
         GetCallFailReason(slotId, connectionMap_);
+    }
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGI("connectionMap_ is empty");
+        CallReportInfo reportInfo;
+        reportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+        reportInfo.accountId = slotId;
+        callsReportInfo.callVec.push_back(reportInfo);
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("ReportHangUpInfo return, GetInstance() is nullptr.");
