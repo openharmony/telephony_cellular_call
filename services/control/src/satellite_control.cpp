@@ -398,5 +398,52 @@ int32_t SatelliteControl::ReportCallsData(int32_t slotId, const CallInfoList &ca
 {
     return TELEPHONY_ERROR;
 }
+
+int32_t SatelliteControl::ExecutePostDial(int32_t slotId, int64_t callId)
+{
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGE("connectionMap_ is empty.");
+        return TELEPHONY_ERROR;
+    }
+    auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &,
+        CellularCallConnectionSatellite *>(connectionMap_, callId);
+    if (pConnection == nullptr) {
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    char currentChar;
+    PostDialCallState state = pConnection->ProcessNextChar(slotId, currentChar);
+    switch (state) {
+        case PostDialCallState::POST_DIAL_CALL_STARTED:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialChar(currentChar);
+            break;
+        case PostDialCallState::POST_DIAL_CALL_DELAY:
+            DelayedSingleton<CellularCallRegister>::GetInstance()->ReportPostDialDelay(
+                pConnection->GetLeftPostDialCallString());
+            break;
+        default:
+            break;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t SatelliteControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
+{
+    std::string networkAddress;
+    std::string postDialString;
+    StandardizeUtils standardizeUtils;
+    standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(
+        connectionMap_, callInfo.index);
+    if (pConnection == nullptr) {
+        TELEPHONY_LOGE("cs pConnection is nullptr!");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    if (proceed) {
+        ExecutePostDial(callInfo.slotId, pConnection->GetIndex());
+    } else {
+        pConnection->SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_CANCELED);
+    }
+    return TELEPHONY_SUCCESS;
+}
 } // namespace Telephony
 } // namespace OHOS

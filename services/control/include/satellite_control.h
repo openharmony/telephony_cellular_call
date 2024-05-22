@@ -150,6 +150,9 @@ public:
      */
     int32_t HangUpAllConnection(int32_t slotId) override;
 
+    int32_t ExecutePostDial(int32_t slotId, int64_t callId);
+
+    int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
 private:
     /**
      * Report being hung up data

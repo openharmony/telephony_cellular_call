@@ -822,6 +822,13 @@ int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->StartDtmf(csControl->GetConnectionMap(), cDtmfCode, callInfo);
+    } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
+        auto satelliteControl = GetSatelliteControl(callInfo.slotId);
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::StartDtmf return, satelliteControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return satelliteControl->StartDtmf(satelliteControl->GetConnectionMap(), cDtmfCode, callInfo);
     }
     TELEPHONY_LOGE("CellularCallService::StartDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -850,6 +857,13 @@ int32_t CellularCallService::StopDtmf(const CellularCallInfo &callInfo)
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->StopDtmf(csControl->GetConnectionMap(), callInfo);
+    } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
+        auto satelliteControl = GetSatelliteControl(callInfo.slotId);
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::StopDtmf return, satelliteControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return satelliteControl->StopDtmf(satelliteControl->GetConnectionMap(), callInfo);
     }
     TELEPHONY_LOGE("CellularCallService::StopDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -879,6 +893,13 @@ int32_t CellularCallService::PostDialProceed(const CellularCallInfo &callInfo, c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->PostDialProceed(callInfo, proceed);
+    } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
+        auto satelliteControl = GetSatelliteControl(callInfo.slotId);
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::PostDialProceed return, satelliteControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return satelliteControl->PostDialProceed(callInfo, proceed);
     }
     TELEPHONY_LOGE("CellularCallService::PostDialProceed return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -907,6 +928,13 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->SendDtmf(csControl->GetConnectionMap(), cDtmfCode, callInfo);
+    } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
+        auto satelliteControl = GetSatelliteControl(callInfo.slotId);
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("CellularCallService::SendDtmf return, satelliteControl is nullptr");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
+        return satelliteControl->SendDtmf(satelliteControl->GetConnectionMap(), cDtmfCode, callInfo);
     }
     TELEPHONY_LOGE("CellularCallService::SendDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
