@@ -405,7 +405,8 @@ int32_t SatelliteControl::ExecutePostDial(int32_t slotId, int64_t callId)
         TELEPHONY_LOGE("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
     }
-    auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(connectionMap_, callId);
+    auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &,
+        CellularCallConnectionSatellite *>(connectionMap_, callId);
     if (pConnection == nullptr) {
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
