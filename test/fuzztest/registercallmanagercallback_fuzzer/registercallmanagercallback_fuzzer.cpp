@@ -190,7 +190,8 @@ void ReportUpdateCallMediaMode(const uint8_t *data, size_t size)
     reportCallModeInfo.result = static_cast<ImsCallModeRequestResult>(size);
     reportCallModeInfo.callType = static_cast<ImsCallType>(static_cast<int32_t>(size % BOOL_NUM));
     cellularCallRegister->ReceiveUpdateCallMediaModeRequest(reportCallModeInfo);
-    cellularCallRegister->ReceiveUpdateCallMediaModeResponse(reportCallModeInfo);
+    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    cellularCallRegister->ReceiveUpdateCallMediaModeResponse(slotId, reportCallModeInfo);
 }
 
 void ReportCallSessionEventChanged(const uint8_t *data, size_t size)

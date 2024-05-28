@@ -104,7 +104,7 @@ public:
 
     void ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveInfo &callModeInfo);
 
-    void ReceiveUpdateCallMediaModeResponse(ImsCallModeReceiveInfo &callModeInfo);
+    void ReceiveUpdateCallMediaModeResponse(int32_t slotId, ImsCallModeReceiveInfo &callModeInfo);
 
     void HandleCallSessionEventChanged(ImsCallSessionEventInfo &callSessionEventInfo);
 

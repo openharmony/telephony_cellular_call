@@ -836,7 +836,7 @@ void CellularCallHandler::ReceiveUpdateCallMediaModeResponse(const AppExecFwk::I
         TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
         return;
     }
-    registerInstance_->ReceiveUpdateCallMediaModeResponse(*result);
+    registerInstance_->ReceiveUpdateCallMediaModeResponse(slotId_, *result);
     info.videoState = static_cast<ImsCallType>(result->callType);
     int32_t requestResult = static_cast<ImsCallModeRequestResult>(result->result);
     CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(

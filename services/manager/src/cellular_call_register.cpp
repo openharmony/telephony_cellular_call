@@ -433,7 +433,7 @@ void CellularCallRegister::ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveI
     callManagerCallBack_->ReceiveUpdateCallMediaModeRequest(response);
 }
 
-void CellularCallRegister::ReceiveUpdateCallMediaModeResponse(ImsCallModeReceiveInfo &callModeInfo)
+void CellularCallRegister::ReceiveUpdateCallMediaModeResponse(int32_t slotId, ImsCallModeReceiveInfo &callModeInfo)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
@@ -445,6 +445,7 @@ void CellularCallRegister::ReceiveUpdateCallMediaModeResponse(ImsCallModeReceive
     response.result = static_cast<VideoRequestResultType>(callModeInfo.result);
     ImsCallMode callMode = ConverToImsCallMode(callModeInfo.callType);
     response.callMode = callMode;
+    response.slotId = slotId;
     callManagerCallBack_->ReceiveUpdateCallMediaModeResponse(response);
 }
 
