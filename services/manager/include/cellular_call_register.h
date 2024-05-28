@@ -102,9 +102,9 @@ public:
 
     void ReportPostDialDelay(std::string str);
 
-    void ReceiveUpdateCallMediaModeRequest(int32_t slotId, ImsCallModeReceiveInfo &callModeInfo);
+    void ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveInfo &callModeInfo);
 
-    void ReceiveUpdateCallMediaModeResponse(ImsCallModeReceiveInfo &callModeInfo);
+    void ReceiveUpdateCallMediaModeResponse(int32_t slotId, ImsCallModeReceiveInfo &callModeInfo);
 
     void HandleCallSessionEventChanged(ImsCallSessionEventInfo &callSessionEventInfo);
 
