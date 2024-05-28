@@ -1748,7 +1748,7 @@ HWTEST_F(ImsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest
     callRegister->ReportGetImsFeatureResult(imsFeatureValueResponse);
     callRegister->ReportSetImsFeatureResult(RESULT);
     ImsCallModeReceiveInfo callModeInfo;
-    callRegister->ReceiveUpdateCallMediaModeRequest(callModeInfo);
+    callRegister->ReceiveUpdateCallMediaModeRequest(-1, callModeInfo);
     callRegister->ReceiveUpdateCallMediaModeResponse(callModeInfo);
     ImsCallSessionEventInfo callSessionEventInfo;
     callRegister->HandleCallSessionEventChanged(callSessionEventInfo);
