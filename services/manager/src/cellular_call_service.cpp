@@ -107,19 +107,19 @@ void CellularCallService::OnStop()
 
 void CellularCallService::RegisterHandler()
 {
-    TELEPHONY_LOGD("connect core service Register Handler start");
+    TELEPHONY_LOGI("connect core service Register Handler start");
     networkSearchCallBack_ = (std::make_unique<CellularCallCallback>()).release();
     for (uint32_t i = 0; i < CONNECT_MAX_TRY_COUNT; i++) {
         std::this_thread::sleep_for(std::chrono::milliseconds(CONNECT_CORE_SERVICE_WAIT_TIME));
         if (CoreManagerInner::GetInstance().IsInitFinished()) {
-            TELEPHONY_LOGD("connect core service Register Handler start");
+            TELEPHONY_LOGI("connect core service Register Handler start");
             RegisterCoreServiceHandler();
             CoreManagerInner::GetInstance().RegisterCellularCallObject(networkSearchCallBack_);
             break;
         }
         TELEPHONY_LOGW("connect core service Register Handler null or not init");
     }
-    TELEPHONY_LOGD("connect core service Register Handler end");
+    TELEPHONY_LOGI("connect core service Register Handler end");
 }
 
 void CellularCallService::CreateHandler()
@@ -735,14 +735,16 @@ int32_t CellularCallService::HangUpAllConnection()
 
 int32_t CellularCallService::SetReadyToCall(int32_t slotId, int32_t callType, bool isReadyToCall)
 {
+    TELEPHONY_LOGI("slotId = %{public}d, callType = %{public}d, isReadyToCall = %{public}d",
+        slotId, callType, isReadyToCall);
     if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("CellularCallService::SetReadyToCall return, invalid slot id");
         return CALL_ERR_INVALID_SLOT_ID;
     }
-    if (callType == static_cast<int32_t>(CallType::TYPE_CS) && GetCsControl(slotId) != nullptr) {
+    if (GetCsControl(slotId) != nullptr) {
         GetCsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
-    if (callType == static_cast<int32_t>(CallType::TYPE_IMS) && GetImsControl(slotId) != nullptr) {
+    if (GetImsControl(slotId) != nullptr) {
         GetImsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
     return TELEPHONY_SUCCESS;
