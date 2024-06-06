@@ -187,6 +187,10 @@ int32_t SupplementRequestCs::AlterPinPassword(int32_t slotId, std::string newPin
         pinResData->remain = response.remain;
         AppExecFwk::InnerEvent::Pointer msgEvent =
             AppExecFwk::InnerEvent::Get(MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        if (msgEvent == nullptr) {
+            TELEPHONY_LOGE("msgEvent is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         bool ret = ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
         if (!ret) {
             TELEPHONY_LOGE("[slot%{public}d] SendEvent failed! status update failed", slotId);
@@ -210,6 +214,10 @@ int32_t SupplementRequestCs::UnlockPuk(int32_t slotId, std::string newPin, std::
         pinResData->remain = response.remain;
         AppExecFwk::InnerEvent::Pointer msgEvent =
             AppExecFwk::InnerEvent::Get(MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        if (msgEvent == nullptr) {
+            TELEPHONY_LOGE("msgEvent is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         bool ret = ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
         if (!ret) {
             TELEPHONY_LOGE("[slot%{public}d] SendEvent failed! status update failed", slotId);
@@ -233,6 +241,10 @@ int32_t SupplementRequestCs::AlterPin2Password(int32_t slotId, std::string newPi
         pinResData->remain = response.remain;
         AppExecFwk::InnerEvent::Pointer msgEvent =
             AppExecFwk::InnerEvent::Get(MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        if (msgEvent == nullptr) {
+            TELEPHONY_LOGE("msgEvent is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         bool ret = ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
         if (!ret) {
             TELEPHONY_LOGE("[slot%{public}d] SendEvent failed! status update failed", slotId);
@@ -256,6 +268,10 @@ int32_t SupplementRequestCs::UnlockPuk2(int32_t slotId, std::string newPin2, std
         pinResData->remain = response.remain;
         AppExecFwk::InnerEvent::Pointer msgEvent =
             AppExecFwk::InnerEvent::Get(MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID, pinResData, 0);
+        if (msgEvent == nullptr) {
+            TELEPHONY_LOGE("msgEvent is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         bool ret = ccHandler->SendEvent(msgEvent, 0, AppExecFwk::EventQueue::Priority::IMMEDIATE);
         if (!ret) {
             TELEPHONY_LOGE("[slot%{public}d] SendEvent failed! status update failed", slotId);
