@@ -95,7 +95,7 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     ImsCurrentCall info;
     ImsCurrentCallList infoList;
     info.number = number;
-    info.name = name;
+    info.name = number;
     infoList.calls.push_back(info);
 
     SatelliteCurrentCall satelliteInfo;
