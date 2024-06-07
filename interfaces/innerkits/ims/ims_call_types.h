@@ -281,6 +281,10 @@ struct ImsCurrentCall {
      */
     std::string number = "";
     /**
+     * Indicates remote party name.
+     */
+    std::string name = "";
+    /**
      * Indicates the type of address octet in integer format.
      */
     int32_t type = 0;

@@ -475,7 +475,8 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     }
 
     StandardizeUtils standardizeUtils;
-    std::string newString = standardizeUtils.FormatNumberAndToa(callInfo.number, callInfo.toa);
+    std::string phoneNumber = callInfo.number ? callInfo.name : callInfo.number;
+    std::string newString = standardizeUtils.FormatNumberAndToa(phoneNumber, callInfo.toa);
     size_t cpyLen = strlen(newString.c_str()) + 1;
     if (cpyLen > static_cast<size_t>(kMaxNumberLen + 1)) {
         TELEPHONY_LOGE("EncapsulationCallReportInfo return, strcpy_s fail.");

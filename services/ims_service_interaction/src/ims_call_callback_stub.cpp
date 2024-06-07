@@ -343,6 +343,7 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
             call.voiceDomain = data.ReadInt32();
             call.callType = static_cast<ImsCallType>(data.ReadInt32());
             data.ReadString(call.number);
+            data.ReadString(call.name);
             call.type = data.ReadInt32();
             data.ReadString(call.alpha);
             call.toa = data.ReadInt32();
