@@ -479,20 +479,7 @@ void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerE
     if (satelliteCallInfoList == nullptr) {
         TELEPHONY_LOGE(
             "[slot%{public}d] Cannot get the SatelliteCurrentCallList, need to get rilResponseInfo", slotId_);
-        auto rilResponseInfo = event->GetSharedObject<RadioResponseInfo>();
-        if (rilResponseInfo == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] SatelliteCurrentCallList and rilResponseInfo are null", slotId_);
-            return;
-        }
-        CellularCallEventInfo eventInfo;
-        eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
-        eventInfo.eventId = RequestResultEventId::RESULT_GET_CURRENT_CALLS_FAILED;
-        if (registerInstance_ == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
-            return;
-        }
-        registerInstance_->ReportEventResultInfo(eventInfo);
-        return;
+        satelliteCallInfoList = std::make_shared<SatelliteCurrentCallList>();
     }
     ReportSatelliteCallsData(*satelliteCallInfoList);
 }
