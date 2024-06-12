@@ -478,7 +478,7 @@ void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerE
     auto satelliteCallInfoList = event->GetSharedObject<SatelliteCurrentCallList>();
     if (satelliteCallInfoList == nullptr) {
         TELEPHONY_LOGE(
-            "[slot%{public}d] Cannot get the SatelliteCurrentCallList, need to get rilResponseInfo", slotId_);
+            "[slot%{public}d] Cannot get the SatelliteCurrentCallList, need to create satelliteCallInfoList", slotId_);
         satelliteCallInfoList = std::make_shared<SatelliteCurrentCallList>();
     }
     ReportSatelliteCallsData(*satelliteCallInfoList);
