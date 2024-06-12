@@ -484,10 +484,6 @@ void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerE
             TELEPHONY_LOGE("[slot%{public}d] SatelliteCurrentCallList and rilResponseInfo are null", slotId_);
             return;
         }
-        if (rilResponseInfo->error == ErrType::NONE) {
-            TELEPHONY_LOGE("[slot%{public}d] Failed to query the call list but no reason!", slotId_);
-            return;
-        }
         CellularCallEventInfo eventInfo;
         eventInfo.eventType = CellularCallEventType::EVENT_REQUEST_RESULT_TYPE;
         eventInfo.eventId = RequestResultEventId::RESULT_GET_CURRENT_CALLS_FAILED;
