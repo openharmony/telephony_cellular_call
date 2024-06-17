@@ -111,6 +111,7 @@ int32_t ImsCoreService::GetImsRegistrationStatus(int32_t slotId)
 
     // IMS demo callback response info
     ImsRegistrationStatus imsRegStatus;
+    std::lock_guard<std::mutex> lock(mutex_);
     if (imsCoreServiceCallback_ == nullptr) {
         TELEPHONY_LOGE("imsCoreServiceCallback_ is nullptr");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -121,6 +122,7 @@ int32_t ImsCoreService::GetImsRegistrationStatus(int32_t slotId)
 
 int32_t ImsCoreService::RegisterImsCoreServiceCallback(const sptr<ImsCoreServiceCallbackInterface> &callback)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     TELEPHONY_LOGI("Register IMS coreservice callback");
     imsCoreServiceCallback_ = callback;
     return TELEPHONY_SUCCESS;
