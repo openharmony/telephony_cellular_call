@@ -180,11 +180,7 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     }
     auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
         connectionMap_, TelCallState::CALL_STATUS_ACTIVE);
-    bool isPendingHold = false;
-    if (con != nullptr) {
-        isPendingHold = con->GetPendingHold();
-    }
-    if (IsInState(connectionMap_, TelCallState::CALL_STATUS_ACTIVE) && !isPendingHold &&
+    if (con != nullptr && con->GetPendingHold() &&
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
         if (con == nullptr) {
@@ -643,7 +639,7 @@ void IMSControl::DialAfterHold(int32_t slotId)
 void IMSControl::RecoverPendingHold()
 {
     for (auto &connection : connectionMap_) {
-        if (connection.second.GetPendingHold()) {
+        if (connection.second.IsPendingHold()) {
             connection.second.UpdatePendingHoldFlag(false);
             break;
         }

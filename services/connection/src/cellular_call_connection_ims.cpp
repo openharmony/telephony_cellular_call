@@ -404,7 +404,7 @@ ImsDialInfoStruct CellularCallConnectionIMS::GetHoldToDialInfo()
     return holdToDialInfo_;
 }
 
-bool CellularCallConnectionIMS::GetPendingHold()
+bool CellularCallConnectionIMS::IsPendingHold()
 {
     return GetCallReportInfo().isPendingHold;
 }
