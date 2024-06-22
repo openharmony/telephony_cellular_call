@@ -196,7 +196,7 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
         if (ret == TELEPHONY_SUCCESS) {
             UpdatePendingHoldFlag(true);
         }
-        return 
+        return ret;
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
