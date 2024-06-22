@@ -180,7 +180,7 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     }
     auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
         connectionMap_, TelCallState::CALL_STATUS_ACTIVE);
-    if (con != nullptr && con->GetPendingHold() &&
+    if (con != nullptr && !con->GetPendingHold() &&
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
         if (con == nullptr) {

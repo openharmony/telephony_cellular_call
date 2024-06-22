@@ -654,7 +654,7 @@ void CellularCallHandler::SwapCallResponse(const AppExecFwk::InnerEvent::Pointer
             TELEPHONY_LOGE("[slot%{public}d] imsControl is null", slotId_);
             return;
         }
-        imsControl->RecoverPendingHold(false);
+        imsControl->RecoverPendingHold();
     }
     auto result = event->GetSharedObject<RadioResponseInfo>();
     if (result == nullptr) {
