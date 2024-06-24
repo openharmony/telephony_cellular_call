@@ -192,7 +192,11 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
         int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
-        return DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, callType);
+        int32_t ret = DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, callType);
+        if (ret == TELEPHONY_SUCCESS) {
+            UpdatePendingHoldFlag(true);
+        }
+        return ret;
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
@@ -398,6 +402,11 @@ void CellularCallConnectionIMS::SetDialFlag(bool isNeedToDial)
 ImsDialInfoStruct CellularCallConnectionIMS::GetHoldToDialInfo()
 {
     return holdToDialInfo_;
+}
+
+bool CellularCallConnectionIMS::IsPendingHold()
+{
+    return GetCallReportInfo().isPendingHold;
 }
 } // namespace Telephony
 } // namespace OHOS

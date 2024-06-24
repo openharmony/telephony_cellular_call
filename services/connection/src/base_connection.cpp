@@ -121,5 +121,10 @@ int32_t BaseConnection::ProcessPostDialCallChar(int32_t slotId, char c)
 {
     return TELEPHONY_SUCCESS;
 }
+
+void BaseConnection::UpdatePendingHoldFlag(bool isPendingHold)
+{
+    callReportInfo_.isPendingHold = isPendingHold;
+}
 } // namespace Telephony
 } // namespace OHOS

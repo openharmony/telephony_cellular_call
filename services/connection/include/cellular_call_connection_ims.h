@@ -206,6 +206,8 @@ public:
 
     ImsDialInfoStruct GetHoldToDialInfo();
 
+    bool IsPendingHold();
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 

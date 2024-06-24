@@ -192,6 +192,8 @@ public:
      */
     int32_t ReportHangUpInfo(int32_t slotId);
 
+    void RecoverPendingHold();
+
 private:
     /**
      * handle dial judgment
