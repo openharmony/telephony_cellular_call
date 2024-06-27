@@ -418,7 +418,7 @@ void CellularCallRegister::ReportPostDialDelay(std::string str)
     callManagerCallBack_->ReportPostDialDelay(str);
 }
 
-void CellularCallRegister::ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveInfo &callModeInfo)
+void CellularCallRegister::ReceiveUpdateCallMediaModeRequest(int32_t slotId, ImsCallModeReceiveInfo &callModeInfo)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (callManagerCallBack_ == nullptr) {
@@ -428,6 +428,7 @@ void CellularCallRegister::ReceiveUpdateCallMediaModeRequest(ImsCallModeReceiveI
     CallModeReportInfo response;
     response.callIndex = callModeInfo.callIndex;
     response.result = static_cast<VideoRequestResultType>(callModeInfo.result);
+    response.slotId = slotId;
     ImsCallMode callMode = ConverToImsCallMode(callModeInfo.callType);
     response.callMode = callMode;
     callManagerCallBack_->ReceiveUpdateCallMediaModeRequest(response);
