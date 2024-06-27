@@ -799,7 +799,7 @@ void CellularCallHandler::ReceiveUpdateCallMediaModeRequest(const AppExecFwk::In
         TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
         return;
     }
-    registerInstance_->ReceiveUpdateCallMediaModeRequest(*result);
+    registerInstance_->ReceiveUpdateCallMediaModeRequest(slotId_, *result);
     int32_t requestResult = static_cast<ImsCallModeRequestResult>(result->result);
     CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
         CallModeBehaviorType::RECEIVE_REQUEST_EVENT, info, requestResult);
