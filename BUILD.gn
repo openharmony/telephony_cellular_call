@@ -64,16 +64,12 @@ ohos_shared_library("tel_cellular_call") {
     "services/manager/include",
     "services/control/include",
     "services/connection/include",
-    "//third_party/libphonenumber/cpp/src",
-    "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
   defines = [
     "TELEPHONY_LOG_TAG = \"CellularCall\"",
     "LOG_DOMAIN = 0xD001F11",
   ]
-
-  deps = [ "//third_party/libphonenumber/cpp:phonenumber_standard" ]
 
   external_deps = [
     "ability_base:want",
@@ -92,6 +88,7 @@ ohos_shared_library("tel_cellular_call") {
     "hitrace:hitrace_meter",
     "init:libbegetutil",
     "ipc:ipc_single",
+    "libphonenumber:phonenumber_standard"
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
