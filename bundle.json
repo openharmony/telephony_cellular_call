@@ -43,6 +43,7 @@
                 "hitrace",
                 "init",
                 "ipc",
+                "libphonenumber",
                 "resource_management",
                 "safwk",
                 "samgr",
