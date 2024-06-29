@@ -130,13 +130,30 @@ private:
     int32_t ReConnectService();
     void Clean();
 
+    class SatelliteServiceDeathRecipient : public IRemoteObject::DeathRecipient {
+    public:
+        explicit SatelliteServiceDeathRecipient(SatelliteCallClient &client) : client_(client) {}
+        ~SatelliteServiceDeathRecipient() override = default;
+        void OnRemoteDied(const wptr<IRemoteObject> &remote) override
+        {
+            client_.OnRemoteDied(remote);
+        }
+
+    private:
+        SatelliteCallClient &client_;
+    };
+
+    void RemoveDeathRecipient(const wptr<IRemoteObject> &remote);
+
+    void OnRemoteDied(const wptr<IRemoteObject> &remote);
+
 private:
     sptr<ISatelliteService> satelliteServiceProxy_ = nullptr;
     sptr<SatelliteCallInterface> satelliteCallProxy_ = nullptr;
     sptr<SatelliteCallCallbackInterface> satelliteCallCallback_ = nullptr;
+    sptr<IRemoteObject::DeathRecipient> deathRecipient_ { nullptr };
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
     Utils::RWLock rwClientLock_;
-
     std::mutex mutexProxy_;
 };
 } // namespace Telephony

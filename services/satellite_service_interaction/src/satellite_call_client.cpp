@@ -69,6 +69,19 @@ sptr<SatelliteCallInterface> SatelliteCallClient::GetSatelliteCallProxy()
         TELEPHONY_LOGE("GetSatelliteCallProxy return, remote service not exists.");
         return nullptr;
     }
+
+    std::unique_ptr<SatelliteServiceDeathRecipient> recipient = std::make_unique<SatelliteServiceDeathRecipient>(*this);
+    if (recipient == nullptr) {
+        TELEPHONY_LOGE("recipient is null");
+        return nullptr;
+    }
+
+    sptr<IRemoteObject::DeathRecipient> dr(recipient.release());
+    if (remoteObjectPtr->IsProxyObject() && !remoteObjectPtr->AddDeathRecipient(dr)) {
+        TELEPHONY_LOGE("Failed to add death recipient");
+        return nullptr;
+    }
+
     satelliteServiceProxy_ = iface_cast<ISatelliteService>(remoteObjectPtr);
     if (satelliteServiceProxy_ == nullptr) {
         TELEPHONY_LOGE("GetSatelliteCallProxy return, satelliteServiceProxy_ is nullptr.");
@@ -80,6 +93,7 @@ sptr<SatelliteCallInterface> SatelliteCallClient::GetSatelliteCallProxy()
         return nullptr;
     }
     satelliteCallProxy_ = iface_cast<SatelliteCallInterface>(satelliteCallRemoteObjectPtr);
+    deathRecipient_ = dr;
     RegisterSatelliteCallCallback();
     return satelliteCallProxy_;
 }
@@ -106,7 +120,6 @@ int32_t SatelliteCallClient::RegisterSatelliteCallCallback()
         return TELEPHONY_ERR_FAIL;
     }
     TELEPHONY_LOGI("RegisterSatelliteCallCallback success.");
-    ;
     return TELEPHONY_SUCCESS;
 }
 
@@ -206,5 +219,37 @@ void SatelliteCallClient::Clean()
         satelliteCallCallback_ = nullptr;
     }
 }
+
+void SatelliteCallClient::OnRemoteDied(const wptr<IRemoteObject> &remote)
+{
+    RemoveDeathRecipient(remote);
+}
+
+void SatelliteCallClient::RemoveDeathRecipient(const wptr<IRemoteObject> &remote)
+{
+    if (remote == nullptr) {
+        TELEPHONY_LOGE("Remote died, remote is nullptr");
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
+    if (satelliteServiceProxy_ == nullptr) {
+        TELEPHONY_LOGE("satelliteServiceProxy_ is nullptr");
+        return;
+    }
+    auto serviceRemote = satelliteServiceProxy_->AsObject();
+    if (serviceRemote == nullptr) {
+        TELEPHONY_LOGE("serviceRemote is nullptr");
+        return;
+    }
+    if (serviceRemote != remote.promote()) {
+        TELEPHONY_LOGE("Remote died serviceRemote is not same");
+        return;
+    }
+    serviceRemote->RemoveDeathRecipient(deathRecipient_);
+    satelliteServiceProxy_ = nullptr;
+    satelliteCallProxy_ = nullptr;
+    TELEPHONY_LOGI("SatelliteCallClient:RemoveDeathRecipient success");
+}
+
 } // namespace Telephony
 } // namespace OHOS
