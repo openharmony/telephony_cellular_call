@@ -43,13 +43,11 @@
                 "hitrace",
                 "init",
                 "ipc",
+                "libphonenumber",
                 "resource_management",
                 "safwk",
                 "samgr",
                 "telephony_data"
-            ],
-            "third_party": [
-                "libphonenumber"
             ]
         },
         "build": {
