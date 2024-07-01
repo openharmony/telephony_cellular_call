@@ -33,10 +33,12 @@ ohos_unittest("tel_cellular_call_satellite_test") {
     "${CELLULAR_CALL_PATH}/services/connection/include",
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
+    "${CELLULAR_CALL_PATH}/services/utils/include",
   ]
 
   deps = [
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
     "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]

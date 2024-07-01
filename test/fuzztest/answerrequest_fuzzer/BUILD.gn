@@ -26,6 +26,7 @@ ohos_fuzztest("AnswerRequestFuzzTest") {
   include_dirs = [
     "${CELLULAR_CALL_PATH}/test/fuzztest/common_fuzzer",
     "${CELLULAR_CALL_PATH}/services/connection/include",
+    "${CELLULAR_CALL_PATH}/services/utils/include",
     "//third_party/libphonenumber/cpp/src",
     "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
