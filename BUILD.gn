@@ -55,7 +55,6 @@ ohos_shared_library("tel_cellular_call") {
     "services/utils/src/mmi_code_utils.cpp",
     "services/utils/src/module_service_utils.cpp",
     "services/utils/src/standardize_utils.cpp",
-
   ]
 
   include_dirs = [
