@@ -28,11 +28,14 @@ ImsSmsStub::~ImsSmsStub() {}
 
 void ImsSmsStub::InitFuncMap()
 {
-    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_SEND_MESSAGE)] = &ImsSmsStub::OnImsSendMessage;
-    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_SET_SMS_CONFIG)] = &ImsSmsStub::OnImsSetSmsConfig;
-    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_GET_SMS_CONFIG)] = &ImsSmsStub::OnImsGetSmsConfig;
+    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_SEND_MESSAGE)] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnImsSendMessage(data, reply); };
+    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_SET_SMS_CONFIG)] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnImsSetSmsConfig(data, reply); };
+    memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_GET_SMS_CONFIG)] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnImsGetSmsConfig(data, reply); };
     memberFuncMap_[static_cast<uint32_t>(ImsSmsInterfaceCode::IMS_SMS_REGISTER_CALLBACK)] =
-        &ImsSmsStub::OnRegisterSmsCallCallback;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRegisterSmsCallCallback(data, reply); };
 }
 
 int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -48,7 +51,7 @@ int32_t ImsSmsStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageP
     if (itFunction != memberFuncMap_.end()) {
         auto memberFunc = itFunction->second;
         if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
+            return memberFunc(data, reply);
         }
     }
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

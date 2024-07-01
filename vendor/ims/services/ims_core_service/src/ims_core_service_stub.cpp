@@ -29,12 +29,13 @@ ImsCoreServiceStub::~ImsCoreServiceStub() {}
 void ImsCoreServiceStub::InitMemberFuncMap()
 {
     memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_REGISTRATION_STATUS] =
-        &ImsCoreServiceStub::OnGetImsRegistrationStatus;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsRegistrationStatus(data, reply); };
 
     /* ------------ callback ------------- */
     memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_REGISTER_CALLBACK] =
-        &ImsCoreServiceStub::OnRegisterImsCoreServiceCallback;
-    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_PROXY_OBJECT_PTR] = &ImsCoreServiceStub::OnGetProxyObjectPtr;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRegisterImsCoreServiceCallback(data, reply); };
+    memberFuncMap_[ImsCoreServiceInterfaceCode::IMS_GET_PROXY_OBJECT_PTR] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetProxyObjectPtr(data, reply); };
 }
 
 int32_t ImsCoreServiceStub::OnRemoteRequest(
@@ -55,7 +56,7 @@ int32_t ImsCoreServiceStub::OnRemoteRequest(
     if (itFunction != memberFuncMap_.end()) {
         auto memberFunc = itFunction->second;
         if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
+            return memberFunc(data, reply);
         }
     }
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

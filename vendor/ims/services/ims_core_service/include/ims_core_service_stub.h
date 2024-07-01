@@ -49,7 +49,7 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:
-    using ImsServiceFunc = int32_t (ImsCoreServiceStub::*)(MessageParcel &data, MessageParcel &reply);
+    using ImsServiceFunc = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     int32_t OnGetImsRegistrationStatus(MessageParcel &data, MessageParcel &reply);
     int32_t OnRegisterImsCoreServiceCallback(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetProxyObjectPtr(MessageParcel &data, MessageParcel &reply);

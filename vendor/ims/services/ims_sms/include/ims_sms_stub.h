@@ -48,7 +48,7 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option) override;
 
 private:
-    using ImsSmsFunc = int32_t (ImsSmsStub::*)(MessageParcel &data, MessageParcel &reply);
+    using ImsSmsFunc = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     int32_t OnImsSendMessage(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsSetSmsConfig(MessageParcel &data, MessageParcel &reply);
     int32_t OnImsGetSmsConfig(MessageParcel &data, MessageParcel &reply);

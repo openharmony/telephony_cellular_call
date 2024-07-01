@@ -30,7 +30,7 @@ public:
     int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
 
 private:
-    using ImsCallFunc = int32_t (ImsCallStub::*)(MessageParcel &data, MessageParcel &reply);
+    using ImsCallFunc = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     int32_t OnDial(MessageParcel &data, MessageParcel &reply);
     int32_t OnHangUp(MessageParcel &data, MessageParcel &reply);
     int32_t OnRejectWithReason(MessageParcel &data, MessageParcel &reply);

@@ -48,120 +48,201 @@ CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInf
     InitSupplementFuncMap();
     InitActiveReportFuncMap();
     InitSatelliteCallFuncMap();
+    InitAdditionalFuncMap();
 }
 
 void CellularCallHandler::InitBasicFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_DIAL] = &CellularCallHandler::DialResponse;
-    requestFuncMap_[RadioEvent::RADIO_HANGUP_CONNECT] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_REJECT_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_ACCEPT_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_HOLD_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_ACTIVE_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] = &CellularCallHandler::SwapCallResponse;
-    requestFuncMap_[RadioEvent::RADIO_COMBINE_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_JOIN_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_SPLIT_CALL] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_SUPPLEMENT] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[RadioEvent::RADIO_SEND_DTMF] = &CellularCallHandler::SendDtmfResponse;
-    requestFuncMap_[RadioEvent::RADIO_START_DTMF] = &CellularCallHandler::StartDtmfResponse;
-    requestFuncMap_[RadioEvent::RADIO_STOP_DTMF] = &CellularCallHandler::StopDtmfResponse;
-    requestFuncMap_[RadioEvent::RADIO_CURRENT_CALLS] = &CellularCallHandler::GetCsCallsDataResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FAIL_REASON] = &CellularCallHandler::GetCallFailReasonResponse;
+    requestFuncMap_[RadioEvent::RADIO_DIAL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { DialResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_HANGUP_CONNECT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_REJECT_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_ACCEPT_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_HOLD_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_ACTIVE_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SWAP_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SwapCallResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_COMBINE_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_JOIN_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SPLIT_CALL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_SUPPLEMENT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SEND_DTMF] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SendDtmfResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_START_DTMF] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { StartDtmfResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_STOP_DTMF] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { StopDtmfResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CURRENT_CALLS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCsCallsDataResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FAIL_REASON] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCallFailReasonResponse(event); };
     requestFuncMap_[RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_REQUEST] =
-        &CellularCallHandler::ReceiveUpdateCallMediaModeRequest;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ReceiveUpdateCallMediaModeRequest(event); };
     requestFuncMap_[RadioEvent::RADIO_RECV_CALL_MEDIA_MODE_RESPONSE] =
-        &CellularCallHandler::ReceiveUpdateCallMediaModeResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED] = &CellularCallHandler::HandleCallSessionEventChanged;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ReceiveUpdateCallMediaModeResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_SESSION_EVENT_CHANGED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleCallSessionEventChanged(event); };
     requestFuncMap_[RadioEvent::RADIO_CALL_PEER_DIMENSIONS_CHANGED] =
-        &CellularCallHandler::HandlePeerDimensionsChanged;
-    requestFuncMap_[RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED] = &CellularCallHandler::HandleCallDataUsageChanged;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandlePeerDimensionsChanged(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_DATA_USAGE_CHANGED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleCallDataUsageChanged(event); };
     requestFuncMap_[RadioEvent::RADIO_CAMERA_CAPABILITIES_CHANGED] =
-        &CellularCallHandler::HandleCameraCapabilitiesChanged;
-
-    requestFuncMap_[GET_CS_CALL_DATA_ID] = &CellularCallHandler::GetCsCallsDataRequest;
-    requestFuncMap_[GET_IMS_CALL_DATA_ID] = &CellularCallHandler::GetImsCallsDataRequest;
-    requestFuncMap_[REGISTER_HANDLER_ID] = &CellularCallHandler::RegisterHandler;
-    requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] = &CellularCallHandler::GetMMIResponse;
-    requestFuncMap_[DtmfHandlerId::EVENT_EXECUTE_POST_DIAL] = &CellularCallHandler::ExecutePostDial;
-
-    requestFuncMap_[RadioEvent::RADIO_IMS_GET_CALL_DATA] = &CellularCallHandler::GetImsCallsDataResponse;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleCameraCapabilitiesChanged(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_GET_CALL_DATA] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetImsCallsDataResponse(event); };
 }
 
 void CellularCallHandler::InitConfigFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_SET_CMUT] = &CellularCallHandler::SetMuteResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CMUT] = &CellularCallHandler::GetMuteResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] = &CellularCallHandler::SetDomainPreferenceModeResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] = &CellularCallHandler::GetDomainPreferenceModeResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_IMS_SWITCH_STATUS] = &CellularCallHandler::SetImsSwitchStatusResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_IMS_SWITCH_STATUS] = &CellularCallHandler::GetImsSwitchStatusResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_VONR_SWITCH_STATUS] = &CellularCallHandler::SetVoNRSwitchStatusResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] = &CellularCallHandler::SetEmergencyCallListResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] = &CellularCallHandler::GetEmergencyCallListResponse;
-    requestFuncMap_[OPERATOR_CONFIG_CHANGED_ID] = &CellularCallHandler::HandleOperatorConfigChanged;
+    requestFuncMap_[RadioEvent::RADIO_SET_CMUT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetMuteResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CMUT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetMuteResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_PREFERENCE_MODE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetDomainPreferenceModeResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_PREFERENCE_MODE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetDomainPreferenceModeResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_IMS_SWITCH_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetImsSwitchStatusResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_IMS_SWITCH_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetImsSwitchStatusResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_VONR_SWITCH_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetVoNRSwitchStatusResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_EMERGENCY_CALL_LIST] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetEmergencyCallListResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_EMERGENCY_CALL_LIST] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetEmergencyCallListResponse(event); };
+    requestFuncMap_[OPERATOR_CONFIG_CHANGED_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleOperatorConfigChanged(event); };
 }
 
 void CellularCallHandler::InitSupplementFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_WAIT] = &CellularCallHandler::GetCallWaitingResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_WAIT] = &CellularCallHandler::SetCallWaitingResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FORWARD] = &CellularCallHandler::GetCallTransferResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_FORWARD] = &CellularCallHandler::SetCallTransferInfoResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIP] = &CellularCallHandler::GetClipResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIP] = &CellularCallHandler::SetClipResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIR] = &CellularCallHandler::GetClirResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIR] = &CellularCallHandler::SetClirResponse;
-    requestFuncMap_[RadioEvent::RADIO_IMS_GET_COLR] = &CellularCallHandler::GetColrResponse;
-    requestFuncMap_[RadioEvent::RADIO_IMS_SET_COLR] = &CellularCallHandler::SetColrResponse;
-    requestFuncMap_[RadioEvent::RADIO_IMS_GET_COLP] = &CellularCallHandler::GetColpResponse;
-    requestFuncMap_[RadioEvent::RADIO_IMS_SET_COLP] = &CellularCallHandler::SetColpResponse;
-    requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] = &CellularCallHandler::GetCallRestrictionResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] = &CellularCallHandler::SetCallRestrictionResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION_PWD] = &CellularCallHandler::SetBarringPasswordResponse;
-    requestFuncMap_[RadioEvent::RADIO_SET_USSD] = &CellularCallHandler::SendUssdResponse;
-    requestFuncMap_[MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID] = &CellularCallHandler::SendUnlockPinPukResponse;
-    requestFuncMap_[RadioEvent::RADIO_CLOSE_UNFINISHED_USSD] = &CellularCallHandler::CloseUnFinishedUssdResponse;
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_WAIT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCallWaitingResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_WAIT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetCallWaitingResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_FORWARD] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCallTransferResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_FORWARD] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetCallTransferInfoResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIP] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetClipResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIP] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetClipResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_CLIR] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetClirResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_CLIR] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetClirResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_GET_COLR] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetColrResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_SET_COLR] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetColrResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_GET_COLP] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetColpResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_SET_COLP] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetColpResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_CALL_RESTRICTION] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCallRestrictionResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetCallRestrictionResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_CALL_RESTRICTION_PWD] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SetBarringPasswordResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SET_USSD] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SendUssdResponse(event); };
+    requestFuncMap_[MMIHandlerId::EVENT_SET_UNLOCK_PIN_PUK_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SendUnlockPinPukResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CLOSE_UNFINISHED_USSD] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CloseUnFinishedUssdResponse(event); };
 }
 
 void CellularCallHandler::InitActiveReportFuncMap()
 {
-    requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] = &CellularCallHandler::CsCallStatusInfoReport;
-    requestFuncMap_[RadioEvent::RADIO_IMS_CALL_STATUS_INFO] = &CellularCallHandler::ImsCallStatusInfoReport;
-    requestFuncMap_[RadioEvent::RADIO_AVAIL] = &CellularCallHandler::GetCsCallData;
-    requestFuncMap_[RadioEvent::RADIO_NOT_AVAIL] = &CellularCallHandler::GetCsCallData;
-    requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] = &CellularCallHandler::UssdNotifyResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] = &CellularCallHandler::CallRingBackVoiceResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_SRVCC_STATUS] = &CellularCallHandler::UpdateSrvccStateReport;
-    requestFuncMap_[RadioEvent::RADIO_CALL_SS_NOTICE] = &CellularCallHandler::SsNotifyResponse;
-    requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] = &CellularCallHandler::ReportEccChanged;
-    requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] = &CellularCallHandler::SimStateChangeReport;
-    requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] = &CellularCallHandler::SimRecordsLoadedReport;
-    requestFuncMap_[RadioEvent::RADIO_SIM_ACCOUNT_LOADED] = &CellularCallHandler::SimAccountLoadedReport;
-    requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] = &CellularCallHandler::UpdateRsrvccStateReport;
-    requestFuncMap_[RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE] = &CellularCallHandler::ResidentNetworkChangeReport;
-    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_ATTACHED] = &CellularCallHandler::NetworkStateChangeReport;
-    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] = &CellularCallHandler::NetworkStateChangeReport;
-    requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] = &CellularCallHandler::OnRilAdapterHostDied;
-    requestFuncMap_[RadioEvent::RADIO_FACTORY_RESET] = &CellularCallHandler::FactoryReset;
-    requestFuncMap_[RadioEvent::RADIO_NV_REFRESH_FINISHED] = &CellularCallHandler::NvCfgFinishedIndication;
+    requestFuncMap_[RadioEvent::RADIO_CALL_STATUS_INFO] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CsCallStatusInfoReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_IMS_CALL_STATUS_INFO] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ImsCallStatusInfoReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_AVAIL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCsCallData(event); };
+    requestFuncMap_[RadioEvent::RADIO_NOT_AVAIL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCsCallData(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_USSD_NOTICE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { UssdNotifyResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_RINGBACK_VOICE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CallRingBackVoiceResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_SRVCC_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { UpdateSrvccStateReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_SS_NOTICE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SsNotifyResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_EMERGENCY_NUMBER_REPORT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ReportEccChanged(event); };
+    requestFuncMap_[RadioEvent::RADIO_SIM_STATE_CHANGE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SimStateChangeReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_SIM_RECORDS_LOADED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SimRecordsLoadedReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_SIM_ACCOUNT_LOADED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SimAccountLoadedReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_CALL_RSRVCC_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { UpdateRsrvccStateReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ResidentNetworkChangeReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_ATTACHED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { NetworkStateChangeReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { NetworkStateChangeReport(event); };
+    requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { OnRilAdapterHostDied(event); };
+    requestFuncMap_[RadioEvent::RADIO_FACTORY_RESET] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { FactoryReset(event); };
+    requestFuncMap_[RadioEvent::RADIO_NV_REFRESH_FINISHED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { NvCfgFinishedIndication(event); };
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    requestFuncMap_[RadioEvent::RADIO_GET_STATUS] = &CellularCallHandler::GetRadioStateProcess;
-    requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] = &CellularCallHandler::RadioStateChangeProcess;
+    requestFuncMap_[RadioEvent::RADIO_GET_STATUS] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetRadioStateProcess(event); };
+    requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { RadioStateChangeProcess(event); };
 #endif
 }
 
 void CellularCallHandler::InitSatelliteCallFuncMap()
 {
     requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_CALL_STATE_CHANGED] =
-        &CellularCallHandler::SatelliteCallStatusInfoReport;
-    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_DIAL] = &CellularCallHandler::DialSatelliteResponse;
-    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_HANGUP] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_ANSWER] = &CellularCallHandler::CommonResultResponse;
-    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_REJECT] = &CellularCallHandler::CommonResultResponse;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { SatelliteCallStatusInfoReport(event); };
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_DIAL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { DialSatelliteResponse(event); };
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_HANGUP] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_ANSWER] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
+    requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_REJECT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { CommonResultResponse(event); };
     requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_GET_CALL_DATA] =
-        &CellularCallHandler::GetSatelliteCallsDataResponse;
-    requestFuncMap_[GET_SATELLITE_CALL_DATA_ID] = &CellularCallHandler::GetSatelliteCallsDataRequest;
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetSatelliteCallsDataResponse(event); };
+    requestFuncMap_[GET_SATELLITE_CALL_DATA_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetSatelliteCallsDataRequest(event); };
+}
+
+void CellularCallHandler::InitAdditionalFuncMap()
+{
+    requestFuncMap_[GET_CS_CALL_DATA_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetCsCallsDataRequest(event); };
+    requestFuncMap_[GET_IMS_CALL_DATA_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetImsCallsDataRequest(event); };
+    requestFuncMap_[REGISTER_HANDLER_ID] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { RegisterHandler(event); };
+    requestFuncMap_[MMIHandlerId::EVENT_MMI_Id] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetMMIResponse(event); };
+    requestFuncMap_[DtmfHandlerId::EVENT_EXECUTE_POST_DIAL] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ExecutePostDial(event); };
 }
 
 void CellularCallHandler::RegisterImsCallCallbackHandler()
@@ -196,7 +277,7 @@ void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &ev
     if (itFunc != requestFuncMap_.end()) {
         auto requestFunc = itFunc->second;
         if (requestFunc != nullptr) {
-            return (this->*requestFunc)(event);
+            return requestFunc(event);
         }
     }
     TELEPHONY_LOGI("[slot%{public}d] Function not found, need check.", slotId_);

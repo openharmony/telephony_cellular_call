@@ -50,7 +50,7 @@ int32_t CellularCallStub::OnRemoteRequest(
         }
         auto requestFunc = itFunc->second;
         if (requestFunc != nullptr) {
-            return (this->*requestFunc)(data, reply);
+            return requestFunc(data, reply);
         }
     }
     TELEPHONY_LOGI("CellularCallStub::OnRemoteRequest, default case, need check.");
@@ -80,85 +80,138 @@ void CellularCallStub::InitFuncMap()
 
 void CellularCallStub::InitDialFuncMap()
 {
-    requestFuncMap_[CellularCallInterfaceCode::DIAL] = &CellularCallStub::OnDialInner;
-    requestFuncMap_[CellularCallInterfaceCode::HANG_UP] = &CellularCallStub::OnHangUpInner;
-    requestFuncMap_[CellularCallInterfaceCode::REJECT] = &CellularCallStub::OnRejectInner;
-    requestFuncMap_[CellularCallInterfaceCode::ANSWER] = &CellularCallStub::OnAnswerInner;
-    requestFuncMap_[CellularCallInterfaceCode::EMERGENCY_CALL] = &CellularCallStub::OnIsEmergencyPhoneNumberInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_EMERGENCY_CALL_LIST] = &CellularCallStub::OnSetEmergencyCallList;
-    requestFuncMap_[CellularCallInterfaceCode::HOLD_CALL] = &CellularCallStub::OnHoldCallInner;
-    requestFuncMap_[CellularCallInterfaceCode::UN_HOLD_CALL] = &CellularCallStub::OnUnHoldCallInner;
-    requestFuncMap_[CellularCallInterfaceCode::SWITCH_CALL] = &CellularCallStub::OnSwitchCallInner;
-    requestFuncMap_[CellularCallInterfaceCode::COMBINE_CONFERENCE] = &CellularCallStub::OnCombineConferenceInner;
-    requestFuncMap_[CellularCallInterfaceCode::SEPARATE_CONFERENCE] = &CellularCallStub::OnSeparateConferenceInner;
-    requestFuncMap_[CellularCallInterfaceCode::INVITE_TO_CONFERENCE] = &CellularCallStub::OnInviteToConferenceInner;
-    requestFuncMap_[CellularCallInterfaceCode::KICK_OUT_CONFERENCE] = &CellularCallStub::OnKickOutFromConferenceInner;
-    requestFuncMap_[CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION] = &CellularCallStub::OnHangUpAllConnectionInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_READY_TO_CALL] = &CellularCallStub::OnSetReadyToCallInner;
-    requestFuncMap_[CellularCallInterfaceCode::CLEAR_ALL_CALLS] = &CellularCallStub::OnClearAllCallsInner;
+    requestFuncMap_[CellularCallInterfaceCode::DIAL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnDialInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::HANG_UP] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHangUpInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::REJECT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRejectInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::ANSWER] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnAnswerInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::EMERGENCY_CALL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnIsEmergencyPhoneNumberInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_EMERGENCY_CALL_LIST] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetEmergencyCallList(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::HOLD_CALL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHoldCallInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::UN_HOLD_CALL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUnHoldCallInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SWITCH_CALL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSwitchCallInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::COMBINE_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCombineConferenceInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SEPARATE_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSeparateConferenceInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::INVITE_TO_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnInviteToConferenceInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::KICK_OUT_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnKickOutFromConferenceInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::HANG_UP_ALL_CONNECTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHangUpAllConnectionInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_READY_TO_CALL] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetReadyToCallInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::CLEAR_ALL_CALLS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnClearAllCallsInner(data, reply); };
 }
 
 void CellularCallStub::InitDtmfFuncMap()
 {
-    requestFuncMap_[CellularCallInterfaceCode::START_DTMF] = &CellularCallStub::OnStartDtmfInner;
-    requestFuncMap_[CellularCallInterfaceCode::STOP_DTMF] = &CellularCallStub::OnStopDtmfInner;
-    requestFuncMap_[CellularCallInterfaceCode::POST_DIAL_PROCEED] = &CellularCallStub::OnPostDialProceedInner;
-    requestFuncMap_[CellularCallInterfaceCode::SEND_DTMF] = &CellularCallStub::OnSendDtmfInner;
-    requestFuncMap_[CellularCallInterfaceCode::START_RTT] = &CellularCallStub::OnStartRttInner;
-    requestFuncMap_[CellularCallInterfaceCode::STOP_RTT] = &CellularCallStub::OnStopRttInner;
+    requestFuncMap_[CellularCallInterfaceCode::START_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStartDtmfInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::STOP_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStopDtmfInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::POST_DIAL_PROCEED] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnPostDialProceedInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SEND_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSendDtmfInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::START_RTT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStartRttInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::STOP_RTT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStopRttInner(data, reply); };
 }
 
 void CellularCallStub::InitConfigFuncMap()
 {
     requestFuncMap_[CellularCallInterfaceCode::SET_DOMAIN_PREFERENCE_MODE] =
-        &CellularCallStub::OnSetDomainPreferenceModeInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDomainPreferenceModeInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::GET_DOMAIN_PREFERENCE_MODE] =
-        &CellularCallStub::OnGetDomainPreferenceModeInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_SWITCH_STATUS] = &CellularCallStub::OnSetImsSwitchStatusInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_SWITCH_STATUS] = &CellularCallStub::OnGetImsSwitchStatusInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_VONR_SWITCH_STATUS] = &CellularCallStub::OnSetVoNRStateInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_VONR_SWITCH_STATUS] = &CellularCallStub::OnGetVoNRStateInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_CONFIG_STRING] = &CellularCallStub::OnSetImsConfigStringInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_CONFIG_INT] = &CellularCallStub::OnSetImsConfigIntInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_CONFIG] = &CellularCallStub::OnGetImsConfigInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_FEATURE] = &CellularCallStub::OnSetImsFeatureValueInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_FEATURE] = &CellularCallStub::OnGetImsFeatureValueInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_MUTE] = &CellularCallStub::OnSetMuteInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_MUTE] = &CellularCallStub::OnGetMuteInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetDomainPreferenceModeInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsSwitchStatusInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsSwitchStatusInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_VONR_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetVoNRStateInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_VONR_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetVoNRStateInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_CONFIG_STRING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsConfigStringInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_CONFIG_INT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsConfigIntInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_CONFIG] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsConfigInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_IMS_FEATURE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsFeatureValueInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_IMS_FEATURE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsFeatureValueInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_MUTE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetMuteInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_MUTE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetMuteInner(data, reply); };
 }
 
 void CellularCallStub::InitVideoFuncMap()
 {
-    requestFuncMap_[CellularCallInterfaceCode::CTRL_CAMERA] = &CellularCallStub::OnControlCameraInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_PREVIEW_WINDOW] = &CellularCallStub::OnSetPreviewWindowInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_DISPLAY_WINDOW] = &CellularCallStub::OnSetDisplayWindowInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_CAMERA_ZOOM] = &CellularCallStub::OnSetCameraZoomInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_PAUSE_IMAGE] = &CellularCallStub::OnSetPausePictureInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_DEVICE_DIRECTION] = &CellularCallStub::OnSetDeviceDirectionInner;
+    requestFuncMap_[CellularCallInterfaceCode::CTRL_CAMERA] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnControlCameraInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_PREVIEW_WINDOW] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetPreviewWindowInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_DISPLAY_WINDOW] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDisplayWindowInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_CAMERA_ZOOM] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCameraZoomInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_PAUSE_IMAGE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetPausePictureInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_DEVICE_DIRECTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDeviceDirectionInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::SEND_CALL_MEDIA_MODE_REQUEST] =
-        &CellularCallStub::OnSendUpdateCallMediaModeRequestInner;
+        [this](MessageParcel &data, MessageParcel &reply) {
+            return OnSendUpdateCallMediaModeRequestInner(data, reply);
+        };
     requestFuncMap_[CellularCallInterfaceCode::SEND_CALL_MEDIA_MODE_RESPONSE] =
-        &CellularCallStub::OnSendUpdateCallMediaModeResponseInner;
-    requestFuncMap_[CellularCallInterfaceCode::CANCEL_CALL_UPGRADE] = &CellularCallStub::OnCancelCallUpgradeInner;
+        [this](MessageParcel &data, MessageParcel &reply) {
+            return OnSendUpdateCallMediaModeResponseInner(data, reply);
+        };
+    requestFuncMap_[CellularCallInterfaceCode::CANCEL_CALL_UPGRADE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCancelCallUpgradeInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::REQUEST_CAMERA_CAPABILITY] =
-        &CellularCallStub::OnRequestCameraCapabilitiesInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRequestCameraCapabilitiesInner(data, reply); };
 }
 
 void CellularCallStub::InitSupplementFuncMap()
 {
-    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_TRANSFER] = &CellularCallStub::OnSetCallTransferInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_TRANSFER] = &CellularCallStub::OnGetCallTransferInner;
+    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_TRANSFER] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallTransferInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_TRANSFER] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallTransferInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::CAN_SET_CALL_TRANSFER_TIME] =
-        &CellularCallStub::OnCanSetCallTransferTimeInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_WAITING] = &CellularCallStub::OnSetCallWaitingInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_WAITING] = &CellularCallStub::OnGetCallWaitingInner;
-    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_RESTRICTION] = &CellularCallStub::OnSetCallRestrictionInner;
-    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_RESTRICTION] = &CellularCallStub::OnGetCallRestrictionInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCanSetCallTransferTimeInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_WAITING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallWaitingInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_WAITING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallWaitingInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SET_CALL_RESTRICTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallRestrictionInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_CALL_RESTRICTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallRestrictionInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::SET_CALL_RESTRICTION_PWD] =
-        &CellularCallStub::OnSetCallRestrictionPasswordInner;
-    requestFuncMap_[CellularCallInterfaceCode::REGISTER_CALLBACK] = &CellularCallStub::OnRegisterCallBackInner;
-    requestFuncMap_[CellularCallInterfaceCode::UNREGISTER_CALLBACK] = &CellularCallStub::OnUnRegisterCallBackInner;
-    requestFuncMap_[CellularCallInterfaceCode::CLOSE_UNFINISHED_USSD] = &CellularCallStub::OnCloseUnFinishedUssdInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallRestrictionPasswordInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::REGISTER_CALLBACK] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRegisterCallBackInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::UNREGISTER_CALLBACK] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUnRegisterCallBackInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::CLOSE_UNFINISHED_USSD] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCloseUnFinishedUssdInner(data, reply); };
 }
 
 int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)

@@ -38,74 +38,110 @@ void ImsCallStub::InitFuncMap()
 
 void ImsCallStub::InitDialFuncMap()
 {
-    memberFuncMap_[IMS_DIAL] = &ImsCallStub::OnDial;
-    memberFuncMap_[IMS_HANG_UP] = &ImsCallStub::OnHangUp;
-    memberFuncMap_[IMS_REJECT_WITH_REASON] = &ImsCallStub::OnRejectWithReason;
-    memberFuncMap_[IMS_ANSWER] = &ImsCallStub::OnAnswer;
-    memberFuncMap_[IMS_HOLD] = &ImsCallStub::OnHoldCall;
-    memberFuncMap_[IMS_UN_HOLD] = &ImsCallStub::OnUnHoldCall;
-    memberFuncMap_[IMS_SWITCH] = &ImsCallStub::OnSwitchCall;
-    memberFuncMap_[IMS_COMBINE_CONFERENCE] = &ImsCallStub::OnCombineConference;
-    memberFuncMap_[IMS_INVITE_TO_CONFERENCE] = &ImsCallStub::OnInviteToConference;
-    memberFuncMap_[IMS_KICK_OUT_CONFERENCE] = &ImsCallStub::OnKickOutFromConference;
-    memberFuncMap_[IMS_UPDATE_CALL_MEDIA_MODE] = &ImsCallStub::OnUpdateImsCallMode;
-    memberFuncMap_[IMS_GET_CALL_DATA] = &ImsCallStub::OnGetImsCallsDataRequest;
-    memberFuncMap_[IMS_GET_LAST_CALL_FAIL_REASON] = &ImsCallStub::OnGetLastCallFailReason;
+    memberFuncMap_[IMS_DIAL] = [this](MessageParcel &data, MessageParcel &reply) { return OnDial(data, reply); };
+    memberFuncMap_[IMS_HANG_UP] = [this](MessageParcel &data, MessageParcel &reply) { return OnHangUp(data, reply); };
+    memberFuncMap_[IMS_REJECT_WITH_REASON] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRejectWithReason(data, reply); };
+    memberFuncMap_[IMS_ANSWER] = [this](MessageParcel &data, MessageParcel &reply) { return OnAnswer(data, reply); };
+    memberFuncMap_[IMS_HOLD] = [this](MessageParcel &data, MessageParcel &reply) { return OnHoldCall(data, reply); };
+    memberFuncMap_[IMS_UN_HOLD] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUnHoldCall(data, reply); };
+    memberFuncMap_[IMS_SWITCH] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSwitchCall(data, reply); };
+    memberFuncMap_[IMS_COMBINE_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCombineConference(data, reply); };
+    memberFuncMap_[IMS_INVITE_TO_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnInviteToConference(data, reply); };
+    memberFuncMap_[IMS_KICK_OUT_CONFERENCE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnKickOutFromConference(data, reply); };
+    memberFuncMap_[IMS_UPDATE_CALL_MEDIA_MODE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUpdateImsCallMode(data, reply); };
+    memberFuncMap_[IMS_GET_CALL_DATA] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsCallsDataRequest(data, reply); };
+    memberFuncMap_[IMS_GET_LAST_CALL_FAIL_REASON] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetLastCallFailReason(data, reply); };
 }
 
 void ImsCallStub::InitDtmfFuncMap()
 {
-    memberFuncMap_[IMS_START_DTMF] = &ImsCallStub::OnStartDtmf;
-    memberFuncMap_[IMS_SEND_DTMF] = &ImsCallStub::OnSendDtmf;
-    memberFuncMap_[IMS_STOP_DTMF] = &ImsCallStub::OnStopDtmf;
-    memberFuncMap_[IMS_START_RTT] = &ImsCallStub::OnStartRtt;
-    memberFuncMap_[IMS_STOP_RTT] = &ImsCallStub::OnStopRtt;
+    memberFuncMap_[IMS_START_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStartDtmf(data, reply); };
+    memberFuncMap_[IMS_SEND_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSendDtmf(data, reply); };
+    memberFuncMap_[IMS_STOP_DTMF] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStopDtmf(data, reply); };
+    memberFuncMap_[IMS_START_RTT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStartRtt(data, reply); };
+    memberFuncMap_[IMS_STOP_RTT] = [this](MessageParcel &data, MessageParcel &reply) { return OnStopRtt(data, reply); };
 }
 
 void ImsCallStub::InitConfigFuncMap()
 {
-    memberFuncMap_[IMS_SET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnSetDomainPreferenceMode;
-    memberFuncMap_[IMS_GET_DOMAIN_PREFERENCE_MODE] = &ImsCallStub::OnGetDomainPreferenceMode;
-    memberFuncMap_[IMS_SET_SWITCH_STATUS] = &ImsCallStub::OnSetImsSwitchStatus;
-    memberFuncMap_[IMS_GET_SWITCH_STATUS] = &ImsCallStub::OnGetImsSwitchStatus;
-    memberFuncMap_[IMS_SET_IMS_CONFIG_STRING] = &ImsCallStub::OnSetImsConfigString;
-    memberFuncMap_[IMS_SET_IMS_CONFIG_INT] = &ImsCallStub::OnSetImsConfigInt;
-    memberFuncMap_[IMS_GET_IMS_CONFIG] = &ImsCallStub::OnGetImsConfig;
-    memberFuncMap_[IMS_SET_IMS_FEATURE] = &ImsCallStub::OnSetImsFeatureValue;
-    memberFuncMap_[IMS_GET_IMS_FEATURE] = &ImsCallStub::OnGetImsFeatureValue;
-    memberFuncMap_[IMS_SET_MUTE] = &ImsCallStub::OnSetMute;
-    memberFuncMap_[IMS_GET_MUTE] = &ImsCallStub::OnGetMute;
-    memberFuncMap_[IMS_UPDATE_CAPABILITY] = &ImsCallStub::OnUpdateImsCapabilities;
+    memberFuncMap_[IMS_SET_DOMAIN_PREFERENCE_MODE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDomainPreferenceMode(data, reply); };
+    memberFuncMap_[IMS_GET_DOMAIN_PREFERENCE_MODE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetDomainPreferenceMode(data, reply); };
+    memberFuncMap_[IMS_SET_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsSwitchStatus(data, reply); };
+    memberFuncMap_[IMS_GET_SWITCH_STATUS] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsSwitchStatus(data, reply); };
+    memberFuncMap_[IMS_SET_IMS_CONFIG_STRING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsConfigString(data, reply); };
+    memberFuncMap_[IMS_SET_IMS_CONFIG_INT] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsConfigInt(data, reply); };
+    memberFuncMap_[IMS_GET_IMS_CONFIG] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsConfig(data, reply); };
+    memberFuncMap_[IMS_SET_IMS_FEATURE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsFeatureValue(data, reply); };
+    memberFuncMap_[IMS_GET_IMS_FEATURE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsFeatureValue(data, reply); };
+    memberFuncMap_[IMS_SET_MUTE] = [this](MessageParcel &data, MessageParcel &reply) { return OnSetMute(data, reply); };
+    memberFuncMap_[IMS_GET_MUTE] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetMute(data, reply); };
+    memberFuncMap_[IMS_UPDATE_CAPABILITY] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUpdateImsCapabilities(data, reply); };
 }
 
 void ImsCallStub::InitVideoFuncMap()
 {
-    memberFuncMap_[IMS_CTRL_CAMERA] = &ImsCallStub::OnCtrlCamera;
-    memberFuncMap_[IMS_SET_PREVIEW_WINDOW] = &ImsCallStub::OnSetPreviewWindow;
-    memberFuncMap_[IMS_SET_DISPLAY_WINDOW] = &ImsCallStub::OnSetDisplayWindow;
-    memberFuncMap_[IMS_SET_CAMERA_ZOOM] = &ImsCallStub::OnSetCameraZoom;
-    memberFuncMap_[IMS_SET_PAUSE_IMAGE] = &ImsCallStub::OnSetPauseImage;
-    memberFuncMap_[IMS_SET_DEVICE_DIRECTION] = &ImsCallStub::OnSetDeviceDirection;
+    memberFuncMap_[IMS_CTRL_CAMERA] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCtrlCamera(data, reply); };
+    memberFuncMap_[IMS_SET_PREVIEW_WINDOW] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetPreviewWindow(data, reply); };
+    memberFuncMap_[IMS_SET_DISPLAY_WINDOW] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDisplayWindow(data, reply); };
+    memberFuncMap_[IMS_SET_CAMERA_ZOOM] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCameraZoom(data, reply); };
+    memberFuncMap_[IMS_SET_PAUSE_IMAGE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetPauseImage(data, reply); };
+    memberFuncMap_[IMS_SET_DEVICE_DIRECTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetDeviceDirection(data, reply); };
 }
 
 void ImsCallStub::InitSupplementFuncMap()
 {
-    memberFuncMap_[IMS_SET_CLIP] = &ImsCallStub::OnGetClip;
-    memberFuncMap_[IMS_GET_CLIP] = &ImsCallStub::OnGetClip;
-    memberFuncMap_[IMS_SET_CLIR] = &ImsCallStub::OnSetClir;
-    memberFuncMap_[IMS_GET_CLIR] = &ImsCallStub::OnGetClir;
-    memberFuncMap_[IMS_SET_CALL_TRANSFER] = &ImsCallStub::OnSetCallTransfer;
-    memberFuncMap_[IMS_GET_CALL_TRANSFER] = &ImsCallStub::OnGetCallTransfer;
-    memberFuncMap_[IMS_SET_CALL_RESTRICTION] = &ImsCallStub::OnSetCallRestriction;
-    memberFuncMap_[IMS_GET_CALL_RESTRICTION] = &ImsCallStub::OnGetCallRestriction;
-    memberFuncMap_[IMS_SET_CALL_WAITING] = &ImsCallStub::OnSetCallWaiting;
-    memberFuncMap_[IMS_GET_CALL_WAITING] = &ImsCallStub::OnGetCallWaiting;
-    memberFuncMap_[IMS_SET_COLR] = &ImsCallStub::OnSetColr;
-    memberFuncMap_[IMS_GET_COLR] = &ImsCallStub::OnGetColr;
-    memberFuncMap_[IMS_SET_COLP] = &ImsCallStub::OnSetColp;
-    memberFuncMap_[IMS_GET_COLP] = &ImsCallStub::OnGetColp;
+    memberFuncMap_[IMS_SET_CLIP] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetClip(data, reply); };
+    memberFuncMap_[IMS_GET_CLIP] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetClip(data, reply); };
+    memberFuncMap_[IMS_SET_CLIR] = [this](MessageParcel &data, MessageParcel &reply) { return OnSetClir(data, reply); };
+    memberFuncMap_[IMS_GET_CLIR] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetClir(data, reply); };
+    memberFuncMap_[IMS_SET_CALL_TRANSFER] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallTransfer(data, reply); };
+    memberFuncMap_[IMS_GET_CALL_TRANSFER] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallTransfer(data, reply); };
+    memberFuncMap_[IMS_SET_CALL_RESTRICTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallRestriction(data, reply); };
+    memberFuncMap_[IMS_GET_CALL_RESTRICTION] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallRestriction(data, reply); };
+    memberFuncMap_[IMS_SET_CALL_WAITING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallWaiting(data, reply); };
+    memberFuncMap_[IMS_GET_CALL_WAITING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallWaiting(data, reply); };
+    memberFuncMap_[IMS_SET_COLR] = [this](MessageParcel &data, MessageParcel &reply) { return OnSetColr(data, reply); };
+    memberFuncMap_[IMS_GET_COLR] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetColr(data, reply); };
+    memberFuncMap_[IMS_SET_COLP] = [this](MessageParcel &data, MessageParcel &reply) { return OnSetColp(data, reply); };
+    memberFuncMap_[IMS_GET_COLP] = [this](MessageParcel &data, MessageParcel &reply) { return OnGetColp(data, reply); };
 
-    memberFuncMap_[IMS_CALL_REGISTER_CALLBACK] = &ImsCallStub::OnRegisterImsCallCallback;
+    memberFuncMap_[IMS_CALL_REGISTER_CALLBACK] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRegisterImsCallCallback(data, reply); };
 }
 
 int32_t ImsCallStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option)
@@ -121,7 +157,7 @@ int32_t ImsCallStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Message
     if (itFunction != memberFuncMap_.end()) {
         auto memberFunc = itFunction->second;
         if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
+            return memberFunc(data, reply);
         }
     }
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);

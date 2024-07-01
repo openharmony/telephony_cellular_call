@@ -225,6 +225,7 @@ private:
     void InitSupplementFuncMap();
     void InitActiveReportFuncMap();
     void InitSatelliteCallFuncMap();
+    void InitAdditionalFuncMap();
 
     void ReportCsCallsData(const CallInfoList &callInfoList);
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
@@ -257,7 +258,7 @@ private:
 private:
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
     int64_t lastCallsDataFlag_ = 0L;
-    using RequestFuncType = void (CellularCallHandler::*)(const AppExecFwk::InnerEvent::Pointer &event);
+    using RequestFuncType = std::function<void(const AppExecFwk::InnerEvent::Pointer &event)>;
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
     bool isInCsRedial_ = false;

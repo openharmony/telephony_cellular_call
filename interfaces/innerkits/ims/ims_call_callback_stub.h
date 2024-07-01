@@ -150,7 +150,7 @@ private:
     int32_t SendEvent(int32_t slotId, int32_t eventId, const ImsCallModeReceiveInfo &callModeInfo);
 
 private:
-    using RequestFuncType = int32_t (ImsCallCallbackStub::*)(MessageParcel &data, MessageParcel &reply);
+    using RequestFuncType = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
 };
 } // namespace Telephony
