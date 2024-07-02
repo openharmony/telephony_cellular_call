@@ -64,7 +64,10 @@
             "inner_kits": [
                 {
                     "header": {
-                        "header_base" : "//base/telephony/cellular_call/interfaces/innerkits/ims",
+                        "header_base" : [
+                            "//base/telephony/cellular_call/interfaces/innerkits/ims",
+                            "//base/telephony/cellular_call/interfaces/innerkits/ims_common"
+                        ],
                         "header_files": []
                     },
                     "name":"//base/telephony/cellular_call/interfaces/innerkits/ims:tel_ims_call_api"

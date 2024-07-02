@@ -29,6 +29,7 @@ ohos_fuzztest("ImsCallbackFuzzTest") {
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/connection/include",
+    "${CELLULAR_CALL_PATH}/services/utils/include",
   ]
 
   deps = [
