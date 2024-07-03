@@ -318,7 +318,7 @@ void KickOutFromConference(const uint8_t *data, size_t size)
 
 void doFuzzCellularCallService_1(const uint8_t *data, size_t size)
 {
-    auto cellularCallService = DelayedSingleton<CallManagerService>::GetInstance();
+    auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
     uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(1, 20);
@@ -327,8 +327,10 @@ void doFuzzCellularCallService_1(const uint8_t *data, size_t size)
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
     MessageOption option;
-    MessageParcel dataParcel, replyParcel;
-    std::vector<uint8_t> subData = fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
+    MessageParcel dataParcel;
+    MessageParcel replyParcel;
+    std::vector<uint8_t> subData =
+        fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -336,7 +338,7 @@ void doFuzzCellularCallService_1(const uint8_t *data, size_t size)
 
 void doFuzzCellularCallService_2(const uint8_t *data, size_t size)
 {
-    auto cellularCallService = DelayedSingleton<CallManagerService>::GetInstance();
+    auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
     uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(100, 105);
@@ -345,8 +347,10 @@ void doFuzzCellularCallService_2(const uint8_t *data, size_t size)
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
     MessageOption option;
-    MessageParcel dataParcel, replyParcel;
-    std::vector<uint8_t> subData = fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
+    MessageParcel dataParcel;
+    MessageParcel replyParcel;
+    std::vector<uint8_t> subData =
+        fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -354,7 +358,7 @@ void doFuzzCellularCallService_2(const uint8_t *data, size_t size)
 
 void doFuzzCellularCallService_3(const uint8_t *data, size_t size)
 {
-    auto cellularCallService = DelayedSingleton<CallManagerService>::GetInstance();
+    auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
     uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(200, 208);
@@ -363,8 +367,10 @@ void doFuzzCellularCallService_3(const uint8_t *data, size_t size)
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
     MessageOption option;
-    MessageParcel dataParcel, replyParcel;
-    std::vector<uint8_t> subData = fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
+    MessageParcel dataParcel;
+    MessageParcel replyParcel;
+    std::vector<uint8_t> subData =
+        fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -372,7 +378,7 @@ void doFuzzCellularCallService_3(const uint8_t *data, size_t size)
 
 void doFuzzCellularCallService_4(const uint8_t *data, size_t size)
 {
-    auto cellularCallService = DelayedSingleton<CallManagerService>::GetInstance();
+    auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
     uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(300, 312);
@@ -381,8 +387,10 @@ void doFuzzCellularCallService_4(const uint8_t *data, size_t size)
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
     MessageOption option;
-    MessageParcel dataParcel, replyParcel;
-    std::vector<uint8_t> subData = fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
+    MessageParcel dataParcel;
+    MessageParcel replyParcel;
+    std::vector<uint8_t> subData =
+        fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -390,7 +398,7 @@ void doFuzzCellularCallService_4(const uint8_t *data, size_t size)
 
 void doFuzzCellularCallService_5(const uint8_t *data, size_t size)
 {
-    auto cellularCallService = DelayedSingleton<CallManagerService>::GetInstance();
+    auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
     uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(400, 407);
@@ -399,8 +407,10 @@ void doFuzzCellularCallService_5(const uint8_t *data, size_t size)
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
     MessageOption option;
-    MessageParcel dataParcel, replyParcel;
-    std::vector<uint8_t> subData = fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
+    MessageParcel dataParcel;
+    MessageParcel replyParcel;
+    std::vector<uint8_t> subData =
+        fdp.ConsumeBytes<uint8_t>(fdp.ConsumeIntegralInRange<size_t>(0, fdp.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
