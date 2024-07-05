@@ -36,6 +36,9 @@
 #include "securec.h"
 #include "cellular_call_hisysevent.h"
 #include "standardize_utils.h"
+#include "cellular_call_rdb_helper.h"
+#include "cellular_call_dump_helper.h"
+#include "emergency_utils.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -1333,6 +1336,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplementRequestIms_001, Function | 
     SRequestIms.GetClirRequest(SIM1_SLOTID, 0);
     SRequestIms.GetCallTransferRequest(SIM1_SLOTID, 0, 0);
     SRequestIms.SetCallTransferRequest(SIM1_SLOTID, CTransferInfo, ACTIVATE_ACTION, 0);
+    bool enable = false;
+    SRequestIms.CanSetCallTransferTime(SIM1_SLOTID, enable);
     SRequestIms.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0);
     std::string pw = "";
     SRequestIms.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0);
@@ -1488,8 +1493,28 @@ HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | 
 {
     SupplementRequestCs supplementRequestCs;
     std::string msg = "11111";
+    std::string fac = "";
+    std::string pw = "";
+    std::string oldPin = "123456";
+    std::string newPin = "789101";
+    std::string puk = "22222";
+    CallTransferParam callTransferParam;
     supplementRequestCs.SendUssdRequest(SIM1_SLOTID, msg);
     supplementRequestCs.CloseUnFinishedUssdRequest(SIM1_SLOTID);
+    supplementRequestCs.SetClirRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0);
+    supplementRequestCs.GetClipRequest(SIM1_SLOTID, 0);
+    supplementRequestCs.GetClirRequest(SIM1_SLOTID, 0);
+    supplementRequestCs.SetCallTransferRequest(SIM1_SLOTID, callTransferParam, 0);
+    supplementRequestCs.GetCallTransferRequest(SIM1_SLOTID, 0, 0);
+    supplementRequestCs.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0);
+    supplementRequestCs.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0);
+    supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str());
+    supplementRequestCs.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0);
+    supplementRequestCs.GetCallWaitingRequest(SIM1_SLOTID, 0);
+    supplementRequestCs.AlterPinPassword(SIM1_SLOTID, newPin, oldPin);
+    supplementRequestCs.UnlockPuk(SIM1_SLOTID, newPin, puk);
+    supplementRequestCs.AlterPin2Password(SIM1_SLOTID, newPin, oldPin);
+    supplementRequestCs.UnlockPuk2(SIM1_SLOTID, newPin, puk);
 }
 
 /**
@@ -1531,5 +1556,47 @@ HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
     mmiCodeUtils.mmiData_.dialString = "11111#";
     mmiCodeUtils.RegexMatchMmi("111111#");
 }
+
+/**
+ * @tc.number	Telephony_CellularCallRdbHelper_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallRdbHelper_001, Function | MediumTest | Level3)
+{
+    std::u16string u16Hplmn = u"";
+    CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
+    std::string hplmn = Str16ToStr8(u16Hplmn);
+    std::vector<EccNum> eccVec;
+    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
+}
+
+/**
+ * @tc.number	Telephony_CellularCallDumpHelper_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallDumpHelper_001, Function | MediumTest | Level3)
+{
+    CellularCallDumpHelper cellularCallDumpHelper;
+    std::vector<std::string> args = { "123456", "234567" };
+    std::string result;
+    cellularCallDumpHelper.WhetherHasSimCard(SIM1_SLOTID);
+    cellularCallDumpHelper.Dump(args, result);
+}
+
+/**
+ * @tc.number	Telephony_EmergencyUtils_001
+ * @tc.name 	Test error branch
+ * @tc.desc 	Function test
+ */
+HWTEST_F(BranchTest, Telephony_EmergencyUtils_001, Function | MediumTest | Level3)
+{
+    EmergencyUtils emergencyUtils;
+    std::string phoneNum = "1234567";
+    bool enabled = false;
+    emergencyUtils.IsEmergencyCall(SIM1_SLOTID, phoneNum, enabled);
+}
+
 } // namespace Telephony
 } // namespace OHOS

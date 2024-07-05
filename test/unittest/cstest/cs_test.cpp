@@ -1376,6 +1376,16 @@ HWTEST_F(CsTest, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | 
     bool airplaneModeOn = false;
     moduleServiceUtils.GetCsRegState(SIM1_SLOTID);
     moduleServiceUtils.GetPsRegState(SIM1_SLOTID);
+    moduleServiceUtils.GetRadioState(SIM1_SLOTID);
+    moduleServiceUtils.GetNetworkStatus(SIM1_SLOTID);
+    moduleServiceUtils.GetIsoCountryCode(SIM1_SLOTID);
+    moduleServiceUtils.GetNetworkCountryCode(SIM1_SLOTID);
+    moduleServiceUtils.GetImsRegistrationState(SIM1_SLOTID);
+    moduleServiceUtils.GetImsUtSupportState(SIM1_SLOTID);
+    moduleServiceUtils.GetSatelliteStatus();
+    moduleServiceUtils.GetSlotInfo();
+    moduleServiceUtils.NeedCallImsService();
+    moduleServiceUtils.GetImsServiceRemoteObject();
     EXPECT_NE(moduleServiceUtils.GetAirplaneMode(airplaneModeOn), TELEPHONY_SUCCESS);
     EXPECT_NE(moduleServiceUtils.UpdateRadioOn(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
