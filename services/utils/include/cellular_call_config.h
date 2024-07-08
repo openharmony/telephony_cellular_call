@@ -27,6 +27,7 @@
 
 namespace OHOS {
 namespace Telephony {
+constexpr const char *KEY_CONST_TELEPHONY_IGNORE_THIRD_PARTY_LIB = "const.telephony.ignore_third_party_lib";
 class CellularCallConfig {
 public:
     /**
@@ -419,6 +420,8 @@ public:
      * @param needUpdateUtCapability update ut capability or not
      */
     void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
+
+    bool IsIgnoreThirdParyLib();
 
 private:
     static void InitDefaultOperatorConfig();
