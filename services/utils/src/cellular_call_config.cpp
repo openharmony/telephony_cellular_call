@@ -1051,5 +1051,14 @@ bool CellularCallConfig::IsReadyToCall(int32_t slotId)
     }
     return readyToCall_[slotId];
 }
+
+bool CellularCallConfig::IsIgnoreThirdParyLib()
+{
+    std::string ignoreThirdParty = system::GetParameter(KEY_CONST_TELEPHONY_IGNORE_THIRD_PARTY_LIB, "");
+    if (ignoreThirdParty.compare("true") == 0) {
+        return true;
+    }
+    return false;
+}
 } // namespace Telephony
 } // namespace OHOS
