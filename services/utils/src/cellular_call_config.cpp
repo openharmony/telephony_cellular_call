@@ -287,7 +287,8 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
         roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
     ModuleServiceUtils moduleUtils;
-    bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
+    bool isNetworkInService =  (moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE)
+        ||(moduleUtils.GetCsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE);
     bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
     std::vector<EccNum> eccVec;
     bool isSimPresent = false;
