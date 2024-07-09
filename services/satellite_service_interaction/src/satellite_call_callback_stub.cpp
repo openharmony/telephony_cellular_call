@@ -44,17 +44,17 @@ void SatelliteCallCallbackStub::InitCallBasicFuncMap()
 {
     /****************** call basic ******************/
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_DIAL)] =
-        &SatelliteCallCallbackStub::OnDialResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnDialResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_HANG_UP)] =
-        &SatelliteCallCallbackStub::OnHangUpResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHangUpResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_REJECT)] =
-        &SatelliteCallCallbackStub::OnRejectResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRejectResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_ANSWER)] =
-        &SatelliteCallCallbackStub::OnAnswerResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnAnswerResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_CALL_STATE_CHANGE)] =
-        &SatelliteCallCallbackStub::OnCallStateChangeReportInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCallStateChangeReportInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(SatelliteCallCallbackInterfaceCode::SATELLITE_GET_CALLS_DATA)] =
-        &SatelliteCallCallbackStub::OnGetSatelliteCallsDataResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetSatelliteCallsDataResponseInner(data, reply); };
 }
 
 SatelliteCallCallbackStub::~SatelliteCallCallbackStub()
@@ -75,7 +75,7 @@ int32_t SatelliteCallCallbackStub::OnRemoteRequest(
     if (itFunc != requestFuncMap_.end()) {
         auto requestFunc = itFunc->second;
         if (requestFunc != nullptr) {
-            return (this->*requestFunc)(data, reply);
+            return requestFunc(data, reply);
         }
     }
     TELEPHONY_LOGI("Function not found, need check.");

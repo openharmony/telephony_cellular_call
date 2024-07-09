@@ -47,97 +47,101 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
 {
     /****************** call basic ******************/
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_DIAL)] =
-        &ImsCallCallbackStub::OnDialResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnDialResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_HANG_UP)] =
-        &ImsCallCallbackStub::OnHangUpResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHangUpResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_REJECT)] =
-        &ImsCallCallbackStub::OnRejectResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnRejectResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_ANSWER)] =
-        &ImsCallCallbackStub::OnAnswerResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnAnswerResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_HOLD)] =
-        &ImsCallCallbackStub::OnHoldCallResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnHoldCallResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_UN_HOLD)] =
-        &ImsCallCallbackStub::OnUnHoldCallResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnUnHoldCallResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SWITCH)] =
-        &ImsCallCallbackStub::OnSwitchCallResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSwitchCallResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_STATE_CHANGE)] =
-        &ImsCallCallbackStub::OnCallStateChangeReportInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCallStateChangeReportInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_LAST_CALL_FAIL_REASON)] =
-        &ImsCallCallbackStub::OnLastCallFailReasonResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnLastCallFailReasonResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CRING)] =
-        &ImsCallCallbackStub::OnCallRingBackReportInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCallRingBackReportInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_COMBINE_CONFERENCE)] =
-        &ImsCallCallbackStub::OnCombineConferenceResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCombineConferenceResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_INVITE_TO_CONFERENCE)] =
-        &ImsCallCallbackStub::OnInviteToConferenceResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnInviteToConferenceResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_REQUEST)] =
-        &ImsCallCallbackStub::OnReceiveUpdateCallMediaModeRequestInner;
+        [this](MessageParcel &data, MessageParcel &reply) {
+            return OnReceiveUpdateCallMediaModeRequestInner(data, reply);
+        };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_RECV_CALL_MEDIA_MODE_RESPONSE)] =
-        &ImsCallCallbackStub::OnReceiveUpdateCallMediaModeResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) {
+            return OnReceiveUpdateCallMediaModeResponseInner(data, reply);
+        };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_SESSION_EVENT_CHANGED)] =
-        &ImsCallCallbackStub::OnCallSessionEventChangedInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCallSessionEventChangedInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_PEER_DIMENSIONS_CHANGED)] =
-        &ImsCallCallbackStub::OnPeerDimensionsChangedInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnPeerDimensionsChangedInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_DATA_USAGE_CHANGED)] =
-        &ImsCallCallbackStub::OnCallDataUsageChangedInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCallDataUsageChangedInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CAMERA_CAPABILITIES_CHANGED)] =
-        &ImsCallCallbackStub::OnCameraCapabilitiesChangedInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnCameraCapabilitiesChangedInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_NV_CONFIG_REFRESHED)] =
-        &ImsCallCallbackStub::OnNvCfgFinishedInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnNvCfgFinishedInner(data, reply); };
 }
 
 void ImsCallCallbackStub::InitConfigFuncMap()
 {
     /****************** dtmf rtt ******************/
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF)] =
-        &ImsCallCallbackStub::OnStartDtmfResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStartDtmfResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SEND_DTMF)] =
-        &ImsCallCallbackStub::OnSendDtmfResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSendDtmfResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_STOP_DTMF)] =
-        &ImsCallCallbackStub::OnStopDtmfResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnStopDtmfResponseInner(data, reply); };
 
     /****************** ims config ******************/
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_SWITCH_STATUS)] =
-        &ImsCallCallbackStub::OnSetImsSwitchResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsSwitchResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_SWITCH_STATUS)] =
-        &ImsCallCallbackStub::OnGetImsSwitchResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsSwitchResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA)] =
-        &ImsCallCallbackStub::OnGetImsCallsDataResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsCallsDataResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_MUTE)] =
-        &ImsCallCallbackStub::OnSetMuteResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetMuteResponseInner(data, reply); };
 }
 
 void ImsCallCallbackStub::InitSupplementFuncMap()
 {
     /****************** supplement ******************/
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIP)] =
-        &ImsCallCallbackStub::OnSetClipResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetClipResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIP)] =
-        &ImsCallCallbackStub::OnGetClipResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetClipResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_CLIR)] =
-        &ImsCallCallbackStub::OnGetClirResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetClirResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_CLIR)] =
-        &ImsCallCallbackStub::OnSetClirResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetClirResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_FORWARD)] =
-        &ImsCallCallbackStub::OnGetCallTransferResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallTransferResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_FORWARD)] =
-        &ImsCallCallbackStub::OnSetCallTransferResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallTransferResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_RESTRICTION)] =
-        &ImsCallCallbackStub::OnGetCallRestrictionResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallRestrictionResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_RESTRICTION)] =
-        &ImsCallCallbackStub::OnSetCallRestrictionResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallRestrictionResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_WAIT)] =
-        &ImsCallCallbackStub::OnGetCallWaitingResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCallWaitingResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_WAIT)] =
-        &ImsCallCallbackStub::OnSetCallWaitingResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetCallWaitingResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLR)] =
-        &ImsCallCallbackStub::OnGetColrResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetColrResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLR)] =
-        &ImsCallCallbackStub::OnSetColrResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetColrResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_CALL_COLP)] =
-        &ImsCallCallbackStub::OnSetColpResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSetColpResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALL_COLP)] =
-        &ImsCallCallbackStub::OnGetColpResponseInner;
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetColpResponseInner(data, reply); };
 }
 
 ImsCallCallbackStub::~ImsCallCallbackStub()
@@ -158,7 +162,7 @@ int32_t ImsCallCallbackStub::OnRemoteRequest(
     if (itFunc != requestFuncMap_.end()) {
         auto requestFunc = itFunc->second;
         if (requestFunc != nullptr) {
-            return (this->*requestFunc)(data, reply);
+            return requestFunc(data, reply);
         }
     }
     TELEPHONY_LOGI("Function not found, need check.");

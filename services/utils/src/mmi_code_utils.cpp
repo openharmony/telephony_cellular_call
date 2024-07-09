@@ -50,18 +50,41 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNee
     return false;
 }
 
-void InitMmiCodeFunc(std::map<std::uint64_t,
-    void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData)> &mmiCodeFunc)
+void InitCallTransferMmiCodeFunc(std::map<std::uint64_t,
+    std::function<void(CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData)>> &mmiCodeFunc)
 {
     /**
-     * "30" Processing caller ID
-     * "31" Processing calling number display
      * "21" Deal with unconditional transfer
      * "61" Handling no answer transfer
      * "62" Handling no signal transfer
      * "67" Deal with busy transfer
      * "002" Process all transfers
      * "004" Handle transfer under all conditions
+     */
+    mmiCodeFunc["21"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+    mmiCodeFunc["61"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+    mmiCodeFunc["62"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+    mmiCodeFunc["67"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+    mmiCodeFunc["002"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+    mmiCodeFunc["004"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallTransfer(slotId, mmiData);
+    };
+}
+
+void InitCallRestrictionCodeFunc(std::map<std::uint64_t,
+    std::function<void(CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData)>> &mmiCodeFunc)
+{
+    /**
      * "33" Processing limits all outgoing calls
      * "330" Processing all restrictions
      * "331" Processing limits all international calls
@@ -71,51 +94,91 @@ void InitMmiCodeFunc(std::map<std::uint64_t,
      * "35" Processing limits all incoming calls
      * "351" Handle all incoming calls when roaming is restricted
      * "353" Processing limits incoming calls
-     * "43" Handling call waiting
+     */
+    mmiCodeFunc["33"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["330"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["331"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["332"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["333"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["35"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["351"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+    mmiCodeFunc["353"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallRestriction(slotId, mmiData);
+    };
+}
+
+void InitAdditionalMmiCodeFunc(std::map<std::uint64_t,
+    std::function<void(CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData)>> &mmiCodeFunc)
+{
+    /**
+     * "30" Processing caller ID
+     * "31" Processing calling number display
      * "04" Change pin password
      * "05" Use puk unlock sim and change pin password
      * "042" Change pin2 password
      * "052" Use puk2 unlock sim and change pin2 password
+     * "43" Handling call waiting
      */
-    mmiCodeFunc["30"_hash] = &CellularCallSupplement::HandleClip;
-    mmiCodeFunc["31"_hash] = &CellularCallSupplement::HandleClir;
-    mmiCodeFunc["21"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["61"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["62"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["67"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["002"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["004"_hash] = &CellularCallSupplement::HandleCallTransfer;
-    mmiCodeFunc["33"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["330"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["331"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["332"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["333"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["35"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["351"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["353"_hash] = &CellularCallSupplement::HandleCallRestriction;
-    mmiCodeFunc["43"_hash] = &CellularCallSupplement::HandleCallWaiting;
-    mmiCodeFunc["04"_hash] = &CellularCallSupplement::AlterPinPassword;
-    mmiCodeFunc["05"_hash] = &CellularCallSupplement::UnlockPuk;
-    mmiCodeFunc["042"_hash] = &CellularCallSupplement::AlterPin2Password;
-    mmiCodeFunc["052"_hash] = &CellularCallSupplement::UnlockPuk2;
+    mmiCodeFunc["30"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleClip(slotId, mmiData);
+    };
+    mmiCodeFunc["31"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleClir(slotId, mmiData);
+    };
+    mmiCodeFunc["04"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->AlterPinPassword(slotId, mmiData);
+    };
+    mmiCodeFunc["05"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->UnlockPuk(slotId, mmiData);
+    };
+    mmiCodeFunc["042"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->AlterPin2Password(slotId, mmiData);
+    };
+    mmiCodeFunc["052"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->UnlockPuk2(slotId, mmiData);
+    };
+    mmiCodeFunc["43"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleCallWaiting(slotId, mmiData);
+    };
 }
 
-void InitImsMmiCodeFunc(
-    std::map<std::uint64_t, void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData)> &mmiCodeFunc)
+void InitImsMmiCodeFunc(std::map<std::uint64_t,
+    std::function<void(CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData)>> &mmiCodeFunc)
 {
     /**
      * "76" Connected line identification presentation
      * "77" Connected line identification restriction
      */
-    mmiCodeFunc["76"_hash] = &CellularCallSupplement::HandleColp;
-    mmiCodeFunc["77"_hash] = &CellularCallSupplement::HandleColr;
+    mmiCodeFunc["76"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleColp(slotId, mmiData);
+    };
+    mmiCodeFunc["77"_hash] = [](CellularCallSupplement *supplement, int32_t slotId, const MMIData &mmiData) {
+        supplement->HandleColr(slotId, mmiData);
+    };
 }
 
 bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 {
-    using MmiCodeFunc = void (CellularCallSupplement::*)(int32_t slotId, const MMIData &mmiData);
+    using MmiCodeFunc =
+        std::function<void(CellularCallSupplement * supplement, int32_t slotId, const MMIData &mmiData)>;
     std::map<std::uint64_t, MmiCodeFunc> mmiCodeFunc;
-    InitMmiCodeFunc(mmiCodeFunc);
+    InitCallTransferMmiCodeFunc(mmiCodeFunc);
+    InitCallRestrictionCodeFunc(mmiCodeFunc);
+    InitAdditionalMmiCodeFunc(mmiCodeFunc);
     if (isNeedUseIms_) {
         InitImsMmiCodeFunc(mmiCodeFunc);
     }
@@ -131,7 +194,7 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
         if (itFunc != mmiCodeFunc.end()) {
             auto func = itFunc->second;
             if (func != nullptr) {
-                (supplement.*func)(slotId, mmiData_);
+                func(&supplement, slotId, mmiData_);
                 return true;
             }
         }

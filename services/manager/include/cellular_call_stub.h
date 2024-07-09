@@ -534,7 +534,7 @@ private:
     int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
 private:
-    using RequestFuncType = int32_t (CellularCallStub::*)(MessageParcel &data, MessageParcel &reply);
+    using RequestFuncType = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     std::map<CellularCallInterfaceCode, RequestFuncType> requestFuncMap_;
     void InitFuncMap();
     void InitDialFuncMap();
