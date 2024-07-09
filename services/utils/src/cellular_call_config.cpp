@@ -287,7 +287,8 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
         roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
     ModuleServiceUtils moduleUtils;
-    bool isNetworkInService = moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE;
+    bool isNetworkInService =  (moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE)
+        ||(moduleUtils.GetCsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE);
     bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
     std::vector<EccNum> eccVec;
     bool isSimPresent = false;
@@ -1049,6 +1050,15 @@ bool CellularCallConfig::IsReadyToCall(int32_t slotId)
         return false;
     }
     return readyToCall_[slotId];
+}
+
+bool CellularCallConfig::IsIgnoreThirdParyLib()
+{
+    std::string ignoreThirdParty = system::GetParameter(KEY_CONST_TELEPHONY_IGNORE_THIRD_PARTY_LIB, "");
+    if (ignoreThirdParty.compare("true") == 0) {
+        return true;
+    }
+    return false;
 }
 } // namespace Telephony
 } // namespace OHOS
