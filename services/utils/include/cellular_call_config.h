@@ -421,7 +421,7 @@ public:
      */
     void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
 
-    bool needReadThirdParyLib();
+    bool NeedReadThirdParyLib();
 
 private:
     static void InitDefaultOperatorConfig();
