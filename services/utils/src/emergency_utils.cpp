@@ -68,7 +68,7 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
             }
         }
     }
-    if (!config.IsIgnoreThirdParyLib() && !countryIsoCode.empty()) {
+    if (config.NeedReadThirdParyLib() && !countryIsoCode.empty()) {
         TELEPHONY_LOGD("IsEmergencyCallProcessing countryIsoCode is not empty");
         i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
         transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
