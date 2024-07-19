@@ -261,11 +261,6 @@ public:
 
     void HandleNetworkStateChange(int32_t slotId);
 
-    /**
-     * HandleSimAccountLoaded
-     *
-     * @param slotId
-     */
     void HandleSimAccountLoaded(int32_t slotId);
 
     /**
@@ -452,6 +447,7 @@ private:
     void UpdateEccNumberList(int32_t slotId);
     void GetEccListFromResult(const std::vector<EccNum> &eccVec,
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
+    int32_t CheckHomeAndPresentState(int32_t slotId, bool &isHoamAndPresent);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
