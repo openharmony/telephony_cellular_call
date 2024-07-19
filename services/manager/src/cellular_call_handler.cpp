@@ -35,6 +35,7 @@ const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
 const uint32_t GET_SATELLITE_CALL_DATA_ID = 10005;
+const uint32_t NETWORK_STATE_CHANGED = 10006;
 const int64_t DELAY_TIME = 100;
 const int32_t MAX_REQUEST_COUNT = 50;
 // message was null, mean report the default message to user which have been define at CellularCallSupplement
@@ -195,9 +196,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { UpdateRsrvccStateReport(event); };
     requestFuncMap_[RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { ResidentNetworkChangeReport(event); };
-    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_ATTACHED] =
-        [this](const AppExecFwk::InnerEvent::Pointer &event) { NetworkStateChangeReport(event); };
-    requestFuncMap_[RadioEvent::RADIO_PS_CONNECTION_DETACHED] =
+    requestFuncMap_[NETWORK_STATE_CHANGED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { NetworkStateChangeReport(event); };
     requestFuncMap_[RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { OnRilAdapterHostDied(event); };
@@ -294,6 +293,13 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
             return;
         }
         this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, DELAY_TIME, Priority::HIGH);
+    }
+    if (action == EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED) {
+        int32_t slotId = want.GetIntParam(BROADCAST_ARG_SLOT_ID, DEFAULT_SIM_SLOT_ID);
+        if (slotId_ != slotId) {
+            return;
+        }
+        this->SendEvent(NETWORK_STATE_CHANGED, 0, Priority::HIGH);
     }
 }
 
