@@ -462,7 +462,6 @@ private:
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
     static std::map<int32_t, std::string> curPlmn_;
-    static std::map<int32_t, RegServiceState> serviceState_;
     std::mutex mutex_;
     std::mutex simStateLock_;
     static std::mutex operatorMutex_;
