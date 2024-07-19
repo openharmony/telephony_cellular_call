@@ -35,6 +35,7 @@ namespace Telephony {
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
+const int32_t SLOT_COUNT = 2;
 const int32_t INVALID_SLOTID = -1;
 const int32_t INVALID_HANG_UP_TYPE = -1;
 const int32_t RESULT = 1;
@@ -1761,6 +1762,38 @@ HWTEST_F(ImsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest
 }
 
 /**
+ * @tc.number   cellular_call_CellularCallRegister_0002
+ * @tc.name     Test for CellularCallRegister
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallRegister_0002, Function | MediumTest | Level3)
+{
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    ASSERT_TRUE(systemAbilityMgr != nullptr);
+    auto registerRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    ASSERT_TRUE(registerRemote != nullptr);
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    ASSERT_TRUE(callRegister != nullptr);
+    GetImsConfigResponse imsConfigResponse;
+    callRegister->ReportGetImsConfigResult(imsConfigResponse);
+    callRegister->ReportSetImsConfigResult(RESULT);
+    GetImsFeatureValueResponse imsFeatureValueResponse;
+    callRegister->ReportGetImsFeatureResult(imsFeatureValueResponse);
+    callRegister->ReportSetImsFeatureResult(RESULT);
+    ImsCallModeReceiveInfo callModeInfo;
+    callRegister->ReceiveUpdateCallMediaModeRequest(-1, callModeInfo);
+    callRegister->ReceiveUpdateCallMediaModeResponse(-1, callModeInfo);
+    ImsCallSessionEventInfo callSessionEventInfo;
+    callRegister->HandleCallSessionEventChanged(callSessionEventInfo);
+    ImsCallPeerDimensionsInfo callPeerDimensionsInfo;
+    callRegister->HandlePeerDimensionsChanged(callPeerDimensionsInfo);
+    ImsCallDataUsageInfo callDataUsageInfo;
+    callRegister->HandleCallDataUsageChanged(callDataUsageInfo);
+    CameraCapabilitiesInfo cameraCapabilitiesInfo;
+    callRegister->HandleCameraCapabilitiesChanged(cameraCapabilitiesInfo);
+}
+
+/**
  * @tc.number   cellular_call_CellularCallConfig_0001
  * @tc.name     Test for CellularCallConfig
  * @tc.desc     Function test
@@ -1865,6 +1898,67 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest 
         if (!HasSimCard(slotId)) {
             continue;
         }
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        handler.ReceiveUpdateCallMediaModeRequest(event);
+        handler.ReceiveUpdateCallMediaModeResponse(event);
+        handler.HandleCallSessionEventChanged(event);
+        handler.HandlePeerDimensionsChanged(event);
+        handler.HandleCallDataUsageChanged(event);
+        handler.HandleCameraCapabilitiesChanged(event);
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0003
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    for (int32_t slotId = 0; slotId < SLOT_COUNT; slotId++) {
+        handler.SetSlotId(slotId);
+        auto event = AppExecFwk::InnerEvent::Get(0);
+        handler.GetImsCallsDataResponse(event);
+        handler.GetImsCallsDataRequest(event);
+        auto rilRadioResponse = std::make_shared<RadioResponseInfo>();
+        rilRadioResponse->error = ErrType::ERR_GENERIC_FAILURE;
+        auto responseEvent = AppExecFwk::InnerEvent::Get(0, rilRadioResponse);
+        handler.SetDomainPreferenceModeResponse(responseEvent);
+        handler.GetDomainPreferenceModeResponse(event);
+        handler.SetDomainPreferenceModeResponse(event);
+        handler.SetVoNRSwitchStatusResponse(responseEvent);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
+        handler.OnRilAdapterHostDied(event);
+        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+        if (serviceInstance != nullptr) {
+            std::shared_ptr<CSControl> csControl;
+            serviceInstance->SetCsControl(slotId, csControl);
+            std::shared_ptr<IMSControl> imsControl;
+            serviceInstance->SetImsControl(slotId, imsControl);
+            handler.OnRilAdapterHostDied(event);
+            ASSERT_TRUE(serviceInstance->GetCsControl(slotId) == nullptr);
+            ASSERT_TRUE(serviceInstance->GetCsControl(slotId) == nullptr);
+        }
+    }
+}
+
+/**
+ * @tc.number   cellular_call_CellularCallHandler_0004
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    for (int32_t slotId = 0; slotId < SLOT_COUNT; slotId++) {
         handler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
         handler.ReceiveUpdateCallMediaModeRequest(event);
