@@ -72,7 +72,7 @@ std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::allEccList_;
 std::map<int32_t, int32_t> CellularCallConfig::simState_;
 std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
-std::map<int32_t, RegServiceState> CellularCallConfig::serviceState_;
+std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
@@ -97,8 +97,9 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_STATUS_UNKNOWN));
-        CellularCallConfig::serviceState_.insert(std::pair<int, RegServiceState>(i,
-            RegServiceState::REG_STATE_UNKNOWN));
+        CellularCallConfig::cellularNetworkState cellularState;
+        CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
+            cellularState));
     }
 }
 
@@ -254,13 +255,25 @@ void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string
 void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
 {
     TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
-    ModuleServiceUtils moduleUtils;
-    RegServiceState regState = moduleUtils.GetPsRegState(slotId);
-    if (serviceState_[slotId] == regState) {
-        TELEPHONY_LOGI("serviceState is not change, slotId: %{public}d", slotId);
+    auto itSlotId = networkServiceState_.find(slotId);
+    if (itSlotId == networkServiceState_.end()) {
+        TELEPHONY_LOGE("slotId is not in networkServiceState_");
         return;
     }
-    serviceState_[slotId] = regState;
+    sptr<NetworkState> networkState = nullptr;
+    CoreManagerInner::GetInstance().GetNetworkStatus(slotId, networkState);
+    if (networkState == nullptr) {
+        TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
+        return;
+    }
+    RegServiceState regState = networkState->GetRegStatus();
+    bool isRoam = networkState->IsRoaming();
+    if (networkServiceState_[slotId].ServiceState_ == regState && networkServiceState_[slotId].isRoaming_ == isRoam) {
+        TELEPHONY_LOGI("regState and isRoam are not change, slotId: %{public}d", slotId);
+        return;
+    }
+    networkServiceState_[slotId].ServiceState_ = regState;
+    networkServiceState_[slotId].isRoaming_ = isRoam;
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
 }
@@ -283,13 +296,16 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<std::string> callListWithCard;
     std::vector<std::string> callListNoCard;
-    int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
-    bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
-        roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
-    ModuleServiceUtils moduleUtils;
-    bool isNetworkInService = (moduleUtils.GetPsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE)
-        ||(moduleUtils.GetCsRegState(slotId) == RegServiceState::REG_STATE_IN_SERVICE);
-    bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoaming;
+    sptr<NetworkState> networkState = nullptr;
+    CoreManagerInner::GetInstance().GetNetworkStatus(slotId, networkState);
+    if (networkState == nullptr) {
+        TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
+        return;
+    }
+    RegServiceState regState = networkState->GetRegStatus();
+    bool isRoam = networkState->IsRoaming();
+    bool isNetworkInService = (regState == RegServiceState::REG_STATE_IN_SERVICE);
+    bool isHomeNetRegister = !hplmn.empty() && isNetworkInService && !isRoam;
     std::vector<EccNum> eccVec;
     bool isSimPresent = false;
     {
@@ -351,6 +367,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
         TELEPHONY_LOGE("failed due to parse operator config");
         return;
     }
+
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true);
 }
