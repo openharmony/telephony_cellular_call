@@ -377,7 +377,6 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
         TELEPHONY_LOGE("failed due to parse operator config");
         return;
     }
-
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true);
 }
