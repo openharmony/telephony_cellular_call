@@ -261,6 +261,11 @@ public:
 
     void HandleNetworkStateChange(int32_t slotId);
 
+    /**
+     * HandleSimAccountLoaded
+     *
+     * @param slotId
+     */
     void HandleSimAccountLoaded(int32_t slotId);
 
     /**
