@@ -482,6 +482,11 @@ private:
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
     static bool isOperatorConfigInit_;
+    struct cellularNetworkState {
+        RegServiceState ServiceState_ = RegServiceState::REG_STATE_UNKNOWN;
+        bool isRoaming_ = false;
+    };
+    static std::map<int32_t, cellularNetworkState> networkServiceState_;
 };
 } // namespace Telephony
 } // namespace OHOS
