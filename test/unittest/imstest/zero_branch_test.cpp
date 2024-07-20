@@ -644,6 +644,25 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest
 }
 
 /**
+ * @tc.number   Telephony_CellularCallImsControl_003
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallImsControl_003, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    IMSControl imsControl;
+    imsControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionIMS()));
+    imsControl.RecoverPendingHold();
+    imsControl.DialAfterHold(SIM1_SLOTID);
+    imsControl.HangUpAllConnection(SIM1_SLOTID);
+    imsControl.ReportHangUpInfo(SIM1_SLOTID);
+    ImsCurrentCallList imsCallList;
+    CallsReportInfo callsReportInfo;
+    imsControl.DeleteConnection(callsReportInfo, imsCallList);
+}
+
+/**
  * @tc.number   Telephony_ImsVideoCallControl_001
  * @tc.name     Test error branch
  * @tc.desc     Function test
@@ -667,6 +686,27 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | 
     imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
     imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX);
+}
+
+/**
+ * @tc.number   Telephony_ImsVideoCallControl_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_002, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    auto imsVideoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    ImsCallMode mode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
+    imsVideoCallControl->ConverToImsCallType(mode);
+    mode = ImsCallMode::CALL_MODE_RECEIVE_ONLY;
+    imsVideoCallControl->ConverToImsCallType(mode);
+    mode = ImsCallMode::CALL_MODE_SEND_ONLY;
+    imsVideoCallControl->ConverToImsCallType(mode);
+    mode = ImsCallMode::CALL_MODE_SEND_RECEIVE;
+    imsVideoCallControl->ConverToImsCallType(mode);
+    mode = ImsCallMode::CALL_MODE_VIDEO_PAUSED;
+    imsVideoCallControl->ConverToImsCallType(mode);
 }
 
 /**
