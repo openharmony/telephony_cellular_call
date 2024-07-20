@@ -452,6 +452,7 @@ private:
     void UpdateEccNumberList(int32_t slotId);
     void GetEccListFromResult(const std::vector<EccNum> &eccVec,
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
+    int32_t CheckHomeAndPresentState(int32_t slotId, bool &isHoamAndPresent);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
@@ -462,7 +463,6 @@ private:
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
     static std::map<int32_t, std::string> curPlmn_;
-    static std::map<int32_t, RegServiceState> serviceState_;
     std::mutex mutex_;
     std::mutex simStateLock_;
     static std::mutex operatorMutex_;
@@ -482,6 +482,11 @@ private:
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
     static bool isOperatorConfigInit_;
+    struct cellularNetworkState {
+        RegServiceState ServiceState_ = RegServiceState::REG_STATE_UNKNOWN;
+        bool isRoaming_ = false;
+    };
+    static std::map<int32_t, cellularNetworkState> networkServiceState_;
 };
 } // namespace Telephony
 } // namespace OHOS

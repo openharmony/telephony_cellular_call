@@ -128,6 +128,7 @@ void CellularCallService::CreateHandler()
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
     for (const auto &it : slotVector) {
@@ -174,8 +175,6 @@ void CellularCallService::HandlerResetUnRegister()
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE);
-        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED);
-        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -211,8 +210,6 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_SRVCC_STATUS, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_CALL_RSRVCC_STATUS, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE, nullptr);
-            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_ATTACHED, nullptr);
-            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_PS_CONNECTION_DETACHED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
