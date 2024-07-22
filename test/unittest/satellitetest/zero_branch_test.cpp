@@ -128,6 +128,45 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | Medi
 }
 
 /**
+ * @tc.number   Telephony_CellularCallSatelliteControl_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_002, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    SatelliteControl satelliteControl;
+    CellularCallInfo cellularCallInfo;
+    std::vector<CellularCallInfo> infos;
+    infos.emplace_back(cellularCallInfo);
+    SatelliteCurrentCallList satellitecallInfoList;
+    satellitecallInfoList.callSize = 2;
+    CallsReportInfo callsReportInfo;
+    auto connectionMap = satelliteControl.GetConnectionMap();
+    satelliteControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionSatellite()));
+    satelliteControl.ReportHungUpInfo(SIM1_SLOTID);
+    satelliteControl.DeleteConnection(callsReportInfo, satellitecallInfoList);
+    satelliteControl.ExecutePostDial(SIM1_SLOTID, 0);
+    satelliteControl.PostDialProceed(cellularCallInfo, true);
+}
+
+/**
+ * @tc.number   Telephony_ControlBase_001
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_ControlBase_001, Function | MediumTest | Level3)
+{
+    SatelliteControl satelliteControl;
+    CellularCallInfo callInfo;
+    bool isEcc = true;
+    bool isAirplaneModeOn = true;
+    bool isActivateSim = false;
+    satelliteControl.HandleEcc(callInfo, isEcc, isAirplaneModeOn, isActivateSim);
+    satelliteControl.SetReadyToCall(SIM1_SLOTID, true);
+}
+
+/**
  * @tc.number   Telephony_CellularCallConnectionSatellite_001
  * @tc.name     Test error branch
  * @tc.desc     Function test
