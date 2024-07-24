@@ -39,6 +39,7 @@
 #include "cellular_call_rdb_helper.h"
 #include "cellular_call_dump_helper.h"
 #include "emergency_utils.h"
+#include "satellite_call_client.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -466,6 +467,175 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_005, Function | MediumTest
     callSup.HandleCallWaiting(SIM2_SLOTID, mmiDataDeact);
     bool enable = false;
     callSup.CanSetCallTransferTime(SIM1_SLOTID, enable);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallSupplement_006
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSupplement_006, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallSupplement callSup;
+    MMIData mmiDataEmp = {};
+    MMIData mmiDataAct = { .actionString = "*" };
+    MMIData mmiDataDeact = { .actionString = "#" };
+    MMIData mmiDataInterrogate = { .actionString = "*#" };
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler);
+    callSup.HandleClip(SIM1_SLOTID, mmiDataAct);
+    callSup.HandleClip(SIM1_SLOTID, mmiDataDeact);
+    callSup.HandleClip(SIM1_SLOTID, mmiDataInterrogate);
+    callSup.HandleColr(SIM1_SLOTID, mmiDataAct);
+    callSup.HandleColr(SIM1_SLOTID, mmiDataDeact);
+    callSup.HandleColr(SIM1_SLOTID, mmiDataInterrogate);
+    callSup.HandleColp(SIM1_SLOTID, mmiDataAct);
+    callSup.HandleColp(SIM1_SLOTID, mmiDataDeact);
+    callSup.HandleColp(SIM1_SLOTID, mmiDataInterrogate);
+    int32_t cause = 0;
+    callSup.HandleGetCallTransfer(SIM1_SLOTID, cause);
+    int32_t serviceCode = 0;
+    std::string phoneNumber("1234567890");
+    CallTransferSettingType callTransferAction = CallTransferSettingType::CALL_TRANSFER_DISABLE;
+    callSup.HandleSetCallTransfer(SIM1_SLOTID, serviceCode, cause, phoneNumber, callTransferAction);
+    callSup.HandleCallRestriction(SIM1_SLOTID, mmiDataAct);
+    callSup.HandleCallRestriction(SIM1_SLOTID, mmiDataDeact);
+    callSup.HandleCallRestriction(SIM1_SLOTID, mmiDataInterrogate);
+    callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataAct);
+    callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataDeact);
+    callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataInterrogate);
+    auto command = std::make_shared<SsRequestCommand>();
+    CallTransferInfo cfInfo;
+    callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command);
+    callSup.SetCallTransferInfo(SIM1_SLOTID, cfInfo);
+    callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
+    bool activate = true;
+    callSup.SetCallWaiting(SIM1_SLOTID, activate);
+    callSup.GetCallWaiting(SIM1_SLOTID);
+    CallRestrictionInfo cRInfo;
+    callSup.SetCallRestriction(SIM1_SLOTID, cRInfo);
+    std::string info(cRInfo.password);
+    std::string fac("AO");
+    callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command);
+    callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
+    callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING, "1111", "0000");
+}
+
+/**
+ * @tc.number   Telephony_CellularCallSupplement_007
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSupplement_007, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallSupplement callSup;
+    MMIData mmiDataEmp = {};
+    MMIData mmiDataAct = { .actionString = "*" };
+    MMIData mmiDataDeact = { .actionString = "#" };
+    MMIData mmiDataInterrogate = { .actionString = "*#" };
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler);
+    std::string serviceInfoB("10");
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "11";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "12";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "13";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "16";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "19";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "20";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "21";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "22";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "24";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "25";
+    callSup.ObtainServiceCode(serviceInfoB);
+    serviceInfoB = "99";
+    callSup.ObtainServiceCode(serviceInfoB);
+    std::string phoneNumber("1234");
+    CallTransferSettingType callTransferAction;
+    callSup.ObtainCallTrasferAction("*", phoneNumber, callTransferAction);
+    callSup.ObtainCallTrasferAction("**", phoneNumber, callTransferAction);
+    callSup.ObtainCallTrasferAction("#", phoneNumber, callTransferAction);
+    callSup.ObtainCallTrasferAction("##", phoneNumber, callTransferAction);
+    callSup.ObtainCause("21");
+    callSup.ObtainCause("61");
+    callSup.ObtainCause("62");
+    callSup.ObtainCause("67");
+    callSup.ObtainCause("99");
+}
+
+/**
+ * @tc.number   Telephony_CellularCallSupplement_008
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSupplement_008, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallSupplement callSup;
+    MMIData mmiDataAct = { .actionString = "*" };
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler);
+    callSup.ObtainBarringInstallation("33");
+    callSup.ObtainBarringInstallation("331");
+    callSup.ObtainBarringInstallation("332");
+    callSup.ObtainBarringInstallation("351");
+    callSup.ObtainBarringInstallation("35");
+    callSup.ObtainBarringInstallation("330");
+    callSup.ObtainBarringInstallation("333");
+    callSup.ObtainBarringInstallation("353");
+    callSup.ObtainBarringInstallation("1000");
+    std::string fac;
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_ALL_OUTGOING);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_INTERNATIONAL_EXCLUDING_HOME);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_ROAMING_INCOMING);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_ALL_CALLS);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_OUTGOING_SERVICES);
+    callSup.CheckCallRestrictionType(fac, CallRestrictionType::RESTRICTION_TYPE_INCOMING_SERVICES);
+    MmiCodeInfo mmiCodeInfo;
+    SsNoticeInfo ssNoticeInfo;
+    ssNoticeInfo.result = 0;
+    callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
+    ssNoticeInfo.result = 1;
+    ssNoticeInfo.serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
+    callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
+    ssNoticeInfo.serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_BUSY);
+    callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
+    ssNoticeInfo.serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
+    callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
+    ssNoticeInfo.serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
+    callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
+    callSup.AlterPinPassword(SIM1_SLOTID, mmiDataAct);
+    callSup.UnlockPuk(SIM1_SLOTID, mmiDataAct);
+    callSup.AlterPin2Password(SIM1_SLOTID, mmiDataAct);
+    callSup.UnlockPuk2(SIM1_SLOTID, mmiDataAct);
+    callSup.IsVaildPinOrPuk("123", "123");
+    callSup.IsVaildPinOrPuk("1234567", "123");
+    callSup.IsVaildPinOrPuk("1234567", "1234567");
 }
 
 /**
