@@ -842,7 +842,7 @@ int32_t ImsCallCallbackStub::StopDtmfResponse(int32_t slotId, const RadioRespons
 
 int32_t ImsCallCallbackStub::CallStateChangeReport(int32_t slotId)
 {
-    TELEPHONY_LOGD("[slot%{public}d] entry", slotId);
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
     if (handler == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);

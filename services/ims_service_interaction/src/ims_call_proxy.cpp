@@ -311,6 +311,7 @@ int32_t ImsCallProxy::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDa
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
+    TELEPHONY_LOGI("[slot%{public}d] ret = %{public}d!", slotId, ret);
     if (!in.WriteInt64(lastCallsDataFlag)) {
         TELEPHONY_LOGE("[slot%{public}d]Write lastCallsDataFlag fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
