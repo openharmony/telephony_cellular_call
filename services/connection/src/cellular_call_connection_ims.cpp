@@ -264,7 +264,7 @@ int32_t CellularCallConnectionIMS::CallSupplementRequest(int32_t slotId, CallSup
 int32_t CellularCallConnectionIMS::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
     if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGD("call ims service");
+        TELEPHONY_LOGI("call ims service");
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
