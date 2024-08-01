@@ -124,7 +124,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | Medi
     satelliteControl.HangUpAllConnection(SIM1_SLOTID);
     CLIRMode mode = DEFAULT;
     satelliteControl.EncapsulateDialCommon(SIM1_SLOTID, PHONE_NUMBER, mode);
-    satelliteControl.ReportSatelliteCallsData(SIM1_SLOTID, satellitecallInfoList);
+    ASSERT_NE(satelliteControl.ReportSatelliteCallsData(SIM1_SLOTID, satellitecallInfoList), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -147,7 +147,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_002, Function | Medi
     satelliteControl.ReportHungUpInfo(SIM1_SLOTID);
     satelliteControl.DeleteConnection(callsReportInfo, satellitecallInfoList);
     satelliteControl.ExecutePostDial(SIM1_SLOTID, 0);
-    satelliteControl.PostDialProceed(cellularCallInfo, true);
+    ASSERT_NE(satelliteControl.PostDialProceed(cellularCallInfo, true), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -163,7 +163,7 @@ HWTEST_F(BranchTest, Telephony_ControlBase_001, Function | MediumTest | Level3)
     bool isAirplaneModeOn = true;
     bool isActivateSim = false;
     satelliteControl.HandleEcc(callInfo, isEcc, isAirplaneModeOn, isActivateSim);
-    satelliteControl.SetReadyToCall(SIM1_SLOTID, true);
+    ASSERT_EQ(satelliteControl.SetReadyToCall(SIM1_SLOTID, true), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -181,7 +181,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionSatellite_001, Function | M
     callConn.AnswerRequest(SIM1_SLOTID);
     callConn.RejectRequest(SIM1_SLOTID);
     callConn.GetSatelliteCallsDataRequest(SIM1_SLOTID, 0);
-    callConn.GetCallFailReasonRequest(SIM1_SLOTID);
+    ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -199,12 +199,12 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | 
     callService.Answer(satelliteCallInfo);
     callService.HoldCall(satelliteCallInfo);
     callService.UnHoldCall(satelliteCallInfo);
-    callService.SwitchCall(satelliteCallInfo);
 
     callService.GetSatelliteControl(SIM1_SLOTID);
 
     std::shared_ptr<SatelliteControl> satelliteControl;
     callService.SetSatelliteControl(SIM1_SLOTID, satelliteControl);
+    ASSERT_EQ(callService.SwitchCall(satelliteCallInfo), TELEPHONY_SUCCESS);
 }
 } // namespace Telephony
 } // namespace OHOS

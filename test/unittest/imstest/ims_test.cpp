@@ -2003,6 +2003,7 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest 
         handler.HandlePeerDimensionsChanged(event);
         handler.HandleCallDataUsageChanged(event);
         handler.HandleCameraCapabilitiesChanged(event);
+        ASSERT_EQ(handler.GetSlotId(), slotId);
     }
 }
 
