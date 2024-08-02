@@ -185,9 +185,10 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_001, Function | MediumTest | L
     config.SetImsConfig(ImsConfigItem::ITEM_VIDEO_QUALITY, 1);
     config.GetImsConfig(ImsConfigItem::ITEM_VIDEO_QUALITY);
     config.SetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE, 1);
-    config.GetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE);
+    int32_t res = config.GetImsFeatureValue(FeatureType::TYPE_VOICE_OVER_LTE);
     config.HandleFactoryReset(0);
     config.HandleFactoryReset(1);
+    ASSERT_NE(res, TELEPHONY_SUCCESS);
 }
 
 /**
@@ -232,6 +233,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfig_002, Function | MediumTest | L
     config.utProvisioningSupported_[SIM1_SLOTID] = enabled;
     config.ResetImsSwitch(SIM1_SLOTID);
     config.HandleSimAccountLoaded(SIM1_SLOTID);
+    ASSERT_TRUE(config.utProvisioningSupported_[SIM1_SLOTID]);
 }
 
 /**
@@ -273,6 +275,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_001, Function | MediumTest
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataEmp);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataAct);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataDeact);
+    ASSERT_TRUE(mmiDataAct.actionString.empty());
 }
 
 /**
@@ -319,6 +322,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_002, Function | MediumTest
     callSup.EventGetColr(getColrResult, message, 1);
     callSup.EventSetColr(0, message, 0);
     callSup.EventSetColr(0, message, 1);
+    ASSERT_TRUE(mmiDataPin.actionString.empty());
 }
 
 /**
@@ -371,7 +375,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_003, Function | MediumTest
     RadioResponseInfo response;
     callSup.EventCloseUnFinishedUssd(response);
     callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
-    callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
+    ASSERT_NE(callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
+        TELEPHONY_SUCCESS);
 }
 
 /**
@@ -427,7 +432,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_004, Function | MediumTest
     callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
     callSup.GetCallRestriction(SIM2_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
     callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING, "1111", "0000");
-    callSup.SetBarringPassword(SIM2_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING, "1111", "0000");
+    ASSERT_NE(callSup.SetBarringPassword(SIM2_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING,
+        "1111", "0000"), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -466,7 +472,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_005, Function | MediumTest
     callSup.HandleCallWaiting(SIM2_SLOTID, mmiDataAct);
     callSup.HandleCallWaiting(SIM2_SLOTID, mmiDataDeact);
     bool enable = false;
-    callSup.CanSetCallTransferTime(SIM1_SLOTID, enable);
+    ASSERT_NE(callSup.CanSetCallTransferTime(SIM1_SLOTID, enable), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -518,12 +524,12 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_006, Function | MediumTest
     callSup.SetCallWaiting(SIM1_SLOTID, activate);
     callSup.GetCallWaiting(SIM1_SLOTID);
     CallRestrictionInfo cRInfo;
-    callSup.SetCallRestriction(SIM1_SLOTID, cRInfo);
     std::string info(cRInfo.password);
     std::string fac("AO");
     callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command);
     callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING);
     callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING, "1111", "0000");
+    ASSERT_NE(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -579,7 +585,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_007, Function | MediumTest
     callSup.ObtainCause("61");
     callSup.ObtainCause("62");
     callSup.ObtainCause("67");
-    callSup.ObtainCause("99");
+    ASSERT_EQ(callSup.ObtainCause("99"), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -635,7 +641,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_008, Function | MediumTest
     callSup.UnlockPuk2(SIM1_SLOTID, mmiDataAct);
     callSup.IsVaildPinOrPuk("123", "123");
     callSup.IsVaildPinOrPuk("1234567", "123");
-    callSup.IsVaildPinOrPuk("1234567", "1234567");
+    ASSERT_FALSE(callSup.IsVaildPinOrPuk("1234567", "1234567"));
 }
 
 /**
@@ -685,10 +691,11 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     csControl.EncapsulationCallReportInfo(SIM1_SLOTID, callInfo);
     std::string phoneNum = "00000000";
     CLIRMode clirMode = CLIRMode::DEFAULT;
-    csControl.EncapsulateDialCommon(SIM1_SLOTID, phoneNum, clirMode);
+    int res = csControl.EncapsulateDialCommon(SIM1_SLOTID, phoneNum, clirMode);
     CallsReportInfo callsReportInfo;
     csControl.DeleteConnection(callsReportInfo, callInfoList);
     csControl.ReleaseAllConnection();
+    ASSERT_EQ(res, TELEPHONY_SUCCESS);
 }
 
 /**
@@ -724,7 +731,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_002, Function | MediumTest 
     csControl.DialCdma(cellularCallInfo);
     csControl.DialGsm(cellularCallInfo);
     csControl.connectionMap_.clear();
-    csControl.ReportHangUp(infos, SIM1_SLOTID);
+    ASSERT_EQ(csControl.ReportHangUp(infos, SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -779,7 +786,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_001, Function | MediumTest
     CLIRMode clirMode = CLIRMode::DEFAULT;
     int32_t videoState = 0;
     imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState);
-    imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState);
+    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -808,9 +815,10 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_002, Function | MediumTest
     imsControl.DialAfterHold(SIM1_SLOTID);
     std::string msg = "";
     imsControl.StartRtt(SIM1_SLOTID, msg);
-    imsControl.StopRtt(SIM1_SLOTID);
+    int res = imsControl.StopRtt(SIM1_SLOTID);
     imsControl.GetConnectionMap();
     imsControl.ReleaseAllConnection();
+    ASSERT_EQ(res, TELEPHONY_SUCCESS);
 }
 
 /**
@@ -826,10 +834,10 @@ HWTEST_F(BranchTest, Telephony_CellularCallImsControl_003, Function | MediumTest
     imsControl.RecoverPendingHold();
     imsControl.DialAfterHold(SIM1_SLOTID);
     imsControl.HangUpAllConnection(SIM1_SLOTID);
-    imsControl.ReportHangUpInfo(SIM1_SLOTID);
     ImsCurrentCallList imsCallList;
     CallsReportInfo callsReportInfo;
     imsControl.DeleteConnection(callsReportInfo, imsCallList);
+    ASSERT_NE(imsControl.ReportHangUpInfo(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -855,7 +863,7 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | 
     imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
-    imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX);
+    ASSERT_NE(imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -871,12 +879,14 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_002, Function | MediumTest | 
     imsVideoCallControl->ConverToImsCallType(mode);
     mode = ImsCallMode::CALL_MODE_RECEIVE_ONLY;
     imsVideoCallControl->ConverToImsCallType(mode);
+    imsVideoCallControl->ConverToImsCallType(mode);
     mode = ImsCallMode::CALL_MODE_SEND_ONLY;
+    imsVideoCallControl->ConverToImsCallType(mode);
     imsVideoCallControl->ConverToImsCallType(mode);
     mode = ImsCallMode::CALL_MODE_SEND_RECEIVE;
     imsVideoCallControl->ConverToImsCallType(mode);
     mode = ImsCallMode::CALL_MODE_VIDEO_PAUSED;
-    imsVideoCallControl->ConverToImsCallType(mode);
+    ASSERT_NE(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VOICE);
 }
 
 /**
@@ -908,7 +918,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0);
     callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0);
     callConn.StopDtmfRequest(SIM1_SLOTID, 0);
-    callConn.GetCallFailReasonRequest(SIM1_SLOTID);
+    ASSERT_NE(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -947,7 +957,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConfigRequest_001, Function | MediumT
     configReq.GetEmergencyCallListRequest(SIM2_SLOTID);
     configReq.SetEmergencyCallListRequest(SIM2_SLOTID, eccVec);
     ImsCapabilityList imsCapabilityList;
-    configReq.UpdateImsCapabilities(SIM1_SLOTID, imsCapabilityList);
+    ASSERT_NE(configReq.UpdateImsCapabilities(SIM1_SLOTID, imsCapabilityList), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1009,7 +1019,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_001, Function | MediumTest | Lev
     callStub.OnSwitchCallInner(switchCallErrorData, reply);
     MessageParcel switchCallData;
     MakeCallInfoParcelData(false, switchCallData);
-    callStub.OnSwitchCallInner(switchCallData, reply);
+    ASSERT_NE(callStub.OnSwitchCallInner(switchCallData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1062,7 +1072,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_002, Function | MediumTest | Lev
 
     MessageParcel cameraData;
     cameraData.WriteInt32(size);
-    callStub.OnControlCameraInner(cameraData, reply);
+    ASSERT_NE(callStub.OnControlCameraInner(cameraData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1119,7 +1129,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_003, Function | MediumTest | Lev
     MessageParcel getCallWaitData;
     getCallWaitData.WriteInt32(size);
     getCallWaitData.WriteInt32(errorSize);
-    callStub.OnGetCallWaitingInner(getCallWaitData, reply);
+    ASSERT_NE(callStub.OnGetCallWaitingInner(getCallWaitData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1174,7 +1184,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_004, Function | MediumTest | Lev
     MessageParcel setconfigData;
     setconfigData.WriteInt32(size);
     setconfigData.WriteInt32(errorSize);
-    callStub.OnSetImsConfigStringInner(setconfigData, reply);
+    ASSERT_NE(callStub.OnSetImsConfigStringInner(setconfigData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1220,7 +1230,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_005, Function | MediumTest | Lev
     callStub.OnCloseUnFinishedUssdInner(closeUssdData, reply);
     MessageParcel clearCallsData;
     MakeCallInfoParcelData(false, clearCallsData);
-    callStub.OnClearAllCallsInner(clearCallsData, reply);
+    ASSERT_NE(callStub.OnClearAllCallsInner(clearCallsData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1278,7 +1288,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Lev
     MessageParcel stopRttData;
     stopRttData.WriteInt32(size);
     stopRttData.WriteInt32(errorSize);
-    callStub.OnStopRttInner(stopRttData, reply);
+    ASSERT_NE(callStub.OnStopRttInner(stopRttData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1314,7 +1324,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_007, Function | MediumTest | Lev
     cameraCapabilitiesData.WriteInt32(size);
     cameraCapabilitiesData.WriteInt32(SIM1_SLOTID);
     cameraCapabilitiesData.WriteInt32(DEFAULT_INDEX);
-    callStub.OnRequestCameraCapabilitiesInner(cameraCapabilitiesData, reply);
+    ASSERT_NE(callStub.OnRequestCameraCapabilitiesInner(cameraCapabilitiesData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1368,7 +1378,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | 
     bool enabled = false;
     std::string phoneNum = "000";
     cellularCall.IsEmergencyPhoneNumber(INVALID_SLOTID, phoneNum, enabled);
-    cellularCall.IsEmergencyPhoneNumber(SIM1_SLOTID, phoneNum, enabled);
+    ASSERT_NE(cellularCall.IsEmergencyPhoneNumber(SIM1_SLOTID, phoneNum, enabled), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1421,7 +1431,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | 
     cellularCall.SendDtmf('*', errCallInfo);
     std::string msg = "";
     cellularCall.StartRtt(SIM1_SLOTID, msg);
-    cellularCall.StopRtt(SIM1_SLOTID);
+    ASSERT_NE(cellularCall.StopRtt(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1476,7 +1486,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | 
     cellularCall.SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
-    cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX);
+    ASSERT_NE(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1528,6 +1538,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
     cellularCall.UnRegisterCallManagerCallBack();
     cellularCall.HandlerResetUnRegister();
     cellularCall.OnStop();
+    ASSERT_EQ(callback, nullptr);
 }
 
 /**
@@ -1556,8 +1567,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplementRequestIms_001, Function | 
     SRequestIms.SetColrRequest(SIM1_SLOTID, 0, 0);
     SRequestIms.GetColrRequest(SIM1_SLOTID, 0);
     SRequestIms.SetColpRequest(SIM1_SLOTID, 0, 0);
-    SRequestIms.GetColpRequest(SIM1_SLOTID, 0);
     SRequestIms.GetMMIHandler(SIM1_SLOTID);
+    ASSERT_NE(SRequestIms.GetColpRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1609,6 +1620,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_001, Function | MediumTest
     cellularCallHiSysEvent->JudgingIncomingTimeOut(0, 0, 0);
     CallForwardingInfo cfInfo;
     cellularCallHiSysEvent->GetCallForwardingInfo(cfInfo);
+    ASSERT_TRUE(desc.empty());
 }
 
 /**
@@ -1661,8 +1673,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_002, Function | MediumTest
         static_cast<int32_t>(CALL_ERR_SYSTEM_EVENT_HANDLE_FAILURE), eventValue);
     cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
         static_cast<int32_t>(CALL_ERR_CALL_COUNTS_EXCEED_LIMIT), eventValue);
-    cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
-        static_cast<int32_t>(CALL_ERR_GET_RADIO_STATE_FAILED), eventValue);
+    ASSERT_NE(cellularCallHiSysEvent->CallInterfaceErrorCodeConversion(
+        static_cast<int32_t>(CALL_ERR_GET_RADIO_STATE_FAILED), eventValue), 0);
 }
 
 /**
@@ -1691,7 +1703,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionCs_001, Function | MediumTe
     cellularCallConnectionCS.StopDtmfRequest(SIM2_SLOTID, 0);
     cellularCallConnectionCS.GetCsCallsDataRequest(SIM2_SLOTID, 0);
     cellularCallConnectionCS.GetCallFailReasonRequest(SIM2_SLOTID);
-    cellularCallConnectionCS.ProcessPostDialCallChar(SIM1_SLOTID, cDtmfCode);
+    ASSERT_NE(cellularCallConnectionCS.ProcessPostDialCallChar(SIM1_SLOTID, cDtmfCode), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1720,11 +1732,11 @@ HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | 
     supplementRequestCs.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0);
     supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str());
     supplementRequestCs.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0);
-    supplementRequestCs.GetCallWaitingRequest(SIM1_SLOTID, 0);
     supplementRequestCs.AlterPinPassword(SIM1_SLOTID, newPin, oldPin);
     supplementRequestCs.UnlockPuk(SIM1_SLOTID, newPin, puk);
     supplementRequestCs.AlterPin2Password(SIM1_SLOTID, newPin, oldPin);
     supplementRequestCs.UnlockPuk2(SIM1_SLOTID, newPin, puk);
+    ASSERT_NE(supplementRequestCs.GetCallWaitingRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1742,6 +1754,7 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
     phoneString = "1111111,123321";
     standardizeUtils.ExtractAddressAndPostDial(phoneString, networkAddress, postDial);
     standardizeUtils.Split(phoneString, ",");
+    ASSERT_FALSE(phoneString.empty());
 }
 
 /**
@@ -1764,7 +1777,7 @@ HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
     mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
     mmiCodeUtils.mmiData_.fullString.clear();
     mmiCodeUtils.mmiData_.dialString = "11111#";
-    mmiCodeUtils.RegexMatchMmi("111111#");
+    ASSERT_FALSE(mmiCodeUtils.RegexMatchMmi("111111#"));
 }
 
 /**
@@ -1778,7 +1791,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallRdbHelper_001, Function | MediumTest 
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<EccNum> eccVec;
-    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
+    ASSERT_NE(DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1792,7 +1805,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallDumpHelper_001, Function | MediumTest
     std::vector<std::string> args = { "123456", "234567" };
     std::string result;
     cellularCallDumpHelper.WhetherHasSimCard(SIM1_SLOTID);
-    cellularCallDumpHelper.Dump(args, result);
+    ASSERT_NE(cellularCallDumpHelper.Dump(args, result), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -1805,7 +1818,7 @@ HWTEST_F(BranchTest, Telephony_EmergencyUtils_001, Function | MediumTest | Level
     EmergencyUtils emergencyUtils;
     std::string phoneNum = "1234567";
     bool enabled = false;
-    emergencyUtils.IsEmergencyCall(SIM1_SLOTID, phoneNum, enabled);
+    ASSERT_NE(emergencyUtils.IsEmergencyCall(SIM1_SLOTID, phoneNum, enabled), TELEPHONY_SUCCESS);
 }
 
 } // namespace Telephony
