@@ -168,6 +168,7 @@ int32_t ControlBase::HandleEcc(const CellularCallInfo &callInfo, bool isEcc, boo
 
 int32_t ControlBase::SetReadyToCall(int32_t slotId, bool isReadyToCall)
 {
+    std::unique_lock<std::mutex> lock(mutex_);
     CellularCallConfig cellularCallConfig;
     if (!cellularCallConfig.IsReadyToCall(slotId) && isReadyToCall) {
         cellularCallConfig.SetReadyToCall(slotId, isReadyToCall);
