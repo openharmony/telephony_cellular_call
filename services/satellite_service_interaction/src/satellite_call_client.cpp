@@ -40,6 +40,7 @@ void SatelliteCallClient::Init()
     }
 
     GetSatelliteCallProxy();
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     if (satelliteCallProxy_ == nullptr) {
         TELEPHONY_LOGE("Init, get satellite call proxy failed!");
         return;
@@ -50,6 +51,7 @@ void SatelliteCallClient::Init()
 void SatelliteCallClient::UnInit()
 {
     Clean();
+    std::lock_guard<std::mutex> lock(mutexMap_);
     handlerMap_.clear();
 }
 
@@ -98,8 +100,9 @@ sptr<SatelliteCallInterface> SatelliteCallClient::GetSatelliteCallProxy()
     return satelliteCallProxy_;
 }
 
-bool SatelliteCallClient::IsConnect() const
+bool SatelliteCallClient::IsConnect()
 {
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return (satelliteCallProxy_ != nullptr);
 }
 
@@ -131,6 +134,7 @@ int32_t SatelliteCallClient::RegisterSatelliteCallCallbackHandler(
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
+    std::lock_guard<std::mutex> lock(mutexMap_);
     handlerMap_.insert(std::make_pair(slotId, handler));
     TELEPHONY_LOGI("RegisterSatelliteCallCallbackHandler success.");
     return TELEPHONY_SUCCESS;
@@ -138,6 +142,7 @@ int32_t SatelliteCallClient::RegisterSatelliteCallCallbackHandler(
 
 std::shared_ptr<AppExecFwk::EventHandler> SatelliteCallClient::GetHandler(int32_t slotId)
 {
+    std::lock_guard<std::mutex> lock(mutexMap_);
     return handlerMap_[slotId];
 }
 
@@ -149,6 +154,7 @@ int32_t SatelliteCallClient::Dial(const SatelliteCallInfo &callInfo, CLIRMode mo
             TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return satelliteCallProxy_->Dial(callInfo, mode);
 }
 
@@ -160,6 +166,7 @@ int32_t SatelliteCallClient::HangUp(int32_t slotId, int32_t index)
             slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "HangUp satellite ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return satelliteCallProxy_->HangUp(slotId, index);
 }
 
@@ -171,6 +178,7 @@ int32_t SatelliteCallClient::Reject(int32_t slotId)
             slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "Reject satellite ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return satelliteCallProxy_->Reject(slotId);
 }
 
@@ -182,6 +190,7 @@ int32_t SatelliteCallClient::Answer(int32_t slotId)
             TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "answer satellite ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return satelliteCallProxy_->Answer(slotId);
 }
 
@@ -191,6 +200,7 @@ int32_t SatelliteCallClient::GetSatelliteCallsDataRequest(int32_t slotId, int64_
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
+    std::lock_guard<std::mutex> lock(mutexProxy_);
     return satelliteCallProxy_->GetSatelliteCallsDataRequest(slotId);
 }
 

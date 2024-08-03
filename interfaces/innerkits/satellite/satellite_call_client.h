@@ -125,7 +125,7 @@ private:
      *
      * @return bool
      */
-    bool IsConnect() const;
+    bool IsConnect();
     int32_t RegisterSatelliteCallCallback();
     int32_t ReConnectService();
     void Clean();
@@ -155,6 +155,7 @@ private:
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
     Utils::RWLock rwClientLock_;
     std::mutex mutexProxy_;
+    std::mutex mutexMap_;
 };
 } // namespace Telephony
 } // namespace OHOS
