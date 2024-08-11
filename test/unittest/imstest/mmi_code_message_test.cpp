@@ -19,7 +19,7 @@ public:
 };
 void MmiCodeMessageTest::SetUpTestCase() {}
 
-void MmiCodeMessageTest::TearDownTestCase(){}
+void MmiCodeMessageTest::TearDownTestCase() {}
 
 void MmiCodeMessageTest::SetUp() {}
 

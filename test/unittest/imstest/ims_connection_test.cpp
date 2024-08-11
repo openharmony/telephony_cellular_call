@@ -34,7 +34,7 @@ public:
 };
 void ImsConnectionTest::SetUpTestCase() {}
 
-void ImsConnectionTest::TearDownTestCase(){}
+void ImsConnectionTest::TearDownTestCase() {}
 
 void ImsConnectionTest::SetUp() {}
 
