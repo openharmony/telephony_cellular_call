@@ -233,7 +233,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0005, Function | MediumTest | Le
     std::string compareMessage;
     compareMessage.append("\n");
     compareMessage.append(SERVICE_DISABLE);
-    CreateSuppSvcQueryResultMessage(resultMessage, result , status);
+    CreateSuppSvcQueryResultMessage(resultMessage, result, status);
     EXPECT_EQ(resultMessage, compareMessage);
 
     status = SS_ENABLED;
@@ -306,7 +306,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0006, Function | MediumTest | Le
 HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0007, Function | MediumTest | Level1)
 {
     std::string resultMessage;
-    CallTransferResponse response; 
+    CallTransferResponse response;
 
     response.classx = ServiceClassType::DEDICATED_PACKET_ACCESS;
     std::string compareMessage = "\nPackage: Not forwarded";
@@ -373,7 +373,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0008, Function | MediumTest | Le
 
     classex = 256;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Unknow: ");
 }
 
