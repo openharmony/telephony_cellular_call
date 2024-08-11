@@ -457,7 +457,6 @@ HWTEST_F(ImsConnectionTest, BaseConnectionTest_0005, Function | MediumTest | Lev
     BaseConnection baseConnection;
     baseConnection.SetNumber("1234567890");
     EXPECT_EQ(baseConnection.GetNumber(), "1234567890");
-
 }
 
 /**
@@ -482,7 +481,7 @@ HWTEST_F(ImsConnectionTest, BaseConnectionTest_0007, Function | MediumTest | Lev
     BaseConnection baseConnection;
     int32_t slotId = 0;
     char c = 'B';
-    EXPECT_EQ(baseConnection.ProcessPostDialCallChar(slotId,c), TELEPHONY_SUCCESS);
+    EXPECT_EQ(baseConnection.ProcessPostDialCallChar(slotId, c), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -512,10 +511,10 @@ HWTEST_F(ImsConnectionTest, BaseConnectionTest_0009, Function | MediumTest | Lev
     baseConnection.SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_CANCELED);
     int32_t slotId = 0;
     char c = 'B';
-    EXPECT_EQ(baseConnection.ProcessNextChar(slotId,c), PostDialCallState::POST_DIAL_CALL_CANCELED);
+    EXPECT_EQ(baseConnection.ProcessNextChar(slotId, c), PostDialCallState::POST_DIAL_CALL_CANCELED);
 
     baseConnection.SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_NOT_STARTED);
-    EXPECT_EQ(baseConnection.ProcessNextChar(slotId,c), PostDialCallState::POST_DIAL_CALL_COMPLETE);
+    EXPECT_EQ(baseConnection.ProcessNextChar(slotId, c), PostDialCallState::POST_DIAL_CALL_COMPLETE);
 
     baseConnection.SetPostDialCallState(PostDialCallState::POST_DIAL_CALL_NOT_STARTED);
     std::string phoneString = "13363669099,123321";
