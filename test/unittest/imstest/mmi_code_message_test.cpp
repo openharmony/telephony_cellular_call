@@ -241,7 +241,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0005, Function | MediumTest | Le
     compareMessage = "";
     compareMessage.append("\n");
     compareMessage.append(SERVICE_ENABLE);
-    CreateSuppSvcQueryResultMessage(resultMessage, result , status);
+    CreateSuppSvcQueryResultMessage(resultMessage, result, status);
     EXPECT_EQ(resultMessage, compareMessage);
 
     result = TELEPHONY_ERROR;
@@ -437,11 +437,11 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0009, Function | MediumTest | Le
 HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0010, Function | MediumTest | Level1)
 {
     std::string resultMessage;
-    CallTransferResponse response; 
+    CallTransferResponse response;
     response.status = SS_DISABLED;
   
     int32_t classex = ServiceClassType::VOICE;
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Voice: Not forwarded");
 
     classex = ServiceClassType::FAX;
