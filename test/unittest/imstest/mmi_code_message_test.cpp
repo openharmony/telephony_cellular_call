@@ -334,41 +334,41 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0007, Function | MediumTest | Le
 HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0008, Function | MediumTest | Level1)
 {
     std::string resultMessage;
-    CallTransferResponse response; 
+    CallTransferResponse response;
     response.status = SS_ENABLED;
 
     int32_t classex = ServiceClassType::VOICE;
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Voice: ");
 
     classex = ServiceClassType::FAX;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Fax: ");
 
     classex = ServiceClassType::SHORT_MESSAGE_SERVICE;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Message: ");
 
     classex = ServiceClassType::DATA_CIRCUIT_SYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Sync: ");
 
     classex = ServiceClassType::DATA_CIRCUIT_ASYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Async: ");
 
     classex = ServiceClassType::DEDICATED_PACKET_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Package: ");
 
     classex = ServiceClassType::DEDICATED_PAD_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Pad: ");
 
     classex = 256;
@@ -385,7 +385,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0008, Function | MediumTest | Le
 HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0009, Function | MediumTest | Level1)
 {
     std::string resultMessage;
-    CallTransferResponse response; 
+    CallTransferResponse response;
     response.status = SS_ENABLED;
     response.reason = TRANSFER_REASON_TYPE_NO_REPLY;
 
@@ -400,32 +400,32 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0009, Function | MediumTest | Le
 
     classex = ServiceClassType::SHORT_MESSAGE_SERVICE;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Message:  after 0 seconds");
 
     classex = ServiceClassType::DATA_CIRCUIT_SYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Sync:  after 0 seconds");
 
     classex = ServiceClassType::DATA_CIRCUIT_ASYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Async:  after 0 seconds");
 
     classex = ServiceClassType::DEDICATED_PACKET_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Package:  after 0 seconds");
 
     classex = ServiceClassType::DEDICATED_PAD_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Pad:  after 0 seconds");
 
     classex = 256;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Unknow:  after 0 seconds");
 }
 
@@ -446,37 +446,37 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0010, Function | MediumTest | Le
 
     classex = ServiceClassType::FAX;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Fax: Not forwarded");
 
     classex = ServiceClassType::SHORT_MESSAGE_SERVICE;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Message: Not forwarded");
 
     classex = ServiceClassType::DATA_CIRCUIT_SYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Sync: Not forwarded");
 
     classex = ServiceClassType::DATA_CIRCUIT_ASYNC;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Async: Not forwarded");
 
     classex = ServiceClassType::DEDICATED_PACKET_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Package: Not forwarded");
 
     classex = ServiceClassType::DEDICATED_PAD_ACCESS;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Pad: Not forwarded");
 
     classex = 256;
     resultMessage = "";
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Unknow: Not forwarded");
 }
 } // namespace Telephony
