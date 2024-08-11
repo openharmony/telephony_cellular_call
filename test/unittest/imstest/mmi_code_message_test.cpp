@@ -390,7 +390,7 @@ HWTEST_F(MmiCodeMessageTest, MmiCodeMessageTest_0009, Function | MediumTest | Le
     response.reason = TRANSFER_REASON_TYPE_NO_REPLY;
 
     int32_t classex = ServiceClassType::VOICE;
-    MakeCallTransferMessageEx(resultMessage, response , classex);
+    MakeCallTransferMessageEx(resultMessage, response, classex);
     EXPECT_EQ(resultMessage, "Voice:  after 0 seconds");
 
     classex = ServiceClassType::FAX;
