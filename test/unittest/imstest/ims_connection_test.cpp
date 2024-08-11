@@ -522,5 +522,342 @@ HWTEST_F(ImsConnectionTest, BaseConnectionTest_0009, Function | MediumTest | Lev
     baseConnection.UpdateCallNumber(phoneString);
     EXPECT_NE(baseConnection.ProcessNextChar(slotId, c), PostDialCallState::POST_DIAL_CALL_CANCELED);
 }
+
+/**
+ * @tc.number   Telephony_SupplementRequestImsTest_0001
+ * @tc.name     Test SupplementRequestIms
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, SupplementRequestImsTest_0001, Function | MediumTest | Level1)
+{
+    SupplementRequestIms supplementRequestIms;
+    int32_t slotId = 0;
+    int32_t index = 0;
+    int32_t ret = supplementRequestIms.GetClipRequest(slotId, index);
+    EXPECT_NE(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_SupplementRequestImsTest_0002
+ * @tc.name     Test SupplementRequestIms
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, SupplementRequestImsTest_0002, Function | MediumTest | Level1)
+{
+    SupplementRequestIms supplementRequestIms;
+    int32_t slotId = 0;
+    int32_t reason = 0;
+    int32_t index = 0;
+    int32_t ret = supplementRequestIms.GetCallTransferRequest(slotId, reason, index);
+    EXPECT_NE(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_SupplementRequestImsTest_0003
+ * @tc.name     Test SupplementRequestIms
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, SupplementRequestImsTest_0003, Function | MediumTest | Level1)
+{
+    SupplementRequestIms supplementRequestIms;
+    int32_t slotId = 0;
+    int32_t reason = 0;
+    CallTransferInfo cfInfo;
+    int32_t index = 0;
+    int32_t ret = supplementRequestIms.SetCallTransferRequest(slotId, cfInfo, reason, index);
+    EXPECT_NE(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_SupplementRequestImsTest_0004
+ * @tc.name     Test SupplementRequestIms
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, SupplementRequestImsTest_0004, Function | MediumTest | Level1)
+{
+    SupplementRequestIms supplementRequestIms;
+    int32_t slotId = 0;
+    bool result = false;
+    int32_t ret = supplementRequestIms.CanSetCallTransferTime(slotId, result);
+    EXPECT_NE(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_SupplementRequestImsTest_0005
+ * @tc.name     Test SupplementRequestIms
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, SupplementRequestImsTest_0005, Function | MediumTest | Level1)
+{
+    SupplementRequestIms supplementRequestIms;
+    int32_t slotId = 0;
+    int32_t reason = 0;
+    int32_t index = 0;
+    int32_t ret = supplementRequestIms.GetCallTransferRequest(slotId, reason, index);
+    EXPECT_NE(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0001
+ * @tc.name     Test CellularCallConnectionCS HangUpRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0001, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.HangUpRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+
+    slotId = -1;
+    ret = cellularCallConnectionCS.HangUpRequest(slotId);
+    EXPECT_EQ(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0002
+ * @tc.name     Test CellularCallConnectionCS AnswerRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0002, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.AnswerRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+
+    slotId = -1;
+    ret = cellularCallConnectionCS.AnswerRequest(slotId);
+    EXPECT_EQ(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0003
+ * @tc.name     Test CellularCallConnectionCS RejectRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0003, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.RejectRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0004
+ * @tc.name     Test CellularCallConnectionCS HoldRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0004, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.HoldRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0005
+ * @tc.name     Test CellularCallConnectionCS UnHoldRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0005, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.UnHoldCallRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0006
+ * @tc.name     Test CellularCallConnectionCS SwitchCallRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0006, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.SwitchCallRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0007
+ * @tc.name     Test CellularCallConnectionCS CombineConferenceRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0007, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t voiceCall = 0;
+    int32_t ret = cellularCallConnectionCS.CombineConferenceRequest(slotId, voiceCall);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+
+    slotId = -1;
+    ret = cellularCallConnectionCS.CombineConferenceRequest(slotId, voiceCall);
+    EXPECT_EQ(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0008
+ * @tc.name     Test CellularCallConnectionCS SeparateConferenceRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0008, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t voiceCall = 0;
+    int32_t index = 0;
+    int32_t ret = cellularCallConnectionCS.SeparateConferenceRequest(slotId, index, voiceCall);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+
+    slotId = -1;
+    ret = cellularCallConnectionCS.SeparateConferenceRequest(slotId, index, voiceCall);
+    EXPECT_EQ(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+}
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0009
+ * @tc.name     Test CellularCallConnectionCS CallSupplementRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0009, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    CallSupplementType type = CallSupplementType::TYPE_DEFAULT;
+    int32_t ret = cellularCallConnectionCS.CallSupplementRequest(slotId, type);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0010
+ * @tc.name     Test CellularCallConnectionCS SendCDMAThreeWayDialRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0010, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.SendCDMAThreeWayDialRequest(slotId);
+    EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0011
+ * @tc.name     Test CellularCallConnectionCS SeparateConferenceRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0011, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t index = 0;
+    char cDtmfCode = '0';
+    int32_t ret = cellularCallConnectionCS.SendDtmfRequest(slotId, cDtmfCode, index);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0012
+ * @tc.name     Test CellularCallConnectionCS StartDtmfRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0012, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t index = 0;
+    char cDtmfCode = '0';
+    int32_t ret = cellularCallConnectionCS.StartDtmfRequest(slotId, cDtmfCode, index);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0013
+ * @tc.name     Test CellularCallConnectionCS StopDtmfRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0013, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t index = 0;
+    int32_t ret = cellularCallConnectionCS.StopDtmfRequest(slotId, index);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0014
+ * @tc.name     Test CellularCallConnectionCS GetCsCallsDataRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0014, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int64_t lastCallsDataFlag = 0;
+    int32_t ret = cellularCallConnectionCS.GetCsCallsDataRequest(slotId, lastCallsDataFlag);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0015
+ * @tc.name     Test CellularCallConnectionCS GetCallFailReasonRequest
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0015, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    int32_t ret = cellularCallConnectionCS.GetCallFailReasonRequest(slotId);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConnectionCSTest_0016
+ * @tc.name     Test CellularCallConnectionCS ProcessPostDialCallChar
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsConnectionTest, CellularCallConnectionCSTest_0016, Function | MediumTest | Level1)
+{
+    CellularCallConnectionCS cellularCallConnectionCS;
+    DelayedSingleton<CellularCallService>::GetInstance()->Init();
+    int32_t slotId = 0;
+    char c = '0';
+    int32_t ret = cellularCallConnectionCS.ProcessPostDialCallChar(slotId, c);
+    EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+
+    c = ',';
+    slotId = -1;
+    ret = cellularCallConnectionCS.ProcessPostDialCallChar(slotId, c);
+    EXPECT_EQ(ret, CALL_ERR_RESOURCE_UNAVAILABLE);
+
+    slotId = 0;
+    ret = cellularCallConnectionCS.ProcessPostDialCallChar(slotId, c);
+    EXPECT_NE(ret, TELEPHONY_SUCCESS);
+
+    c = ';';
+    ret = cellularCallConnectionCS.ProcessPostDialCallChar(slotId, c);
+    EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+}
 } // namespace Telephony
 } // namespace OHOS
