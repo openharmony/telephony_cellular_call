@@ -29,6 +29,8 @@ ohos_unittest("tel_cellular_call_ims_test") {
     "ims_test.cpp",
     "mmi_code_message_test.cpp",
     "zero_branch_test.cpp",
+    "cellular_call_hisysevent_test.cpp",
+    "emergency_utils_test.cpp",
   ]
 
   include_dirs = [
