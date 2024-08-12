@@ -87,7 +87,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0001, Function |
     callInfo.videoState = VOICE_TYPE;
     cellularCallHiSysEvent->WriteHangUpCallBehaviorEvent(callInfo, result);
 
-    int32_t slotId = 0; 
+    int32_t slotId = 0;
     int32_t callType = CS_CALL_TYPE;
     int32_t videoState = VOICE_TYPE;
     int32_t errCode = static_cast<int32_t>(TELEPHONY_ERR_MEMCPY_FAIL);
@@ -126,7 +126,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0003, Function |
 
     int32_t slotId = 0;
     int32_t callType = CS_CALL_TYPE;
-    int32_t videoState = VOICE_TYPE; 
+    int32_t videoState = VOICE_TYPE;
     int32_t errCode = 100;
     std::string desc;
     CallErrorCode value = CallErrorCode::CALL_ERROR_NONE;
