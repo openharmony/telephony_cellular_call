@@ -59,7 +59,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0001, Function |
 {
     std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
     cellularCallHiSysEvent->WriteFoundationRestartFaultEvent(2);
-    cellularCallHiSysEvent->WriteCallEndBehaviorEvent(0,17);
+    cellularCallHiSysEvent->WriteCallEndBehaviorEvent(0, 17);
 
     CallBehaviorParameterInfo callInfo = {.callType = IMS_CALL_TYPE, .videoState = VOICE_TYPE};
     CallResponseResult result = CallResponseResult::COMMAND_FAILURE;
@@ -89,7 +89,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0001, Function |
 
     int32_t slotId = 0; 
     int32_t callType = CS_CALL_TYPE;
-    int32_t videoState = VOICE_TYPE; 
+    int32_t videoState = VOICE_TYPE;
     int32_t errCode = static_cast<int32_t>(TELEPHONY_ERR_MEMCPY_FAIL);
     std::string desc;
     CallErrorCode value = CallErrorCode::CALL_ERROR_NONE;
@@ -124,7 +124,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0003, Function |
     cellularCallHiSysEvent->WriteVoNRSwitchChangeEvent(0);
     cellularCallHiSysEvent->WriteVoNRSwitchChangeEvent(1);
 
-    int32_t slotId = 0; 
+    int32_t slotId = 0;
     int32_t callType = CS_CALL_TYPE;
     int32_t videoState = VOICE_TYPE; 
     int32_t errCode = 100;
@@ -275,7 +275,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0008, Function |
     errCode = static_cast<int32_t>(CALL_ERR_CALL_OBJECT_IS_NULL);
     ret = cellularCallHiSysEvent->CallDataErrorCodeConversion(errCode, eventValue);
     EXPECT_TRUE(ret);
-    EXPECT_EQ(eventValue, CallErrorCode::CALL_ERROR_CALL_OBJECT_IS_NULL);   
+    EXPECT_EQ(eventValue, CallErrorCode::CALL_ERROR_CALL_OBJECT_IS_NULL);
 }
 
 /**
@@ -367,7 +367,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0013, Function |
 
     CallForwardingInfo info;
     int32_t slotId = 0;  
-    bool enable = true;  
+    bool enable = true;
     std::string number = "10086";
 
     cellularCallHiSysEvent->SetCallForwardingInfo(slotId, enable, number);
