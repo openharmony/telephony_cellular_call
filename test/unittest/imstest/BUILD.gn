@@ -24,6 +24,8 @@ ohos_unittest("tel_cellular_call_ims_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
+    "cellular_call_hisysevent_test.cpp",
+    "emergency_utils_test.cpp",
     "ims_callback_test.cpp",
     "ims_connection_test.cpp",
     "ims_test.cpp",
