@@ -366,7 +366,7 @@ HWTEST_F(CellularCallHiSysEventTest, CellularCallHiSysEventTest_0013, Function |
     std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
 
     CallForwardingInfo info;
-    int32_t slotId = 0;  
+    int32_t slotId = 0;
     bool enable = true;
     std::string number = "10086";
 
