@@ -100,11 +100,11 @@ HWTEST_F(ConfigRequestTest, ConfigRequestTest_0004, Function | MediumTest | Leve
     configRequest.SetImsFeatureValueRequest(FeatureType::TYPE_VOICE_OVER_LTE, intValue);
 
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
-    EXPECT_EQ(configRequest.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, value), 
+    EXPECT_EQ(configRequest.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, value),
         CALL_ERR_RESOURCE_UNAVAILABLE);
-    EXPECT_EQ(configRequest.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, intValue), 
+    EXPECT_EQ(configRequest.SetImsConfigRequest(ImsConfigItem::ITEM_VIDEO_QUALITY, intValue),
         CALL_ERR_RESOURCE_UNAVAILABLE);
-    EXPECT_EQ(configRequest.GetImsFeatureValueRequest(FeatureType::TYPE_VOICE_OVER_LTE, intValue), 
+    EXPECT_EQ(configRequest.GetImsFeatureValueRequest(FeatureType::TYPE_VOICE_OVER_LTE, intValue),
         CALL_ERR_RESOURCE_UNAVAILABLE);
 }
 

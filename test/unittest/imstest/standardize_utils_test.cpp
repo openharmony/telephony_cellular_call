@@ -41,7 +41,7 @@ void StandardizeUtilsTest::TearDown() {}
 
 /**
  * @tc.number   Telephony_StandardizeUtilsTest_0001
- * @tc.name     Test CellularCallConnectionCS 
+ * @tc.name     Test CellularCallConnectionCS
  * @tc.desc     Function test
  */
 HWTEST_F(StandardizeUtilsTest, StandardizeUtilsTest_0001, Function | MediumTest | Level1)
