@@ -30,6 +30,7 @@ public:
     void SetUp();
     void TearDown();
 };
+
 void CellularCallStubTest::SetUpTestCase() {}
 
 void CellularCallStubTest::TearDownTestCase() {}
