@@ -32,6 +32,7 @@ public:
     void SetUp();
     void TearDown();
 };
+
 void ImsCallCallbackStubTest::SetUpTestCase() {}
 
 void ImsCallCallbackStubTest::TearDownTestCase() {}
