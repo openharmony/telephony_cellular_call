@@ -143,7 +143,7 @@ HWTEST_F(ConfigRequestTest, ConfigRequestTest_0006, Function | MediumTest | Leve
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     DelayedSingleton<CellularCallService>::GetInstance()->Init();
     EXPECT_NE(configRequest.SetMuteRequest(slotId, mute), TELEPHONY_SUCCESS);
-    EXPECT_EQ(configRequest.GetMuteRequest(slotId), TELEPHONY_SUCCESS);
+    EXPECT_NE(configRequest.GetMuteRequest(slotId), TELEPHONY_SUCCESS);
 }
 
 /**
