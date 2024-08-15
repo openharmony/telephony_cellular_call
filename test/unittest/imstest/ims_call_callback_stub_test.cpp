@@ -51,8 +51,8 @@ HWTEST_F(ImsCallCallbackStubTest, ImsCallCallbackStubTest_0001, Function | Mediu
     ImsCallCallbackStub callBackStub;
     int32_t slotId = 0;
     uint32_t code = 150;
-    MessageParcel data; 
-    MessageParcel reply; 
+    MessageParcel data;
+    MessageParcel reply;
     MessageOption option;
     RadioResponseInfo rilRadioResponse;
     rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
