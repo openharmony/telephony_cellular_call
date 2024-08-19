@@ -14,7 +14,7 @@
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
 
-ohos_unittest("tel_ims_callback1_test") {
+ohos_unittest("tel_ims_callback_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -24,7 +24,7 @@ ohos_unittest("tel_ims_callback1_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback1_test.cpp",
+    "ims_callback_test.cpp",
     "ims_test.cpp",
   ]
 
@@ -74,7 +74,7 @@ ohos_unittest("tel_ims_callback1_test") {
   ]
 }
 
-ohos_unittest("tel_ims_callback2_test") {
+ohos_unittest("tel_ims_callback1_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -84,7 +84,7 @@ ohos_unittest("tel_ims_callback2_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback2_test.cpp",
+    "ims_callback1_test.cpp",
     "ims_test.cpp",
   ]
 
@@ -254,7 +254,7 @@ ohos_unittest("tel_ims2_test") {
   ]
 }
 
-ohos_unittest("tel_zero_branch1_test") {
+ohos_unittest("tel_zero_branch_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -264,7 +264,7 @@ ohos_unittest("tel_zero_branch1_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "zero_branch1_test.cpp",
+    "zero_branch_test.cpp",
   ]
 
   include_dirs = [
@@ -313,7 +313,7 @@ ohos_unittest("tel_zero_branch1_test") {
   ]
 }
 
-ohos_unittest("tel_zero_branch2_test") {
+ohos_unittest("tel_zero_branch1_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -323,7 +323,7 @@ ohos_unittest("tel_zero_branch2_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "zero_branch2_test.cpp",
+    "zero_branch1_test.cpp",
   ]
 
   include_dirs = [
@@ -847,12 +847,12 @@ ohos_unittest("tel_standardize_utils_test") {
 group("unittest") {
   testonly = true
   deps = [
+    ":tel_ims_callback_test",
     ":tel_ims_callback1_test",
-    ":tel_ims_callback2_test",
     ":tel_ims1_test",
     ":tel_ims2_test",
+    ":tel_zero_branch_test",
     ":tel_zero_branch1_test",
-    ":tel_zero_branch2_test",
     ":tel_cellular_call_stub_test",
     ":tel_ims_call_callback_stub_test",
     ":tel_cellular_call_hisysevent_test",
