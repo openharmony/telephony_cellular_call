@@ -31,6 +31,7 @@ group("unittest") {
     "unittest/imstest:tel_ims_callback2_test",
     "unittest/imstest:tel_ims_connection_test",
     "unittest/imstest:tel_mmi_code_message_test",
+    "unittest/imstest:tel_standardize_utils_test",
     "unittest/imstest:tel_zero_branch1_test",
     "unittest/imstest:tel_zero_branch2_test",
     "unittest/satellitetest:tel_satellite_callback_test",
