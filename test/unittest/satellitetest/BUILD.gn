@@ -20,9 +20,7 @@ ohos_unittest("tel_satellite_callback_test") {
   test_module = "satellitetest"
   module_out_path = part_name + "/" + test_module
 
-  sources = [
-    "satellite_callback_test.cpp",
-  ]
+  sources = [ "satellite_callback_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",
@@ -72,9 +70,7 @@ ohos_unittest("tel_satellite_test") {
   test_module = "satellitetest"
   module_out_path = part_name + "/" + test_module
 
-  sources = [
-    "satellite_test.cpp",
-  ]
+  sources = [ "satellite_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",
@@ -124,9 +120,7 @@ ohos_unittest("tel_satellite_zero_branch_test") {
   test_module = "satellitetest"
   module_out_path = part_name + "/" + test_module
 
-  sources = [
-    "zero_branch_test.cpp",
-  ]
+  sources = [ "zero_branch_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",

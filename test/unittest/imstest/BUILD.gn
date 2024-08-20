@@ -144,8 +144,8 @@ ohos_unittest("tel_ims1_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_test.cpp",
     "ims1_test.cpp",
+    "ims_test.cpp",
   ]
 
   include_dirs = [
@@ -204,8 +204,8 @@ ohos_unittest("tel_ims2_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_test.cpp",
     "ims2_test.cpp",
+    "ims_test.cpp",
   ]
 
   include_dirs = [

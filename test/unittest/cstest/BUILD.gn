@@ -74,8 +74,8 @@ ohos_unittest("tel_cs1_test") {
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
   sources = [
-    "cs_test.cpp",
     "cs1_test.cpp",
+    "cs_test.cpp",
   ]
 
   include_dirs = [
@@ -127,8 +127,8 @@ ohos_unittest("tel_cs2_test") {
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
   sources = [
-    "cs_test.cpp",
     "cs2_test.cpp",
+    "cs_test.cpp",
   ]
 
   include_dirs = [
@@ -177,8 +177,8 @@ ohos_unittest("tel_cs2_test") {
 group("unittest") {
   testonly = true
   deps = [
-    ":tel_cs_calloperation_test",
     ":tel_cs1_test",
     ":tel_cs2_test",
+    ":tel_cs_calloperation_test",
   ]
 }
