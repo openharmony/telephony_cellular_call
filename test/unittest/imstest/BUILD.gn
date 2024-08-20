@@ -847,19 +847,19 @@ ohos_unittest("tel_standardize_utils_test") {
 group("unittest") {
   testonly = true
   deps = [
-    ":tel_ims_callback_test",
-    ":tel_ims_callback1_test",
+    ":tel_cellular_call_hisysevent_test",
+    ":tel_cellular_call_stub_test",
+    ":tel_config_request_test",
+    ":tel_emergency_utils_test",
     ":tel_ims1_test",
     ":tel_ims2_test",
-    ":tel_zero_branch_test",
-    ":tel_zero_branch1_test",
-    ":tel_cellular_call_stub_test",
     ":tel_ims_call_callback_stub_test",
-    ":tel_cellular_call_hisysevent_test",
-    ":tel_emergency_utils_test",
+    ":tel_ims_callback1_test",
+    ":tel_ims_callback_test",
     ":tel_ims_connection_test",
     ":tel_mmi_code_message_test",
-    ":tel_config_request_test",
     ":tel_standardize_utils_test",
+    ":tel_zero_branch1_test",
+    ":tel_zero_branch_test",
   ]
 }
