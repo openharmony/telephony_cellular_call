@@ -270,7 +270,8 @@ void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
         }
         RegServiceState regState = networkState->GetRegStatus();
         bool isRoam = networkState->IsRoaming();
-        if (networkServiceState_[slotId].ServiceState_ == regState && networkServiceState_[slotId].isRoaming_ == isRoam) {
+        if (networkServiceState_[slotId].ServiceState_ == regState
+            && networkServiceState_[slotId].isRoaming_ == isRoam) {
             TELEPHONY_LOGI("regState and isRoam are not change, slotId: %{public}d", slotId);
             return;
         }
