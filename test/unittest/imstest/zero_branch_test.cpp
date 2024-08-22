@@ -856,7 +856,6 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | 
         TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
         TELEPHONY_SUCCESS);
-    imsVideoCallControl->SetCameraZoom(1.0);
     ASSERT_EQ(imsVideoCallControl->SetCameraZoom(1.0), TELEPHONY_SUCCESS);
     std::string path = "";
     ASSERT_EQ(imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path), TELEPHONY_SUCCESS);
