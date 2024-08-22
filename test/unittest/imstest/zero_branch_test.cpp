@@ -694,7 +694,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallCsControl_001, Function | MediumTest 
     CallsReportInfo callsReportInfo;
     csControl.DeleteConnection(callsReportInfo, callInfoList);
     csControl.ReleaseAllConnection();
-    ASSERT_NE(res, TELEPHONY_SUCCESS);
+    ASSERT_EQ(res, TELEPHONY_SUCCESS);
 }
 
 /**
@@ -848,20 +848,26 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | 
 {
     AccessToken token;
     auto imsVideoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    ASSERT_NE(imsVideoCallControl, nullptr);
     std::string cameraId = "";
-    imsVideoCallControl->ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId);
+    ASSERT_EQ(imsVideoCallControl->ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId), TELEPHONY_SUCCESS);
     std::string surfaceId = "";
-    imsVideoCallControl->SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
-    imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr);
+    ASSERT_EQ(imsVideoCallControl->SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
+        TELEPHONY_SUCCESS);
+    ASSERT_EQ(imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
+        TELEPHONY_SUCCESS);
     imsVideoCallControl->SetCameraZoom(1.0);
+    ASSERT_EQ(imsVideoCallControl->SetCameraZoom(1.0), TELEPHONY_SUCCESS);
     std::string path = "";
-    imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path);
-    imsVideoCallControl->SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0);
+    ASSERT_EQ(imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path), TELEPHONY_SUCCESS);
+    ASSERT_EQ(imsVideoCallControl->SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0), TELEPHONY_SUCCESS);
     CellularCallInfo cellularCallInfo;
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
-    imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
-    imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
-    imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
+    ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
+        TELEPHONY_SUCCESS);
+    ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
+        TELEPHONY_SUCCESS);
+    ASSERT_EQ(imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
 }
 
@@ -874,18 +880,17 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_002, Function | MediumTest | 
 {
     AccessToken token;
     auto imsVideoCallControl = DelayedSingleton<ImsVideoCallControl>::GetInstance();
+    ASSERT_NE(imsVideoCallControl, nullptr);
     ImsCallMode mode = ImsCallMode::CALL_MODE_AUDIO_ONLY;
-    imsVideoCallControl->ConverToImsCallType(mode);
+    ASSERT_EQ(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VOICE);
     mode = ImsCallMode::CALL_MODE_RECEIVE_ONLY;
-    imsVideoCallControl->ConverToImsCallType(mode);
-    imsVideoCallControl->ConverToImsCallType(mode);
+    ASSERT_EQ(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VT_RX);
     mode = ImsCallMode::CALL_MODE_SEND_ONLY;
-    imsVideoCallControl->ConverToImsCallType(mode);
-    imsVideoCallControl->ConverToImsCallType(mode);
+    ASSERT_EQ(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VT_TX);
     mode = ImsCallMode::CALL_MODE_SEND_RECEIVE;
-    imsVideoCallControl->ConverToImsCallType(mode);
+    ASSERT_EQ(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VT);
     mode = ImsCallMode::CALL_MODE_VIDEO_PAUSED;
-    ASSERT_NE(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_VOICE);
+    ASSERT_EQ(imsVideoCallControl->ConverToImsCallType(mode), ImsCallType::TEL_IMS_CALL_TYPE_PAUSE);
 }
 
 /**
@@ -898,25 +903,25 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     AccessToken token;
     CellularCallConnectionIMS callConn;
     ImsDialInfoStruct dialRequest;
-    callConn.DialRequest(SIM1_SLOTID, dialRequest);
-    callConn.HangUpRequest(SIM1_SLOTID, PHONE_NUMBER, 0);
-    callConn.AnswerRequest(SIM1_SLOTID, PHONE_NUMBER, 0, 0);
-    callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0);
-    callConn.HoldCallRequest(SIM1_SLOTID);
-    callConn.UnHoldCallRequest(SIM1_SLOTID);
-    callConn.SwitchCallRequest(SIM1_SLOTID);
-    callConn.CombineConferenceRequest(SIM1_SLOTID, 0);
+    ASSERT_EQ(callConn.DialRequest(SIM1_SLOTID, dialRequest), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.HangUpRequest(SIM1_SLOTID, PHONE_NUMBER, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.AnswerRequest(SIM1_SLOTID, PHONE_NUMBER, 0, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.HoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.UnHoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     std::vector<std::string> numberList = {};
-    callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList);
-    callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0);
-    callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT);
+    ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
     std::string msg = "";
-    callConn.StartRttRequest(SIM1_SLOTID, msg);
-    callConn.StopRttRequest(SIM1_SLOTID);
-    callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0);
-    callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0);
-    callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0);
-    callConn.StopDtmfRequest(SIM1_SLOTID, 0);
+    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.StopDtmfRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
