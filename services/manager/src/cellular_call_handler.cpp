@@ -1772,7 +1772,11 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {
     CellularCallConfig config;
-    config.UpdateImsCapabilities(slotId_, true);
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (const auto &it : slotVector) {
+        config.UpdateImsCapabilities(it, true);
+    }
 }
 } // namespace Telephony
 } // namespace OHOS
