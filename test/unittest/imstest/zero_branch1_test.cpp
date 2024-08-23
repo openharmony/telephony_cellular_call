@@ -904,22 +904,22 @@ HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | 
     std::string newPin = "789101";
     std::string puk = "22222";
     CallTransferParam callTransferParam;
-    supplementRequestCs.SendUssdRequest(SIM1_SLOTID, msg);
-    supplementRequestCs.CloseUnFinishedUssdRequest(SIM1_SLOTID);
-    supplementRequestCs.SetClirRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0);
-    supplementRequestCs.GetClipRequest(SIM1_SLOTID, 0);
-    supplementRequestCs.GetClirRequest(SIM1_SLOTID, 0);
-    supplementRequestCs.SetCallTransferRequest(SIM1_SLOTID, callTransferParam, 0);
-    supplementRequestCs.GetCallTransferRequest(SIM1_SLOTID, 0, 0);
-    supplementRequestCs.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0);
-    supplementRequestCs.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0);
-    supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str());
-    supplementRequestCs.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0);
-    supplementRequestCs.AlterPinPassword(SIM1_SLOTID, newPin, oldPin);
-    supplementRequestCs.UnlockPuk(SIM1_SLOTID, newPin, puk);
-    supplementRequestCs.AlterPin2Password(SIM1_SLOTID, newPin, oldPin);
-    supplementRequestCs.UnlockPuk2(SIM1_SLOTID, newPin, puk);
-    ASSERT_NE(supplementRequestCs.GetCallWaitingRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
+    ASSERT_EQ(supplementRequestCs.SendUssdRequest(SIM1_SLOTID, msg), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.CloseUnFinishedUssdRequest(SIM1_SLOTID), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetClirRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.GetClipRequest(SIM1_SLOTID, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.GetClirRequest(SIM1_SLOTID, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetCallTransferRequest(SIM1_SLOTID, callTransferParam, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.GetCallTransferRequest(SIM1_SLOTID, 0, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str()), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.AlterPinPassword(SIM1_SLOTID, newPin, oldPin), TELEPHONY_ERROR);
+    ASSERT_EQ(supplementRequestCs.UnlockPuk(SIM1_SLOTID, newPin, puk), TELEPHONY_ERROR);
+    ASSERT_EQ(supplementRequestCs.AlterPin2Password(SIM1_SLOTID, newPin, oldPin), TELEPHONY_ERROR);
+    ASSERT_EQ(supplementRequestCs.UnlockPuk2(SIM1_SLOTID, newPin, puk), TELEPHONY_ERROR);
+    ASSERT_EQ(supplementRequestCs.GetCallWaitingRequest(SIM1_SLOTID, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
 }
 
 /**
@@ -933,10 +933,11 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
     std::string phoneString = {0};
     std::string networkAddress = "1111111";
     std::string postDial = "11111111";
-    standardizeUtils.RemoveSeparatorsPhoneNumber(phoneString);
+    ASSERT_EQ(standardizeUtils.RemoveSeparatorsPhoneNumber(phoneString), "");
     phoneString = "1111111,123321";
     standardizeUtils.ExtractAddressAndPostDial(phoneString, networkAddress, postDial);
-    standardizeUtils.Split(phoneString, ",");
+    ASSERT_EQ(postDial, "1111111,123321");
+    std::vector<std::string> split = standardizeUtils.Split(phoneString, ",");
     ASSERT_FALSE(phoneString.empty());
 }
 
@@ -949,15 +950,15 @@ HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
 {
     MMICodeUtils mmiCodeUtils;
     bool enable = false;
-    mmiCodeUtils.IsNeedExecuteMmi("111111#", enable);
+    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi("111111#", enable));
     mmiCodeUtils.isNeedUseIms_ = true;
-    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    ASSERT_FALSE(mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID));
     mmiCodeUtils.isNeedUseIms_ = false;
     mmiCodeUtils.mmiData_.serviceCode = "11111";
-    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    ASSERT_FALSE(mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID));
     mmiCodeUtils.mmiData_.serviceCode.clear();
     mmiCodeUtils.mmiData_.fullString = "11111";
-    mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID);
+    ASSERT_TRUE(mmiCodeUtils.ExecuteMmiCode(SIM1_SLOTID));
     mmiCodeUtils.mmiData_.fullString.clear();
     mmiCodeUtils.mmiData_.dialString = "11111#";
     ASSERT_FALSE(mmiCodeUtils.RegexMatchMmi("111111#"));
