@@ -938,7 +938,7 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
     ASSERT_EQ(standardizeUtils.RemoveSeparatorsPhoneNumber(phoneString), "");
     phoneString = "1111111,123321";
     standardizeUtils.ExtractAddressAndPostDial(phoneString, networkAddress, postDial);
-    ASSERT_EQ(postDial, "1111111,123321");
+    ASSERT_EQ(postDial, "11111111,123321");
     std::vector<std::string> split = standardizeUtils.Split(phoneString, ",");
     ASSERT_FALSE(split.empty());
 }
