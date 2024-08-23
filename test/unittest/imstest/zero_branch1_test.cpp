@@ -909,11 +909,13 @@ HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | 
     ASSERT_EQ(supplementRequestCs.SetClirRequest(SIM1_SLOTID, ACTIVATE_ACTION, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.GetClipRequest(SIM1_SLOTID, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.GetClirRequest(SIM1_SLOTID, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
-    ASSERT_EQ(supplementRequestCs.SetCallTransferRequest(SIM1_SLOTID, callTransferParam, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetCallTransferRequest(SIM1_SLOTID, callTransferParam, 0),
+        TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.GetCallTransferRequest(SIM1_SLOTID, 0, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.GetCallRestrictionRequest(SIM1_SLOTID, fac, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.SetCallRestrictionRequest(SIM1_SLOTID, fac, 0, pw, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
-    ASSERT_EQ(supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str()), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    ASSERT_EQ(supplementRequestCs.SetBarringPasswordRequest(SIM1_SLOTID, msg, 0, oldPin.c_str(), newPin.c_str()),
+        TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.SetCallWaitingRequest(SIM1_SLOTID, true, 0, 0), TELEPHONY_ERR_LOCAL_PTR_NULL);
     ASSERT_EQ(supplementRequestCs.AlterPinPassword(SIM1_SLOTID, newPin, oldPin), TELEPHONY_ERROR);
     ASSERT_EQ(supplementRequestCs.UnlockPuk(SIM1_SLOTID, newPin, puk), TELEPHONY_ERROR);
@@ -938,7 +940,7 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
     standardizeUtils.ExtractAddressAndPostDial(phoneString, networkAddress, postDial);
     ASSERT_EQ(postDial, "1111111,123321");
     std::vector<std::string> split = standardizeUtils.Split(phoneString, ",");
-    ASSERT_FALSE(phoneString.empty());
+    ASSERT_FALSE(split.empty());
 }
 
 /**
