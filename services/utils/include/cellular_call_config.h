@@ -453,6 +453,7 @@ private:
     void GetEccListFromResult(const std::vector<EccNum> &eccVec,
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
     int32_t CheckHomeAndPresentState(int32_t slotId, bool &isHoamAndPresent);
+    bool GetRoamingState(int32_t slotId);
 
 private:
     static std::map<int32_t, int32_t> modeTempMap_;
