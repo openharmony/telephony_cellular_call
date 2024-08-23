@@ -791,6 +791,19 @@ EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &n
     return emergencyCall;
 }
 
+bool CellularCallConfig::GetRoamingState(int32_t slotId)
+{
+    sptr<NetworkState> networkState = nullptr;
+    CoreManagerInner::GetInstance().GetNetworkStatus(slotId, networkState);
+    if (networkState == nullptr) {
+        TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
+        return false;
+    }
+    bool isRoaming = networkState->IsRoaming();
+    TELEPHONY_LOGD("isRoaming=%{public}d", isRoaming);
+    return isRoaming;
+}
+
 void CellularCallConfig::MergeEccCallList(int32_t slotId)
 {
     std::map<int32_t, std::vector<EmergencyCall>> tempEccList;
@@ -820,10 +833,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
-    int32_t roamingState = CoreManagerInner::GetInstance().GetPsRoamingState(slotId);
-    bool isRoaming = roamingState > static_cast<int32_t>(RoamingType::ROAMING_STATE_UNKNOWN) &&
-        roamingState <= static_cast<int32_t>(RoamingType::ROAMING_STATE_INTERNATIONAL);
-    if (hasSim && !isRoaming && !hplmn.empty()) {
+    if (hasSim && !GetRoamingState(slotId) && !hplmn.empty()) {
         std::vector<EccNum> eccVec;
         DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
         if (!eccVec.empty()) {
