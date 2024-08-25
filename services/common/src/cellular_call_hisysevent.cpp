@@ -385,8 +385,11 @@ void CellularCallHiSysEvent::GetCallForwardingInfo(CallForwardingInfo &info)
     info.slotId = callForwardingSlotId_;
     info.enable = callForwardingEnable_;
 
-    size_t cpyLen = callForwardingNumber_.length() + 1;
     if (callForwardingNumber_.length() > static_cast<size_t>(maxNumberLen)) {
+        return;
+    }
+    size_t cpyLen = callForwardingNumber_.length() + 1;
+    if (cpyLen.length() > static_cast<size_t>(maxNumberLen + 1)) {
         return;
     }
     if (strcpy_s(info.number, cpyLen, callForwardingNumber_.c_str()) != EOK) {

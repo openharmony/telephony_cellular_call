@@ -136,7 +136,10 @@ void CellularCallService::CreateHandler()
         TELEPHONY_LOGI("setSlotId:%{public}d", it);
         handler->SetSlotId(it);
         handler->RegisterImsCallCallbackHandler();
-        handlerMap_.insert(std::make_pair(it, handler));
+        {
+            std::unique_lock<std::mutex> lock(handlerMapMutex_);
+            handlerMap_.insert(std::make_pair(it, handler));
+        }
         auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         statusChangeListener_ = new (std::nothrow) SystemAbilityStatusChangeListener(handler);
         if (samgrProxy == nullptr || statusChangeListener_ == nullptr) {
@@ -156,6 +159,7 @@ void CellularCallService::CreateHandler()
 void CellularCallService::HandlerResetUnRegister()
 {
     TELEPHONY_LOGI("HandlerResetUnRegister");
+    std::unique_lock<std::mutex> lock(handlerMapMutex_);
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -192,6 +196,7 @@ void CellularCallService::HandlerResetUnRegister()
 void CellularCallService::RegisterCoreServiceHandler()
 {
     TELEPHONY_LOGI("RegisterCoreServiceHandle");
+    std::unique_lock<std::mutex> lock(handlerMapMutex_);
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -232,6 +237,7 @@ void CellularCallService::SendEventRegisterHandler()
 {
     int64_t delayTime = 1000;
     int32_t slot = DEFAULT_SIM_SLOT_ID;
+    std::unique_lock<std::mutex> lock(handlerMapMutex_);
     auto handler = handlerMap_[slot];
     if (handler == nullptr) {
         TELEPHONY_LOGE("SendEventRegisterHandler return, handler is nullptr");
