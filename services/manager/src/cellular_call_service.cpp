@@ -1279,6 +1279,7 @@ bool CellularCallService::IsNeedIms(int32_t slotId) const
 
 std::shared_ptr<CellularCallHandler> CellularCallService::GetHandler(int32_t slotId)
 {
+    std::unique_lock<std::mutex> lock(handlerMapMutex_);
     return handlerMap_[slotId];
 }
 
