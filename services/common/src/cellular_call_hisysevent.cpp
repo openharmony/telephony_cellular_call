@@ -389,7 +389,7 @@ void CellularCallHiSysEvent::GetCallForwardingInfo(CallForwardingInfo &info)
         return;
     }
     size_t cpyLen = callForwardingNumber_.length() + 1;
-    if (cpyLen.length() > static_cast<size_t>(maxNumberLen + 1)) {
+    if (cpyLen > static_cast<size_t>(maxNumberLen + 1)) {
         return;
     }
     if (strcpy_s(info.number, cpyLen, callForwardingNumber_.c_str()) != EOK) {
