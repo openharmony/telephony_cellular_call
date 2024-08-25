@@ -196,7 +196,8 @@ void CellularCallService::HandlerResetUnRegister()
 void CellularCallService::RegisterCoreServiceHandler()
 {
     TELEPHONY_LOGI("RegisterCoreServiceHandle");
-    std::unique_lock<std::mutex> lock(handlerMapMutex_);
+    std::unique_lock<std::mutex> lock(handlerMapMutex_, std::defer_lock);
+    lock.lock();
     for (const auto &it : handlerMap_) {
         int32_t slot = it.first;
         auto handler = it.second;
@@ -227,9 +228,11 @@ void CellularCallService::RegisterCoreServiceHandler()
         if (config.GetDomainPreferenceMode(slot) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetDomainPreferenceMode request fail");
         }
+        lock.unlock();
         if (config.GetEmergencyCallList(it.first) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetEmergencyCallList request fail");
         }
+        lock.lock();
     }
 }
 
