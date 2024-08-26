@@ -1648,8 +1648,9 @@ void CellularCallHandler::SaveSsRequestCommand(const std::shared_ptr<SsRequestCo
         TELEPHONY_LOGE("[slot%{public}d] utCommand is null", slotId_);
         return;
     }
+    int32_t indexCommand = indexCommand_;
     std::lock_guard<std::mutex> lock(mutex_);
-    utCommandMap_.insert(std::make_pair(indexCommand_, utCommand));
+    utCommandMap_.insert(std::make_pair(indexCommand, utCommand));
 }
 
 int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int32_t &flag)
