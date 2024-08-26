@@ -617,6 +617,7 @@ int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue
         return SAVE_IMS_SWITCH_FAILED;
     }
     saveImsSwitchStatusToLocal(slotId, imsSwitchValue);
+    SaveVoNRState(imsSwitchValue);
     return SAVE_IMS_SWITCH_SUCCESS_CHANGED;
 }
 
