@@ -1140,6 +1140,108 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest |
 }
 
 /**
+ * @tc.number   cellular_call_CellularCallHandler_0004
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler fourthHandler { subscriberInfo };
+    auto callInfoList = std::make_shared<CallInfoList>();
+    callInfoList->callSize = 1;
+    std::string expectedPhoneNumber = "+861565910xxxx";
+    std::string unexpectedPhoneNumber = "00861565910xxxx";
+    std::vector<CallInfo> callInfoLists;
+    CallInfo callInfo;
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoLists.push_back(callInfo);
+    callInfoList->calls = callInfoLists;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    auto callInfoListFirst = std::make_shared<CallInfoList>();
+    callInfoListFirst->callSize = 0;
+    callInfoLists.clear();
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoLists.push_back(callInfo);
+    callInfoListFirst->calls = callInfoLists;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoListFirst);
+    EXPECT_EQ(callInfoListFirst->calls[0].number, unexpectedPhoneNumber);
+    auto callInfoListSecond = std::make_shared<CallInfoList>();
+    callInfoListSecond->callSize = 1;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoListSecond);
+    EXPECT_EQ(callInfoListSecond->callSize, 1);
+    auto callInfoListThird = std::make_shared<CallInfoList>();
+    callInfoListThird->callSize = 1;
+    expectedPhoneNumber = "+861565910xxxx";
+    unexpectedPhoneNumber = "123";
+    callInfoLists.clear();
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoLists.push_back(callInfo);
+    callInfoListThird->calls = callInfoLists;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
+    EXPECT_EQ(callInfoListThird->calls[0].number, unexpectedPhoneNumber);
+    callInfoLists.clear();
+    unexpectedPhoneNumber = "0861565910xxxx";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoLists.push_back(callInfo);
+    callInfoListThird->calls = callInfoLists;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
+    EXPECT_EQ(callInfoListThird->calls[0].number, unexpectedPhoneNumber);
+}
+
+ /**
+ * @tc.number   cellular_call_CellularCallHandler_0005
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler fifthHandler { subscriberInfo };
+    auto callInfoList = std::make_shared<CallInfoList>();
+    callInfoList->callSize = 1;
+    std::string expectedPhoneNumber = "+8615659101234";
+    std::string unexpectedPhoneNumber = "+868615659101234";
+    CallInfo callInfo;
+    callInfo.number = unexpectedPhoneNumber;
+    callInfo.type = 145;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    callInfoList->callSize = 0;
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.clear();
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    callInfoList->callSize = 1;
+    callInfoList->calls.clear();
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->callSize, 1);
+    callInfo.number = unexpectedPhoneNumber;
+    callInfo.type = 136;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "+561565910xxxx";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfo.type = 145;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "+861565910";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+}
+
+/**
  * @tc.number   cellular_call_TestDump_0001
  * @tc.name     TestDump
  * @tc.desc     Function test
