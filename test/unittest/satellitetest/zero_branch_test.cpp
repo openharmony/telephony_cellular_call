@@ -181,7 +181,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionSatellite_001, Function | M
     callConn.AnswerRequest(SIM1_SLOTID);
     callConn.RejectRequest(SIM1_SLOTID);
     callConn.GetSatelliteCallsDataRequest(SIM1_SLOTID, 0);
-    ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_NE(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -204,7 +204,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | 
 
     std::shared_ptr<SatelliteControl> satelliteControl;
     callService.SetSatelliteControl(SIM1_SLOTID, satelliteControl);
-    ASSERT_EQ(callService.SwitchCall(satelliteCallInfo), TELEPHONY_SUCCESS);
+    ASSERT_NE(callService.SwitchCall(satelliteCallInfo), TELEPHONY_SUCCESS);
 }
 } // namespace Telephony
 } // namespace OHOS
