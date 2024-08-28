@@ -1205,8 +1205,16 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest |
     CellularCallHandler fifthHandler { subscriberInfo };
     auto callInfoList = std::make_shared<CallInfoList>();
     callInfoList->callSize = 1;
-    std::string expectedPhoneNumber = "+8615659101234";
-    std::string unexpectedPhoneNumber = "+868615659101234";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, 9);
+    int randomNumber = 0;
+    int phonenumberLength = 8;
+    for (int i = 0; i < phonenumberLength; i++) {
+        randomNumber = randomNumber * 10 + distrib(gen);
+    }
+    std::string expectedPhoneNumber = "+86156" + std::to_string(randomNumber);
+    std::string unexpectedPhoneNumber = "+8686156" + std::to_string(randomNumber);
     CallInfo callInfo;
     callInfo.number = unexpectedPhoneNumber;
     callInfo.type = 145;

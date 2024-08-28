@@ -191,7 +191,7 @@ public:
     const std::string PHONE_CONTEXT_UNEXPECTED = "0086";
     const std::string PHONE_CONTEXT_EXPECTED = "+86";
     const std::string DOUBLE_PHONE_CONTEXT_STRING = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
-                                                    "|18[0-9]|19[0-9])\\d{8}$";
+        "|18[0-9]|19[0-9])\\d{8}$";
     const int32_t INTERNATION_CODE = 145;
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
 

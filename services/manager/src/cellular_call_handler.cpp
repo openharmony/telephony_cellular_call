@@ -1346,7 +1346,7 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
         std::regex phoneContextPattern(DOUBLE_PHONE_CONTEXT_STRING);
         if (callInfo.type == INTERNATION_CODE && std::regex_match(callInfo.number, phoneContextPattern)) {
             callInfoList.calls[i].number = callInfo.number.substr(0, 1) +
-                                           callInfo.number.substr(PHONE_CONTEXT_EXPECTED.length());
+                callInfo.number.substr(PHONE_CONTEXT_EXPECTED.length());
         }
     }
 }
@@ -1363,7 +1363,7 @@ void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
         }
         if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
             list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
-                                                           PHONE_CONTEXT_EXPECTED);
+                PHONE_CONTEXT_EXPECTED);
         }
     }
 }
@@ -1380,7 +1380,7 @@ void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
         }
         if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
             list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
-                                                              PHONE_CONTEXT_EXPECTED);
+                PHONE_CONTEXT_EXPECTED);
         }
     }
 }
