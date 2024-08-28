@@ -36,6 +36,26 @@ const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 
+void SatelliteTest::SetUpTestCase(void)
+{
+    // step 3: Set Up Test Case
+}
+
+void SatelliteTest::TearDownTestCase(void)
+{
+    // step 3: Tear Down Test Case
+}
+
+void SatelliteTest::SetUp(void)
+{
+    // step 3: input testcase setup step
+}
+
+void SatelliteTest::TearDown(void)
+{
+    // step 3: input testcase teardown step
+}
+
 /**
  * @tc.number   cellular_call_SatelliteCallCallbackProxy_0001
  * @tc.name     Test for SatelliteCallCallbackProxy
