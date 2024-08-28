@@ -456,6 +456,8 @@ void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::P
         registerInstance_->ReportEventResultInfo(eventInfo);
         return;
     }
+    ProcessCsPhoneNumber(*callInfoList);
+    ProcessRedundantCode(*callInfoList);
     ReportCsCallsData(*callInfoList);
 }
 
@@ -482,6 +484,7 @@ void CellularCallHandler::GetImsCallsDataResponse(const AppExecFwk::InnerEvent::
         registerInstance_->ReportGetCallDataResult(static_cast<int32_t>(rilResponseInfo->error));
         return;
     }
+    ProcessImsPhoneNumber(*imsCallInfoList);
     ReportImsCallsData(*imsCallInfoList);
 }
 
@@ -1330,6 +1333,56 @@ void CellularCallHandler::GetCallWaitingResponse(const AppExecFwk::InnerEvent::P
     }
     CellularCallSupplement supplement;
     supplement.EventGetCallWaiting(*result, result->result.message, flag);
+}
+
+void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
+{
+    if (callInfoList.callSize == 0 || callInfoList.calls.empty()) {
+        return;
+    }
+
+    for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
+        CallInfo callInfo = callInfoList.calls[i];
+        std::regex phoneContextPattern(DOUBLE_PHONE_CONTEXT_STRING);
+        if (callInfo.type == INTERNATION_CODE && std::regex_match(callInfo.number, phoneContextPattern)) {
+            callInfoList.calls[i].number = callInfo.number.substr(0, 1) +
+                callInfo.number.substr(PHONE_CONTEXT_EXPECTED.length());
+        }
+    }
+}
+
+void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
+{
+    if (list.callSize == 0 || list.calls.empty()) {
+        return;
+    }
+    for (uint64_t i = 0; i < list.calls.size(); i++) {
+        CallInfo callInfo = list.calls[i];
+        if (callInfo.number.length() <= PHONE_CONTEXT_UNEXPECTED.length()) {
+            continue;
+        }
+        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
+            list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
+                PHONE_CONTEXT_EXPECTED);
+        }
+    }
+}
+
+void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
+{
+    if (list.callSize == 0 || list.calls.empty()) {
+        return;
+    }
+    for (uint64_t i = 0; i < list.calls.size(); i++) {
+        ImsCurrentCall currentCall = list.calls[i];
+        if (currentCall.number.length() <= PHONE_CONTEXT_UNEXPECTED.length()) {
+            continue;
+        }
+        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
+            list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
+                PHONE_CONTEXT_EXPECTED);
+        }
+    }
 }
 
 void CellularCallHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event)

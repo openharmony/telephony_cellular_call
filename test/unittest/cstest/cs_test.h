@@ -16,6 +16,8 @@
 #ifndef TELEPHONY_CS_TEST_H
 #define TELEPHONY_CS_TEST_H
 #include <securec.h>
+#include <iostream>
+#include <random>
 
 #include "accesstoken_kit.h"
 #include "call_manager_errors.h"

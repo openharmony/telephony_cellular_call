@@ -858,6 +858,46 @@ HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest 
 }
 
 /**
+ * @tc.number   cellular_call_CellularCallHandler_0005
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    auto imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
+    imsCurrentCallList->callSize = 0;
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->callSize, 0);
+    imsCurrentCallList->callSize = 1;
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->callSize, 1);
+    imsCurrentCallList->callSize = 1;
+    ImsCurrentCall imsCurrent;
+    std::string phoneNumber = "123";
+    imsCurrent.number = phoneNumber;
+    imsCurrentCallList->calls.push_back(imsCurrent);
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->calls[0].number, phoneNumber);
+    imsCurrentCallList->calls.clear();
+    std::string unexpected = "00861565910xxxx";
+    std::string expected = "+861565910xxxx";
+    imsCurrent.number = unexpected;
+    imsCurrentCallList->calls.push_back(imsCurrent);
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->calls[0].number, expected);
+    imsCurrentCallList->calls.clear();
+    unexpected = "0861565910xxxx";
+    imsCurrent.number = unexpected;
+    imsCurrentCallList->calls.push_back(imsCurrent);
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->calls[0].number, unexpected);
+}
+
+/**
  * @tc.number   cellular_call_ImsCallClient_0001
  * @tc.name     test for ImsCallClient
  * @tc.desc     Function test
