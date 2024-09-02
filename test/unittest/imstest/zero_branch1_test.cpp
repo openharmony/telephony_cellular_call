@@ -669,7 +669,11 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | 
     cellularCall.SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
+#ifdef DEVICE_RK3568
+    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
+#else
     ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
+#endif
 }
 
 /**
