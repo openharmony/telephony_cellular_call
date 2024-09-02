@@ -313,7 +313,7 @@ ohos_unittest("tel_zero_branch_test") {
   ]
 
   if (device_name == "rk3568") {
-    defines += [ "DEVICE_RK3568" ]
+    defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
   }
 }
 
@@ -376,7 +376,7 @@ ohos_unittest("tel_zero_branch1_test") {
   ]
 
   if (device_name == "rk3568") {
-    defines += [ "DEVICE_RK3568" ]
+    defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
   }
 }
 
