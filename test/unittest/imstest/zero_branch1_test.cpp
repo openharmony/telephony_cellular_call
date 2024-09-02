@@ -45,6 +45,10 @@ namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 
+#ifdef DEVICE_RK3568
+static const int32_t INVALID_VALUE = -1;
+#endif
+
 namespace {
 const int32_t INVALID_SLOTID = 2;
 const int32_t SIM1_SLOTID = 0;
