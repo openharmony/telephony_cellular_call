@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "reporthungupinfo_fuzzer.h"
+#include "reporthangupinfo_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -80,7 +80,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     satelliteControl->HoldCall(slotId);
     satelliteControl->UnHoldCall(slotId);
     satelliteControl->SwitchCall(slotId);
-    satelliteControl->ReportHungUpInfo(slotId);
+    satelliteControl->ReportHangUpInfo(slotId);
     return;
 }
 } // namespace OHOS

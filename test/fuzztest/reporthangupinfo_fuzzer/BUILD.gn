@@ -18,11 +18,11 @@ import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
 
 ##############################fuzztest##########################################
-ohos_fuzztest("ReportHungUpInfoFuzzTest") {
+ohos_fuzztest("ReportHangUpInfoFuzzTest") {
   module_output_path = "cellular_call/cellular_call"
   module_out_path = module_output_path
   fuzz_config_file =
-      "${CELLULAR_CALL_PATH}/test/fuzztest/reporthungupinfo_fuzzer"
+      "${CELLULAR_CALL_PATH}/test/fuzztest/reporthangupinfo_fuzzer"
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/test/fuzztest/common_fuzzer",
@@ -76,7 +76,7 @@ ohos_fuzztest("ReportHungUpInfoFuzzTest") {
   ]
   sources = [
     "${CELLULAR_CALL_PATH}/test/fuzztest/common_fuzzer/addcellularcalltoken_fuzzer.cpp",
-    "reporthungupinfo_fuzzer.cpp",
+    "reporthangupinfo_fuzzer.cpp",
   ]
 }
 
@@ -86,7 +86,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":ReportHungUpInfoFuzzTest",
+    ":ReportHangUpInfoFuzzTest",
   ]
 }
 ###############################################################################
