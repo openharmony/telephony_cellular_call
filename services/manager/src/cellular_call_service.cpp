@@ -218,6 +218,7 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET, nullptr);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NV_REFRESH_FINISHED, nullptr);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
             coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
