@@ -904,29 +904,40 @@ HWTEST_F(BranchTest, Telephony_ImsVideoCallControl_001, Function | MediumTest | 
     ASSERT_NE(imsVideoCallControl, nullptr);
     std::string cameraId = "";
     std::string surfaceId = "";
+    std::string path = "";
+    CellularCallInfo cellularCallInfo;
+    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     ASSERT_EQ(imsVideoCallControl->ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId), INVALID_VALUE);
     ASSERT_EQ(imsVideoCallControl->SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
         INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
+        INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->SetCameraZoom(1.0), INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path), INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0), INVALID_VALUE);
+    ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
+        INVALID_VALUE);
+    ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
+        INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
+    ASSERT_EQ(imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
 #else
     ASSERT_EQ(imsVideoCallControl->ControlCamera(SIM1_SLOTID, DEFAULT_INDEX, cameraId), TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->SetPreviewWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
         TELEPHONY_SUCCESS);
-#endif
     ASSERT_EQ(imsVideoCallControl->SetDisplayWindow(SIM1_SLOTID, DEFAULT_INDEX, surfaceId, nullptr),
         TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->SetCameraZoom(1.0), TELEPHONY_SUCCESS);
-    std::string path = "";
     ASSERT_EQ(imsVideoCallControl->SetPausePicture(SIM1_SLOTID, DEFAULT_INDEX, path), TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->SetDeviceDirection(SIM1_SLOTID, DEFAULT_INDEX, 0), TELEPHONY_SUCCESS);
-    CellularCallInfo cellularCallInfo;
-    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
     ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
         TELEPHONY_SUCCESS);
     ASSERT_NE(imsVideoCallControl->SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY),
         TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
     ASSERT_EQ(imsVideoCallControl->RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
+#endif
 }
 
 /**
@@ -961,24 +972,39 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     AccessToken token;
     CellularCallConnectionIMS callConn;
     ImsDialInfoStruct dialRequest;
+    std::vector<std::string> numberList = {};
+    std::string msg = "";
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     ASSERT_EQ(callConn.DialRequest(SIM1_SLOTID, dialRequest), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
     ASSERT_EQ(callConn.HangUpRequest(SIM1_SLOTID, PHONE_NUMBER, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.AnswerRequest(SIM1_SLOTID, PHONE_NUMBER, 0, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.HoldCallRequest(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(callConn.UnHoldCallRequest(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), INVALID_VALUE);
+    ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), INVALID_VALUE);
+    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), INVALID_VALUE);
+    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.StopDtmfRequest(SIM1_SLOTID, 0), INVALID_VALUE);
+    ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), INVALID_VALUE);
 #else
     ASSERT_EQ(callConn.DialRequest(SIM1_SLOTID, dialRequest), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.HangUpRequest(SIM1_SLOTID, PHONE_NUMBER, 0), TELEPHONY_SUCCESS);
-#endif
     ASSERT_EQ(callConn.AnswerRequest(SIM1_SLOTID, PHONE_NUMBER, 0, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.HoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.UnHoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
-    std::vector<std::string> numberList = {};
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
-    std::string msg = "";
     ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
@@ -986,6 +1012,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     ASSERT_EQ(callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.StopDtmfRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+#endif
 }
 
 /**
