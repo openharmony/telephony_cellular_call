@@ -985,7 +985,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionIms_001, Function | MediumT
     ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), INVALID_VALUE);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
-    ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), INVALID_VALUE);
+    ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), INVALID_VALUE);
     ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), INVALID_VALUE);
     ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), INVALID_VALUE);
