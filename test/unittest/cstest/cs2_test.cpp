@@ -1222,11 +1222,8 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest |
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     callInfoList->callSize = 0;
-    callInfo.number = unexpectedPhoneNumber;
-    callInfoList->calls.clear();
-    callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     callInfoList->callSize = 1;
     callInfoList->calls.clear();
     fifthHandler.ProcessRedundantCode(*callInfoList);
@@ -1239,11 +1236,13 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest |
     unexpectedPhoneNumber = "+561565910xxxx";
     callInfo.number = unexpectedPhoneNumber;
     callInfo.type = 145;
+    callInfoList->calls.clear();
     callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
     unexpectedPhoneNumber = "+861565910";
     callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.clear();
     callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
