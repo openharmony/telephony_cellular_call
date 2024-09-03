@@ -526,34 +526,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_006, Function | MediumTest
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataAct);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataDeact);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataInterrogate);
-    auto command = std::make_shared<SsRequestCommand>();
-    CallTransferInfo cfInfo;
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
-#else
-    ASSERT_EQ(callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command), TELEPHONY_SUCCESS);
-#endif
-    ASSERT_EQ(callSup.SetCallTransferInfo(SIM1_SLOTID, cfInfo), TELEPHONY_ERR_ARGUMENT_INVALID);
-    ASSERT_EQ(callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
-        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    bool activate = true;
-    ASSERT_EQ(callSup.SetCallWaiting(SIM1_SLOTID, activate), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    ASSERT_EQ(callSup.GetCallWaiting(SIM1_SLOTID), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    CallRestrictionInfo cRInfo;
-    std::string info(cRInfo.password);
-    std::string fac("AO");
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command),
-        TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
-#else
-    ASSERT_EQ(callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command),
-        TELEPHONY_SUCCESS);
-#endif
-    ASSERT_EQ(callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING),
-        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    ASSERT_EQ(callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING,
-        "1111", "0000"), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    ASSERT_EQ(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
 }
 
 /**
@@ -674,6 +646,45 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_008, Function | MediumTest
     ASSERT_FALSE(callSup.IsVaildPinOrPuk("123", "123"));
     ASSERT_FALSE(callSup.IsVaildPinOrPuk("1234567", "123"));
     ASSERT_TRUE(callSup.IsVaildPinOrPuk("1234567", "1234567"));
+}
+
+/**
+ * @tc.number   Telephony_CellularCallSupplement_009
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(BranchTest, Telephony_CellularCallSupplement_009, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallSupplement callSup;
+    auto command = std::make_shared<SsRequestCommand>();
+    CallTransferInfo cfInfo;
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    ASSERT_EQ(callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
+#else
+    ASSERT_EQ(callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command), TELEPHONY_SUCCESS);
+#endif
+    ASSERT_EQ(callSup.SetCallTransferInfo(SIM1_SLOTID, cfInfo), TELEPHONY_ERR_ARGUMENT_INVALID);
+    ASSERT_EQ(callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
+        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    bool activate = true;
+    ASSERT_EQ(callSup.SetCallWaiting(SIM1_SLOTID, activate), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_EQ(callSup.GetCallWaiting(SIM1_SLOTID), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    CallRestrictionInfo cRInfo;
+    std::string info(cRInfo.password);
+    std::string fac("AO");
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    ASSERT_EQ(callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command),
+        TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
+#else
+    ASSERT_EQ(callSup.SetCallRestrictionByIms(SIM1_SLOTID, fac, static_cast<int32_t>(cRInfo.mode), info, command),
+        TELEPHONY_SUCCESS);
+#endif
+    ASSERT_EQ(callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING),
+        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_EQ(callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING,
+        "1111", "0000"), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_EQ(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
 }
 
 /**
