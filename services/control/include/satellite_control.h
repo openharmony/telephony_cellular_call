@@ -153,14 +153,14 @@ public:
     int32_t ExecutePostDial(int32_t slotId, int64_t callId);
 
     int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
-private:
     /**
      * Report being hung up data
      *
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t ReportHungUpInfo(int32_t slotId);
+    int32_t ReportHangUpInfo(int32_t slotId);
 
+private:
     /**
      * Report Incoming info
      *

@@ -179,7 +179,7 @@ int32_t SatelliteControl::Reject(const CellularCallInfo &callInfo)
 int32_t SatelliteControl::ReportSatelliteCallsData(int32_t slotId, const SatelliteCurrentCallList &callInfoList)
 {
     if (callInfoList.callSize <= 0 && !connectionMap_.empty()) {
-        return ReportHungUpInfo(slotId);
+        return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
         return ReportIncomingInfo(slotId, callInfoList);
     } else if (callInfoList.callSize > 0 && !connectionMap_.empty()) {
@@ -297,9 +297,9 @@ int32_t SatelliteControl::ReportIncomingInfo(int32_t slotId, const SatelliteCurr
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SatelliteControl::ReportHungUpInfo(int32_t slotId)
+int32_t SatelliteControl::ReportHangUpInfo(int32_t slotId)
 {
-    TELEPHONY_LOGD("ReportHungUpInfo entry");
+    TELEPHONY_LOGD("ReportHangUpInfo entry");
     CallsReportInfo callsReportInfo;
     for (auto &it : connectionMap_) {
         CallReportInfo callReportInfo = it.second.GetCallReportInfo();
@@ -309,7 +309,7 @@ int32_t SatelliteControl::ReportHungUpInfo(int32_t slotId)
         GetCallFailReason(slotId, connectionMap_);
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
-        TELEPHONY_LOGE("ReportHungUpInfo return, GetInstance() is nullptr.");
+        TELEPHONY_LOGE("ReportHangUpInfo return, GetInstance() is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     callsReportInfo.slotId = slotId;

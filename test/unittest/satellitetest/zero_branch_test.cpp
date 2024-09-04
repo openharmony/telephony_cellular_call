@@ -114,7 +114,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | Medi
     CallInfoList callInfoList;
     satelliteControl.ReportCallsData(SIM1_SLOTID, callInfoList);
     SatelliteCurrentCallList satellitecallInfoList;
-    satelliteControl.ReportHungUpInfo(SIM1_SLOTID);
+    satelliteControl.ReportHangUpInfo(SIM1_SLOTID);
     satelliteControl.ReportIncomingInfo(SIM1_SLOTID, satellitecallInfoList);
     satelliteControl.ReportUpdateInfo(SIM1_SLOTID, satellitecallInfoList);
     SatelliteCurrentCall CallInfo;
@@ -144,7 +144,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_002, Function | Medi
     CallsReportInfo callsReportInfo;
     auto connectionMap = satelliteControl.GetConnectionMap();
     satelliteControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionSatellite()));
-    satelliteControl.ReportHungUpInfo(SIM1_SLOTID);
+    satelliteControl.ReportHangUpInfo(SIM1_SLOTID);
     satelliteControl.DeleteConnection(callsReportInfo, satellitecallInfoList);
     satelliteControl.ExecutePostDial(SIM1_SLOTID, 0);
     ASSERT_NE(satelliteControl.PostDialProceed(cellularCallInfo, true), TELEPHONY_SUCCESS);
