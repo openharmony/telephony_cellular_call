@@ -311,6 +311,10 @@ ohos_unittest("tel_zero_branch_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+
+  if (device_name == "rk3568") {
+    defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
+  }
 }
 
 ohos_unittest("tel_zero_branch1_test") {
@@ -370,6 +374,10 @@ ohos_unittest("tel_zero_branch1_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+
+  if (device_name == "rk3568") {
+    defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
+  }
 }
 
 ohos_unittest("tel_cellular_call_stub_test") {
