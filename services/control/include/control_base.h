@@ -310,7 +310,6 @@ public:
          */
         TELEPHONY_LOGD("ControlBase::StartDtmf start");
         auto pConnection = FindConnectionByIndex<T &, decltype(&t.begin()->second)>(t, callInfo.index);
-
         if (pConnection == nullptr) {
             TELEPHONY_LOGE("StartDtmf, error type: connection is null");
             return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
