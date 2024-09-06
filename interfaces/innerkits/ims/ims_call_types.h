@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace Telephony {
-const int32_t kMaxNumberLength = 257;
+const int32_t kMaxNumberLength = 255;
 const int32_t SLOT_0 = 0;
 const int32_t SLOT_1 = 1;
 
