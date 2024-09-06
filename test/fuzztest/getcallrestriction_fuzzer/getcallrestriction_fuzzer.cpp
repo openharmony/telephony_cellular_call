@@ -316,12 +316,12 @@ void KickOutFromConference(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnKickOutFromConferenceInner(dataMessageParcel, reply);
 }
 
-void doFuzzCellularCallService_1(const uint8_t *data, size_t size)
+void DoFuzzCellularCallService1(const uint8_t *data, size_t size)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(1, 20);
+    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(1, 21);
     if (fdp.remaining_bytes() == 0) {
         return;
     }
@@ -336,12 +336,12 @@ void doFuzzCellularCallService_1(const uint8_t *data, size_t size)
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
 }
 
-void doFuzzCellularCallService_2(const uint8_t *data, size_t size)
+void DoFuzzCellularCallService2(const uint8_t *data, size_t size)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(100, 105);
+    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(100, 106);
     if (fdp.remaining_bytes() == 0) {
         return;
     }
@@ -356,12 +356,12 @@ void doFuzzCellularCallService_2(const uint8_t *data, size_t size)
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
 }
 
-void doFuzzCellularCallService_3(const uint8_t *data, size_t size)
+void DoFuzzCellularCallService3(const uint8_t *data, size_t size)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(200, 208);
+    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(200, 210);
     if (fdp.remaining_bytes() == 0) {
         return;
     }
@@ -376,12 +376,12 @@ void doFuzzCellularCallService_3(const uint8_t *data, size_t size)
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
 }
 
-void doFuzzCellularCallService_4(const uint8_t *data, size_t size)
+void DoFuzzCellularCallService4(const uint8_t *data, size_t size)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(300, 312);
+    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(300, 315);
     if (fdp.remaining_bytes() == 0) {
         return;
     }
@@ -396,12 +396,12 @@ void doFuzzCellularCallService_4(const uint8_t *data, size_t size)
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
 }
 
-void doFuzzCellularCallService_5(const uint8_t *data, size_t size)
+void DoFuzzCellularCallService5(const uint8_t *data, size_t size)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     FuzzedDataProvider fdp(data, size);
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(400, 407);
+    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(400, 410);
     if (fdp.remaining_bytes() == 0) {
         return;
     }
@@ -437,11 +437,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     Dial(data, size);
     InviteToConference(data, size);
     KickOutFromConference(data, size);
-    doFuzzCellularCallService_1(data, size);
-    doFuzzCellularCallService_2(data, size);
-    doFuzzCellularCallService_3(data, size);
-    doFuzzCellularCallService_4(data, size);
-    doFuzzCellularCallService_5(data, size);
+    DoFuzzCellularCallService1(data, size);
+    DoFuzzCellularCallService2(data, size);
+    DoFuzzCellularCallService3(data, size);
+    DoFuzzCellularCallService4(data, size);
+    DoFuzzCellularCallService5(data, size);
     return;
 }
 } // namespace OHOS
