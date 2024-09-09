@@ -268,14 +268,14 @@ void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
             TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
             return;
         }
-        RegServiceState regState = networkState->GetRegStatus();
+        bool isInSrv = networkState->GetRegStatus() == RegServiceState::REG_STATE_IN_SERVICE ? true : false;
         bool isRoam = networkState->IsRoaming();
-        if (networkServiceState_[slotId].ServiceState_ == regState
+        if (networkServiceState_[slotId].isInService_ == isInSrv
             && networkServiceState_[slotId].isRoaming_ == isRoam) {
-            TELEPHONY_LOGI("regState and isRoam are not change, slotId: %{public}d", slotId);
+            TELEPHONY_LOGI("service state and roaming state are not change, slotId: %{public}d", slotId);
             return;
         }
-        networkServiceState_[slotId].ServiceState_ = regState;
+        networkServiceState_[slotId].isInService_ = isInSrv;
         networkServiceState_[slotId].isRoaming_ = isRoam;
     }
     CheckAndUpdateSimState(slotId);
