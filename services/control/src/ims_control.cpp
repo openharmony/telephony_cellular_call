@@ -180,13 +180,12 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     }
     auto con = FindConnectionByState<ImsConnectionMap &, CellularCallConnectionIMS *>(
         connectionMap_, TelCallState::CALL_STATUS_ACTIVE);
-    if (con != nullptr && !con->IsPendingHold() &&
-        pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
+    if (con == nullptr) {
+        TELEPHONY_LOGE("Answer return, error type: con is null, there are no active calls");
+        return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
+    }
+    if (!con->IsPendingHold() && pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
-        if (con == nullptr) {
-            TELEPHONY_LOGE("Answer return, error type: con is null, there are no active calls");
-            return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
-        }
         return con->SwitchCallRequest(callInfo.slotId);
     }
     if (pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
@@ -522,7 +521,7 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCur
             CallReportInfo callReportInfo = it->second.GetCallReportInfo();
             callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
             callsReportInfo.callVec.push_back(callReportInfo);
-            connectionMap_.erase(it++);
+            it = connectionMap_.erase(it);
             GetCallFailReason(callsReportInfo.slotId, connectionMap_);
         } else {
             it->second.SetFlag(false);

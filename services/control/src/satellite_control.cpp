@@ -232,7 +232,7 @@ void SatelliteControl::DeleteConnection(CallsReportInfo &callsReportInfo, const 
         if (!it->second.GetFlag()) {
             callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
             callsReportInfo.callVec.push_back(callReportInfo);
-            connectionMap_.erase(it++);
+            it = connectionMap_.erase(it);
             GetCallFailReason(callsReportInfo.slotId, connectionMap_);
         } else {
             it->second.SetFlag(false);

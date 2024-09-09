@@ -22,7 +22,9 @@ namespace OHOS {
 namespace Telephony {
 BaseConnection::BaseConnection()
 {
-    (void)memset_s(&callReportInfo_, sizeof(CallReportInfo), 0, sizeof(callReportInfo_));
+    if (memset_s(&callReportInfo_, sizeof(CallReportInfo), 0, sizeof(callReportInfo_)) != EOK) {
+        TELEPHONY_LOGE("return, memset_s error.");
+    }
 }
 
 void BaseConnection::SetOrUpdateCallReportInfo(CallReportInfo &callReportInfo)
