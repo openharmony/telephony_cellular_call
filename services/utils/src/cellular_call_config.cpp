@@ -254,26 +254,30 @@ void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string
 
 void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
 {
-    TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
-    auto itSlotId = networkServiceState_.find(slotId);
-    if (itSlotId == networkServiceState_.end()) {
-        TELEPHONY_LOGE("slotId is not in networkServiceState_");
-        return;
+    {
+        std::lock_guard<std::mutex> lock(operatorMutex_);
+        TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
+        auto itSlotId = networkServiceState_.find(slotId);
+        if (itSlotId == networkServiceState_.end()) {
+            TELEPHONY_LOGE("slotId is not in networkServiceState_");
+            return;
+        }
+        sptr<NetworkState> networkState = nullptr;
+        CoreManagerInner::GetInstance().GetNetworkStatus(slotId, networkState);
+        if (networkState == nullptr) {
+            TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
+            return;
+        }
+        bool isInSrv = networkState->GetRegStatus() == RegServiceState::REG_STATE_IN_SERVICE ? true : false;
+        bool isRoam = networkState->IsRoaming();
+        if (networkServiceState_[slotId].isInService_ == isInSrv
+            && networkServiceState_[slotId].isRoaming_ == isRoam) {
+            TELEPHONY_LOGI("service state and roaming state are not change, slotId: %{public}d", slotId);
+            return;
+        }
+        networkServiceState_[slotId].isInService_ = isInSrv;
+        networkServiceState_[slotId].isRoaming_ = isRoam;
     }
-    sptr<NetworkState> networkState = nullptr;
-    CoreManagerInner::GetInstance().GetNetworkStatus(slotId, networkState);
-    if (networkState == nullptr) {
-        TELEPHONY_LOGE("networkState get failed, slotId: %{public}d", slotId);
-        return;
-    }
-    RegServiceState regState = networkState->GetRegStatus();
-    bool isRoam = networkState->IsRoaming();
-    if (networkServiceState_[slotId].ServiceState_ == regState && networkServiceState_[slotId].isRoaming_ == isRoam) {
-        TELEPHONY_LOGI("regState and isRoam are not change, slotId: %{public}d", slotId);
-        return;
-    }
-    networkServiceState_[slotId].ServiceState_ = regState;
-    networkServiceState_[slotId].isRoaming_ = isRoam;
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
 }
