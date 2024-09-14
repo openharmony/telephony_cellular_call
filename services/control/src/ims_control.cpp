@@ -63,6 +63,7 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
 int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState)
 {
     TELEPHONY_LOGI("DialJudgment entry.");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("DialJudgment return, error type: call state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(
@@ -127,6 +128,7 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
     TELEPHONY_LOGI("HangUp start");
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
+            std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
             auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
                 connectionMap_, callInfo.index);
             if (pConnection == nullptr) {
@@ -163,6 +165,7 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
 int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("IMSControl::Answer start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(
         connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -213,6 +216,7 @@ int32_t IMSControl::CheckAndHangupHoldingCall()
 int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
 {
     TELEPHONY_LOGI("IMSControl::Reject start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection =
         FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -233,6 +237,7 @@ int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
 int32_t IMSControl::HoldCall(int32_t slotId)
 {
     TELEPHONY_LOGI("HoldCall start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("HoldCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
@@ -272,6 +277,7 @@ int32_t IMSControl::HangUpAllConnection(int32_t slotId)
 {
     TELEPHONY_LOGI("HangUpAllConnection entry");
     CellularCallConnectionIMS connection;
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (connectionMap_.empty()) {
         TELEPHONY_LOGI("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
@@ -295,10 +301,12 @@ int32_t IMSControl::InviteToConference(int32_t slotId, const std::vector<std::st
 
 int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &KickOutString, int32_t index)
 {
+    TELEPHONY_LOGI("KickOutFromConference entry");
     if (KickOutString.empty()) {
         TELEPHONY_LOGW("KickOutFromConference, splitString is empty.");
     }
 
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_, index);
     if (pConnection != nullptr) {
         return pConnection->KickOutFromConferenceRequest(slotId, pConnection->GetIndex());
@@ -325,16 +333,21 @@ int32_t IMSControl::StopRtt(int32_t slotId)
 
 void IMSControl::ReleaseAllConnection()
 {
+    TELEPHONY_LOGI("ReleaseAllConnection entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     connectionMap_.clear();
 }
 
 ImsConnectionMap IMSControl::GetConnectionMap()
 {
+    TELEPHONY_LOGI("GetConnectionMap entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     return connectionMap_;
 }
 
 int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList)
 {
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (callInfoList.callSize <= 0) {
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
@@ -529,6 +542,8 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCur
 
 int32_t IMSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 {
+    TELEPHONY_LOGI("ExecutePostDial entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (connectionMap_.empty()) {
         TELEPHONY_LOGE("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
@@ -555,10 +570,12 @@ int32_t IMSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 
 int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
 {
+    TELEPHONY_LOGI("PostDialProceed entry");
     std::string networkAddress;
     std::string postDialString;
     StandardizeUtils standardizeUtils;
     standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<ImsConnectionMap &, CellularCallConnectionIMS *>(connectionMap_,
         callInfo.index);
     if (pConnection == nullptr) {
@@ -575,6 +592,8 @@ int32_t IMSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool
 
 int32_t IMSControl::RestoreConnection(const std::vector<CellularCallInfo> &infos, int32_t slotId)
 {
+    TELEPHONY_LOGI("RestoreConnection entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     for (auto &info : infos) {
         if (info.callType == CallType::TYPE_IMS && info.slotId == slotId) {
             CellularCallConnectionIMS connectionIMS;
@@ -621,6 +640,7 @@ int32_t IMSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int
 void IMSControl::DialAfterHold(int32_t slotId)
 {
     TELEPHONY_LOGI("DialAfterHold entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     for (auto &connection : connectionMap_) {
         if (connection.second.IsNeedToDial()) {
             ImsDialInfoStruct holdToDialInfo = connection.second.GetHoldToDialInfo();
@@ -634,6 +654,8 @@ void IMSControl::DialAfterHold(int32_t slotId)
 
 void IMSControl::RecoverPendingHold()
 {
+    TELEPHONY_LOGI("RecoverPendingHold entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     for (auto &connection : connectionMap_) {
         if (connection.second.IsPendingHold()) {
             connection.second.UpdatePendingHoldFlag(false);

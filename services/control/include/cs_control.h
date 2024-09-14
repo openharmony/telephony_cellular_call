@@ -268,6 +268,7 @@ private:
     CsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
     const int32_t VOICE_CALL = 0;
+    std::recursive_mutex connectionMapMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
