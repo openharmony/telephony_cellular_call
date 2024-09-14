@@ -1730,6 +1730,14 @@ void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Poi
     } else {
         serviceInstance->SetImsControl(slotId_, nullptr);
     }
+    auto satelliteControl = serviceInstance->GetSatelliteControl(slotId_);
+    if (satelliteControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] satelliteControl is null", slotId_);
+    } else if (satelliteControl->ReportHangUpInfo(slotId_) != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("[slot%{public}d] fail to disconnect satellite calls", slotId_);
+    } else {
+        serviceInstance->SetSatelliteControl(slotId_, nullptr);
+    }
 }
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE

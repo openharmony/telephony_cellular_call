@@ -27,7 +27,7 @@ group("fuzztest") {
   deps += [ "registercallmanagercallback_fuzzer:fuzztest" ]
   deps += [ "imscallback_fuzzer:fuzztest" ]
   deps += [ "imsclient_fuzzer:fuzztest" ]
-  deps += [ "reporthungupinfo_fuzzer:fuzztest" ]
+  deps += [ "reporthangupinfo_fuzzer:fuzztest" ]
   deps += [ "separateconference_fuzzer:fuzztest" ]
   deps += [ "setorupdatecallreportinfo_fuzzer:fuzztest" ]
   deps += [ "satellitecallrequest_fuzzer:fuzztest" ]

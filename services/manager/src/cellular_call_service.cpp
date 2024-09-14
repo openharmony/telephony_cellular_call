@@ -753,6 +753,9 @@ int32_t CellularCallService::SetReadyToCall(int32_t slotId, int32_t callType, bo
     if (GetImsControl(slotId) != nullptr) {
         GetImsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
+    if (GetSatelliteControl(slotId) != nullptr) {
+        GetSatelliteControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
+    }
     return TELEPHONY_SUCCESS;
 }
 
@@ -763,6 +766,9 @@ int32_t CellularCallService::HangUpAllConnection(int32_t slotId)
     }
     if (GetImsControl(slotId)) {
         GetImsControl(slotId)->HangUpAllConnection(slotId);
+    }
+    if (GetSatelliteControl(slotId)) {
+        GetSatelliteControl(slotId)->HangUpAllConnection(slotId);
     }
     return TELEPHONY_SUCCESS;
 }
