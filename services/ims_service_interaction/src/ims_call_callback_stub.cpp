@@ -946,6 +946,10 @@ int32_t ImsCallCallbackStub::LastCallFailReasonResponse(int32_t slotId, const Di
         char *p = nullptr;
         char *ptr = nullptr;
         ptr = strtok_r((char *)(reasonInfo.c_str()), "|", &p);
+        if (ptr == nullptr) {
+            TELEPHONY_LOGE("strtok_r ptr is null");
+            continue;
+        }
         int32_t tmpReason = (int32_t)std::atoi(ptr);
         int flag = false;
         while (tmpReason == static_cast<int32_t>(detailsInfo->reason)) {

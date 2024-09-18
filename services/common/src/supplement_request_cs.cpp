@@ -182,6 +182,10 @@ int32_t SupplementRequestCs::AlterPinPassword(int32_t slotId, std::string newPin
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
     if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        if (ccHandler == nullptr) {
+            TELEPHONY_LOGE("ccHandler is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
         pinResData->result = response.result;
         pinResData->remain = response.remain;
@@ -209,6 +213,10 @@ int32_t SupplementRequestCs::UnlockPuk(int32_t slotId, std::string newPin, std::
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
     if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        if (ccHandler == nullptr) {
+            TELEPHONY_LOGE("ccHandler is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
         pinResData->result = response.result;
         pinResData->remain = response.remain;
@@ -236,6 +244,10 @@ int32_t SupplementRequestCs::AlterPin2Password(int32_t slotId, std::string newPi
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
     if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        if (ccHandler == nullptr) {
+            TELEPHONY_LOGE("ccHandler is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
         pinResData->result = response.result;
         pinResData->remain = response.remain;
@@ -263,6 +275,10 @@ int32_t SupplementRequestCs::UnlockPuk2(int32_t slotId, std::string newPin2, std
     TELEPHONY_LOGI("[slot%{public}d] result: %{public}d, remain: %{public}d", slotId, response.result, response.remain);
     if (result == TELEPHONY_SUCCESS) {
         std::shared_ptr<CellularCallHandler> ccHandler = GetMMIHandler(slotId);
+        if (ccHandler == nullptr) {
+            TELEPHONY_LOGE("ccHandler is null");
+            return TELEPHONY_ERR_LOCAL_PTR_NULL;
+        }
         std::shared_ptr<PinPukResponse> pinResData = std::make_shared<PinPukResponse>();
         pinResData->result = response.result;
         pinResData->remain = response.remain;
