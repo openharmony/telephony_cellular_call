@@ -74,7 +74,8 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
     // Calls can be put on hold, recovered, released, added to conversation,
     // and transferred similarly as defined in 3GPP TS 22.030 [19].
     for (auto &connection : connectionMap_) {
-        if (connection.second.GetStatus() == TelCallState::CALL_STATUS_ACTIVE) {
+        if (connection.second.GetStatus() == TelCallState::CALL_STATUS_ACTIVE &&
+            !connection.second.IsPendingHangup()) {
             TELEPHONY_LOGI("DialJudgment, have connection in active state.");
             EmergencyUtils emergencyUtils;
             bool isEmergency = false;
@@ -135,7 +136,7 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
                 TELEPHONY_LOGE("HangUp return, error type: connection is null");
                 return CALL_ERR_CALL_CONNECTION_NOT_EXIST;
             }
-
+            pConnection->SetHangupFlag(true);
             if (DelayedSingleton<CellularCallRegister>::GetInstance() != nullptr) {
                 DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
                     pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
