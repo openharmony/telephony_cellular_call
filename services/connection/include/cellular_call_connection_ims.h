@@ -208,6 +208,10 @@ public:
 
     bool IsPendingHold();
 
+    bool IsPendingHangup();
+
+    void SetHangupFlag(bool isPendingHangup);
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 
@@ -215,6 +219,7 @@ private:
     ModuleServiceUtils moduleUtils_;
     bool isNeedToDial_ = false;
     ImsDialInfoStruct holdToDialInfo_;
+    bool isPendingHangup_ = false;
 };
 } // namespace Telephony
 } // namespace OHOS

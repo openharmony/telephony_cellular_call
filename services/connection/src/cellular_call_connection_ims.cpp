@@ -408,5 +408,15 @@ bool CellularCallConnectionIMS::IsPendingHold()
 {
     return GetCallReportInfo().isPendingHold;
 }
+
+bool CellularCallConnectionIMS::IsPendingHangup()
+{
+    return isPendingHangup_;
+}
+
+void CellularCallConnectionIMS::SetHangupFlag(bool isPendingHangup)
+{
+    isPendingHangup_ = isPendingHangup;
+}
 } // namespace Telephony
 } // namespace OHOS
