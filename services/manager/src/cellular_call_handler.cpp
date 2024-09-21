@@ -339,7 +339,6 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
         return;
     }
-    auto csControl = serviceInstance->GetCsControl(slotId_);
     CallInfo callInfo;
     std::vector<CallInfo>::const_iterator it = callInfoList.calls.begin();
     for (; it != callInfoList.calls.end(); ++it) {
@@ -347,6 +346,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     TELEPHONY_LOGI("[slot%{public}d] callInfoList.callSize:%{public}d", slotId_, callInfoList.callSize);
     CellularCallIncomingStartTrace(callInfo.state);
+    auto csControl = serviceInstance->GetCsControl(slotId_);
     if (callInfoList.callSize == 0) {
         if (isInCsRedial_) {
             TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
@@ -396,7 +396,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     for (; it != imsCallInfoList.calls.end(); ++it) {
         imsCallInfo.state = (*it).state;
     }
-    TELEPHONY_LOGD("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
+    TELEPHONY_LOGI("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
     CellularCallIncomingStartTrace(imsCallInfo.state);
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     if (imsCallInfoList.callSize == 0) {
@@ -434,6 +434,7 @@ void CellularCallHandler::GetCsCallsDataResponse(const AppExecFwk::InnerEvent::P
 {
     // Returns list of current calls of ME. If command succeeds but no calls are available,
     // no information response is sent to TE. Refer subclause 9.2 for possible <err> values.
+    TELEPHONY_LOGI("[slot%{public}d] GetCsCallsDataResponse entry", slotId_);
     auto callInfoList = event->GetSharedObject<CallInfoList>();
     if (callInfoList == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] Cannot get the callInfoList, need to get rilResponseInfo", slotId_);
@@ -1086,6 +1087,7 @@ void CellularCallHandler::SetVoNRSwitchStatusResponse(const AppExecFwk::InnerEve
 
 void CellularCallHandler::CsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    TELEPHONY_LOGI("[slot%{public}d] CsCallStatusInfoReport entry", slotId_);
     if (srvccState_ == SrvccState::STARTED) {
         TELEPHONY_LOGI("[slot%{public}d] Ignore to report cs call state change cause by srvcc started", slotId_);
         return;
