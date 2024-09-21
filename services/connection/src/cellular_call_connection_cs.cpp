@@ -259,7 +259,7 @@ int32_t CellularCallConnectionCS::StopDtmfRequest(int32_t slotId, int32_t index)
 
 int32_t CellularCallConnectionCS::GetCsCallsDataRequest(int32_t slotId, int64_t lastCallsDataFlag)
 {
-    TELEPHONY_LOGD("CellularCallConnectionCS::GetCsCallsDataRequest start.");
+    TELEPHONY_LOGI("CellularCallConnectionCS::GetCsCallsDataRequest start.");
     if (DelayedSingleton<CellularCallService>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("GetCsCallsDataRequest return, error type: GetInstance() is nullptr.");
         return CALL_ERR_RESOURCE_UNAVAILABLE;
