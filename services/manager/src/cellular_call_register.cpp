@@ -63,6 +63,7 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
 int32_t CellularCallRegister::RegisterCallManagerCallBack(const sptr<ICallStatusCallback> &callback)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    TELEPHONY_LOGI("CellularCallRegister::RegisterCallManagerCallBack");
     callManagerCallBack_ = callback;
     return TELEPHONY_SUCCESS;
 }
@@ -83,6 +84,7 @@ void CellularCallRegister::ReportSingleCallInfo(const CallReportInfo &info, TelC
 int32_t CellularCallRegister::UnRegisterCallManagerCallBack()
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    TELEPHONY_LOGI("CellularCallRegister::UnRegisterCallManagerCallBack");
     callManagerCallBack_ = nullptr;
     return TELEPHONY_SUCCESS;
 }
