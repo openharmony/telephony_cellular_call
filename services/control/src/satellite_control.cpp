@@ -178,7 +178,7 @@ int32_t SatelliteControl::Reject(const CellularCallInfo &callInfo)
 
 int32_t SatelliteControl::ReportSatelliteCallsData(int32_t slotId, const SatelliteCurrentCallList &callInfoList)
 {
-    if (callInfoList.callSize <= 0 && !connectionMap_.empty()) {
+    if (callInfoList.callSize <= 0) {
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
         return ReportIncomingInfo(slotId, callInfoList);
@@ -307,6 +307,13 @@ int32_t SatelliteControl::ReportHangUpInfo(int32_t slotId)
         callReportInfo.accountId = slotId;
         callsReportInfo.callVec.push_back(callReportInfo);
         GetCallFailReason(slotId, connectionMap_);
+    }
+    if (connectionMap_.empty()) {
+        TELEPHONY_LOGI("connectionMap_ is empty");
+        CallReportInfo reportInfo;
+        reportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+        reportInfo.accountId = slotId;
+        callsReportInfo.callVec.push_back(reportInfo);
     }
     if (DelayedSingleton<CellularCallRegister>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("ReportHangUpInfo return, GetInstance() is nullptr.");
