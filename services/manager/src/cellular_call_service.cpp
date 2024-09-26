@@ -526,6 +526,7 @@ int32_t CellularCallService::RegisterCallManagerCallBack(const sptr<ICallStatusC
         TELEPHONY_LOGE("CellularCallService::RegisterCallManagerCallBack return, instance is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+    TELEPHONY_LOGI("CellularCallService::RegisterCallManagerCallBack");
     return DelayedSingleton<CellularCallRegister>::GetInstance()->RegisterCallManagerCallBack(callback);
 }
 
@@ -535,6 +536,7 @@ int32_t CellularCallService::UnRegisterCallManagerCallBack()
         TELEPHONY_LOGE("CellularCallService::UnRegisterCallManagerCallBack return, instance is nullptr.");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
+    TELEPHONY_LOGI("CellularCallService::UnRegisterCallManagerCallBack");
     return DelayedSingleton<CellularCallRegister>::GetInstance()->UnRegisterCallManagerCallBack();
 }
 
@@ -1550,10 +1552,6 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbili
 {
     switch (systemAbilityId) {
         case TELEPHONY_CALL_MANAGER_SYS_ABILITY_ID: {
-            auto cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
-            if (cellularCallRegister != nullptr) {
-                cellularCallRegister->UnRegisterCallManagerCallBack();
-            }
             auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
             if (cellularCallService == nullptr) {
                 TELEPHONY_LOGE("cellularCallService is nullptr");
