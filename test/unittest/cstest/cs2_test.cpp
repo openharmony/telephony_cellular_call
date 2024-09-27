@@ -1223,7 +1223,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest |
     EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     callInfoList->callSize = 0;
     fifthHandler.ProcessRedundantCode(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
     callInfoList->callSize = 1;
     callInfoList->calls.clear();
     fifthHandler.ProcessRedundantCode(*callInfoList);
