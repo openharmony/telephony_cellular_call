@@ -336,9 +336,9 @@ int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
             return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
         case "67"_hash:
             return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_BUSY);
-        case "62"_hash:
-            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
         case "61"_hash:
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
+        case "62"_hash:
             return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
         default:
             TELEPHONY_LOGE("actionStr out of range!");
