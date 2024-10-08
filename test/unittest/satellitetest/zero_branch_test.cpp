@@ -124,7 +124,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | Medi
     satelliteControl.HangUpAllConnection(SIM1_SLOTID);
     CLIRMode mode = DEFAULT;
     satelliteControl.EncapsulateDialCommon(SIM1_SLOTID, PHONE_NUMBER, mode);
-    ASSERT_NE(satelliteControl.ReportSatelliteCallsData(SIM1_SLOTID, satellitecallInfoList), TELEPHONY_SUCCESS);
+    ASSERT_EQ(satelliteControl.ReportSatelliteCallsData(SIM1_SLOTID, satellitecallInfoList), TELEPHONY_SUCCESS);
 }
 
 /**
