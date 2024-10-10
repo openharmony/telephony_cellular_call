@@ -578,8 +578,8 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplement_007, Function | MediumTest
     ASSERT_EQ(callSup.ObtainCallTrasferAction("#", phoneNumber, callTransferAction), TELEPHONY_SUCCESS);
     ASSERT_EQ(callSup.ObtainCallTrasferAction("##", phoneNumber, callTransferAction), TELEPHONY_SUCCESS);
     ASSERT_EQ(callSup.ObtainCause("21"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_UNCONDITIONAL));
-    ASSERT_EQ(callSup.ObtainCause("61"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE));
-    ASSERT_EQ(callSup.ObtainCause("62"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY));
+    ASSERT_EQ(callSup.ObtainCause("61"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY));
+    ASSERT_EQ(callSup.ObtainCause("62"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE));
     ASSERT_EQ(callSup.ObtainCause("67"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_BUSY));
     ASSERT_EQ(callSup.ObtainCause("99"), TELEPHONY_ERROR);
 }
