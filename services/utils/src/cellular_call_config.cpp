@@ -44,6 +44,7 @@ const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
 const int32_t INVALID_SIM_ID = 0;
 const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
+const int32_t CARRIER_NR_MODE_DEFAULT = 0;
 const int32_t CARRIER_NR_MODE_SA = 2;
 const int32_t CARRIER_NR_MODE_SA_AND_NSA = 3;
 const int MCC_LEN = 3;
@@ -100,7 +101,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_STATUS_UNKNOWN));
-        CellularCallConfig::nrModeSupported_.insert(std::pair<int, int>(i, CARRIER_NR_MODE_SA_AND_NSA));
+        CellularCallConfig::nrModeSupported_.insert(std::pair<int, int>(i, CARRIER_NR_MODE_DEFAULT));
         CellularCallConfig::cellularNetworkState cellularState;
         CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
             cellularState));
