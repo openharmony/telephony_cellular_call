@@ -487,10 +487,13 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
 void CellularCallConfig::UpdateImsVoiceCapabilities(
     int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
 {
+    int32_t vonrSwitch = VONR_SWITCH_STATUS_OFF;
+    GetVoNRSwitchStatus(slotId, vonrSwitch);
+    bool vonrSwitchEnabled = vonrSwitch == VONR_SWITCH_STATUS_ON;
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid);
+    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 
     bool imsSwitch = false;
