@@ -48,6 +48,7 @@ int32_t SatelliteControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
         return RETURN_TYPE_MMI;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("DialSatellite return, error type: call state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
@@ -93,6 +94,7 @@ int32_t SatelliteControl::HangUp(const CellularCallInfo &callInfo, CallSupplemen
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
             // Match the session connection according to the phone number string
+            std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
             auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(
                 connectionMap_, callInfo.index);
             if (pConnection == nullptr) {
@@ -119,6 +121,8 @@ int32_t SatelliteControl::HangUp(const CellularCallInfo &callInfo, CallSupplemen
 
 int32_t SatelliteControl::Answer(const CellularCallInfo &callInfo)
 {
+    TELEPHONY_LOGI("SatelliteControl::Answer start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(
         connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -155,6 +159,8 @@ int32_t SatelliteControl::Answer(const CellularCallInfo &callInfo)
 
 int32_t SatelliteControl::Reject(const CellularCallInfo &callInfo)
 {
+    TELEPHONY_LOGI("SatelliteControl::Reject start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(
         connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -178,6 +184,7 @@ int32_t SatelliteControl::Reject(const CellularCallInfo &callInfo)
 
 int32_t SatelliteControl::ReportSatelliteCallsData(int32_t slotId, const SatelliteCurrentCallList &callInfoList)
 {
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (callInfoList.callSize <= 0) {
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
@@ -226,6 +233,7 @@ int32_t SatelliteControl::ReportUpdateInfo(int32_t slotId, const SatelliteCurren
 
 void SatelliteControl::DeleteConnection(CallsReportInfo &callsReportInfo, const SatelliteCurrentCallList &callInfoList)
 {
+    TELEPHONY_LOGI("DeleteConnection entry");
     auto it = connectionMap_.begin();
     while (it != connectionMap_.end()) {
         CallReportInfo callReportInfo = it->second.GetCallReportInfo();
@@ -331,11 +339,15 @@ int32_t SatelliteControl::ReportHangUpInfo(int32_t slotId)
 
 void SatelliteControl::ReleaseAllConnection()
 {
+    TELEPHONY_LOGI("ReleaseAllConnection entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     connectionMap_.clear();
 }
 
 SatelliteConnectionMap SatelliteControl::GetConnectionMap()
 {
+    TELEPHONY_LOGI("GetConnectionMap entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     return connectionMap_;
 }
 
@@ -408,6 +420,8 @@ int32_t SatelliteControl::ReportCallsData(int32_t slotId, const CallInfoList &ca
 
 int32_t SatelliteControl::ExecutePostDial(int32_t slotId, int64_t callId)
 {
+    TELEPHONY_LOGI("ExecutePostDial entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (connectionMap_.empty()) {
         TELEPHONY_LOGE("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
@@ -435,10 +449,12 @@ int32_t SatelliteControl::ExecutePostDial(int32_t slotId, int64_t callId)
 
 int32_t SatelliteControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
 {
+    TELEPHONY_LOGI("PostDialProceed entry");
     std::string networkAddress;
     std::string postDialString;
     StandardizeUtils standardizeUtils;
     standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<SatelliteConnectionMap &, CellularCallConnectionSatellite *>(
         connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
