@@ -205,6 +205,7 @@ private:
 private:
     SatelliteConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
+    std::recursive_mutex connectionMapMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -72,6 +72,7 @@ int32_t CSControl::DialCdma(const CellularCallInfo &callInfo)
         return RETURN_TYPE_MMI;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("CSControl::DialCdma return, error type: call state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
@@ -101,6 +102,7 @@ int32_t CSControl::DialGsm(const CellularCallInfo &callInfo)
         return RETURN_TYPE_MMI;
     }
 
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (!CanCall(connectionMap_)) {
         TELEPHONY_LOGE("DialGsm return, error type: call state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.slotId, static_cast<int32_t>(callInfo.callType),
@@ -164,6 +166,7 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
             // Match the session connection according to the phone number string
+            std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
             auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
                 connectionMap_, callInfo.index);
             if (pConnection == nullptr) {
@@ -212,6 +215,8 @@ int32_t CSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType t
 
 int32_t CSControl::Answer(const CellularCallInfo &callInfo)
 {
+    TELEPHONY_LOGI("CSControl::Answer start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection =
         FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -286,6 +291,8 @@ int32_t CSControl::CheckAndHangupHoldingCall()
 
 int32_t CSControl::Reject(const CellularCallInfo &callInfo)
 {
+    TELEPHONY_LOGI("CSControl::Reject start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection =
         FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -320,6 +327,8 @@ int32_t CSControl::HoldCall(int32_t slotId)
      * channel is released from the existing call. The traffic channel is reserved for the served mobile subscriber
      * invoking the call hold service. The served mobile subscriber can only have one call on hold at a time.
      */
+    TELEPHONY_LOGI("HoldCall start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("HoldCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
@@ -331,6 +340,8 @@ int32_t CSControl::HoldCall(int32_t slotId)
 int32_t CSControl::UnHoldCall(int32_t slotId)
 {
     // A notification shall be send towards the previously held party that the call has been retrieved.
+    TELEPHONY_LOGI("UnHoldCall start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("UnHoldCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
@@ -348,6 +359,8 @@ int32_t CSControl::SwitchCall(int32_t slotId)
      * 3) Disconnect the held call.
      * 4) Disconnect both calls.
      */
+    TELEPHONY_LOGI("SwitchCall start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (IsInState(connectionMap_, TelCallState::CALL_STATUS_INCOMING)) {
         TELEPHONY_LOGE("SwitchCall return, error type: call state error.");
         return CALL_ERR_CALL_STATE;
@@ -364,10 +377,12 @@ int32_t CSControl::SwitchCall(int32_t slotId)
  */
 int32_t CSControl::SeparateConference(int32_t slotId, const std::string &splitString, int32_t index)
 {
+    TELEPHONY_LOGI("SeparateConference entry");
     if (splitString.empty()) {
         TELEPHONY_LOGW("SeparateConference, splitString is empty.");
     }
 
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(connectionMap_, index);
     if (pConnection != nullptr) {
         return pConnection->SeparateConferenceRequest(slotId, pConnection->GetIndex(), VOICE_CALL);
@@ -417,6 +432,7 @@ bool CSControl::CalculateInternationalRoaming(int32_t slotId) const
 
 int32_t CSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfoList)
 {
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (callInfoList.callSize <= 0) {
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
@@ -475,6 +491,7 @@ int32_t CSControl::ReportUpdateInfo(int32_t slotId, const CallInfoList &callInfo
 
 void CSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const CallInfoList &callInfoList)
 {
+    TELEPHONY_LOGI("DeleteConnection entry");
     auto it = connectionMap_.begin();
     while (it != connectionMap_.end()) {
         CallReportInfo callReportInfo = it->second.GetCallReportInfo();
@@ -599,6 +616,8 @@ int32_t CSControl::ReportHangUpInfo(int32_t slotId)
 
 int32_t CSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 {
+    TELEPHONY_LOGI("ExecutePostDial entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (connectionMap_.empty()) {
         TELEPHONY_LOGE("connectionMap_ is empty.");
         return TELEPHONY_ERROR;
@@ -625,10 +644,12 @@ int32_t CSControl::ExecutePostDial(int32_t slotId, int64_t callId)
 
 int32_t CSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool proceed)
 {
+    TELEPHONY_LOGI("PostDialProceed entry");
     std::string networkAddress;
     std::string postDialString;
     StandardizeUtils standardizeUtils;
     standardizeUtils.ExtractAddressAndPostDial(callInfo.phoneNum, networkAddress, postDialString);
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     auto pConnection = FindConnectionByIndex<CsConnectionMap &, CellularCallConnectionCS *>(
         connectionMap_, callInfo.index);
     if (pConnection == nullptr) {
@@ -645,11 +666,15 @@ int32_t CSControl::PostDialProceed(const CellularCallInfo &callInfo, const bool 
 
 void CSControl::ReleaseAllConnection()
 {
+    TELEPHONY_LOGI("ReleaseAllConnection entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     connectionMap_.clear();
 }
 
 CsConnectionMap CSControl::GetConnectionMap()
 {
+    TELEPHONY_LOGI("GetConnectionMap entry");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     return connectionMap_;
 }
 
