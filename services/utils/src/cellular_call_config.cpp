@@ -44,6 +44,9 @@ const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
 const int32_t INVALID_SIM_ID = 0;
 const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
+const int32_t CARRIER_NR_MODE_DEFAULT = 0;
+const int32_t CARRIER_NR_MODE_SA = 2;
+const int32_t CARRIER_NR_MODE_SA_AND_NSA = 3;
 const int MCC_LEN = 3;
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
@@ -74,6 +77,7 @@ std::map<int32_t, int32_t> CellularCallConfig::simState_;
 std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
 std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
+std::map<int32_t, int32_t> CellularCallConfig::nrModeSupported_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
@@ -97,6 +101,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::forceVolteSwitchOn_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::readyToCall_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::vonrSwithStatus_.insert(std::pair<int, int>(i, VONR_SWITCH_STATUS_UNKNOWN));
+        CellularCallConfig::nrModeSupported_.insert(std::pair<int, int>(i, CARRIER_NR_MODE_DEFAULT));
         CellularCallConfig::cellularNetworkState cellularState;
         CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
             cellularState));
@@ -410,6 +415,9 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
     if (poc.intValue.count(KEY_CALL_WAITING_SERVICE_CLASS_INT) > 0) {
         callWaitingServiceClass_[slotId] = poc.intValue[KEY_CALL_WAITING_SERVICE_CLASS_INT];
     }
+    if (poc.intValue.count(KEY_NR_MODE_SUPPORTED_INT) > 0) {
+        nrModeSupported_[slotId] = poc.intValue[KEY_NR_MODE_SUPPORTED_INT];
+    }
     if (poc.stringArrayValue.count(KEY_IMS_CALL_DISCONNECT_REASONINFO_MAPPING_STRING_ARRAY) > 0) {
         imsCallDisconnectResoninfoMapping_[slotId] =
             poc.stringArrayValue[KEY_IMS_CALL_DISCONNECT_REASONINFO_MAPPING_STRING_ARRAY];
@@ -528,11 +536,7 @@ bool CellularCallConfig::IsVolteProvisioned(int32_t slotId)
 
 bool CellularCallConfig::IsVonrSupported(int32_t slotId, bool isGbaValid)
 {
-    if (std::find(nrModeSupportedList_[slotId].begin(), nrModeSupportedList_[slotId].end(),
-        CARRIER_NR_AVAILABILITY_SA) == nrModeSupportedList_[slotId].end()) {
-        return false;
-    }
-    return isGbaValid;
+    return nrModeSupported_[slotId] == CARRIER_NR_MODE_SA_AND_NSA || nrModeSupported_[slotId] == CARRIER_NR_MODE_SA;
 }
 
 bool CellularCallConfig::IsUtProvisioned(int32_t slotId)
