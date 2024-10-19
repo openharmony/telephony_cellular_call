@@ -1348,7 +1348,8 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
     }
     switch (ssNoticeInfo.serviceType) {
         case (unsigned int)CallTransferType::TRANSFER_TYPE_UNCONDITIONAL: {
-            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message),
+                TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_UNCONDITIONAL_SUCCESS fail.");
                 return;
             }
@@ -1369,7 +1370,8 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
             break;
         }
         case (unsigned int)CallTransferType::TRANSFER_TYPE_NOT_REACHABLE: {
-            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message),
+                TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_NOT_REACHABLE_SUCCESS fail.");
                 return;
             }
