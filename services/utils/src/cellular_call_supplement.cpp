@@ -640,8 +640,7 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
         return;
     }
     // <number>: string type phone number of forwarding address in format specified by <type>
-    size_t cpyLen = strlen(queryResult.number.c_str()) + 1;
-    if (strcpy_s(response.number, cpyLen, queryResult.number.c_str()) != EOK) {
+    if (strcpy_s(response.number, sizeof(response.number), queryResult.number.c_str()) != EOK) {
         TELEPHONY_LOGE(" strcpy_s fail.");
         return;
     }
@@ -1342,48 +1341,44 @@ void CellularCallSupplement::EventSsNotify(SsNoticeInfo &ssNoticeInfo)
 void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNoticeInfo &ssNoticeInfo)
 {
     if (ssNoticeInfo.result != 0) {
-        size_t cpyLen = strlen(QUERY_SS_FAILED.c_str()) + 1;
-        if (strcpy_s(mmiCodeInfo.message, cpyLen, QUERY_SS_FAILED.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), QUERY_SS_FAILED.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s QUERY_SS_FAILED fail.");
         }
         return;
     }
     switch (ssNoticeInfo.serviceType) {
         case (unsigned int)CallTransferType::TRANSFER_TYPE_UNCONDITIONAL: {
-            size_t cpyLen = strlen(TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) + 1;
-            if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message),
+                TRANSFER_UNCONDITIONAL_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_UNCONDITIONAL_SUCCESS fail.");
                 return;
             }
             break;
         }
         case (unsigned int)CallTransferType::TRANSFER_TYPE_BUSY: {
-            size_t cpyLen = strlen(TRANSFER_BUSY_SUCCESS.c_str()) + 1;
-            if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_BUSY_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), TRANSFER_BUSY_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_BUSY_SUCCESS fail.");
                 return;
             }
             break;
         }
         case (unsigned int)CallTransferType::TRANSFER_TYPE_NO_REPLY: {
-            size_t cpyLen = strlen(TRANSFER_NO_REPLYL_SUCCESS.c_str()) + 1;
-            if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_NO_REPLYL_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), TRANSFER_NO_REPLYL_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_NO_REPLYL_SUCCESS fail.");
                 return;
             }
             break;
         }
         case (unsigned int)CallTransferType::TRANSFER_TYPE_NOT_REACHABLE: {
-            size_t cpyLen = strlen(TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) + 1;
-            if (strcpy_s(mmiCodeInfo.message, cpyLen, TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message),
+                TRANSFER_NOT_REACHABLE_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s TRANSFER_NOT_REACHABLE_SUCCESS fail.");
                 return;
             }
             break;
         }
         default: {
-            size_t cpyLen = strlen(QUERY_SS_SUCCESS.c_str()) + 1;
-            if (strcpy_s(mmiCodeInfo.message, cpyLen, QUERY_SS_SUCCESS.c_str()) != EOK) {
+            if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), QUERY_SS_SUCCESS.c_str()) != EOK) {
                 TELEPHONY_LOGE("strcpy_s QUERY_SS_SUCCESS fail.");
                 return;
             }
@@ -1397,15 +1392,13 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo)
     bool isUssdError = ussdNoticeInfo.m != USSD_MODE_NOTIFY && ussdNoticeInfo.m != USSD_MODE_REQUEST;
     if (!isUssdError && !ussdNoticeInfo.str.empty()) {
         mmiCodeInfo.result = USSD_SUCCESS;
-        size_t cpyLen = strlen(ussdNoticeInfo.str.c_str()) + 1;
-        if (strcpy_s(mmiCodeInfo.message, cpyLen, ussdNoticeInfo.str.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), ussdNoticeInfo.str.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s ussdNoticeInfo.str fail.");
             return;
         }
     } else if (isUssdError && !(ussdNoticeInfo.m == USSD_MODE_NW_RELEASE)) {
         mmiCodeInfo.result = USSD_FAILED;
-        size_t cpyLen = strlen(INVALID_MMI_CODE.c_str()) + 1;
-        if (strcpy_s(mmiCodeInfo.message, cpyLen, INVALID_MMI_CODE.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), INVALID_MMI_CODE.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s INVALID_MMI_CODE fail.");
             return;
         }
@@ -1426,8 +1419,7 @@ void CellularCallSupplement::EventSetPinPuk(const PinPukResponse &pinPukResponse
     MmiCodeInfo mmiCodeInfo;
     mmiCodeInfo.result = pinPukResponse.result;
     std::string messageTemp = std::to_string(pinPukResponse.remain);
-    size_t cpyLen = strlen(messageTemp.c_str()) + 1;
-    if (strcpy_s(mmiCodeInfo.message, cpyLen, messageTemp.c_str()) != EOK) {
+    if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), messageTemp.c_str()) != EOK) {
         TELEPHONY_LOGE("strcpy_s messageTemp fail.");
     }
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
@@ -1538,14 +1530,12 @@ void CellularCallSupplement::ReportMmiCodeMessage(
     MmiCodeInfo mmiCodeInfo;
     mmiCodeInfo.result = result;
     if (result == RESULT_SUCCESS) {
-        size_t cpyLen = strlen(successMsg.c_str()) + 1;
-        if (strcpy_s(mmiCodeInfo.message, cpyLen, successMsg.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), successMsg.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fail.");
             return;
         }
     } else {
-        size_t cpyLen = strlen(failedMsg.c_str()) + 1;
-        if (strcpy_s(mmiCodeInfo.message, cpyLen, failedMsg.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), failedMsg.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fail.");
             return;
         }
