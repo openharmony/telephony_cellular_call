@@ -84,7 +84,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
 {
     std::lock_guard<std::mutex> lock(operatorMutex_);
     for (int32_t i = DEFAULT_SIM_SLOT_ID; i < SIM_SLOT_COUNT; ++i) {
-        CellularCallConfig::imsSwitchOnByDefault_.insert(std::pair<int, bool>(i, true));
+        CellularCallConfig::imsSwitchOnByDefault_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::hideImsSwitch_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::volteSupported_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::nrModeSupportedList_.insert(std::pair<int, std::vector<int32_t>>(
