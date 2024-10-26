@@ -482,7 +482,6 @@ private:
     static std::map<int32_t, bool> forceVolteSwitchOn_;
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
-    static std::map<int32_t, int32_t> nrModeSupported_;
     static bool isOperatorConfigInit_;
     struct cellularNetworkState {
         bool isInService_ = false;
