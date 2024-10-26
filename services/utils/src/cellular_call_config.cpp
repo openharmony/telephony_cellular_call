@@ -75,7 +75,6 @@ std::map<int32_t, int32_t> CellularCallConfig::simState_;
 std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
 std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
-std::map<int32_t, int32_t> CellularCallConfig::nrModeSupported_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
