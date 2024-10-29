@@ -25,6 +25,8 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t NUM_PRESENTATION_ALLOWED = 0;
+const int32_t NUM_PRESENTATION_RESTRICTED = 1;
 const int32_t ACTIVATE_ACTION = 1;
 const int32_t DEACTIVATE_ACTION = 2;
 const int32_t USSD_MODE_NOTIFY = 0;
@@ -159,14 +161,14 @@ void CellularCallSupplement::HandleColr(int32_t slotId, const MMIData &mmiData)
     int32_t index;
     handler->RequestSsRequestCommandIndex(index);
     if (mmiData.actionString == activate) {
-        utCommand->action = ACTIVATE_ACTION;
+        utCommand->action = NUM_PRESENTATION_ALLOWED;
         if (NeedUseImsToHandle(slotId)) {
-            result = supplementRequestIms_.SetColrRequest(slotId, ACTIVATE_ACTION, index);
+            result = supplementRequestIms_.SetColrRequest(slotId, NUM_PRESENTATION_ALLOWED, index);
         }
     } else if (mmiData.actionString == deactivate) {
-        utCommand->action = DEACTIVATE_ACTION;
+        utCommand->action = NUM_PRESENTATION_RESTRICTED;
         if (NeedUseImsToHandle(slotId)) {
-            result = supplementRequestIms_.SetColrRequest(slotId, DEACTIVATE_ACTION, index);
+            result = supplementRequestIms_.SetColrRequest(slotId, NUM_PRESENTATION_RESTRICTED, index);
         }
     } else if (mmiData.actionString == interrogate) {
         if (NeedUseImsToHandle(slotId)) {
