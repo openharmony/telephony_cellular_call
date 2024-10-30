@@ -27,6 +27,7 @@
 #include "standardize_utils.h"
 #include "string_ex.h"
 #include "telephony_types.h"
+#include "network_search_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -481,13 +482,10 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
 void CellularCallConfig::UpdateImsVoiceCapabilities(
     int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
 {
-    int32_t vonrSwitch = VONR_SWITCH_STATUS_OFF;
-    GetVoNRSwitchStatus(slotId, vonrSwitch);
-    bool vonrSwitchEnabled = vonrSwitch == VONR_SWITCH_STATUS_ON;
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid) && vonrSwitchEnabled;
+    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid);
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 
     bool imsSwitch = false;
@@ -496,8 +494,7 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
     ImsCapability volteCapability;
     volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
-    volteCapability.enable = vonrCapability.enable
-        || (volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned);
+    volteCapability.enable = (volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned);
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
     TELEPHONY_LOGI("slotId = %{public}d, vonrCapability = %{public}d, volteSupported = %{public}d, "
         "isGbaValid = %{public}d, imsSwitch = %{public}d, isVolteProvisioned = %{public}d",
@@ -529,11 +526,14 @@ bool CellularCallConfig::IsVolteProvisioned(int32_t slotId)
 
 bool CellularCallConfig::IsVonrSupported(int32_t slotId, bool isGbaValid)
 {
-    if (std::find(nrModeSupportedList_[slotId].begin(), nrModeSupportedList_[slotId].end(),
-        CARRIER_NR_AVAILABILITY_SA) == nrModeSupportedList_[slotId].end()) {
-        return false;
+    NrMode nrMode = NrMode::NR_MODE_UNKNOWN;
+    int32_t queryRet = CoreManagerInner::GetInstance().GetNrOptionMode(slotId, nrMode);
+    if (queryRet != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("get nr mode value failed");
+        return isGbaValid;
     }
-    return isGbaValid;
+    TELEPHONY_LOGI("nr mode value is %{public}d", nrMode);
+    return nrMode == NrMode::NR_MODE_NSA_AND_SA || nrMode == NrMode::NR_MODE_SA_ONLY;
 }
 
 bool CellularCallConfig::IsUtProvisioned(int32_t slotId)
