@@ -439,6 +439,7 @@ private:
     bool IsGbaValid(int32_t slotId);
     bool IsVolteProvisioned(int32_t slotId);
     bool IsVonrSupported(int32_t slotId, bool isGbaValid);
+    bool IsVonrSupportedForImsSwitch(int32_t slotId, bool isGbaValid);
     bool IsUtProvisioned(int32_t slotId);
     bool IsNeedTurnOnIms(const ImsCapabilityList &imsCapabilityList);
     bool IsSimChanged(int32_t slotId, std::string iccid);
