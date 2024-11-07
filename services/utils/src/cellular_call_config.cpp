@@ -484,7 +484,7 @@ void CellularCallConfig::UpdateImsVoiceCapabilities(
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = IsVonrSupported(slotId, isGbaValid);
+    vonrCapability.enable = IsVonrSupportedForImsSwitch(slotId, isGbaValid);
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 
     bool imsSwitch = false;
@@ -524,6 +524,15 @@ bool CellularCallConfig::IsVolteProvisioned(int32_t slotId)
 }
 
 bool CellularCallConfig::IsVonrSupported(int32_t slotId, bool isGbaValid)
+{
+    if (std::find(nrModeSupportedList_[slotId].begin(), nrModeSupportedList_[slotId].end(),
+        CARRIER_NR_AVAILABILITY_SA) == nrModeSupportedList_[slotId].end()) {
+        return false;
+    }
+    return isGbaValid;
+}
+
+bool CellularCallConfig::IsVonrSupportedForImsSwitch(int32_t slotId, bool isGbaValid)
 {
     NrMode nrMode = NrMode::NR_MODE_UNKNOWN;
     int32_t queryRet = CoreManagerInner::GetInstance().GetNrOptionMode(slotId, nrMode);
