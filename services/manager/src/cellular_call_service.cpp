@@ -223,12 +223,12 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
 #endif
         }
+        lock.unlock();
         CellularCallConfig config;
         config.InitModeActive();
         if (config.GetDomainPreferenceMode(slot) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetDomainPreferenceMode request fail");
         }
-        lock.unlock();
         if (config.GetEmergencyCallList(it.first) != TELEPHONY_SUCCESS) {
             TELEPHONY_LOGW("RegisterCoreServiceHandler, GetEmergencyCallList request fail");
         }
