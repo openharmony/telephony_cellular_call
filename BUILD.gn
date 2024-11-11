@@ -77,6 +77,7 @@ ohos_shared_library("tel_cellular_call") {
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:dataobs_manager",
+    "cJSON:cjson",
     "c_utils:utils",
     "call_manager:tel_call_manager_api",
     "common_event_service:cesfwk_innerkits",
@@ -106,6 +107,11 @@ ohos_shared_library("tel_cellular_call") {
 
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
+  }
+  if (!defined(global_parts_info) ||
+      defined(global_parts_info.security_guard_enabled)) {
+    external_deps += [ "security_guard:libsg_collect_sdk" ]
+    defines += [ "SECURITY_GUARDE_ENABLE" ]
   }
 
   part_name = "cellular_call"

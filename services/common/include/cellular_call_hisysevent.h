@@ -88,6 +88,9 @@ public:
     static void WriteVoNRSwitchChangeEvent(const int32_t enable);
     static void WriteImsCallModeBehaviorEvent(
         const CallModeBehaviorType type, const CallBehaviorParameterInfo &info, const int32_t requestResult);
+#ifdef SECURITY_GUARDE_ENABLE
+    static void WriteCallTansferEvent(uint8_t state);
+#endif
     void SetCallParameterInfo(const int32_t slotId, const int32_t callType, const int32_t videoState);
     void SetIncomingCallParameterInfo(const int32_t incomingCallType, const int32_t incomingVideoState);
     void GetCallParameterInfo(CallBehaviorParameterInfo &info);
