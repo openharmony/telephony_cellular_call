@@ -361,9 +361,6 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 {
     TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
-    saveImsSwitchStatusToLocalForPowerOn(slotId);
-    ResetImsSwitch(slotId);
-    UpdateImsCapabilities(slotId, true);
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
 }
@@ -382,6 +379,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
         TELEPHONY_LOGE("failed due to parse operator config");
         return;
     }
+    saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true);
 }
@@ -720,8 +718,6 @@ int32_t CellularCallConfig::GetSwitchStatus(int32_t slotId)
             TELEPHONY_LOGI("get ims switch state failed from database, return operator config default value");
             imsSwitchStatus = imsSwitchOnByDefault_[slotId] ? IMS_SWITCH_STATUS_ON : IMS_SWITCH_STATUS_OFF;
         }
-        // save DB or operator config default ims switch status to local
-        saveImsSwitchStatusToLocal(slotId, imsSwitchStatus);
     }
     TELEPHONY_LOGD("slotId[%{public}d] GetSwitchStatus imsSwitchStatus:%{public}d", slotId, imsSwitchStatus);
     return imsSwitchStatus;
