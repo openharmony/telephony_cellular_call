@@ -30,7 +30,6 @@
 #include "securec.h"
 #include "ims_core_service_client.h"
 
-
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;

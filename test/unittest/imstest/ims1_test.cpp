@@ -32,7 +32,6 @@
 #include "core_service_client.h"
 #include "gtest/gtest.h"
 #include "ims_core_service_client.h"
-#include "ims_core_service_proxy.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "token.h"
