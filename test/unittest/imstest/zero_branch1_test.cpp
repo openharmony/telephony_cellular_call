@@ -32,7 +32,7 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "ims_test.h"
+#include "token.h"
 #include "securec.h"
 #include "cellular_call_hisysevent.h"
 #include "standardize_utils.h"

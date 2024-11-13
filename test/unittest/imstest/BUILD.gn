@@ -14,7 +14,7 @@
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
 
-ohos_unittest("cellular_call_ims_callback_stub_test") {
+ohos_unittest("cellular_call_ims_callback_proxy_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -24,7 +24,7 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback_stub_test.cpp",
+    "ims_callback_proxy_test.cpp",
   ]
 
   include_dirs = [
@@ -72,7 +72,7 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
   ]
 }
 
-ohos_unittest("cellular_call_ims_callback_proxy_test") {
+ohos_unittest("cellular_call_ims_callback_stub_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -82,7 +82,7 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback_proxy_test.cpp",
+    "ims_callback_stub_test.cpp",
   ]
 
   include_dirs = [

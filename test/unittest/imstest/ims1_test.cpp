@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 
-#include "ims_test.h"
-
 #define private public
 #define protected public
 #include "cellular_call_config.h"
@@ -29,22 +27,14 @@
 #include "ims_control.h"
 #include "ims_error.h"
 #include "securec.h"
-#include "accesstoken_kit.h"
 #include "call_manager_errors.h"
 #include "cellular_call_interface.h"
-#include "cellular_call_ipc_interface_code.h"
-#include "core_manager_inner.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"
 #include "ims_core_service_client.h"
 #include "ims_core_service_proxy.h"
 #include "iservice_registry.h"
-#include "surface_utils.h"
 #include "system_ability_definition.h"
-#include "telephony_log_wrapper.h"
-#include "telephony_permission.h"
-#include "token_setproc.h"
-#include "ims_video_call_control.h"
 #include "token.h"
 
 namespace OHOS {

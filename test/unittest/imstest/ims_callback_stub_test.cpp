@@ -26,9 +26,11 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "core_server_client.h"
-#include "securec.h"
+#include "core_service_client.h"
+#include "gtest/gtest.h"
+#include "ims_core_service_client.h"
 #include "token.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -39,7 +41,7 @@ const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 const int32_t DEFAULT_INDEX = 1;
 
-class ImsTest : public testing::Test {
+class ImsCallbackStubTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -109,21 +111,21 @@ public:
     }
 };
 
-void ImsTest::SetUpTestCase(void)
+void ImsCallbackStubTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
     std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
     DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
 }
 
-void ImsTest::TearDownTestCase(void)
+void ImsCallbackStubTest::TearDownTestCase(void)
 {
     // step 3: Tear Down Test Case
 }
 
-void ImsTest::SetUp(void) {}
+void ImsCallbackStubTest::SetUp(void) {}
 
-void ImsTest::TearDown(void)
+void ImsCallbackStubTest::TearDown(void)
 {
     // step 3: input testcase teardown step
 }
@@ -133,7 +135,7 @@ void ImsTest::TearDown(void)
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);
@@ -189,7 +191,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0001, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -251,7 +253,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0002, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -295,7 +297,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0004, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0004, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -351,7 +353,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0004, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0005, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0005, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -407,7 +409,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0005, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0006, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0006, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestSix = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestSix != nullptr);
@@ -452,7 +454,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0006, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -504,7 +506,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0007, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -558,7 +560,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0008, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -612,7 +614,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0009, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0010, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0010, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -668,7 +670,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0010, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0011, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0011, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -714,7 +716,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0011, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0012, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0012, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -759,7 +761,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0012, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0013, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0013, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stub = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);
@@ -809,7 +811,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0013, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0014, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0014, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestTwo = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestTwo != nullptr);
@@ -865,7 +867,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0014, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0015, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0015, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestThree = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestThree != nullptr);
@@ -902,7 +904,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0015, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0016, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0016, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestFour = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestFour != nullptr);
@@ -952,7 +954,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0016, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0017, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0017, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestFive = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestFive != nullptr);
@@ -1002,7 +1004,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0017, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0018, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0018, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestSix = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestSix != nullptr);
@@ -1041,7 +1043,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0018, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0019, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0019, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestSeven = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestSeven != nullptr);
@@ -1087,7 +1089,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0019, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0020, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0020, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestEigth = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestEigth != nullptr);
@@ -1135,7 +1137,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0020, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0021, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0021, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestNight = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestNight != nullptr);
@@ -1183,7 +1185,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0021, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0022, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0022, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestTen = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestTen != nullptr);
@@ -1232,7 +1234,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0022, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0023, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0023, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestEleven = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestEleven != nullptr);
@@ -1272,7 +1274,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0023, Function | MediumTest 
  * @tc.name     Test for ImsCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackStub_0024, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0024, Function | MediumTest | Level3)
 {
     sptr<ImsCallCallbackStub> stubTestEleven = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestEleven != nullptr);

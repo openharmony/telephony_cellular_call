@@ -32,7 +32,7 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "ims_test.h"
+#include "token.h"
 #include "securec.h"
 #include "cellular_call_hisysevent.h"
 #include "standardize_utils.h"
@@ -40,6 +40,7 @@
 #include "cellular_call_dump_helper.h"
 #include "emergency_utils.h"
 #include "satellite_call_client.h"
+#include "ims_video_call_control.h"
 
 namespace OHOS {
 namespace Telephony {

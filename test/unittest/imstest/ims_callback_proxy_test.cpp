@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #define private public
 #define protected public
 #include "cellular_call_config.h"
@@ -26,9 +25,10 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "call_service_client.h"
+#include "core_service_client.h"
+#include "gtest/gtest.h"
 #include "securec.h"
-#include "ims_call_service_client.h"
+#include "ims_core_service_client.h"
 
 
 namespace OHOS {
@@ -43,14 +43,13 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-
     bool HasSimCard(int32_t slotId)
     {
         bool hasSimCard = false;
         DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
         return hasSimCard;
     }
-}
+};
 
 void ImsCallbackProxyTest::SetUpTestCase(void)
 {
