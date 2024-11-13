@@ -13,26 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef TELEPHONY_IMS_TEST_H
-#define TELEPHONY_IMS_TEST_H
-#include <securec.h>
+#ifndef TELEPHONY_TOKEN_H
+#define TELEPHONY_TOKEN_H
 
 #include "accesstoken_kit.h"
-#include "call_manager_errors.h"
-#include "cellular_call_interface.h"
-#include "cellular_call_ipc_interface_code.h"
-#include "core_manager_inner.h"
-#include "core_service_client.h"
-#include "gtest/gtest.h"
-#include "ims_core_service_client.h"
-#include "ims_core_service_proxy.h"
-#include "iservice_registry.h"
-#include "surface_utils.h"
-#include "system_ability_definition.h"
-#include "telephony_log_wrapper.h"
-#include "telephony_permission.h"
 #include "token_setproc.h"
-#include "ims_video_call_control.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -133,4 +118,4 @@ private:
 } // namespace Telephony
 } // namespace OHOS
 
-#endif // TELEPHONY_IMS_TEST_H
+#endif // TELEPHONY_TOKEN_H

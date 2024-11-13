@@ -26,9 +26,10 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "ims_test.h"
+#include "call_service_client.h"
 #include "securec.h"
-#include "token.h"
+#include "ims_call_service_client.h"
+
 
 namespace OHOS {
 namespace Telephony {
@@ -36,7 +37,7 @@ using namespace testing::ext;
 const std::string PHONE_NUMBER = "0000000";
 const int32_t DEFAULT_INDEX = 1;
 
-class ImsTest : public testing::Test {
+class ImsCallbackProxyTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -49,144 +50,27 @@ public:
         DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
         return hasSimCard;
     }
-    bool CanUseImsService(int32_t slotId, ImsServiceType type)
-    {
-        ImsRegInfo info;
-        CoreServiceClient::GetInstance().GetImsRegStatus(slotId, type, info);
-        bool imsReg = info.imsRegState == ImsRegState::IMS_REGISTERED;
-        return imsReg;
-    }
+}
 
-    int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
-    {
-        callInfo.accountId = accountId;
-        callInfo.slotId = accountId;
-        callInfo.index = accountId;
-        callInfo.callType = CallType::TYPE_IMS;
-        callInfo.videoState = 0; // 0 means audio
-        if (memset_s(callInfo.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
-            return TELEPHONY_ERR_MEMSET_FAIL;
-        }
-        if (phonenumber.length() > static_cast<size_t>(kMaxNumberLen)) {
-            return CALL_ERR_NUMBER_OUT_OF_RANGE;
-        }
-        if (memcpy_s(callInfo.phoneNum, kMaxNumberLen, phonenumber.c_str(), phonenumber.length()) != EOK) {
-            return TELEPHONY_ERR_MEMCPY_FAIL;
-        }
-        return TELEPHONY_SUCCESS;
-    };
-
-    int32_t TestDialCallByIms(int32_t slotId, std::string code)
-    {
-        AccessToken token;
-        auto saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (saMgr == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto remote = saMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-        if (remote == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto telephonyService = iface_cast<CellularCallInterface>(remote);
-        if (telephonyService == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        CellularCallInfo imsCellularCallInfo;
-        int32_t ret = TELEPHONY_SUCCESS;
-        ret = InitCellularCallInfo(slotId, code, imsCellularCallInfo);
-        if (ret != TELEPHONY_SUCCESS) {
-            return ret;
-        }
-        // open ims, make this time use ims to test
-        ret = telephonyService->SetImsSwitchStatus(slotId, true);
-        if (ret != TELEPHONY_SUCCESS) {
-            return ret;
-        }
-        ret = telephonyService->Dial(imsCellularCallInfo);
-        return ret;
-    };
-
-    int32_t WriteSsBaseResult(MessageParcel &in, const SsBaseResult &ssResult)
-    {
-        if (!in.WriteInt32(ssResult.index)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        if (!in.WriteInt32(ssResult.result)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        if (!in.WriteInt32(ssResult.reason)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        if (!in.WriteString(ssResult.message)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        return TELEPHONY_SUCCESS;
-    };
-
-    int32_t WriteSsResult(MessageParcel &in, const SsBaseResult &ssResult, const int32_t action, const int32_t state)
-    {
-        int32_t ret = WriteSsBaseResult(in, ssResult);
-        if (ret != TELEPHONY_SUCCESS) {
-            return ret;
-        }
-        if (!in.WriteInt32(action)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        if (!in.WriteInt32(state)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        return TELEPHONY_SUCCESS;
-    };
-
-    int32_t WriteCallForwardResult(MessageParcel &in, const CallForwardQueryInfoList &cFQueryList)
-    {
-        int32_t ret = WriteSsBaseResult(in, cFQueryList.result);
-        if (ret != TELEPHONY_SUCCESS) {
-            return ret;
-        }
-        if (!in.WriteInt32(cFQueryList.callSize) || !in.WriteInt32(cFQueryList.flag)) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        if (!in.WriteInt32(static_cast<int32_t>(cFQueryList.calls.size()))) {
-            return TELEPHONY_ERR_WRITE_DATA_FAIL;
-        }
-        for (auto call : cFQueryList.calls) {
-            if (!in.WriteInt32(call.serial) || !in.WriteInt32(call.result) || !in.WriteInt32(call.status) ||
-                !in.WriteInt32(call.classx) || !in.WriteString(call.number) || !in.WriteInt32(call.type) ||
-                !in.WriteInt32(call.reason) || !in.WriteInt32(call.time) || !in.WriteInt32(call.startHour) ||
-                !in.WriteInt32(call.startMinute) || !in.WriteInt32(call.endHour) || !in.WriteInt32(call.endMinute)) {
-                return TELEPHONY_ERR_WRITE_DATA_FAIL;
-            }
-        }
-        return TELEPHONY_SUCCESS;
-    }
-};
-
-void ImsTest::SetUpTestCase(void)
+void ImsCallbackProxyTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
     std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
     DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
 }
 
-void ImsTest::TearDownTestCase(void)
-{
-    // step 3: Tear Down Test Case
-}
+void ImsCallbackProxyTest::TearDownTestCase(void) {}
 
-void ImsTest::SetUp(void) {}
+void ImsCallbackProxyTest::SetUp(void) {}
 
-void ImsTest::TearDown(void)
-{
-    // step 3: input testcase teardown step
-}
+void ImsCallbackProxyTest::TearDown(void) {}
 
 /**
  * @tc.number   cellular_call_ImsCallCallbackProxy_0001
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =
@@ -239,7 +123,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =
@@ -293,7 +177,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0003, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =
