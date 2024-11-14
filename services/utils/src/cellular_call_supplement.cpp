@@ -22,6 +22,9 @@
 #include "securec.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
+#ifdef SECURITY_GUARDE_ENABLE
+#include "cellular_call_hisysevent.h"
+#endif
 
 namespace OHOS {
 namespace Telephony {
@@ -382,6 +385,13 @@ void CellularCallSupplement::HandleSetCallTransfer(int32_t slotId, int32_t servi
         TELEPHONY_LOGE("[slot%{public}d] handler is nullptr!", slotId);
         return;
     }
+#ifdef SECURITY_GUARDE_ENABLE
+    if (callTransferAction == CallTransferSettingType::CALL_TRANSFER_REGISTRATION ||
+        callTransferAction == CallTransferSettingType::CALL_TRANSFER_ERASURE) {
+        uint8_t state = callTransferAction == CallTransferSettingType::CALL_TRANSFER_ERASURE ? 0 : 1;
+        CellularCallHiSysEvent::WriteCallTansferEvent(state);
+        }
+#endif
     auto utCommand = std::make_shared<SsRequestCommand>();
     utCommand->cfReason = cause;
     utCommand->cfAction = static_cast<int32_t>(callTransferAction);

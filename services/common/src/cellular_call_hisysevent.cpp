@@ -20,6 +20,14 @@
 #include "call_manager_errors.h"
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
+#ifdef SECURITY_GUARDE_ENABLE
+#include <iostream>
+#include <ctime>
+#include "cellular_call_hisysevent.h"
+#include "nlohmann/json.hpp"
+#include "event_info.h"
+#include "sg_collect_client.h"
+#endif
 
 namespace OHOS {
 namespace Telephony {
@@ -218,6 +226,32 @@ void CellularCallHiSysEvent::WriteImsCallModeBehaviorEvent(
             CALL_TYPE_KEY, info.callType, VIDEO_STATE_KEY, info.videoState, RESULT_KEY, requestResult);
     }
 }
+
+#ifdef SECURITY_GUARDE_ENABLE
+void CellularCallHiSysEvent::WriteCallTansferEvent(uint8_t state)
+{
+    using namespace OHOS::Security::SecurityGuard;
+    const int32_t TIME_STR_LENGTH = 14 + 1;
+    const int64_t EVENT_ID = 0x009000002;
+    char timeStr[TIME_STR_LENGTH] = {0};
+    time_t nowTime = time(0);
+    struct tm *lt = localtime(&nowTime);
+    if (0 == strftime(timeStr, TIME_STR_LENGTH, "%Y%m%d%H%M%S", lt)) {
+        TELEPHONY_LOGE("strftime error");
+        return;
+    }
+    nlohmann::json jsonResult;
+    jsonResult["occurTime"] = timeStr;
+    jsonResult["transferState"] = state;
+    jsonResult["setting"] = "dial";
+    std::string strInfo = jsonResult.dump();
+    std::shared_ptr<EventInfo> eventInfo = std::make_shared<EventInfo>(EVENT_ID, "1.0", strInfo);
+    int32_t ret = NativeDataCollectKit::ReportSecurityInfo(eventInfo);
+    if (ret != ERR_OK) {
+        TELEPHONY_LOGE("ReportSecurityInfo ret: %{public}d", ret);
+    }
+}
+#endif
 
 int32_t CellularCallHiSysEvent::ErrorCodeConversion(const int32_t errCode, CallErrorCode &eventValue)
 {
