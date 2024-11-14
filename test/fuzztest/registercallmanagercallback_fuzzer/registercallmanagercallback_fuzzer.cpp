@@ -186,10 +186,10 @@ void ReportUpdateCallMediaMode(const uint8_t *data, size_t size)
 
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallModeReceiveInfo reportCallModeInfo;
-    reportCallModeInfo.callIndex = static_cast<int32_t>(size);
-    reportCallModeInfo.result = static_cast<ImsCallModeRequestResult>(size);
-    reportCallModeInfo.callType = static_cast<ImsCallType>(static_cast<int32_t>(size % BOOL_NUM));
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    reportCallModeInfo.callIndex = static_cast<int32_t>(*data);
+    reportCallModeInfo.result = static_cast<ImsCallModeRequestResult>(*data);
+    reportCallModeInfo.callType = static_cast<ImsCallType>(static_cast<int32_t>(*data % BOOL_NUM));
+    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
     cellularCallRegister->ReceiveUpdateCallMediaModeRequest(slotId, reportCallModeInfo);
     cellularCallRegister->ReceiveUpdateCallMediaModeResponse(slotId, reportCallModeInfo);
 }
@@ -202,8 +202,8 @@ void ReportCallSessionEventChanged(const uint8_t *data, size_t size)
 
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallSessionEventInfo reportCallSessionInfo;
-    reportCallSessionInfo.callIndex = static_cast<int32_t>(size);
-    reportCallSessionInfo.eventType = static_cast<VideoCallEventType>(static_cast<int32_t>(size % BOOL_NUM));
+    reportCallSessionInfo.callIndex = static_cast<int32_t>(*data);
+    reportCallSessionInfo.eventType = static_cast<VideoCallEventType>(static_cast<int32_t>(*data % BOOL_NUM));
     cellularCallRegister->HandleCallSessionEventChanged(reportCallSessionInfo);
 }
 
@@ -215,9 +215,9 @@ void ReportPeerDimensionsChanged(const uint8_t *data, size_t size)
 
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallPeerDimensionsInfo reportCallPeerDimensionsInfo;
-    reportCallPeerDimensionsInfo.callIndex = static_cast<int32_t>(size);
-    reportCallPeerDimensionsInfo.width = static_cast<int32_t>(size);
-    reportCallPeerDimensionsInfo.height = static_cast<int32_t>(size);
+    reportCallPeerDimensionsInfo.callIndex = static_cast<int32_t>(*data);
+    reportCallPeerDimensionsInfo.width = static_cast<int32_t>(*data);
+    reportCallPeerDimensionsInfo.height = static_cast<int32_t>(*data);
     cellularCallRegister->HandlePeerDimensionsChanged(reportCallPeerDimensionsInfo);
 }
 
@@ -229,8 +229,8 @@ void ReportCallDataUsageChanged(const uint8_t *data, size_t size)
 
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallDataUsageInfo reportCallDataUsageInfo;
-    reportCallDataUsageInfo.callIndex = static_cast<int32_t>(size);
-    reportCallDataUsageInfo.dataUsage = static_cast<int64_t>(size);
+    reportCallDataUsageInfo.callIndex = static_cast<int32_t>(*data);
+    reportCallDataUsageInfo.dataUsage = static_cast<int64_t>(*data);
     cellularCallRegister->HandleCallDataUsageChanged(reportCallDataUsageInfo);
 }
 
@@ -242,9 +242,9 @@ void ReportCameraCapabilitiesChanged(const uint8_t *data, size_t size)
 
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     CameraCapabilitiesInfo reportCameraCapabilitiesInfo;
-    reportCameraCapabilitiesInfo.callIndex = static_cast<int32_t>(size);
-    reportCameraCapabilitiesInfo.width = static_cast<int32_t>(size);
-    reportCameraCapabilitiesInfo.height = static_cast<int32_t>(size);
+    reportCameraCapabilitiesInfo.callIndex = static_cast<int32_t>(*data);
+    reportCameraCapabilitiesInfo.width = static_cast<int32_t>(*data);
+    reportCameraCapabilitiesInfo.height = static_cast<int32_t>(*data);
     cellularCallRegister->HandleCameraCapabilitiesChanged(reportCameraCapabilitiesInfo);
 }
 

@@ -148,8 +148,8 @@ void SetCameraZoom(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    float zoomRatio = static_cast<float>(size);
+    int32_t maxSize = static_cast<int32_t>(*data);
+    float zoomRatio = static_cast<float>(*data);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteFloat(zoomRatio);
@@ -204,10 +204,10 @@ void SetDeviceDirection(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    int32_t rotation = static_cast<int32_t>(size);
+    int32_t maxSize = static_cast<int32_t>(*data);
+    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
+    int32_t index = static_cast<int32_t>(*data);
+    int32_t rotation = static_cast<int32_t>(*data);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -357,9 +357,9 @@ void CancelCallUpgrade(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
+    int32_t maxSize = static_cast<int32_t>(*data);
+    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
+    int32_t index = static_cast<int32_t>(*data);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -375,9 +375,9 @@ void RequestCameraCapabilities(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
+    int32_t maxSize = static_cast<int32_t>(*data);
+    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
+    int32_t index = static_cast<int32_t>(*data);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);

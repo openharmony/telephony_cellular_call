@@ -223,16 +223,16 @@ void TestImsCallClientWithCallMediaModeResponse(
 void TestImsCallClientWithCancelCallUpgrade(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
+    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
     imsCallClient->CancelCallUpgrade(slotId, index);
 }
 
 void TestImsCallClientWithRequestCameraCapabilities(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
+    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
     imsCallClient->RequestCameraCapabilities(slotId, index);
 }
 
@@ -395,16 +395,16 @@ void TestImsCallProxyWithCallMediaModeResponse(const uint8_t *data, size_t size,
 
 void TestImsCallProxyWithCancelCallUpgrade(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
+    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
     proxy->CancelCallUpgrade(slotId, index);
 }
 
 void TestImsCallProxyWithRequestCameraCapabilities(
     const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
+    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
+    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
     proxy->RequestCameraCapabilities(slotId, index);
 }
 
