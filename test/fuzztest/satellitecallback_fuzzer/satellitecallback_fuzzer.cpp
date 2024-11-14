@@ -60,7 +60,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size, sptr<SatelliteCallCallbac
     }
     int32_t slotId = ERROR_NUM;
     dataMessageParcel.WriteInt32(slotId);
-    uint32_t code = static_cast<uint32_t>(size);
+    uint32_t code = static_cast<uint32_t>(*data);
     MessageParcel reply;
     MessageOption option;
     stub->OnRemoteRequest(code, dataMessageParcel, reply, option);
@@ -70,10 +70,10 @@ void TestSatelliteCallCallbackFunction(const uint8_t *data, size_t size, sptr<Sa
 {
     int32_t slotId = ERROR_NUM;
     RadioResponseInfo rilRadioResponse;
-    rilRadioResponse.flag = static_cast<int32_t>(size % BOOL_NUM);
-    rilRadioResponse.serial = static_cast<int32_t>(size % SERIAL_NUM);
-    rilRadioResponse.error = static_cast<ErrType>(size % ERROR_NUM);
-    rilRadioResponse.type = static_cast<ResponseTypes>(size % TYPE_NUM);
+    rilRadioResponse.flag = static_cast<int32_t>(*data % BOOL_NUM);
+    rilRadioResponse.serial = static_cast<int32_t>(*data % SERIAL_NUM);
+    rilRadioResponse.error = static_cast<ErrType>(*data % ERROR_NUM);
+    rilRadioResponse.type = static_cast<ResponseTypes>(*data % TYPE_NUM);
     MessageParcel answerData;
     MessageParcel answerReply;
     answerData.WriteInt32(slotId);

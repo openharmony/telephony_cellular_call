@@ -101,7 +101,7 @@ void SetImsSwitchStatus(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t activate = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t activate = static_cast<int32_t>(*data % BOOL_NUM);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteBool(activate);
     dataMessageParcel.RewindRead(0);
@@ -128,7 +128,7 @@ void SetVoNRSwitchStatus(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t state = static_cast<int32_t>(size % INT_NUM);
+    int32_t state = static_cast<int32_t>(*data % INT_NUM);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(state);
     dataMessageParcel.RewindRead(0);

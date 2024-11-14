@@ -117,9 +117,9 @@ void SetReadyToCall(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t slotId = static_cast<int32_t>(size);
-    int32_t callType = static_cast<int32_t>(size % SLOT_NUM);
-    bool isReadyToCall = static_cast<bool>(size % SLOT_NUM);
+    int32_t slotId = static_cast<int32_t>(*data);
+    int32_t callType = static_cast<int32_t>(*data % SLOT_NUM);
+    bool isReadyToCall = static_cast<bool>(*data % SLOT_NUM);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(slotId);
     dataMessageParcel.WriteInt32(callType);
@@ -190,7 +190,7 @@ void SetCallWaiting(const uint8_t *data, size_t size)
         return;
     }
 
-    int32_t activate = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t activate = static_cast<int32_t>(*data % BOOL_NUM);
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteBool(activate);
     dataMessageParcel.RewindRead(0);
