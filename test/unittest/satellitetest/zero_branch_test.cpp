@@ -25,9 +25,9 @@
 #include "tel_ril_call_parcel.h"
 #include "satellite_call_client.h"
 #include "satellite_control.h"
-#include "satellite_test.h"
 #include "securec.h"
 #include "standardize_utils.h"
+#include "token.h"
 
 namespace OHOS {
 namespace Telephony {

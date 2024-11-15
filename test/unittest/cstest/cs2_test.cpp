@@ -31,6 +31,8 @@
 #include "radio_event.h"
 #include "securec.h"
 #include "sim_state_type.h"
+#include "system_ability_definition.h"
+#include "token.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -52,13 +54,66 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    int32_t TestDialCallByCs(int32_t slotId, std::string code);
+    bool HasSimCard(int32_t slotId)
+    {
+        bool hasSimCard = false;
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+        return hasSimCard;
+    }
+private:
+    int32_t InitCallInfo(CellularCallInfo &callInfo) const;
 };
 
-bool Cs2Test::HasSimCard(int32_t slotId)
+int32_t CsCallOperationTest::TestDialCallByCs(int32_t slotId, std::string code)
 {
-    bool hasSimCard = false;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
-    return hasSimCard;
+    AccessToken token;
+    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityMgr == nullptr) {
+        return TELEPHONY_ERR_FAIL;
+    }
+    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+    if (remote == nullptr) {
+        return TELEPHONY_ERR_FAIL;
+    }
+    auto telephonyService = iface_cast<CellularCallInterface>(remote);
+    if (telephonyService == nullptr) {
+        return TELEPHONY_ERR_FAIL;
+    }
+    CellularCallInfo callInfo;
+    int32_t ret = TELEPHONY_SUCCESS;
+    ret = InitCellularCallInfo(slotId, code, callInfo);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    // close ims, make this time use cs to test
+    ret = telephonyService->SetImsSwitchStatus(slotId, false);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    ret = telephonyService->Dial(callInfo);
+    return ret;
+};
+
+int32_t CsCallOperationTest::InitCallInfo(CellularCallInfo &callInfo) const
+{
+    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
+        std::cout << "CellularCallService return, memset_s failed. \n";
+        return CELLULAR_CALL_ERROR;
+    }
+
+    std::cout << "please enter the phone number:";
+    std::cin >> callInfo.phoneNum;
+    callInfo.videoState = 1;
+    std::cout << "please enter the call type(0:CS  1:IMS):";
+    int32_t callType = 0;
+    std::cin >> callType;
+    callInfo.callType = static_cast<CallType>(callType);
+    int32_t slotId = 0;
+    std::cout << "please enter the slotId:(0   1)";
+    std::cin >> slotId;
+    callInfo.slotId = slotId;
+    return CELLULAR_CALL_SUCCESS;
 }
 
 void Cs2Test::SetUpTestCase(void)

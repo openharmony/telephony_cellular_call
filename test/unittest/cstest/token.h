@@ -75,18 +75,6 @@ private:
     AccessTokenID currentID_ = 0;
     AccessTokenID accessID_ = 0;
 };
-
-class CsTest : public testing::Test {
-public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
-    void TearDown();
-    bool HasSimCard(int32_t slotId);
-
-private:
-    int32_t InitCallInfo(CellularCallInfo &callInfo) const;
-};
 } // namespace Telephony
 } // namespace OHOS
 #endif // TELEPHONY_TOKEN_H

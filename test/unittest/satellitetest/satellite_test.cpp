@@ -22,9 +22,12 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
+#include "core_service_client.h"
 #include "tel_ril_call_parcel.h"
 #include "satellite_call_client.h"
 #include "securec.h"
+#include "system_ability_definition.h"
+#include "token.h"
 
 namespace OHOS {
 namespace Telephony {
