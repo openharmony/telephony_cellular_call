@@ -20,7 +20,7 @@ ohos_unittest("cellular_call_cs_calloperation_test") {
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = ["cs_calloperation_test.cpp"]
+  sources = [ "cs_calloperation_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
@@ -67,7 +67,7 @@ ohos_unittest("cellular_call_cs1_test") {
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = ["cs1_test.cpp"]
+  sources = [ "cs1_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
@@ -114,7 +114,7 @@ ohos_unittest("cellular_call_cs2_test") {
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = ["cs2_test.cpp"]
+  sources = [ "cs2_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",

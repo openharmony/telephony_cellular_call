@@ -710,7 +710,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     cellularCall.RegisterCoreServiceHandler();
     cellularCall.CreateHandler();
     cellularCall.SendEventRegisterHandler();
-
     cellularCall.IsValidSlotId(SIM1_SLOTID);
     CellularCallInfo imsCallInfo = { .callType = CallType::TYPE_IMS };
     CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
@@ -721,7 +720,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     cellularCall.HangUpWithCellularCallRestart(infos);
     cellularCall.SetControl(imsCallInfo);
     cellularCall.SetControl(csCallInfo);
-
     sptr<ICallStatusCallback> callback;
     cellularCall.RegisterCallManagerCallBack(callback);
     cellularCall.UnRegisterCallManagerCallBack();
