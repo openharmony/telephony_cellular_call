@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "satellite_test.h"
+#include "gtest/gtest.h"
 
 #define private public
 #define protected public

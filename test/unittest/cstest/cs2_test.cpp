@@ -13,7 +13,8 @@
  * limitations under the License.
  */
 
-#include "cs_test.h"
+#include "gtest/gtest.h"
+#include <random.h>
 
 #define private public
 #define protected public
@@ -62,7 +63,7 @@ public:
         return hasSimCard;
     }
 private:
-    int32_t InitCallInfo(CellularCallInfo &callInfo) const;
+    int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo);
 };
 
 int32_t CsCallOperationTest::TestDialCallByCs(int32_t slotId, std::string code)
@@ -95,26 +96,25 @@ int32_t CsCallOperationTest::TestDialCallByCs(int32_t slotId, std::string code)
     return ret;
 };
 
-int32_t CsCallOperationTest::InitCallInfo(CellularCallInfo &callInfo) const
+int32_t Cs2Test::InitCellularCallInfo(int32_t accountId, std::string phonenumber,
+    CellularCallInfo &callInfo)
 {
-    if (memset_s(&callInfo, sizeof(callInfo), 0, sizeof(callInfo)) != EOK) {
-        std::cout << "CellularCallService return, memset_s failed. \n";
-        return CELLULAR_CALL_ERROR;
+    callInfo.accountId = accountId;
+    callInfo.slotId = accountId;
+    callInfo.index = accountId;
+    callInfo.callType = CallType::TYPE_CS;
+    callInfo.videoState = 0; // 0 means audio
+    if (memset_s(callInfo.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
+        return TELEPHONY_ERR_MEMSET_FAIL;
     }
-
-    std::cout << "please enter the phone number:";
-    std::cin >> callInfo.phoneNum;
-    callInfo.videoState = 1;
-    std::cout << "please enter the call type(0:CS  1:IMS):";
-    int32_t callType = 0;
-    std::cin >> callType;
-    callInfo.callType = static_cast<CallType>(callType);
-    int32_t slotId = 0;
-    std::cout << "please enter the slotId:(0   1)";
-    std::cin >> slotId;
-    callInfo.slotId = slotId;
-    return CELLULAR_CALL_SUCCESS;
-}
+    if (phonenumber.length() > static_cast<size_t>(kMaxNumberLen)) {
+        return CALL_ERR_NUMBER_OUT_OF_RANGE;
+    }
+    if (memcpy_s(callInfo.phoneNum, kMaxNumberLen, phonenumber.c_str(), phonenumber.length()) != EOK) {
+        return TELEPHONY_ERR_MEMCPY_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+};
 
 void Cs2Test::SetUpTestCase(void)
 {
