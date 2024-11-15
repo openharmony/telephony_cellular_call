@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #define private public
 #define protected public
 #include "cellular_call_config.h"
@@ -26,8 +25,10 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "ims_test.h"
+#include "core_service_client.h"
+#include "gtest/gtest.h"
 #include "securec.h"
+#include "ims_core_service_client.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -35,12 +36,39 @@ using namespace testing::ext;
 const std::string PHONE_NUMBER = "0000000";
 const int32_t DEFAULT_INDEX = 1;
 
+class ImsCallbackProxyTest : public testing::Test {
+public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
+    void SetUp();
+    void TearDown();
+    bool HasSimCard(int32_t slotId)
+    {
+        bool hasSimCard = false;
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+        return hasSimCard;
+    }
+};
+
+void ImsCallbackProxyTest::SetUpTestCase(void)
+{
+    // step 3: Set Up Test Case
+    std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
+    DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
+}
+
+void ImsCallbackProxyTest::TearDownTestCase(void) {}
+
+void ImsCallbackProxyTest::SetUp(void) {}
+
+void ImsCallbackProxyTest::TearDown(void) {}
+
 /**
  * @tc.number   cellular_call_ImsCallCallbackProxy_0001
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =
@@ -93,7 +121,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0001, Function | MediumTest
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =
@@ -147,7 +175,7 @@ HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0002, Function | MediumTest
  * @tc.name     Test for ImsCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(ImsTest, cellular_call_ImsCallCallbackProxy_0003, Function | MediumTest | Level3)
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function | MediumTest | Level3)
 {
     const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
     auto callCallbackProxy =

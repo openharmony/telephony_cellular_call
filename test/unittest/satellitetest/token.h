@@ -13,22 +13,9 @@
  * limitations under the License.
  */
 
-#ifndef TELEPHONY_SATELLITE_TEST_H
-#define TELEPHONY_SATELLITE_TEST_H
-#include <securec.h>
-
+#ifndef TELEPHONY_TOKEN_H
+#define TELEPHONY_TOKEN_H
 #include "accesstoken_kit.h"
-#include "call_manager_errors.h"
-#include "cellular_call_handler.h"
-#include "cellular_call_interface.h"
-#include "cellular_call_ipc_interface_code.h"
-#include "core_manager_inner.h"
-#include "core_service_client.h"
-#include "gtest/gtest.h"
-#include "iservice_registry.h"
-#include "system_ability_definition.h"
-#include "telephony_log_wrapper.h"
-#include "telephony_permission.h"
 #include "token_setproc.h"
 
 namespace OHOS {
@@ -127,66 +114,7 @@ private:
     AccessTokenID currentID_ = 0;
     AccessTokenID accessID_ = 0;
 };
-
-class SatelliteTest : public testing::Test {
-public:
-    static void SetUpTestCase();
-    static void TearDownTestCase();
-    void SetUp();
-    void TearDown();
-
-    bool HasSimCard(int32_t slotId)
-    {
-        bool hasSimCard = false;
-        DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
-        return hasSimCard;
-    }
-
-    int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
-    {
-        callInfo.accountId = accountId;
-        callInfo.slotId = accountId;
-        callInfo.index = 0;
-        callInfo.callType = CallType::TYPE_SATELLITE;
-        callInfo.videoState = 0; // 0 means audio
-        if (memset_s(callInfo.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
-            return TELEPHONY_ERR_MEMSET_FAIL;
-        }
-        if (phonenumber.length() > static_cast<size_t>(kMaxNumberLen)) {
-            return CALL_ERR_NUMBER_OUT_OF_RANGE;
-        }
-        if (memcpy_s(callInfo.phoneNum, kMaxNumberLen, phonenumber.c_str(), phonenumber.length()) != EOK) {
-            return TELEPHONY_ERR_MEMCPY_FAIL;
-        }
-        return TELEPHONY_SUCCESS;
-    };
-
-    int32_t TestDialCallBySatellite(int32_t slotId, std::string code)
-    {
-        AccessToken token;
-        auto saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (saMgr == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto remote = saMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-        if (remote == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto telephonyService = iface_cast<CellularCallInterface>(remote);
-        if (telephonyService == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        CellularCallInfo SatelliteCellularCallInfo;
-        int32_t ret = TELEPHONY_SUCCESS;
-        ret = InitCellularCallInfo(slotId, code, SatelliteCellularCallInfo);
-        if (ret != TELEPHONY_SUCCESS) {
-            return ret;
-        }
-        ret = telephonyService->Dial(SatelliteCellularCallInfo);
-        return ret;
-    };
-};
 } // namespace Telephony
 } // namespace OHOS
 
-#endif // TELEPHONY_SATELLITE_TEST_H
+#endif // TELEPHONY_TOKEN_H

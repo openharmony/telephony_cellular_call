@@ -14,7 +14,7 @@
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
 
-ohos_unittest("tel_ims_callback_test") {
+ohos_unittest("cellular_call_ims_callback_proxy_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -24,8 +24,7 @@ ohos_unittest("tel_ims_callback_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback_test.cpp",
-    "ims_test.cpp",
+    "ims_callback_proxy_test.cpp",
   ]
 
   include_dirs = [
@@ -42,7 +41,6 @@ ohos_unittest("tel_ims_callback_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -74,7 +72,7 @@ ohos_unittest("tel_ims_callback_test") {
   ]
 }
 
-ohos_unittest("tel_ims_callback1_test") {
+ohos_unittest("cellular_call_ims_callback_stub_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -84,8 +82,7 @@ ohos_unittest("tel_ims_callback1_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback1_test.cpp",
-    "ims_test.cpp",
+    "ims_callback_stub_test.cpp",
   ]
 
   include_dirs = [
@@ -102,7 +99,6 @@ ohos_unittest("tel_ims_callback1_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -134,7 +130,7 @@ ohos_unittest("tel_ims_callback1_test") {
   ]
 }
 
-ohos_unittest("tel_ims1_test") {
+ohos_unittest("cellular_call_ims1_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -145,7 +141,6 @@ ohos_unittest("tel_ims1_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims1_test.cpp",
-    "ims_test.cpp",
   ]
 
   include_dirs = [
@@ -162,7 +157,6 @@ ohos_unittest("tel_ims1_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -194,7 +188,7 @@ ohos_unittest("tel_ims1_test") {
   ]
 }
 
-ohos_unittest("tel_ims2_test") {
+ohos_unittest("cellular_call_ims2_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -205,7 +199,6 @@ ohos_unittest("tel_ims2_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims2_test.cpp",
-    "ims_test.cpp",
   ]
 
   include_dirs = [
@@ -222,7 +215,6 @@ ohos_unittest("tel_ims2_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -254,7 +246,7 @@ ohos_unittest("tel_ims2_test") {
   ]
 }
 
-ohos_unittest("tel_zero_branch_test") {
+ohos_unittest("cellular_call_ims_zero_branch_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -281,7 +273,6 @@ ohos_unittest("tel_zero_branch_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -317,7 +308,7 @@ ohos_unittest("tel_zero_branch_test") {
   }
 }
 
-ohos_unittest("tel_zero_branch1_test") {
+ohos_unittest("cellular_call_ims_zero_branch1_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -344,7 +335,6 @@ ohos_unittest("tel_zero_branch1_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -380,7 +370,7 @@ ohos_unittest("tel_zero_branch1_test") {
   }
 }
 
-ohos_unittest("tel_cellular_call_stub_test") {
+ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -407,7 +397,6 @@ ohos_unittest("tel_cellular_call_stub_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -439,7 +428,7 @@ ohos_unittest("tel_cellular_call_stub_test") {
   ]
 }
 
-ohos_unittest("tel_ims_call_callback_stub_test") {
+ohos_unittest("cellular_call_ims_call_callback_stub_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -466,7 +455,6 @@ ohos_unittest("tel_ims_call_callback_stub_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -498,7 +486,7 @@ ohos_unittest("tel_ims_call_callback_stub_test") {
   ]
 }
 
-ohos_unittest("tel_cellular_call_hisysevent_test") {
+ohos_unittest("cellular_call_ims_hisysevent_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -525,7 +513,6 @@ ohos_unittest("tel_cellular_call_hisysevent_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -557,7 +544,7 @@ ohos_unittest("tel_cellular_call_hisysevent_test") {
   ]
 }
 
-ohos_unittest("tel_emergency_utils_test") {
+ohos_unittest("cellular_call_ims_emergency_utils_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -584,7 +571,6 @@ ohos_unittest("tel_emergency_utils_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -616,7 +602,7 @@ ohos_unittest("tel_emergency_utils_test") {
   ]
 }
 
-ohos_unittest("tel_ims_connection_test") {
+ohos_unittest("cellular_call_ims_connection_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -643,7 +629,6 @@ ohos_unittest("tel_ims_connection_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -675,7 +660,7 @@ ohos_unittest("tel_ims_connection_test") {
   ]
 }
 
-ohos_unittest("tel_mmi_code_message_test") {
+ohos_unittest("cellular_call_ims_mmi_code_message_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -702,7 +687,6 @@ ohos_unittest("tel_mmi_code_message_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -734,7 +718,7 @@ ohos_unittest("tel_mmi_code_message_test") {
   ]
 }
 
-ohos_unittest("tel_config_request_test") {
+ohos_unittest("cellular_call_ims_config_request_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -761,7 +745,6 @@ ohos_unittest("tel_config_request_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -793,7 +776,7 @@ ohos_unittest("tel_config_request_test") {
   ]
 }
 
-ohos_unittest("tel_standardize_utils_test") {
+ohos_unittest("cellular_call_ims_standardize_utils_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -820,7 +803,6 @@ ohos_unittest("tel_standardize_utils_test") {
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -855,19 +837,19 @@ ohos_unittest("tel_standardize_utils_test") {
 group("unittest") {
   testonly = true
   deps = [
-    ":tel_cellular_call_hisysevent_test",
-    ":tel_cellular_call_stub_test",
-    ":tel_config_request_test",
-    ":tel_emergency_utils_test",
-    ":tel_ims1_test",
-    ":tel_ims2_test",
-    ":tel_ims_call_callback_stub_test",
-    ":tel_ims_callback1_test",
-    ":tel_ims_callback_test",
-    ":tel_ims_connection_test",
-    ":tel_mmi_code_message_test",
-    ":tel_standardize_utils_test",
-    ":tel_zero_branch1_test",
-    ":tel_zero_branch_test",
+    ":cellular_call_ims1_test",
+    ":cellular_call_ims2_test",
+    ":cellular_call_ims_call_callback_stub_test",
+    ":cellular_call_ims_callback_proxy_test",
+    ":cellular_call_ims_callback_stub_test",
+    ":cellular_call_ims_cellular_call_stub_test",
+    ":cellular_call_ims_config_request_test",
+    ":cellular_call_ims_connection_test",
+    ":cellular_call_ims_emergency_utils_test",
+    ":cellular_call_ims_hisysevent_test",
+    ":cellular_call_ims_mmi_code_message_test",
+    ":cellular_call_ims_standardize_utils_test",
+    ":cellular_call_ims_zero_branch1_test",
+    ":cellular_call_ims_zero_branch_test",
   ]
 }

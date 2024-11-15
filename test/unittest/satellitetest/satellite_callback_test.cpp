@@ -20,12 +20,13 @@
 #include "cellular_call_proxy.h"
 #include "cellular_call_register.h"
 #include "cellular_call_service.h"
+#include "core_service_client.h"
 #include "tel_ril_call_parcel.h"
 #include "satellite_call_callback_proxy.h"
 #include "satellite_call_callback_stub.h"
 #include "satellite_call_client.h"
 #include "satellite_control.h"
-#include "satellite_test.h"
+#include "gtest/gtest.h"
 #include "securec.h"
 
 namespace OHOS {
@@ -36,22 +37,37 @@ const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 
-void SatelliteTest::SetUpTestCase(void)
+class SatelliteCallbackTest : public testing::Test {
+public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
+    void SetUp();
+    void TearDown();
+
+    bool HasSimCard(int32_t slotId)
+    {
+        bool hasSimCard = false;
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+        return hasSimCard;
+    }
+};
+
+void SatelliteCallbackTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
 }
 
-void SatelliteTest::TearDownTestCase(void)
+void SatelliteCallbackTest::TearDownTestCase(void)
 {
     // step 3: Tear Down Test Case
 }
 
-void SatelliteTest::SetUp(void)
+void SatelliteCallbackTest::SetUp(void)
 {
     // step 3: input testcase setup step
 }
 
-void SatelliteTest::TearDown(void)
+void SatelliteCallbackTest::TearDown(void)
 {
     // step 3: input testcase teardown step
 }
@@ -61,7 +77,7 @@ void SatelliteTest::TearDown(void)
  * @tc.name     Test for SatelliteCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
     const sptr<SatelliteCallCallbackInterface> satelliteCallCallback_ =
         (std::make_unique<SatelliteCallCallbackStub>()).release();
@@ -100,7 +116,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function 
  * @tc.name     Test for SatelliteCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0002, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
     const sptr<SatelliteCallCallbackInterface> satelliteCallCallback_ =
         (std::make_unique<SatelliteCallCallbackStub>()).release();
@@ -136,7 +152,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0002, Function 
  * @tc.name     Test for SatelliteCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackStub_0001, Function | MediumTest | Level3)
 {
     sptr<SatelliteCallCallbackStub> stub = (std::make_unique<SatelliteCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);
@@ -191,7 +207,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function |
  * @tc.name     Test for SatelliteCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0002, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackStub_0002, Function | MediumTest | Level3)
 {
     sptr<SatelliteCallCallbackStub> stub = (std::make_unique<SatelliteCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);

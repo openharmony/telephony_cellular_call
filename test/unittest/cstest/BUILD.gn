@@ -15,15 +15,12 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
 
-ohos_unittest("tel_cs_calloperation_test") {
+ohos_unittest("cellular_call_cs_calloperation_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = [
-    "cs_calloperation_test.cpp",
-    "cs_test.cpp",
-  ]
+  sources = [ "cs_calloperation_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
@@ -32,15 +29,12 @@ ohos_unittest("tel_cs_calloperation_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
-    "//third_party/libphonenumber/cpp/src",
-    "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
   deps = [
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -68,15 +62,12 @@ ohos_unittest("tel_cs_calloperation_test") {
   ]
 }
 
-ohos_unittest("tel_cs1_test") {
+ohos_unittest("cellular_call_cs1_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = [
-    "cs1_test.cpp",
-    "cs_test.cpp",
-  ]
+  sources = [ "cs1_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
@@ -85,15 +76,12 @@ ohos_unittest("tel_cs1_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
-    "//third_party/libphonenumber/cpp/src",
-    "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
   deps = [
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -121,15 +109,12 @@ ohos_unittest("tel_cs1_test") {
   ]
 }
 
-ohos_unittest("tel_cs2_test") {
+ohos_unittest("cellular_call_cs2_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "cstest"
   module_out_path = part_name + "/" + test_module
-  sources = [
-    "cs2_test.cpp",
-    "cs_test.cpp",
-  ]
+  sources = [ "cs2_test.cpp" ]
 
   include_dirs = [
     "${CELLULAR_CALL_PATH}/services/common/include",
@@ -138,15 +123,12 @@ ohos_unittest("tel_cs2_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
-    "//third_party/libphonenumber/cpp/src",
-    "//third_party/libphonenumber/cpp/src/phonenumbers",
   ]
 
   deps = [
     "${CELLULAR_CALL_PATH}:tel_cellular_call",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
-    "//third_party/libphonenumber/cpp:phonenumber_standard",
   ]
 
   external_deps = [
@@ -177,8 +159,8 @@ ohos_unittest("tel_cs2_test") {
 group("unittest") {
   testonly = true
   deps = [
-    ":tel_cs1_test",
-    ":tel_cs2_test",
-    ":tel_cs_calloperation_test",
+    ":cellular_call_cs1_test",
+    ":cellular_call_cs2_test",
+    ":cellular_call_cs_calloperation_test",
   ]
 }

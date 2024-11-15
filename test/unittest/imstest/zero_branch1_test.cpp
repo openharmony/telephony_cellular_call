@@ -32,7 +32,7 @@
 #include "ims_call_client.h"
 #include "ims_control.h"
 #include "ims_error.h"
-#include "ims_test.h"
+#include "token.h"
 #include "securec.h"
 #include "cellular_call_hisysevent.h"
 #include "standardize_utils.h"
@@ -65,7 +65,7 @@ public:
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) {}
 };
 
-class BranchTest : public testing::Test {
+class ZeroBranch1Test : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -77,20 +77,20 @@ public:
     void MakeCallInfoParcelData(bool isError, MessageParcel &data);
 };
 
-void BranchTest::SetUpTestCase()
+void ZeroBranch1Test::SetUpTestCase()
 {
     std::cout << "---------- CellularCallService start ------------" << std::endl;
     DelayedSingleton<CellularCallService>::GetInstance()->Init();
     DelayedSingleton<ImsCallClient>::GetInstance()->Init();
 }
 
-void BranchTest::TearDownTestCase() {}
+void ZeroBranch1Test::TearDownTestCase() {}
 
-void BranchTest::SetUp() {}
+void ZeroBranch1Test::SetUp() {}
 
-void BranchTest::TearDown() {}
+void ZeroBranch1Test::TearDown() {}
 
-int32_t BranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
+int32_t ZeroBranch1Test::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
 {
     callInfo.accountId = accountId;
     callInfo.slotId = accountId;
@@ -109,7 +109,7 @@ int32_t BranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenum
     return TELEPHONY_SUCCESS;
 }
 
-void BranchTest::InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t num)
+void ZeroBranch1Test::InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t num)
 {
     callInfoList.callSize = num;
     ImsCurrentCall call;
@@ -121,7 +121,7 @@ void BranchTest::InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t n
     }
 }
 
-void BranchTest::MakeCallInfoParcelData(bool isError, MessageParcel &data)
+void ZeroBranch1Test::MakeCallInfoParcelData(bool isError, MessageParcel &data)
 {
     if (isError) {
         int32_t errorSize = 0;
@@ -135,7 +135,7 @@ void BranchTest::MakeCallInfoParcelData(bool isError, MessageParcel &data)
     }
 }
 
-void BranchTest::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
+void ZeroBranch1Test::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
 {
     callInfoList.callSize = num;
     CallInfo call;
@@ -152,7 +152,7 @@ void BranchTest::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_001, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -214,7 +214,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_001, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_002, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_002, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -267,7 +267,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_002, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_003, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_003, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -324,7 +324,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_003, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_004, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_004, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -379,7 +379,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_004, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_005, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_005, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -425,7 +425,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_005, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_006, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -483,7 +483,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_006, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallStub_007, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_007, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService callStub;
@@ -519,7 +519,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallStub_007, Function | MediumTest | Lev
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_001, Function | MediumTest | Level3)
 {
     // AccessToken token;
     CellularCallService cellularCall;
@@ -573,7 +573,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | 
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_002, Function | MediumTest | Level3)
 {
     // AccessToken token;
     CellularCallService cellularCall;
@@ -626,7 +626,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_002, Function | MediumTest | 
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_003, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallService cellularCall;
@@ -673,11 +673,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | 
     cellularCall.SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
-#else
-    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
-#endif
 }
 
 /**
@@ -685,9 +680,9 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_003, Function | MediumTest | 
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTest | Level3)
 {
-    // AccessToken token;
+    AccessToken token;
     CellularCallService cellularCall;
     cellularCall.SetMute(SIM1_SLOTID, 0);
     cellularCall.GetMute(SIM1_SLOTID);
@@ -707,12 +702,14 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
     cellularCall.RegisterHandler();
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     cellularCall.StartCallManagerService();
+    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
+#else
+    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
 #endif
     cellularCall.Init();
     cellularCall.RegisterCoreServiceHandler();
     cellularCall.CreateHandler();
     cellularCall.SendEventRegisterHandler();
-
     cellularCall.IsValidSlotId(SIM1_SLOTID);
     CellularCallInfo imsCallInfo = { .callType = CallType::TYPE_IMS };
     CellularCallInfo csCallInfo = { .callType = CallType::TYPE_CS };
@@ -723,7 +720,6 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
     cellularCall.HangUpWithCellularCallRestart(infos);
     cellularCall.SetControl(imsCallInfo);
     cellularCall.SetControl(csCallInfo);
-
     sptr<ICallStatusCallback> callback;
     cellularCall.RegisterCallManagerCallBack(callback);
     cellularCall.UnRegisterCallManagerCallBack();
@@ -737,7 +733,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallService_004, Function | MediumTest | 
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallSupplementRequestIms_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallSupplementRequestIms_001, Function | MediumTest | Level3)
 {
     SupplementRequestIms SRequestIms;
     CallTransferInfo CTransferInfo;
@@ -767,7 +763,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSupplementRequestIms_001, Function | 
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallbaseconnection_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallbaseconnection_001, Function | MediumTest | Level3)
 {
     BaseConnection BConnection;
     char c = ' ';
@@ -785,7 +781,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallbaseconnection_001, Function | Medium
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHiSysEvent_001, Function | MediumTest | Level3)
 {
     // AccessToken token;
     std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
@@ -819,7 +815,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_001, Function | MediumTest
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_002, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHiSysEvent_002, Function | MediumTest | Level3)
 {
     // AccessToken token;
     std::shared_ptr<CellularCallHiSysEvent> cellularCallHiSysEvent = std::make_shared<CellularCallHiSysEvent>();
@@ -873,7 +869,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallHiSysEvent_002, Function | MediumTest
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallConnectionCs_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConnectionCs_001, Function | MediumTest | Level3)
 {
     CellularCallConnectionCS cellularCallConnectionCS;
     DialRequestStruct dialRequestStruct;
@@ -902,7 +898,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionCs_001, Function | MediumTe
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_SupplementRequestCs_001, Function | MediumTest | Level3)
 {
     SupplementRequestCs supplementRequestCs;
     std::string msg = "11111";
@@ -937,7 +933,7 @@ HWTEST_F(BranchTest, Telephony_SupplementRequestCs_001, Function | MediumTest | 
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_StandardizeUtils_001, Function | MediumTest | Level3)
 {
     StandardizeUtils standardizeUtils;
     std::string phoneString = {0};
@@ -956,7 +952,7 @@ HWTEST_F(BranchTest, Telephony_StandardizeUtils_001, Function | MediumTest | Lev
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
 {
     MMICodeUtils mmiCodeUtils;
     bool enable = false;
@@ -979,7 +975,7 @@ HWTEST_F(BranchTest, Telephony_MmiCodeUtils_001, Function | MediumTest | Level3)
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallRdbHelper_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | MediumTest | Level3)
 {
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
@@ -993,7 +989,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallRdbHelper_001, Function | MediumTest 
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallDumpHelper_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallDumpHelper_001, Function | MediumTest | Level3)
 {
     CellularCallDumpHelper cellularCallDumpHelper;
     std::vector<std::string> args = { "123456", "234567" };
@@ -1007,7 +1003,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallDumpHelper_001, Function | MediumTest
  * @tc.name 	Test error branch
  * @tc.desc 	Function test
  */
-HWTEST_F(BranchTest, Telephony_EmergencyUtils_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranch1Test, Telephony_EmergencyUtils_001, Function | MediumTest | Level3)
 {
     EmergencyUtils emergencyUtils;
     std::string phoneNum = "1234567";
