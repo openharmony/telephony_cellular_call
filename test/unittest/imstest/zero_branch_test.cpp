@@ -594,7 +594,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_008, Function | Medium
 {
     AccessToken token;
     CellularCallSupplement callSup;
-    MMIData mmiDataAct = { .actionString = "*" };
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -640,13 +639,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_008, Function | Medium
     callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
     ssNoticeInfo.serviceType = static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
     callSup.GetMessage(mmiCodeInfo, ssNoticeInfo);
-    callSup.AlterPinPassword(SIM1_SLOTID, mmiDataAct);
-    callSup.UnlockPuk(SIM1_SLOTID, mmiDataAct);
-    callSup.AlterPin2Password(SIM1_SLOTID, mmiDataAct);
-    callSup.UnlockPuk2(SIM1_SLOTID, mmiDataAct);
-    ASSERT_FALSE(callSup.IsVaildPinOrPuk("123", "123"));
-    ASSERT_FALSE(callSup.IsVaildPinOrPuk("1234567", "123"));
-    ASSERT_TRUE(callSup.IsVaildPinOrPuk("1234567", "1234567"));
 }
 
 /**
@@ -658,6 +650,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_009, Function | Medium
 {
     AccessToken token;
     CellularCallSupplement callSup;
+    MMIData mmiDataAct = { .actionString = "*" };
     auto command = std::make_shared<SsRequestCommand>();
     CallTransferInfo cfInfo;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -686,6 +679,13 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_009, Function | Medium
     ASSERT_EQ(callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING,
         "1111", "0000"), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
     ASSERT_EQ(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    callSup.AlterPinPassword(SIM1_SLOTID, mmiDataAct);
+    callSup.UnlockPuk(SIM1_SLOTID, mmiDataAct);
+    callSup.AlterPin2Password(SIM1_SLOTID, mmiDataAct);
+    callSup.UnlockPuk2(SIM1_SLOTID, mmiDataAct);
+    ASSERT_FALSE(callSup.IsVaildPinOrPuk("123", "123"));
+    ASSERT_FALSE(callSup.IsVaildPinOrPuk("1234567", "123"));
+    ASSERT_TRUE(callSup.IsVaildPinOrPuk("1234567", "1234567"));
 }
 
 /**
@@ -827,15 +827,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallImsControl_001, Function | Medium
     kickOutStr = "111";
     imsControl.KickOutFromConference(SIM1_SLOTID, kickOutStr, 0);
     imsControl.HangUpAllConnection(SIM1_SLOTID);
-    CLIRMode clirMode = CLIRMode::DEFAULT;
-    int32_t videoState = 0;
-    imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState);
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState),
-        TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
-#else
-    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState), TELEPHONY_SUCCESS);
-#endif
 }
 
 /**
@@ -864,13 +855,18 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallImsControl_002, Function | Medium
     imsControl.DialAfterHold(SIM1_SLOTID);
     std::string msg = "";
     imsControl.StartRtt(SIM1_SLOTID, msg);
-    int res = imsControl.StopRtt(SIM1_SLOTID);
     imsControl.GetConnectionMap();
     imsControl.ReleaseAllConnection();
+    CLIRMode clirMode = CLIRMode::DEFAULT;
+    int32_t videoState = 0;
+    imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(res, INVALID_VALUE);
+    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState),
+        TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
 #else
-    ASSERT_EQ(res, TELEPHONY_SUCCESS);
+    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState), TELEPHONY_SUCCESS);
 #endif
 }
 

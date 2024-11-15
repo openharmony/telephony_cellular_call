@@ -673,11 +673,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_003, Function | MediumTe
     cellularCall.SendUpdateCallMediaModeRequest(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.SendUpdateCallMediaModeResponse(cellularCallInfo, ImsCallMode::CALL_MODE_AUDIO_ONLY);
     cellularCall.CancelCallUpgrade(SIM1_SLOTID, DEFAULT_INDEX);
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
-#else
-    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
-#endif
 }
 
 /**
@@ -687,7 +682,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_003, Function | MediumTe
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTest | Level3)
 {
-    // AccessToken token;
+    AccessToken token;
     CellularCallService cellularCall;
     cellularCall.SetMute(SIM1_SLOTID, 0);
     cellularCall.GetMute(SIM1_SLOTID);
@@ -707,6 +702,9 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     cellularCall.RegisterHandler();
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     cellularCall.StartCallManagerService();
+    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), INVALID_VALUE);
+#else
+    ASSERT_EQ(cellularCall.RequestCameraCapabilities(SIM1_SLOTID, DEFAULT_INDEX), TELEPHONY_SUCCESS);
 #endif
     cellularCall.Init();
     cellularCall.RegisterCoreServiceHandler();
