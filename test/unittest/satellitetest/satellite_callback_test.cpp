@@ -36,22 +36,81 @@ const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 
-void SatelliteTest::SetUpTestCase(void)
+class SatelliteCallbackTest : public testing::Test {
+public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
+    void SetUp();
+    void TearDown();
+
+    bool HasSimCard(int32_t slotId)
+    {
+        bool hasSimCard = false;
+        DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+        return hasSimCard;
+    }
+
+    int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
+    {
+        callInfo.accountId = accountId;
+        callInfo.slotId = accountId;
+        callInfo.index = 0;
+        callInfo.callType = CallType::TYPE_SATELLITE;
+        callInfo.videoState = 0; // 0 means audio
+        if (memset_s(callInfo.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
+            return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (phonenumber.length() > static_cast<size_t>(kMaxNumberLen)) {
+            return CALL_ERR_NUMBER_OUT_OF_RANGE;
+        }
+        if (memcpy_s(callInfo.phoneNum, kMaxNumberLen, phonenumber.c_str(), phonenumber.length()) != EOK) {
+            return TELEPHONY_ERR_MEMCPY_FAIL;
+        }
+        return TELEPHONY_SUCCESS;
+    };
+
+    int32_t TestDialCallBySatellite(int32_t slotId, std::string code)
+    {
+        AccessToken token;
+        auto saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (saMgr == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        auto remote = saMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
+        if (remote == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        auto telephonyService = iface_cast<CellularCallInterface>(remote);
+        if (telephonyService == nullptr) {
+            return TELEPHONY_ERR_FAIL;
+        }
+        CellularCallInfo SatelliteCellularCallInfo;
+        int32_t ret = TELEPHONY_SUCCESS;
+        ret = InitCellularCallInfo(slotId, code, SatelliteCellularCallInfo);
+        if (ret != TELEPHONY_SUCCESS) {
+            return ret;
+        }
+        ret = telephonyService->Dial(SatelliteCellularCallInfo);
+        return ret;
+    };
+};
+
+void SatelliteCallbackTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
 }
 
-void SatelliteTest::TearDownTestCase(void)
+void SatelliteCallbackTest::TearDownTestCase(void)
 {
     // step 3: Tear Down Test Case
 }
 
-void SatelliteTest::SetUp(void)
+void SatelliteCallbackTest::SetUp(void)
 {
     // step 3: input testcase setup step
 }
 
-void SatelliteTest::TearDown(void)
+void SatelliteCallbackTest::TearDown(void)
 {
     // step 3: input testcase teardown step
 }
@@ -61,7 +120,7 @@ void SatelliteTest::TearDown(void)
  * @tc.name     Test for SatelliteCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackProxy_0001, Function | MediumTest | Level3)
 {
     const sptr<SatelliteCallCallbackInterface> satelliteCallCallback_ =
         (std::make_unique<SatelliteCallCallbackStub>()).release();
@@ -100,7 +159,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0001, Function 
  * @tc.name     Test for SatelliteCallCallbackProxy
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0002, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackProxy_0002, Function | MediumTest | Level3)
 {
     const sptr<SatelliteCallCallbackInterface> satelliteCallCallback_ =
         (std::make_unique<SatelliteCallCallbackStub>()).release();
@@ -136,7 +195,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackProxy_0002, Function 
  * @tc.name     Test for SatelliteCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackStub_0001, Function | MediumTest | Level3)
 {
     sptr<SatelliteCallCallbackStub> stub = (std::make_unique<SatelliteCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);
@@ -191,7 +250,7 @@ HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0001, Function |
  * @tc.name     Test for SatelliteCallCallbackStub
  * @tc.desc     Function test
  */
-HWTEST_F(SatelliteTest, cellular_call_SatelliteCallCallbackStub_0002, Function | MediumTest | Level3)
+HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackStub_0002, Function | MediumTest | Level3)
 {
     sptr<SatelliteCallCallbackStub> stub = (std::make_unique<SatelliteCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);

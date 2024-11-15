@@ -39,7 +39,7 @@ const int32_t SIM2_SLOTID = 1;
 const std::string PHONE_NUMBER = "00000000";
 } // namespace
 
-class BranchTest : public testing::Test {
+class ZeroBranchTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
@@ -48,18 +48,18 @@ public:
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo);
 };
 
-void BranchTest::SetUpTestCase()
+void ZeroBranchTest::SetUpTestCase()
 {
     std::cout << "---------- CellularCallService start ------------" << std::endl;
 }
 
-void BranchTest::TearDownTestCase() {}
+void ZeroBranchTest::TearDownTestCase() {}
 
-void BranchTest::SetUp() {}
+void ZeroBranchTest::SetUp() {}
 
-void BranchTest::TearDown() {}
+void ZeroBranchTest::TearDown() {}
 
-int32_t BranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
+int32_t ZeroBranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
 {
     callInfo.accountId = accountId;
     callInfo.slotId = accountId;
@@ -83,7 +83,7 @@ int32_t BranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenum
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallSatelliteControl_001, Function | MediumTest | Level3)
 {
     AccessToken token;
     SatelliteControl satelliteControl;
@@ -132,7 +132,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_001, Function | Medi
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_002, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallSatelliteControl_002, Function | MediumTest | Level3)
 {
     AccessToken token;
     SatelliteControl satelliteControl;
@@ -155,7 +155,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallSatelliteControl_002, Function | Medi
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_ControlBase_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranchTest, Telephony_ControlBase_001, Function | MediumTest | Level3)
 {
     SatelliteControl satelliteControl;
     CellularCallInfo callInfo;
@@ -171,7 +171,7 @@ HWTEST_F(BranchTest, Telephony_ControlBase_001, Function | MediumTest | Level3)
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallConnectionSatellite_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionSatellite_001, Function | MediumTest | Level3)
 {
     AccessToken token;
     CellularCallConnectionSatellite callConn;
@@ -189,7 +189,7 @@ HWTEST_F(BranchTest, Telephony_CellularCallConnectionSatellite_001, Function | M
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(BranchTest, Telephony_CellularCallService_001, Function | MediumTest | Level3)
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallService_001, Function | MediumTest | Level3)
 {
     CellularCallService callService;
     CellularCallInfo satelliteCallInfo = { .callType = CallType::TYPE_SATELLITE };

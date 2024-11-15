@@ -46,12 +46,47 @@ const std::string PHONE_NUMBER = "0000000";
 const std::string PHONE_NUMBER_SECOND = "1111111";
 const std::string PHONE_NUMBER_THIRD = "2222222";
 
+class Cs2Test : public testing::Test {
+public:
+    static void SetUpTestCase();
+    static void TearDownTestCase();
+    void SetUp();
+    void TearDown();
+};
+
+bool Cs2Test::HasSimCard(int32_t slotId)
+{
+    bool hasSimCard = false;
+    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    return hasSimCard;
+}
+
+void Cs2Test::SetUpTestCase(void)
+{
+    // step 3: Set Up Test Case
+}
+
+void Cs2Test::TearDownTestCase(void)
+{
+    // step 3: Tear Down Test Case
+}
+
+void Cs2Test::SetUp(void)
+{
+    // step 3: input testcase setup step
+}
+
+void Cs2Test::TearDown(void)
+{
+    // step 3: input testcase teardown step
+}
+
 /**
  * @tc.number   cellular_call_CombineConference_0001
  * @tc.name     Test for combineConference function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CombineConference_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_CombineConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -84,7 +119,7 @@ HWTEST_F(CsTest, cellular_call_CombineConference_0001, Function | MediumTest | L
  * @tc.name     Test for combineConference function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CombineConference_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_CombineConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -117,7 +152,7 @@ HWTEST_F(CsTest, cellular_call_CombineConference_0002, Function | MediumTest | L
  * @tc.name     Test for separateConference function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_SeparateConference_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_SeparateConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -150,7 +185,7 @@ HWTEST_F(CsTest, cellular_call_SeparateConference_0001, Function | MediumTest | 
  * @tc.name     Test for separateConference function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_SeparateConference_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_SeparateConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -183,7 +218,7 @@ HWTEST_F(CsTest, cellular_call_SeparateConference_0002, Function | MediumTest | 
  * @tc.name     Test for separateConference function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -216,7 +251,7 @@ HWTEST_F(CsTest, cellular_call_KickOutFromConference_0001, Function | MediumTest
  * @tc.name     Test for KickOutFromConference function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_KickOutFromConference_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_KickOutFromConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -249,7 +284,7 @@ HWTEST_F(CsTest, cellular_call_KickOutFromConference_0002, Function | MediumTest
  * @tc.name     Test for hangup all connection function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_HangUpAllConnection_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_HangUpAllConnection_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -276,7 +311,7 @@ HWTEST_F(CsTest, cellular_call_HangUpAllConnection_0001, Function | MediumTest |
  * @tc.name     Test for startDtmf function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -311,7 +346,7 @@ HWTEST_F(CsTest, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
  * @tc.name     Test for startDtmf function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_StartDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_StartDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -345,7 +380,7 @@ HWTEST_F(CsTest, cellular_call_StartDtmf_0002, Function | MediumTest | Level2)
  * @tc.name     Test for stopDtmf function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -378,7 +413,7 @@ HWTEST_F(CsTest, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
  * @tc.name     Test for stopDtmf function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_StopDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_StopDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -411,7 +446,7 @@ HWTEST_F(CsTest, cellular_call_StopDtmf_0002, Function | MediumTest | Level2)
  * @tc.name     Test for sendDtmf function by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -446,7 +481,7 @@ HWTEST_F(CsTest, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
  * @tc.name     Test for sendDtmf function with invalid slot by cs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_SendDtmf_0002, Function | MediumTest | Level2)
+HWTEST_F(Cs2Test, cellular_call_SendDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -481,7 +516,7 @@ HWTEST_F(CsTest, cellular_call_SendDtmf_0002, Function | MediumTest | Level2)
  * @tc.name     Test for GetDomainPreferenceMode function by invalid slotId
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_GetDomainPreferenceMode_0001, Function | MediumTest | Level3)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -508,7 +543,7 @@ HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0001, Function | MediumTe
  * @tc.name     Test for GetDomainPreferenceMode function by valid slotId
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_GetDomainPreferenceMode_0002, Function | MediumTest | Level3)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -535,7 +570,7 @@ HWTEST_F(CsTest, cellular_call_GetDomainPreferenceMode_0002, Function | MediumTe
  * @tc.name     Test for GetMute function by invalid slotId
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_GetMute_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_GetMute_0001, Function | MediumTest | Level3)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -562,7 +597,7 @@ HWTEST_F(CsTest, cellular_call_GetMute_0001, Function | MediumTest | Level3)
  * @tc.name     Test for GetMute function by valid slotId
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_GetMute_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_GetMute_0002, Function | MediumTest | Level3)
 {
     AccessToken token;
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
@@ -589,7 +624,7 @@ HWTEST_F(CsTest, cellular_call_GetMute_0002, Function | MediumTest | Level3)
  * @tc.name     Test for CsControl
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CsControl_0001, Function | MediumTest | Level3)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
@@ -644,7 +679,7 @@ HWTEST_F(CsTest, cellular_call_CsControl_0001, Function | MediumTest | Level3)
  * @tc.name     Test for CsControl
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CsControl_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
 {
     auto csControl = std::make_shared<CSControl>();
     CellularCallInfo cellularCallInfo;
@@ -688,7 +723,7 @@ HWTEST_F(CsTest, cellular_call_CsControl_0002, Function | MediumTest | Level3)
  * @tc.name     Test for CellularCallConnectionCS
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallConnectionCS_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallConnectionCS_0001, Function | MediumTest | Level3)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
@@ -719,7 +754,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallConnectionCS_0001, Function | MediumT
  * @tc.name     Test for CellularCallRegister
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallRegister_0001, Function | MediumTest | Level3)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
@@ -772,7 +807,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0001, Function | MediumTest 
  * @tc.name     Test for CellularCallRegister
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallRegister_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallRegister_0002, Function | MediumTest | Level3)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     CallReportInfo callRepotInfo;
@@ -794,7 +829,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallRegister_0002, Function | MediumTest 
  * @tc.name     Test for SupplementRequestCs
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_SupplementRequestCs_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_SupplementRequestCs_0001, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -832,7 +867,7 @@ HWTEST_F(CsTest, cellular_call_SupplementRequestCs_0001, Function | MediumTest |
  * @tc.name     Test for ConfigRequest
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_ConfigRequest_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_ConfigRequest_0001, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -856,7 +891,7 @@ HWTEST_F(CsTest, cellular_call_ConfigRequest_0001, Function | MediumTest | Level
  * @tc.name     Test for CellularCallSupplement
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0001, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -896,7 +931,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0001, Function | MediumTes
  * @tc.name     Test for CellularCallSupplement
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0002, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -944,7 +979,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0002, Function | MediumTes
  * @tc.name     Test for CellularCallSupplement
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0003, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0003, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -976,7 +1011,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallSupplement_0003, Function | MediumTes
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -1027,7 +1062,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0001, Function | MediumTest |
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0002, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -1087,7 +1122,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0002, Function | MediumTest |
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0003, Function | MediumTest | Level3)
 {
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
@@ -1144,7 +1179,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0003, Function | MediumTest |
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0004, Function | MediumTest | Level3)
 {
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
@@ -1197,7 +1232,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0004, Function | MediumTest |
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest | Level3)
 {
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
@@ -1253,7 +1288,7 @@ HWTEST_F(CsTest, cellular_call_CellularCallHandler_0005, Function | MediumTest |
  * @tc.name     TestDump
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_TestDump_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_TestDump_0001, Function | MediumTest | Level3)
 {
     std::vector<std::u16string> emptyArgs = {};
     std::vector<std::u16string> args = { u"test", u"test1" };
@@ -1267,7 +1302,7 @@ HWTEST_F(CsTest, cellular_call_TestDump_0001, Function | MediumTest | Level3)
  * @tc.name     ModuleServiceUtils
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | Level3)
 {
     ModuleServiceUtils moduleServiceUtils;
     bool airplaneModeOn = false;
@@ -1292,7 +1327,7 @@ HWTEST_F(CsTest, cellular_call_ModuleServiceUtils_0001, Function | MediumTest | 
  * @tc.name     CellularCallConfig
  * @tc.desc     Function test
  */
-HWTEST_F(CsTest, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
 {
     CellularCallConfig CellularCallConfig;
     bool isReadyToCall = false;
