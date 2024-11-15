@@ -58,11 +58,10 @@ public:
         DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
         return hasSimCard;
     }
-private:
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo);
 };
 
-int32_t CsCallOperationTest::TestDialCallByCs(int32_t slotId, std::string code)
+int32_t Cs1Test::TestDialCallByCs(int32_t slotId, std::string code)
 {
     AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
