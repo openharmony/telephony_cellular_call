@@ -157,6 +157,15 @@ public:
      */
     int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList);
 
+    /**
+     * @brief Notify operatorconfig changed
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from 0 to the maximum card slot index number supported by the device.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t NotifyOperatorConfigChanged(int32_t slotId);
+
 private:
     ModuleServiceUtils moduleUtils_;
 };

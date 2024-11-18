@@ -794,5 +794,15 @@ int32_t ImsCallClient::GetUtImpuFromNetwork(int32_t slotId, std::string &impu)
     Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
     return imsCallProxy_->GetUtImpuFromNetwork(slotId, impu);
 }
+
+int32_t ImsCallClient::NotifyOperatorConfigChanged(int32_t slotId)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("[slot%{public}d]ipc reconnect failed!", slotId);
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    return imsCallProxy_->NotifyOperatorConfigChanged(slotId);
+}
 } // namespace Telephony
 } // namespace OHOS

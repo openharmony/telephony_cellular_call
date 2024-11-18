@@ -1839,7 +1839,7 @@ void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     for (const auto &it : slotVector) {
-        config.UpdateImsCapabilities(it, true);
+        config.UpdateImsCapabilities(it, true, false);
     }
 }
 } // namespace Telephony

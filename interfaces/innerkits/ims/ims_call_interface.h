@@ -577,6 +577,8 @@ public:
      */
     virtual int32_t GetUtImpuFromNetwork(int32_t slotId, std::string &impu) = 0;
 
+    virtual int32_t NotifyOperatorConfigChanged(int32_t slotId) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallInterface");
 };
