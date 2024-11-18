@@ -419,7 +419,7 @@ public:
      * @param slotId
      * @param needUpdateUtCapability update ut capability or not
      */
-    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability);
+    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability, bool isOperatorConfigChanged);
 
     bool NeedReadThirdParyLib();
 
