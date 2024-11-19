@@ -108,8 +108,8 @@ ohos_shared_library("tel_cellular_call") {
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
   }
-  if (!defined(global_parts_info) ||
-      defined(global_parts_info.security_guard_enabled)) {
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.security_security_guard)) {
     external_deps += [ "security_guard:libsg_collect_sdk" ]
     defines += [ "SECURITY_GUARDE_ENABLE" ]
   }
