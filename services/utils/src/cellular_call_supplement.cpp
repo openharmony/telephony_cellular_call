@@ -390,7 +390,7 @@ void CellularCallSupplement::HandleSetCallTransfer(int32_t slotId, int32_t servi
         callTransferAction == CallTransferSettingType::CALL_TRANSFER_ERASURE) {
         uint8_t state = callTransferAction == CallTransferSettingType::CALL_TRANSFER_ERASURE ? 0 : 1;
         CellularCallHiSysEvent::WriteCallTansferEvent(state);
-        }
+    }
 #endif
     auto utCommand = std::make_shared<SsRequestCommand>();
     utCommand->cfReason = cause;
