@@ -41,7 +41,6 @@ public:
     int32_t GetImsCallsDataResponse(int32_t slotId, const ImsCurrentCallList &callList) override;
     int32_t LastCallFailReasonResponse(int32_t slotId, const DisconnectedDetails &details) override;
     int32_t CallRingBackReport(int32_t slotId, const RingbackVoice &info) override;
-    int32_t CallNvCfgFinishedIndication(int32_t slotId) override;
 
     /****************** dtmf rtt ******************/
     int32_t StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info) override;

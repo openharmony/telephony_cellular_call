@@ -632,15 +632,5 @@ int32_t ImsCallCallbackProxy::WriteSsBaseResultCommonInfo(
     }
     return TELEPHONY_SUCCESS;
 }
-
-int32_t ImsCallCallbackProxy::CallNvCfgFinishedIndication(int32_t slotId)
-{
-    MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
-    if (ret != TELEPHONY_SUCCESS) {
-        return ret;
-    }
-    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_NV_CONFIG_REFRESHED), in);
-}
 } // namespace Telephony
 } // namespace OHOS
