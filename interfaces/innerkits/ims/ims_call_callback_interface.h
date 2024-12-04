@@ -437,14 +437,6 @@ public:
      */
     virtual int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) = 0;
 
-    /**
-     * CallNvCfgFinishedIndication report NV config changed notification by ims.
-     * @param slotId Indicates the card slot index number,
-     * ranging from {@code 0} to the maximum card slot index number supported by the device.
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    virtual int32_t CallNvCfgFinishedIndication(int32_t slotId) = 0;
-
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };

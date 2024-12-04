@@ -86,8 +86,6 @@ void ImsCallCallbackStub::InitCallBasicFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnCallDataUsageChangedInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_CALL_CAMERA_CAPABILITIES_CHANGED)] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnCameraCapabilitiesChangedInner(data, reply); };
-    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_NV_CONFIG_REFRESHED)] =
-        [this](MessageParcel &data, MessageParcel &reply) { return OnNvCfgFinishedInner(data, reply); };
 }
 
 void ImsCallCallbackStub::InitConfigFuncMap()
@@ -1460,28 +1458,6 @@ int32_t ImsCallCallbackStub::SendEvent(int32_t slotId, int32_t eventId, const Im
     std::shared_ptr<ImsCallModeReceiveInfo> info = std::make_shared<ImsCallModeReceiveInfo>();
     *info = callModeInfo;
     bool ret = TelEventHandler::SendTelEvent(handler, eventId, info);
-    if (!ret) {
-        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
-        return TELEPHONY_ERR_FAIL;
-    }
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnNvCfgFinishedInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    reply.WriteInt32(CallNvCfgFinishedIndication(slotId));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::CallNvCfgFinishedIndication(int32_t slotId)
-{
-    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_NV_REFRESH_FINISHED);
     if (!ret) {
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;

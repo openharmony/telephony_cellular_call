@@ -1835,6 +1835,7 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
 
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    TELEPHONY_LOGI("NvCfgFinishedIndication enter");
     CellularCallConfig config;
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
