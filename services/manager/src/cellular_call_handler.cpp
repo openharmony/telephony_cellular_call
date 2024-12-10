@@ -1117,7 +1117,7 @@ void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Point
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventUssdNotify(*result);
+    supplement.EventUssdNotify(*result, slotId_);
 }
 
 void CellularCallHandler::SetMuteResponse(const AppExecFwk::InnerEvent::Pointer &event)

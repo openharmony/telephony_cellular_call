@@ -379,7 +379,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     SsNoticeInfo ssNoticeInfo;
     callSup.EventSsNotify(ssNoticeInfo);
     UssdNoticeInfo ussdNoticeInfo;
-    callSup.EventUssdNotify(ussdNoticeInfo);
+    callSup.EventUssdNotify(ussdNoticeInfo, SIM1_SLOTID);
     RadioResponseInfo response;
     callSup.EventCloseUnFinishedUssd(response);
     callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);

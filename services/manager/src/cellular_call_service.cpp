@@ -30,6 +30,7 @@
 #include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "telephony_ext_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -56,6 +57,9 @@ CellularCallService::~CellularCallService()
 bool CellularCallService::Init()
 {
     TELEPHONY_LOGD("CellularCallService::Init start");
+#ifdef OHOS_BUILD_ENABLE_TELEPHONY_EXT
+    TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
+#endif
     CreateHandler();
     SendEventRegisterHandler();
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
