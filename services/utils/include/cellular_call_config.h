@@ -272,8 +272,9 @@ public:
      * Handle when operator config change.
      *
      * @param slotId
+     * @param isOperatorConfigChanged
      */
-    void HandleOperatorConfigChanged(int32_t slotId);
+    void HandleOperatorConfigChanged(int32_t slotId, bool isOperatorConfigChanged = true);
 
     /**
      * Get Ecc Call List
@@ -423,12 +424,6 @@ public:
 
     bool NeedReadThirdParyLib();
 
-    /**
-     * update the ims capability with the value from chip
-     *
-     * @param slotId
-     * @param imsCap the ims capabilities from chip
-     */
     void UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap);
 
 private:

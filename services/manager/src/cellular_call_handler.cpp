@@ -1838,7 +1838,7 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
 
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, false);
+    bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, true);
     TELEPHONY_LOGI("[slot%{public}d] entry, isUseCloudImsNV = %{public}d", slotId_, isUseCloudImsNV);
     if (isUseCloudImsNV && GetImsCapabilities(slotId_) == TELEPHONY_ERR_SUCCESS) {
         TELEPHONY_LOGI("[slot%{public}d] GetImsCapabilities success", slotId_);
