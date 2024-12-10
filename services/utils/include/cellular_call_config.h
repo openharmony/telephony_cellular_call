@@ -423,6 +423,14 @@ public:
 
     bool NeedReadThirdParyLib();
 
+    /**
+     * update the ims capability with the value from chip
+     *
+     * @param slotId
+     * @param imsCap the ims capabilities from chip
+     */
+    void UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap);
+
 private:
     static void InitDefaultOperatorConfig();
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);

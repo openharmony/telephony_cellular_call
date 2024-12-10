@@ -23,6 +23,7 @@
 #include "tel_ril_types.h"
 #include "ims_call_client.h"
 #include "operator_config_types.h"
+#include "parameters.h"
 #include "radio_event.h"
 #include "resource_utils.h"
 #include "satellite_call_client.h"
@@ -124,6 +125,8 @@ void CellularCallHandler::InitConfigFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { GetEmergencyCallListResponse(event); };
     requestFuncMap_[OPERATOR_CONFIG_CHANGED_ID] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleOperatorConfigChanged(event); };
+    requestFuncMap_[RadioEvent::RADIO_GET_IMS_CAPABILITY_FINISHED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { GetImsCapResponse(event); };
 }
 
 void CellularCallHandler::InitSupplementFuncMap()
@@ -1835,12 +1838,41 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
 
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, false);
+    TELEPHONY_LOGI("[slot%{public}d] entry, isUseCloudImsNV = %{public}d", slotId_, isUseCloudImsNV);
+    if (isUseCloudImsNV && GetImsCapabilities(slotId_) == TELEPHONY_ERR_SUCCESS) {
+        TELEPHONY_LOGI("[slot%{public}d] GetImsCapabilities success", slotId_);
+        return;
+    }
+
     CellularCallConfig config;
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     for (const auto &it : slotVector) {
         config.UpdateImsCapabilities(it, true, false);
     }
+}
+
+int32_t CellularCallHandler::GetImsCapabilities(int32_t slotId)
+{
+    std::shared_ptr<ImsCallClient> imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] imsCallClient is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return imsCallClient->GetImsCapabilities(slotId);
+}
+
+void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto imsCap = event->GetSharedObject<ImsCapFromChip>();
+    if (imsCap == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] imsCap is null", slotId_);
+        return;
+    }
+
+    CellularCallConfig config;
+    config.UpdateImsCapFromChip(slotId_, *imsCap);
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -109,6 +109,8 @@ void ImsCallCallbackStub::InitConfigFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsCallsDataResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SET_MUTE)] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnSetMuteResponseInner(data, reply); };
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_IMS_CAPABILITY)] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsCapResponseInner(data, reply); };
 }
 
 void ImsCallCallbackStub::InitSupplementFuncMap()
@@ -1486,6 +1488,40 @@ int32_t ImsCallCallbackStub::CallNvCfgFinishedIndication(int32_t slotId)
         TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
         return TELEPHONY_ERR_FAIL;
     }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+
+    auto imsCapability = std::make_shared<ImsCapFromChip>();
+    *imsCapability = imsCap;
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_GET_IMS_CAPABILITY_FINISHED, imsCapability);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnGetImsCapResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    ImsCapFromChip imsCap = {
+        .volteCap = data.ReadInt32(),
+        .vowifiCap = data.ReadInt32(),
+        .vonrCap = data.ReadInt32(),
+        .vtCap = data.ReadInt32()
+    };
+
+    reply.WriteInt32(GetImsCapResponse(slotId, imsCap));
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony
