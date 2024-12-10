@@ -1110,5 +1110,11 @@ bool CellularCallConfig::NeedReadThirdParyLib()
     }
     return true;
 }
+
+void CellularCallConfig::UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap)
+{
+    CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId, imsCap);
+    HandleOperatorConfigChanged(slotId);
+}
 } // namespace Telephony
 } // namespace OHOS

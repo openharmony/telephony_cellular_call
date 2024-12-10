@@ -1084,5 +1084,15 @@ int32_t ImsCallProxy::SendRequest(int32_t slotId, MessageParcel &in, int32_t eve
     TELEPHONY_LOGE("[slot%{public}d]SendRequest fail, eventId:%{public}d, error:%{public}d", slotId, eventId, error);
     return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
 }
+
+int32_t ImsCallProxy::GetImsCapabilities(int32_t slotId)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_GET_IMS_CAPABILITY));
+}
 } // namespace Telephony
 } // namespace OHOS

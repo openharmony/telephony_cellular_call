@@ -93,6 +93,7 @@ public:
     int32_t UpdateImsCapabilities(int32_t slotId, const ImsCapabilityList &imsCapabilityList) override;
     int32_t GetUtImpuFromNetwork(int32_t slotId, std::string &impu) override;
     int32_t NotifyOperatorConfigChanged(int32_t slotId) override;
+    int32_t GetImsCapabilities(int32_t slotId) override;
 
 private:
     int32_t WriteCommonInfo(int32_t slotId, std::string funcName, MessageParcel &in);
