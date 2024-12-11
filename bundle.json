@@ -22,7 +22,9 @@
         "syscap": [
             "SystemCapability.Telephony.CellularCall"
         ],
-        "features": [],
+        "features": [
+            "cellular_call_dynamic_start"
+        ],
         "adapted_system_type": [
             "standard"
         ],

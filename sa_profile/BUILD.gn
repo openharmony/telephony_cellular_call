@@ -13,8 +13,16 @@
 
 import("//build/ohos/sa_profile/sa_profile.gni")
 
+declare_args() {
+  cellular_call_dynamic_start = false
+}
+
 ohos_sa_profile("cellular_call_sa_profile") {
-  sources = [ "4006.json" ]
+  if (!cellular_call_dynamic_start) {
+    sources = [ "4006.json" ]
+  } else {
+    sources = [ "4006_dynamic.json" ]
+  }
 
   part_name = "cellular_call"
 }
