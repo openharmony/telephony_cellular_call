@@ -920,7 +920,7 @@ bool CellularCallSupplement::PhoneTypeGsmOrNot(int32_t slotId)
 
 bool CellularCallSupplement::NeedUseImsToHandle(int32_t slotId)
 {
-    return moduleServiceUtils_.NeedCallImsService() && moduleServiceUtils_.GetImsUtSupportState(slotId);
+    return moduleServiceUtils_.NeedCallImsService();
 }
 
 int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
