@@ -56,6 +56,7 @@ public:
     int32_t GetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t GetImsSwitchResponse(int32_t slotId, int32_t active) override;
     int32_t SetMuteResponse(int32_t slotId, const MuteControlResponse &response) override;
+    int32_t GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap) override;
 
     /****************** supplement ******************/
     int32_t SetClipResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
@@ -114,6 +115,7 @@ private:
     int32_t OnSetImsSwitchResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetImsSwitchResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetMuteResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnGetImsCapResponseInner(MessageParcel &data, MessageParcel &reply);
 
     /****************** supplement ******************/
     int32_t OnSetClipResponseInner(MessageParcel &data, MessageParcel &reply);

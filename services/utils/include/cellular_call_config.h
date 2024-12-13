@@ -276,6 +276,14 @@ public:
     void HandleOperatorConfigChanged(int32_t slotId);
 
     /**
+     * Handle when operator config change.
+     *
+     * @param slotId
+     * @param isOperatorConfigChanged
+     */
+    void HandleOperatorConfigChanged(int32_t slotId, bool isOperatorConfigChanged);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId
@@ -422,6 +430,8 @@ public:
     void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability, bool isOperatorConfigChanged);
 
     bool NeedReadThirdParyLib();
+
+    void UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap);
 
 private:
     static void InitDefaultOperatorConfig();

@@ -626,6 +626,14 @@ public:
      */
     int32_t NotifyOperatorConfigChanged(int32_t slotId);
 
+    /**
+     * @brief Get ims Capabilities interface
+     *
+     * @param slotId Indicates the card slot index number,
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetImsCapabilities(int32_t slotId);
+
 private:
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:

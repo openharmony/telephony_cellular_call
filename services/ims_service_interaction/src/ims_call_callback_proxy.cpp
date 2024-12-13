@@ -642,5 +642,21 @@ int32_t ImsCallCallbackProxy::CallNvCfgFinishedIndication(int32_t slotId)
     }
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_NV_CONFIG_REFRESHED), in);
 }
+
+int32_t ImsCallCallbackProxy::GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+
+    if (!in.WriteInt32(imsCap.volteCap) || !in.WriteInt32(imsCap.vowifiCap) ||
+        !in.WriteInt32(imsCap.vonrCap) || !in.WriteInt32(imsCap.vtCap)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_IMS_CAPABILITY), in);
+}
 } // namespace Telephony
 } // namespace OHOS

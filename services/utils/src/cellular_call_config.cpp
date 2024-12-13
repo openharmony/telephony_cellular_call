@@ -365,7 +365,7 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
     UpdateEccNumberList(slotId);
 }
 
-void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
+void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, bool isOperatorConfigChanged)
 {
     OperatorConfig operatorConfig;
     int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
@@ -381,7 +381,12 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
     }
     saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
-    UpdateImsCapabilities(slotId, true, true);
+    UpdateImsCapabilities(slotId, true, isOperatorConfigChanged);
+}
+
+void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
+{
+    HandleOperatorConfigChanged(slotId, true);
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
@@ -1109,6 +1114,12 @@ bool CellularCallConfig::NeedReadThirdParyLib()
         return false;
     }
     return true;
+}
+
+void CellularCallConfig::UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap)
+{
+    CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId, imsCap);
+    HandleOperatorConfigChanged(slotId, false);
 }
 } // namespace Telephony
 } // namespace OHOS
