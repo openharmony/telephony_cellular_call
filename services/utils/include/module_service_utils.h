@@ -67,14 +67,6 @@ public:
     bool GetImsRegistrationState(int32_t slotId);
 
     /**
-     * Confirm IMS support UT or not
-     *
-     * @param slotId
-     * @return bool
-     */
-    bool GetImsUtSupportState(int32_t slotId);
-
-    /**
      * Get Satellite status
      *
      * @return Satellite status

@@ -1367,7 +1367,6 @@ HWTEST_F(Cs2Test, cellular_call_ModuleServiceUtils_0001, Function | MediumTest |
     moduleServiceUtils.GetIsoCountryCode(SIM1_SLOTID);
     moduleServiceUtils.GetNetworkCountryCode(SIM1_SLOTID);
     moduleServiceUtils.GetImsRegistrationState(SIM1_SLOTID);
-    moduleServiceUtils.GetImsUtSupportState(SIM1_SLOTID);
     moduleServiceUtils.GetSatelliteStatus();
     moduleServiceUtils.GetSlotInfo();
     moduleServiceUtils.NeedCallImsService();
