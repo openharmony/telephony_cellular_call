@@ -384,6 +384,11 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, bool isOper
     UpdateImsCapabilities(slotId, true, isOperatorConfigChanged);
 }
 
+void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
+{
+    HandleOperatorConfigChanged(slotId, true);
+}
+
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
 {
     TELEPHONY_LOGI("CellularCallConfig::ParseAndCacheOperatorConfigs start. slotId %{public}d", slotId);
