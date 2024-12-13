@@ -651,8 +651,7 @@ int32_t ImsCallCallbackProxy::GetImsCapResponse(int32_t slotId, const ImsCapFrom
         return ret;
     }
 
-    if (!in.WriteInt32(imsCap.volteCap) || !in.WriteInt32(imsCap.vowifiCap) || !in.WriteInt32(imsCap.vonrCap)
-   || !in.WriteInt32(imsCap.vtCap)) {
+    if (!in.WriteInt32(imsCap.volteCap) || !in.WriteInt32(imsCap.vowifiCap) || !in.WriteInt32(imsCap.vonrCap) || !in.WriteInt32(imsCap.vtCap)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
 
