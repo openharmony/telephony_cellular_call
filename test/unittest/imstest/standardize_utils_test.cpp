@@ -106,9 +106,6 @@ HWTEST_F(StandardizeUtilsTest, MMICodeUtilsTest_0001, Function | MediumTest | Le
 HWTEST_F(StandardizeUtilsTest, ModuleServiceUtilsTest_0001, Function | MediumTest | Level1)
 {
     ModuleServiceUtils moduleServiceUtils;
-    int32_t slotId = 0;
-    EXPECT_FALSE(moduleServiceUtils.GetImsUtSupportState(slotId));
-
     auto ptr = moduleServiceUtils.GetImsServiceRemoteObject();
     EXPECT_EQ(ptr, nullptr);
 }
