@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace Telephony {
 namespace {
-const std::string TELEPHONY_EXT_WRAPPER_PATH = "libtelephony_ext_service.z.sp";
+const std::string TELEPHONY_EXT_WRAPPER_PATH = "libtelephony_ext_service.z.so";
 } // namespace
 
 TelephonyExtWrapper::TelephonyExtWrapper() {}
