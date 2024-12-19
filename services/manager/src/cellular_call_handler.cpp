@@ -286,13 +286,17 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {
     EventFwk::Want want = data.GetWant();
     std::string action = want.GetAction();
+    auto operatorState = std::make_shared<int32_t>();
     TELEPHONY_LOGI("[slot%{public}d] action=%{public}s code=%{public}d", slotId_, action.c_str(), data.GetCode());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED) {
         int32_t slotId = want.GetIntParam(BROADCAST_ARG_SLOT_ID, DEFAULT_SIM_SLOT_ID);
+        int32_t state = want.GetIntParam(BROADCAST_ARG_OPERATOR_STATE, DEFAULT_OPERATOR_STATE);
         if (slotId_ != slotId) {
             return;
         }
-        this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, DELAY_TIME, Priority::HIGH);
+        *operatorState = state;
+        TELEPHONY_LOGI("[slot%{public}d] state=%{public}d", slotId_, *operatorState);
+        this->SendEvent(OPERATOR_CONFIG_CHANGED_ID, operatorState, DELAY_TIME);
     }
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED) {
         int32_t slotId = want.GetIntParam(BROADCAST_ARG_SLOT_ID, DEFAULT_SIM_SLOT_ID);
@@ -1672,8 +1676,13 @@ void CellularCallHandler::SendUnlockPinPukResponse(const AppExecFwk::InnerEvent:
 
 void CellularCallHandler::HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    auto state = event->GetSharedObject<int32_t>();
+    if (state == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] state is null", slotId_);
+        return;
+    }
     CellularCallConfig config;
-    config.HandleOperatorConfigChanged(slotId_);
+    config.HandleOperatorConfigChanged(slotId_, *state);
 }
 
 void CellularCallHandler::UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1840,7 +1849,7 @@ void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     for (const auto &it : slotVector) {
-        config.UpdateImsCapabilities(it, true, false);
+        config.UpdateImsCapabilities(it, true, false, INVALID_OPERATOR_CONFIG_STATE);
     }
 }
 } // namespace Telephony

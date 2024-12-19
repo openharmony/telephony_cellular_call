@@ -28,6 +28,7 @@
 namespace OHOS {
 namespace Telephony {
 constexpr const char *KEY_CONST_TELEPHONY_READ_THIRD_PARTY_LIB = "const.telephony.read_third_party_lib";
+constexpr int32_t INVALID_OPERATOR_CONFIG_STATE = -1;
 class CellularCallConfig {
 public:
     /**
@@ -273,7 +274,7 @@ public:
      *
      * @param slotId
      */
-    void HandleOperatorConfigChanged(int32_t slotId);
+    void HandleOperatorConfigChanged(int32_t slotId, int32_t state);
 
     /**
      * Get Ecc Call List
@@ -419,7 +420,8 @@ public:
      * @param slotId
      * @param needUpdateUtCapability update ut capability or not
      */
-    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability, bool isOperatorConfigChanged);
+    void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability, bool isOperatorConfigChanged,
+        int32_t state);
 
     bool NeedReadThirdParyLib();
 

@@ -231,7 +231,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.HandleOperatorConfigChanged(SIM1_SLOTID);
     OperatorConfig poc;
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
-    config.UpdateImsCapabilities(SIM1_SLOTID, true, false);
+    config.UpdateImsCapabilities(SIM1_SLOTID, true, false, -1);
     bool enabled = false;
     config.ChangeImsSwitchWithOperatorConfig(SIM1_SLOTID, true);
     config.SaveImsSwitch(SIM1_SLOTID, true);
