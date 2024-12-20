@@ -624,7 +624,7 @@ public:
      * ranging from 0 to the maximum card slot index number supported by the device.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t NotifyOperatorConfigChanged(int32_t slotId);
+    int32_t NotifyOperatorConfigChanged(int32_t slotId, int32_t state);
 
 private:
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {

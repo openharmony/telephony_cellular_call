@@ -1013,12 +1013,16 @@ int32_t ImsCallProxy::GetUtImpuFromNetwork(int32_t slotId, std::string &impu)
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_GET_IMPU_FROM_NETWORK));
 }
 
-int32_t ImsCallProxy::NotifyOperatorConfigChanged(int32_t slotId)
+int32_t ImsCallProxy::NotifyOperatorConfigChanged(int32_t slotId, int32_t state)
 {
     MessageParcel in;
     int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
+    }
+    if (!in.WriteInt32(state)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write state fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_OPERATOR_CONFIG_CHANGED));
 }

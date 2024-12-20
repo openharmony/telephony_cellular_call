@@ -228,10 +228,10 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.HandleSetLteImsSwitchResult(SIM1_SLOTID, ErrType::NONE);
     config.HandleSetVoNRSwitchResult(SIM1_SLOTID, ErrType::NONE);
     config.HandleSimRecordsLoaded(SIM1_SLOTID);
-    config.HandleOperatorConfigChanged(SIM1_SLOTID);
+    config.HandleOperatorConfigChanged(SIM1_SLOTID, 0);
     OperatorConfig poc;
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
-    config.UpdateImsCapabilities(SIM1_SLOTID, true, false);
+    config.UpdateImsCapabilities(SIM1_SLOTID, true, false, -1);
     bool enabled = false;
     config.ChangeImsSwitchWithOperatorConfig(SIM1_SLOTID, true);
     config.SaveImsSwitch(SIM1_SLOTID, true);

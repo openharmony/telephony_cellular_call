@@ -156,7 +156,7 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     TELEPHONY_LOGI("active: %{public}d simState : %{public}d", active, simState);
     if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
-        UpdateImsCapabilities(slotId, !active, false);
+        UpdateImsCapabilities(slotId, !active, false, INVALID_OPERATOR_CONFIG_STATE);
     }
     return TELEPHONY_SUCCESS;
 }
@@ -235,7 +235,7 @@ void CellularCallConfig::HandleFactoryReset(int32_t slotId)
     // Set VoLTE to default
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
     TELEPHONY_LOGI("Save ims switch ret: %{public}d", ret);
-    UpdateImsCapabilities(slotId, true, false);
+    UpdateImsCapabilities(slotId, true, false, INVALID_OPERATOR_CONFIG_STATE);
 }
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
@@ -365,7 +365,7 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
     UpdateEccNumberList(slotId);
 }
 
-void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
+void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state)
 {
     OperatorConfig operatorConfig;
     int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
@@ -381,7 +381,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId)
     }
     saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
-    UpdateImsCapabilities(slotId, true, true);
+    UpdateImsCapabilities(slotId, true, true, state);
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
@@ -449,14 +449,14 @@ void CellularCallConfig::ResetImsSwitch(int32_t slotId)
 }
 
 void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability,
-    bool isOperatorConfigChanged)
+    bool isOperatorConfigChanged, int32_t state)
 {
     bool isGbaValid = IsGbaValid(slotId);
     ImsCapabilityList imsCapabilityList;
     TELEPHONY_LOGI("UpdateImsCapabilities entry");
     UpdateImsVoiceCapabilities(slotId, isGbaValid, imsCapabilityList);
     if (isOperatorConfigChanged) {
-        configRequest_.NotifyOperatorConfigChanged(slotId);
+        configRequest_.NotifyOperatorConfigChanged(slotId, state);
     }
     if (needUpdateUtCapability) {
         UpdateImsUtCapabilities(slotId, isGbaValid, imsCapabilityList);
