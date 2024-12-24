@@ -437,6 +437,15 @@ public:
      */
     virtual int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) = 0;
 
+     /**
+     * @brief GetImsCapResponse the result of get ims capabilities data by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param imsCap Indicates the result of get ims capabilities.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap) = 0;
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };

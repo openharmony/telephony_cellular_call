@@ -579,6 +579,14 @@ public:
 
     virtual int32_t NotifyOperatorConfigChanged(int32_t slotId, int32_t state) = 0;
 
+    /**
+     * @brief Get ims Capabilities interface
+     *
+     * @param slotId Indicates the card slot index number,
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t GetImsCapabilities(int32_t slotId) = 0;
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallInterface");
 };
