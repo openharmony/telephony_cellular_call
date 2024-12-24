@@ -520,6 +520,8 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.mpty = callInfo.mpty;
     callReportInfo.crsType = callInfo.toneType;
     callReportInfo.originalCallType = callInfo.callInitialType;
+    callReportInfo.name = callInfo.name;
+    callReportInfo.namePresentation = callInfo.namePresentation;
     return callReportInfo;
 }
 

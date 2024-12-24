@@ -164,7 +164,8 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsC
             !in.WriteInt32(call.mode) || !in.WriteInt32(call.mpty) || !in.WriteInt32(call.voiceDomain) ||
             !in.WriteInt32(call.callType) || !in.WriteString(call.number) || !in.WriteString(call.name) ||
             !in.WriteInt32(call.type) || !in.WriteString(call.alpha) || !in.WriteInt32(call.toa) ||
-            !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType)) {
+            !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType) ||
+            !in.WriteInt32(call.namePresentation)) {
             return TELEPHONY_ERR_WRITE_DATA_FAIL;
         }
     }
