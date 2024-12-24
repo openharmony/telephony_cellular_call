@@ -22,6 +22,7 @@
 #include "securec.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
+#include "telephony_ext_wrapper.h"
 #ifdef SECURITY_GUARDE_ENABLE
 #include "cellular_call_hisysevent.h"
 #endif
@@ -1398,10 +1399,25 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
     }
 }
 
-void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo)
+void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int32_t slotId)
 {
+    if (TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ != nullptr) {
+        if (ussdNoticeInfo.str.empty() && TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_(slotId)) {
+            TELEPHONY_LOGI("[slot%{public}d] remove mmi success", slotId);
+            return;
+        }
+    }
+    if (TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_ != nullptr) {
+        TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_(slotId, ussdNoticeInfo.str);
+    }
     MmiCodeInfo mmiCodeInfo;
     bool isUssdError = ussdNoticeInfo.m != USSD_MODE_NOTIFY && ussdNoticeInfo.m != USSD_MODE_REQUEST;
+    if (TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ != nullptr) {
+        if (TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_(slotId)) {
+            TELEPHONY_LOGI("[slot%{public}d] ussd ok for network release", slotId);
+            isUssdError &= (ussdNoticeInfo.m != USSD_MODE_NW_RELEASE);
+        }
+    }
     if (!isUssdError && !ussdNoticeInfo.str.empty()) {
         mmiCodeInfo.result = USSD_SUCCESS;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), ussdNoticeInfo.str.c_str()) != EOK) {
