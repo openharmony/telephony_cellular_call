@@ -94,6 +94,7 @@ HWTEST_F(ImsCallCallbackStubTest, ImsCallCallbackStubTest_0001, Function | Mediu
     EXPECT_EQ(callBackStub.OnGetColrResponseInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_EQ(callBackStub.OnSetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_EQ(callBackStub.OnGetColpResponseInner(data, reply), TELEPHONY_SUCCESS);
+    EXPECT_EQ(callBackStub.OnGetImsCapResponseInner(data, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -244,6 +245,9 @@ HWTEST_F(ImsCallCallbackStubTest, ImsCallCallbackStubTest_0004, Function | Mediu
     ImsCallModeReceiveInfo callModeInfo;
     callBackStub.SendEvent(slotId, eventId, callModeInfo);
 
+    ImsCapFromChip imsCap = {0};
+    callBackStub.GetImsCapResponse(slotId, imsCap);
+
     slotId = -100;
     EXPECT_EQ(callBackStub.PeerDimensionsChanged(slotId, callPeerDimensionsInfo), TELEPHONY_ERR_LOCAL_PTR_NULL);
     EXPECT_EQ(callBackStub.CallDataUsageChanged(slotId, callDataUsageInfo), TELEPHONY_ERR_LOCAL_PTR_NULL);
@@ -252,6 +256,7 @@ HWTEST_F(ImsCallCallbackStubTest, ImsCallCallbackStubTest_0004, Function | Mediu
     EXPECT_EQ(callBackStub.SendEvent(slotId, eventId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
     EXPECT_EQ(callBackStub.SendEvent(slotId, eventId, baseResult), TELEPHONY_ERR_LOCAL_PTR_NULL);
     EXPECT_EQ(callBackStub.SendEvent(slotId, eventId, callModeInfo), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    EXPECT_EQ(callBackStub.GetImsCapResponse(slotId, imsCap), TELEPHONY_ERR_LOCAL_PTR_NULL);
 }
 
 } // namespace Telephony

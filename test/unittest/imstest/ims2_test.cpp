@@ -817,6 +817,9 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0001, Function | MediumTest
         handler.GetDomainPreferenceModeResponse(event);
         handler.SetDomainPreferenceModeResponse(event);
         handler.SetVoNRSwitchStatusResponse(responseEvent);
+        handler.NvCfgFinishedIndication(responseEvent);
+        handler.GetImsCapabilities(slotId);
+        handler.GetImsCapResponse(responseEvent);
         ASSERT_EQ(handler.GetSlotId(), slotId);
         handler.OnRilAdapterHostDied(event);
         auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();

@@ -35,6 +35,8 @@
 
 namespace OHOS {
 namespace Telephony {
+
+constexpr const char *KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV = "const.telephony.is_use_cloud_ims_nv";
 class CellularCallHandler : public TelEventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
@@ -185,6 +187,10 @@ public:
     int32_t GetSsRequestCommand(int32_t index, SsRequestCommand &ss);
 
     void NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event);
+
+    int32_t GetImsCapabilities(int32_t slotId);
+
+    void GetImsCapResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
 public:
     const uint32_t REGISTER_HANDLER_ID = 10003;

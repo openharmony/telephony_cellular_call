@@ -425,6 +425,8 @@ public:
 
     bool NeedReadThirdParyLib();
 
+    void UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap);
+
 private:
     static void InitDefaultOperatorConfig();
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);
