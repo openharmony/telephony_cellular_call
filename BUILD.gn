@@ -47,6 +47,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
     "services/satellite_service_interaction/src/satellite_call_client.cpp",
     "services/satellite_service_interaction/src/satellite_call_proxy.cpp",
+    "services/telephony_ext_wrapper/src/telephony_ext_wrapper.cpp",
     "services/utils/src/cellular_call_config.cpp",
     "services/utils/src/cellular_call_dump_helper.cpp",
     "services/utils/src/cellular_call_supplement.cpp",
@@ -66,6 +67,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/control/include",
     "services/connection/include",
     "services/utils/include",
+    "services/telephony_ext_wrapper/include",
   ]
 
   defines = [
@@ -112,6 +114,12 @@ ohos_shared_library("tel_cellular_call") {
       defined(global_parts_info.security_security_guard)) {
     external_deps += [ "security_guard:libsg_collect_sdk" ]
     defines += [ "SECURITY_GUARDE_ENABLE" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_enhanced) &&
+      global_parts_info.telephony_telephony_enhanced) {
+    defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
   }
 
   part_name = "cellular_call"

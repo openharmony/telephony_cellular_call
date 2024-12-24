@@ -487,8 +487,9 @@ public:
      * Ussd notify
      *
      * @param UssdNoticeInfo
+     * @param slotId
      */
-    void EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo);
+    void EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int32_t slotId);
 
     /**
      * Close Unfinished ussd result

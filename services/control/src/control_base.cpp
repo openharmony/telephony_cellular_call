@@ -21,6 +21,7 @@
 #include "core_service_client.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
+#include "telephony_ext_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -59,6 +60,13 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
     if (mmiCodeUtils == nullptr) {
         TELEPHONY_LOGE("IsNeedExecuteMMI return, mmiCodeUtils is nullptr");
         return false;
+    }
+    if (TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ != nullptr) {
+        bool isMmiToNormal = TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_(slotId, phoneString);
+        if (isMmiToNormal) {
+            TELEPHONY_LOGI("need change mmi to noraml");
+            return false;
+        }
     }
     if (!mmiCodeUtils->IsNeedExecuteMmi(phoneString, isNeedUseIms)) {
         TELEPHONY_LOGI("IsNeedExecuteMMI return, isn't need to execute mmi");
