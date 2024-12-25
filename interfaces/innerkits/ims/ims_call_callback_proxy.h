@@ -87,7 +87,7 @@ private:
         int32_t slotId, const std::string &funcName, MessageParcel &in, const RadioResponseInfo &info);
     int32_t WriteSsBaseResultCommonInfo(
         int32_t slotId, const std::string &funcName, MessageParcel &in, const SsBaseResult &ssResult);
-    bool WriteCallInfo(MessageParcel &in, const ImsCurrentCall &call)
+    bool WriteCallInfo(MessageParcel &in, const ImsCurrentCall &call);
 private:
     static inline BrokerDelegator<ImsCallCallbackProxy> delegator_;
 };
