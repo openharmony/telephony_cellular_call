@@ -312,10 +312,6 @@ struct ImsCurrentCall {
      * - 3：Payphone
      */
     int32_t namePresentation = 0;
-    /**
-     * Indicates remote party name.
-     */
-    std::string name = "";
 };
 
 /**
