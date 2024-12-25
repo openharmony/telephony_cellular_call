@@ -160,15 +160,21 @@ int32_t ImsCallCallbackProxy::GetImsCallsDataResponse(int32_t slotId, const ImsC
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
     for (auto call : callList.calls) {
-        if (!in.WriteInt32(call.index) || !in.WriteInt32(call.dir) || !in.WriteInt32(call.state) ||
-            !in.WriteInt32(call.mode) || !in.WriteInt32(call.mpty) || !in.WriteInt32(call.voiceDomain) ||
-            !in.WriteInt32(call.callType) || !in.WriteString(call.number) || !in.WriteString(call.name) ||
-            !in.WriteInt32(call.type) || !in.WriteString(call.alpha) || !in.WriteInt32(call.toa) ||
-            !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType)) {
+        if (WriteCallInfo(in, call)) {
             return TELEPHONY_ERR_WRITE_DATA_FAIL;
         }
     }
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_CALLS_DATA), in);
+}
+
+bool ImsCallCallbackProxy::WriteCallInfo(MessageParcel &in, const ImsCurrentCall &call)
+{
+    return (!in.WriteInt32(call.index) || !in.WriteInt32(call.dir) || !in.WriteInt32(call.state) ||
+            !in.WriteInt32(call.mode) || !in.WriteInt32(call.mpty) || !in.WriteInt32(call.voiceDomain) ||
+            !in.WriteInt32(call.callType) || !in.WriteString(call.number) || !in.WriteString(call.name) ||
+            !in.WriteInt32(call.type) || !in.WriteString(call.alpha) || !in.WriteInt32(call.toa) ||
+            !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType) ||
+            !in.WriteInt32(call.namePresentation));
 }
 
 int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)

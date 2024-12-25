@@ -304,6 +304,14 @@ struct ImsCurrentCall {
      * Indicates the initial type of this call.
      */
     int32_t callInitialType = 0;
+    /**
+     * Identifies the CNAP display name;
+     * - 0：Allowed
+     * - 1：Restricted
+     * - 2：Not Specified/Unknown
+     * - 3：Payphone
+     */
+    int32_t namePresentation = 0;
 };
 
 /**
