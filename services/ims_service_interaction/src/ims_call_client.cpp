@@ -804,5 +804,15 @@ int32_t ImsCallClient::NotifyOperatorConfigChanged(int32_t slotId, int32_t state
     Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
     return imsCallProxy_->NotifyOperatorConfigChanged(slotId, state);
 }
+
+int32_t ImsCallClient::GetImsCapabilities(int32_t slotId)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    return imsCallProxy_->GetImsCapabilities(slotId);
+}
 } // namespace Telephony
 } // namespace OHOS

@@ -109,6 +109,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         ASSERT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_SUCCESS);
         int32_t active = 0;
         ASSERT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
+        ImsCapFromChip imsCap = {0};
+        ASSERT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_SUCCESS);
         MuteControlResponse muteResponse;
         ASSERT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
         ASSERT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
