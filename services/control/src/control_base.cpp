@@ -64,7 +64,7 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
     if (TELEPHONY_EXT_WRAPPER.isMmiCode_ != nullptr) {
         bool isMmiCode = TELEPHONY_EXT_WRAPPER.isMmiCode_(slotId, phoneString);
         if (!isMmiCode) {
-            TELEPHONY_LOGI("need change mmi to noraml");
+            TELEPHONY_LOGI("don't need to execute mmi");
             return false;
         }
     }
