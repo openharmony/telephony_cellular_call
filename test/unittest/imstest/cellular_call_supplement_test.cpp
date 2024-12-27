@@ -33,37 +33,37 @@ public:
     void TearDown();
 };
 
-bool IsNeedRemoveMmiMock(int slotId)
+bool IsEmptyMmiResultFilteredMock(int slotId)
 {
     return true;
 }
 
-bool IsNeedRemoveMmiMockFalse(int slotId)
+bool IsEmptyMmiResultFilteredMockFalse(int slotId)
 {
     return false;
 }
 
-bool IsNeedMmiToNormalCallMock(int32_t slotId, std::string &number)
+bool IsMmiCodeMock(int32_t slotId, std::string &number)
 {
     return true;
 }
 
-bool IsNeedMmiToNormalCallMockFalse(int32_t slotId, std::string &number)
+bool IsMmiCodeMockFalse(int32_t slotId, std::string &number)
 {
     return false;
 }
 
-bool IsUssdOkForReleaseMock(int32_t slotId)
+bool IsUssdReleaseMsgFilteredMock(int32_t slotId)
 {
     return true;
 }
 
-bool IsUssdOkForReleaseMockFalse(int32_t slotId)
+bool IsUssdReleaseMsgFilteredMockFalse(int32_t slotId)
 {
     return false;
 }
 
-void MmiCodeUnescapehtmlMock(int32_t slotId, std::string &content)
+void UnescapeHtmlCodeMock(int32_t slotId, std::string &content)
 {}
 
 static void RenameFile(std::string from, std::string to)
@@ -90,10 +90,9 @@ void CellularCallSupplementTest::SetUp()
 void CellularCallSupplementTest::TearDown()
 {}
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_true_001, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_001, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ = IsNeedRemoveMmiMock;
+    TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMock;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "";
     ussdNoticeInfo.m = 1;
@@ -101,10 +100,9 @@ HWTEST_F(
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_true_002, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_002, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ = IsNeedRemoveMmiMock;
+    TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMock;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "abc";
     ussdNoticeInfo.m = 1;
@@ -112,9 +110,9 @@ HWTEST_F(
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_false, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_003, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ = IsNeedRemoveMmiMockFalse;
+    TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMockFalse;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "";
     ussdNoticeInfo.m = 1;
@@ -122,9 +120,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_null, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_004, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ = nullptr;
+    TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = nullptr;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "";
     ussdNoticeInfo.m = 1;
@@ -132,9 +130,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedRemoveMmi_
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_isUssdOkForRelease_true, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_005, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ = IsUssdOkForReleaseMock;
+    TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = IsUssdReleaseMsgFilteredMock;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "abc";
     ussdNoticeInfo.m = 2;
@@ -142,10 +140,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_isUssdOkForRelea
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_isUssdOkForRelease_false, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_006, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ = IsUssdOkForReleaseMockFalse;
+    TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = IsUssdReleaseMsgFilteredMockFalse;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "abc";
     ussdNoticeInfo.m = 2;
@@ -153,9 +150,9 @@ HWTEST_F(
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_isUssdOkForRelease_null, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_007, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ = nullptr;
+    TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = nullptr;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "abc";
     ussdNoticeInfo.m = 2;
@@ -163,9 +160,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_isUssdOkForRelea
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_mmiCodeUnescapehtml, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_008, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_ = MmiCodeUnescapehtmlMock;
+    TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ = UnescapeHtmlCodeMock;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "&amp;";
     ussdNoticeInfo.m = 2;
@@ -173,10 +170,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_mmiCodeUnescapeh
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_mmiCodeUnescapehtml_null, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_009, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_ = nullptr;
+    TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ = nullptr;
     UssdNoticeInfo ussdNoticeInfo;
     ussdNoticeInfo.str = "&amp;";
     ussdNoticeInfo.m = 2;
@@ -184,9 +180,9 @@ HWTEST_F(
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedMmiToNormalCall, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_010, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ = IsNeedMmiToNormalCallMock;
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMock;
     IMSControl control;
     std::string phoneNum = "*9";
     CLIRMode mode = CLIRMode::DEFAULT;
@@ -194,10 +190,9 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_IsNeedMmiToNorma
     EXPECT_FALSE(isNeed);
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_IsNeedMmiToNormalCall_null, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_011, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ = nullptr;
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = nullptr;
     IMSControl control;
     std::string phoneNum = "*9";
     CLIRMode mode = CLIRMode::DEFAULT;
@@ -205,10 +200,9 @@ HWTEST_F(
     EXPECT_FALSE(isNeed);
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_IsNeedMmiToNormalCall_false, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_012, Function | MediumTest | Level1)
 {
-    TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ = IsNeedMmiToNormalCallMockFalse;
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockFalse;
     IMSControl control;
     std::string phoneNum = "*100#";
     CLIRMode mode = CLIRMode::DEFAULT;
@@ -216,28 +210,27 @@ HWTEST_F(
     EXPECT_FALSE(isNeed);
 }
 
-HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_InitTelephonyExtWrapper, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_013, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ != nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ != nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ != nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_ != nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ != nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isMmiCode_ != nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ != nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ != nullptr);
     TELEPHONY_EXT_WRAPPER.~TelephonyExtWrapper();
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
 }
 
-HWTEST_F(
-    CellularCallSupplementTest, CellularCallSupplementTest_InitTelephonyExtWrapper_fail, Function | MediumTest | Level1)
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_014, Function | MediumTest | Level1)
 {
     std::string filePath = "/system/lib64/libtelephony_ext_service.z.so";
     std::string bakFilePath = "/system/lib64/libtelephony_ext_service.z.so.bak";
     RenameFile(filePath, bakFilePath);
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isNeedRemoveMmi_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isUssdOkForRelease_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.mmiCodeUnescapehtml_ == nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ == nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isMmiCode_ == nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ == nullptr);
+    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ == nullptr);
     TELEPHONY_EXT_WRAPPER.~TelephonyExtWrapper();
     RenameFile(bakFilePath, filePath);
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();

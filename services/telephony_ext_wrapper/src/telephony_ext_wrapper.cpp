@@ -46,10 +46,10 @@ void TelephonyExtWrapper::InitTelephonyExtWrapperForCellularCall()
         TELEPHONY_LOGE("libtelephnoy ext service file load failed!");
         return;
     }
-    isNeedRemoveMmi_ = (IsNeedRemoveMmi)dlsym(handler_, "IsNeedRemoveMmiExt");
-    isNeedMmiToNormalCall_ =  (IsNeedMmiToNormalCall)dlsym(handler_, "IsNeedChangeMmiToNormalCallExt");
-    isUssdOkForRelease_ = (IsUssdOkForRelease)dlsym(handler_, "IsUssdOkForReleaseExt");
-    mmiCodeUnescapehtml_ = (MmiCodeUnescapehtml)dlsym(handler_, "MmiCodeUnescapehtmlExt");
+    isEmptyMmiResultFiltered_ = (IsEmptyMmiResultFiltered)dlsym(handler_, "IsEmptyMmiResultFiltered");
+    isMmiCode_ =  (IsMmiCode)dlsym(handler_, "IsMmiCode");
+    isUssdReleaseMsgFiltered_ = (IsUssdReleaseMsgFiltered)dlsym(handler_, "IsUssdReleaseMsgFiltered");
+    unescapeHtmlCode_ = (UnescapeHtmlCode)dlsym(handler_, "UnescapeHtmlCode");
     TELEPHONY_LOGI("init success");
 }
 } // namespace Telephony

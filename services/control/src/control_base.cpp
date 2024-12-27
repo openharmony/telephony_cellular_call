@@ -61,10 +61,10 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
         TELEPHONY_LOGE("IsNeedExecuteMMI return, mmiCodeUtils is nullptr");
         return false;
     }
-    if (TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_ != nullptr) {
-        bool isMmiToNormal = TELEPHONY_EXT_WRAPPER.isNeedMmiToNormalCall_(slotId, phoneString);
-        if (isMmiToNormal) {
-            TELEPHONY_LOGI("need change mmi to noraml");
+    if (TELEPHONY_EXT_WRAPPER.isMmiCode_ != nullptr) {
+        bool isMmiCode = TELEPHONY_EXT_WRAPPER.isMmiCode_(slotId, phoneString);
+        if (!isMmiCode) {
+            TELEPHONY_LOGI("don't need to execute mmi");
             return false;
         }
     }
