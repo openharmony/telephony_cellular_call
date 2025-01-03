@@ -277,6 +277,15 @@ public:
     void HandleOperatorConfigChanged(int32_t slotId, int32_t state);
 
     /**
+     * Handle when operator config change.
+     *
+     * @param slotId
+     * @param state
+     * @param isOperatorConfigChanged
+     */
+    void HandleOperatorConfigChanged(int32_t slotId, int32_t state, bool isOperatorConfigChanged);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId

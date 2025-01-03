@@ -367,6 +367,11 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state)
 {
+    HandleOperatorConfigChanged(slotId, state, true);
+}
+
+void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state, bool isOperatorConfigChanged)
+{
     OperatorConfig operatorConfig;
     int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
     if (ret != TELEPHONY_SUCCESS) {
@@ -381,7 +386,7 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t sta
     }
     saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
-    UpdateImsCapabilities(slotId, true, true, state);
+    UpdateImsCapabilities(slotId, true, isOperatorConfigChanged, state);
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
@@ -1114,7 +1119,7 @@ bool CellularCallConfig::NeedReadThirdParyLib()
 void CellularCallConfig::UpdateImsCapFromChip(int32_t slotId, const ImsCapFromChip &imsCap)
 {
     CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId, imsCap);
-    HandleOperatorConfigChanged(slotId, INVALID_OPERATOR_CONFIG_STATE);
+    HandleOperatorConfigChanged(slotId, INVALID_OPERATOR_CONFIG_STATE, false);
 }
 } // namespace Telephony
 } // namespace OHOS
