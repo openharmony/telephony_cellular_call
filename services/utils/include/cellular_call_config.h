@@ -277,6 +277,15 @@ public:
     void HandleOperatorConfigChanged(int32_t slotId, int32_t state);
 
     /**
+     * update ims configuration
+     *
+     * @param slotId
+     * @param configState
+     * @param isOpcChanged
+     */
+    void UpdateImsConfiguration(int32_t slotId, int32_t configState, bool isOpcChanged);
+
+    /**
      * Get Ecc Call List
      *
      * @param slotId

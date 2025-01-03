@@ -229,6 +229,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.HandleSetVoNRSwitchResult(SIM1_SLOTID, ErrType::NONE);
     config.HandleSimRecordsLoaded(SIM1_SLOTID);
     config.HandleOperatorConfigChanged(SIM1_SLOTID, 0);
+    config.UpdateImsConfiguration(SIM1_SLOTID, -1, false);
     OperatorConfig poc;
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
     config.UpdateImsCapabilities(SIM1_SLOTID, true, false, -1);
