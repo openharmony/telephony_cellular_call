@@ -1310,9 +1310,10 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest 
     callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    callInfoList->calls[0].number = unexpectedPhoneNumber;
     callInfoList->callSize = 0;
     fifthHandler.ProcessRedundantCode(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
     callInfoList->callSize = 1;
     callInfoList->calls.clear();
     fifthHandler.ProcessRedundantCode(*callInfoList);
