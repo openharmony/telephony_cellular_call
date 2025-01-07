@@ -20,6 +20,7 @@
 #include "cellular_call_data_struct.h"
 #include "cellular_call_connection_ims.h"
 #include "control_base.h"
+#include "call_manager_disconnected_details.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -163,7 +164,7 @@ public:
      * @param CallInfoList
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList);
+    int32_t ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList, bool isNeedQuery = true);
 
     /**
      * IMSControl ReportCallsData.
@@ -193,6 +194,12 @@ public:
     int32_t ReportHangUpInfo(int32_t slotId);
 
     void RecoverPendingHold();
+
+    void UpdateDisconnectedReason(const ImsCurrentCallList &currentCallList, RilDisconnectedReason reason);
+
+    bool HasEndCallWithoutReason(const ImsCurrentCallList &callList);
+
+    void UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason);
 
 private:
     /**

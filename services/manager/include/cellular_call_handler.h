@@ -247,6 +247,7 @@ private:
     void ProcessRedundantCode(CallInfoList &callInfoList);
     void ProcessCsPhoneNumber(CallInfoList &list);
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
+    void HandleCallDisconnectReason(RilDisconnectedReason reason);
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     /**
@@ -280,6 +281,7 @@ private:
     int32_t indexCommand_ = 0;
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
     std::mutex mutex_;
+    ImsCurrentCallList currentCallList_{};
 };
 } // namespace Telephony
 } // namespace OHOS

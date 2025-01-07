@@ -406,6 +406,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     TELEPHONY_LOGI("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
     CellularCallIncomingStartTrace(imsCallInfo.state);
     auto imsControl = serviceInstance->GetImsControl(slotId_);
+    currentCallList_ = imsCallInfoList;
     if (imsCallInfoList.callSize == 0) {
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
@@ -414,7 +415,9 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(imsCallInfo.state);
         }
-        serviceInstance->SetImsControl(slotId_, nullptr);
+        if (!imsControl->HasEndCallWithoutReason(imsCallInfoList)) {
+            serviceInstance->SetImsControl(slotId_, nullptr);
+        }
         return;
     }
     if (srvccState_ == SrvccState::STARTED) {
@@ -1209,16 +1212,13 @@ void CellularCallHandler::CallRingBackVoiceResponse(const AppExecFwk::InnerEvent
 
 void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    if (registerInstance_ == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
-        return;
-    }
     auto reason = event->GetSharedObject<int32_t>();
     DisconnectedDetails details;
     if (reason == nullptr) {
         auto info = event->GetSharedObject<DisconnectedDetails>();
         if (info == nullptr) {
             TELEPHONY_LOGE("[slot%{public}d] info is null", slotId_);
+            HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
             return;
         }
         details.reason = static_cast<DisconnectedReason>(info->reason);
@@ -1234,12 +1234,17 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
             ResourceUtils::Get().GetCallFailedMessageName(static_cast<int32_t>(details.reason), callFailedMessageName);
         if (!ret) {
             TELEPHONY_LOGE("[slot%{public}d] Get call failed message failed!", slotId_);
+            HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
             return;
         }
         ResourceUtils::Get().GetStringValueByName(callFailedMessageName, details.message);
     }
     CellularCallHiSysEvent::WriteCallEndBehaviorEvent(slotId_, static_cast<int32_t>(details.reason));
-    registerInstance_->ReportCallFailReason(details);
+    if (registerInstance_ != nullptr) {
+        registerInstance_->ReportCallFailReason(details);
+    }
+    TELEPHONY_LOGI("GetCallFailReasonResponse reason[%{public}d]", static_cast<int32_t>(details.reason));
+    HandleCallDisconnectReason(static_cast<RilDisconnectedReason>(details.reason));
 }
 
 void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1882,6 +1887,26 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
 
     CellularCallConfig config;
     config.UpdateImsCapFromChip(slotId_, *imsCap);
+}
+
+void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reason)
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("serviceInstance get failed!");
+        return;
+    }
+    auto imsControl = serviceInstance->GetImsControl(slotId_);
+    if (imsControl == nullptr) {
+        TELEPHONY_LOGE("imsControl get failed!");
+        return;
+    }
+    imsControl->UpdateDisconnectedReason(currentCallList_, reason);
+    imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
+    if (currentCallList_.callSize == 0) {
+        TELEPHONY_LOGW("all calls disconnected, set ims control to nullptr.");
+        serviceInstance->SetImsControl(slotId_, nullptr);
+    }
 }
 } // namespace Telephony
 } // namespace OHOS

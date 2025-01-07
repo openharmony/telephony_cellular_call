@@ -141,12 +141,14 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
                 DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
                     pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
             }
+            pConnection->SetDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_USER_TERMINATED);
             return pConnection->HangUpRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
         }
         case CallSupplementType::TYPE_HANG_UP_HOLD_WAIT:
             // release the second (active) call and recover the first (held) call
         case CallSupplementType::TYPE_HANG_UP_ACTIVE: {
             CellularCallConnectionIMS connection;
+            UpdateCallDisconnectReason(callInfo.callId, RilDisconnectedReason::DISCONNECTED_REASON_USER_TERMINATED);
             return connection.CallSupplementRequest(callInfo.slotId, type);
         }
         case CallSupplementType::TYPE_HANG_UP_ALL: {
@@ -154,6 +156,12 @@ int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType 
             CellularCallConnectionIMS connection;
             // The AT command for hanging up all calls is the same as the AT command for rejecting calls,
             // so the reject interface is reused.
+            {
+                std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+                for (auto &connection : connectionMap_) {
+                    connection.second.SetDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_USER_TERMINATED);
+                }
+            }
             return connection.RejectRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
         }
         default: {
@@ -232,6 +240,7 @@ int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportSingleCallInfo(
             pConnection->GetCallReportInfo(), TelCallState::CALL_STATUS_DISCONNECTING);
     }
+    pConnection->SetDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_USER_DECLINE);
     return pConnection->RejectRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
 }
 
@@ -346,14 +355,22 @@ ImsConnectionMap IMSControl::GetConnectionMap()
     return connectionMap_;
 }
 
-int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList)
+int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList &callInfoList, bool isNeedQuery)
 {
     std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (callInfoList.callSize <= 0) {
+        if (isNeedQuery && HasEndCallWithoutReason(callInfoList)) {
+            GetCallFailReason(slotId, connectionMap_);
+            return TELEPHONY_SUCCESS;
+        }
         return ReportHangUpInfo(slotId);
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
         return ReportIncomingInfo(slotId, callInfoList);
     } else if (callInfoList.callSize > 0 && !connectionMap_.empty()) {
+        if (isNeedQuery && HasEndCallWithoutReason(callInfoList)) {
+            GetCallFailReason(slotId, connectionMap_);
+            return TELEPHONY_SUCCESS;
+        }
         return ReportUpdateInfo(slotId, callInfoList);
     }
     return TELEPHONY_ERROR;
@@ -372,8 +389,8 @@ int32_t IMSControl::ReportHangUpInfo(int32_t slotId)
         CallReportInfo reportInfo = it.second.GetCallReportInfo();
         reportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
         reportInfo.accountId = slotId;
+        reportInfo.reason = static_cast<DisconnectedReason>(it.second.GetDisconnectReason());
         callsReportInfo.callVec.push_back(reportInfo);
-        GetCallFailReason(slotId, connectionMap_);
     }
     if (connectionMap_.empty()) {
         TELEPHONY_LOGI("connectionMap_ is empty");
@@ -533,9 +550,9 @@ void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCur
         if (!it->second.GetFlag()) {
             CallReportInfo callReportInfo = it->second.GetCallReportInfo();
             callReportInfo.state = TelCallState::CALL_STATUS_DISCONNECTED;
+            callReportInfo.reason = static_cast<DisconnectedReason>(it->second.GetDisconnectReason());
             callsReportInfo.callVec.push_back(callReportInfo);
             it = connectionMap_.erase(it);
-            GetCallFailReason(callsReportInfo.slotId, connectionMap_);
         } else {
             it->second.SetFlag(false);
             ++it;
@@ -663,6 +680,58 @@ void IMSControl::RecoverPendingHold()
         if (connection.second.IsPendingHold()) {
             connection.second.UpdatePendingHoldFlag(false);
             break;
+        }
+    }
+}
+
+void IMSControl::UpdateDisconnectedReason(const ImsCurrentCallList &currentCallList, RilDisconnectedReason reason)
+{
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+    for (auto &connection : connectionMap_) {
+        bool isFind = false;
+        if (connection.second.GetDisconnectReason() != RilDisconnectedReason::DISCONNECTED_REASON_INVALID) {
+            continue;
+        }
+        for (auto &call : currentCallList.calls) {
+            if (connection.second.GetIndex() == call.index) {
+                isFind = true;
+                break;
+            }
+        }
+        if (!isFind) {
+            connection.second.SetDisconnectReason(reason);
+        }
+    }
+}
+
+bool IMSControl::HasEndCallWithoutReason(const ImsCurrentCallList &currentCallList)
+{
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+    for (auto &connection : connectionMap_) {
+        bool isFind = false;
+        if (connection.second.GetDisconnectReason() != RilDisconnectedReason::DISCONNECTED_REASON_INVALID) {
+            continue; // This call already has a disconnect reason.
+        }
+        for (auto &call : currentCallList.calls) {
+            if (connection.second.GetIndex() == call.index) {
+                isFind = true;
+                break;
+            }
+        }
+        if (!isFind) {
+            return true; // There are still calls need query disconnect reason.
+        }
+    }
+    return false; // All calls have disconnected reason, no need to query disconnect reason.
+}
+
+void IMSControl::UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason)
+{
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+    for (auto &connection : connectionMap_) {
+        if (connection.second.GetIndex() == callId) {
+            connection.second.SetDisconnectReason(reason);
+            return; // call id not duplicated.
         }
     }
 }

@@ -19,6 +19,7 @@
 #include "base_connection.h"
 #include "module_service_utils.h"
 #include "ims_call_interface.h"
+#include "call_manager_disconnected_details.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -212,6 +213,10 @@ public:
 
     void SetHangupFlag(bool isPendingHangup);
 
+    RilDisconnectedReason GetDisconnectReason();
+
+    void SetDisconnectReason(RilDisconnectedReason reason);
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 
@@ -220,6 +225,7 @@ private:
     bool isNeedToDial_ = false;
     ImsDialInfoStruct holdToDialInfo_;
     bool isPendingHangup_ = false;
+    RilDisconnectedReason disconnectReason_ = RilDisconnectedReason::DISCONNECTED_REASON_INVALID;
 };
 } // namespace Telephony
 } // namespace OHOS
