@@ -418,5 +418,15 @@ void CellularCallConnectionIMS::SetHangupFlag(bool isPendingHangup)
 {
     isPendingHangup_ = isPendingHangup;
 }
+
+RilDisconnectedReason CellularCallConnectionIMS::GetDisconnectReason()
+{
+    return disconnectReason_;
+}
+
+void CellularCallConnectionIMS::SetDisconnectReason(RilDisconnectedReason reason)
+{
+    disconnectReason_ = reason;
+}
 } // namespace Telephony
 } // namespace OHOS
