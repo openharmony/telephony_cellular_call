@@ -875,6 +875,20 @@ int32_t ImsCallProxy::SetCallWaiting(int32_t slotId, bool activate, int32_t clas
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_CALL_WAITING));
 }
 
+int32_t ImsCallProxy::SetVideoCallWaiting(int32_t slotId, bool activate)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteBool(activate)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write activate fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }   
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_VIDEO_CALL_WAITING));
+}
+
 int32_t ImsCallProxy::GetCallWaiting(int32_t slotId, int32_t index)
 {
     MessageParcel in;

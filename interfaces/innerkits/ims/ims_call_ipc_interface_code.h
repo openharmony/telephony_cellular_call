@@ -88,6 +88,7 @@ enum class ImsCallInterfaceCode {
     IMS_GET_COLR,
     IMS_SET_COLP,
     IMS_GET_COLP,
+    IMS_SET_VIDEO_CALL_WAITING,
 
     /****************** callback ******************/
     IMS_CALL_REGISTER_CALLBACK = 5500,
