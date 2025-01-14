@@ -885,7 +885,7 @@ int32_t ImsCallProxy::SetVideoCallWaiting(int32_t slotId, bool activate)
     if (!in.WriteBool(activate)) {
         TELEPHONY_LOGE("[slot%{public}d]Write activate fail!", slotId);
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }   
+    }
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_VIDEO_CALL_WAITING));
 }
 
