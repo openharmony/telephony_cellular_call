@@ -44,6 +44,16 @@ public:
     int32_t GetDomainPreferenceModeRequest(int32_t slotId);
 
     /**
+     * Set Carrier Vt Config
+     *
+     * @param slotId
+     * @param active
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetCarrierVtConfig(int32_t slotId, bool active);
+
+
+    /**
      * Set Lte Ims Switch Status Request
      *
      * @param slotId

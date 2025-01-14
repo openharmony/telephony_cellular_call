@@ -140,6 +140,8 @@ void CellularCallStub::InitConfigFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnSetImsSwitchStatusInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::GET_IMS_SWITCH_STATUS] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsSwitchStatusInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_CARRIER_VT_CONFIG] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetCarrierVtConfigInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::SET_VONR_SWITCH_STATUS] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnSetVoNRStateInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::GET_VONR_SWITCH_STATUS] =
@@ -933,6 +935,23 @@ int32_t CellularCallStub::OnGetImsSwitchStatusInner(MessageParcel &data, Message
     int32_t slotId = data.ReadInt32();
     bool enabled;
     int32_t result = GetImsSwitchStatus(slotId, enabled);
+    reply.WriteBool(enabled);
+    reply.WriteInt32(result);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnGetCarrierVtConfigInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGD("CellularCallStub::OnGetCarrierVtConfigInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnGetCarrierVtConfigInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    bool enabled;
+    int32_t result = GetCarrierVtConfig(slotId, enabled);
     reply.WriteBool(enabled);
     reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;

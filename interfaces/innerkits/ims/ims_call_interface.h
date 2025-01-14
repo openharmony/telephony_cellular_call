@@ -248,6 +248,15 @@ public:
     virtual int32_t SetImsSwitchStatus(int32_t slotId, int32_t active) = 0;
 
     /**
+     * @brief Set the Carrier Vt Config
+     *
+     * @param slotId Indicates the card slot index number,
+     * @param active 1: enable carrier vt, 0: disable carrier vt
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t SetCarrierVtConfig(int32_t slotId, int32_t active) = 0;
+
+    /**
      * @brief IMS GetImsSwitchStatus interface
      *
      * @param slotId Indicates the card slot index number,

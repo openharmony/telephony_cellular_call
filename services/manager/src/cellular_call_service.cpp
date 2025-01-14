@@ -1170,6 +1170,16 @@ int32_t CellularCallService::GetDomainPreferenceMode(int32_t slotId)
     return config.GetDomainPreferenceMode(slotId);
 }
 
+int32_t CellularCallService::GetCarrierVtConfig(int32_t slotId, bool &enabled)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::GetDomainPreferenceMode return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallConfig config;
+    return config.GetCarrierVtConfig(slotId);
+}
+
 int32_t CellularCallService::SetImsSwitchStatus(int32_t slotId, bool active)
 {
     if (!IsValidSlotId(slotId)) {

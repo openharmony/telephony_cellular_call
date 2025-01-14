@@ -53,6 +53,7 @@ public:
 
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) override;
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
+    int32_t SetCarrierVtConfig(int32_t slotId, int32_t active) override;
     int32_t SetImsSwitchStatus(int32_t slotId, int32_t active) override;
     int32_t GetImsSwitchStatus(int32_t slotId) override;
     int32_t SetImsConfig(ImsConfigItem item, const std::string &value) override;

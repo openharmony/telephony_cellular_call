@@ -83,6 +83,24 @@ public:
     int32_t GetImsSwitchStatus(int32_t slotId, bool &enabled);
 
     /**
+     * Get Carrier Vt Config
+     *
+     *
+     * @param slotId
+     * @param enabled
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetCarrierVtConfig(int32_t slotId, bool &enabled);
+
+    /**
+     * Get Carrier Vt Config bool value
+     *
+     * @param slotId
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    bool GetCarrierVtAvailbleConfig(int32_t slotId, bool &enabled);
+
+    /**
      * Set VoNR Switch Status
      *
      * @param slotId
@@ -485,6 +503,7 @@ private:
     static std::map<int32_t, bool> imsSwitchOnByDefault_;
     static std::map<int32_t, bool> hideImsSwitch_;
     static std::map<int32_t, bool> volteSupported_;
+    static std::map<int32_t, bool> carrierVtAvailable_;
     static std::map<int32_t, std::vector<int32_t>> nrModeSupportedList_;
     static std::map<int32_t, bool> volteProvisioningSupported_;
     static std::map<int32_t, bool> ssOverUtSupported_;
