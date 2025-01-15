@@ -50,7 +50,7 @@ public:
      * @param active
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SetCarrierVtConfig(int32_t slotId, bool active);
+    int32_t SetCarrierVtConfigRequest(int32_t slotId, bool active);
 
     /**
      * Set Lte Ims Switch Status Request
