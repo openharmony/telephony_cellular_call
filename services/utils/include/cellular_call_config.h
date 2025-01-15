@@ -98,7 +98,7 @@ public:
      * @param slotId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    bool GetCarrierVtAvailbleConfig(int32_t slotId, bool &enabled);
+    bool GetCarrierVtAvailbleConfig(int32_t slotId);
 
     /**
      * Set VoNR Switch Status
