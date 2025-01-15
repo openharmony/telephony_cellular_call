@@ -404,6 +404,15 @@ public:
     int32_t GetDomainPreferenceMode(int32_t slotId) override;
 
     /**
+     * Set Carrier Vt Config
+     *
+     * @param slotId
+     * @param active
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetCarrierVtConfig(int32_t slotId, bool &active) override;
+
+    /**
      * Set Ims Switch Status
      *
      * @param slotId

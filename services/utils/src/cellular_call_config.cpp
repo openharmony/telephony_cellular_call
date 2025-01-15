@@ -55,6 +55,7 @@ std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
 std::map<int32_t, bool> CellularCallConfig::imsSwitchOnByDefault_;
 std::map<int32_t, bool> CellularCallConfig::hideImsSwitch_;
 std::map<int32_t, bool> CellularCallConfig::volteSupported_;
+std::map<int32_t, bool> CellularCallConfig::carrierVtAvailable_;
 std::map<int32_t, std::vector<int32_t>> CellularCallConfig::nrModeSupportedList_;
 std::map<int32_t, bool> CellularCallConfig::volteProvisioningSupported_;
 std::map<int32_t, bool> CellularCallConfig::ssOverUtSupported_;
@@ -84,6 +85,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::imsSwitchOnByDefault_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::hideImsSwitch_.insert(std::pair<int, bool>(i, false));
         CellularCallConfig::volteSupported_.insert(std::pair<int, bool>(i, true));
+        CellularCallConfig::carrierVtAvailable_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::nrModeSupportedList_.insert(std::pair<int, std::vector<int32_t>>(
             i, std::vector<int32_t> { CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA }));
         CellularCallConfig::volteProvisioningSupported_.insert(std::pair<int, bool>(i, false));
@@ -181,6 +183,28 @@ int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
         enabled = imsSwitchStatus;
     }
     return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallConfig::GetCarrierVtConfig(int32_t slotId, bool &enabled)
+{
+    TELEPHONY_LOGD("entry, slotId: %{public}d", slotId);
+    auto itorHide = carrierVtAvailable_.find(slotId);
+    if (itorHide != carrierVtAvailable_.end()) {
+        enabled = itorHide -> second;
+    } else {
+        TELEPHONY_LOGI("do not find GetCarrierVtConfig");
+        enabled = false;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
+bool CellularCallConfig::GetCarrierVtAvailbleConfig(int32_t slotId)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
+        return false;
+    }
+    return carrierVtAvailable_[slotId];
 }
 
 int32_t CellularCallConfig::SetVoNRSwitchStatus(int32_t slotId, int32_t state)
@@ -402,6 +426,7 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
     ParseBoolOperatorConfigs(slotId, hideImsSwitch_, poc, KEY_HIDE_IMS_SWITCH_BOOL);
     ParseBoolOperatorConfigs(slotId, volteSupported_, poc, KEY_VOLTE_SUPPORTED_BOOL);
     ParseBoolOperatorConfigs(slotId, volteProvisioningSupported_, poc, KEY_VOLTE_PROVISIONING_SUPPORTED_BOOL);
+    ParseBoolOperatorConfigs(slotId, carrierVtAvailable_, poc, KEY_CARRIER_VT_AVAILABLE_BOOL);
     ParseBoolOperatorConfigs(slotId, ssOverUtSupported_, poc, KEY_SS_OVER_UT_SUPPORTED_BOOL);
     ParseBoolOperatorConfigs(slotId, imsGbaRequired_, poc, KEY_IMS_GBA_REQUIRED_BOOL);
     ParseBoolOperatorConfigs(slotId, utProvisioningSupported_, poc, KEY_UT_PROVISIONING_SUPPORTED_BOOL);
@@ -468,6 +493,9 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
     }
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
     configRequest_.SetImsSwitchStatusRequest(slotId, IsNeedTurnOnIms(imsCapabilityList));
+    if (carrierVtAvailable_.find(slotId) != carrierVtAvailable_.end()) {
+        configRequest_.SetCarrierVtConfigRequest(slotId, carrierVtAvailable_[slotId]);
+    }
 }
 bool CellularCallConfig::IsGbaValid(int32_t slotId)
 {

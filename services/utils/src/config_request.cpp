@@ -75,6 +75,16 @@ int32_t ConfigRequest::SetImsSwitchStatusRequest(int32_t slotId, bool active)
     return imsCallClient->SetImsSwitchStatus(slotId, active);
 }
 
+int32_t ConfigRequest::SetCarrierVtConfigRequest(int32_t slotId, bool active)
+{
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    return imsCallClient->SetCarrierVtConfig(slotId, active);
+}
+
 int32_t ConfigRequest::SetVoNRSwitchStatusRequest(int32_t slotId, int32_t state)
 {
     auto handle = DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);

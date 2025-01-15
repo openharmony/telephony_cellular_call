@@ -288,6 +288,15 @@ public:
     int32_t GetDomainPreferenceMode(int32_t slotId);
 
     /**
+     * @brief Set the Carrier Vt Config
+     *
+     * @param slotId Indicates the card slot index number,
+     * @param active 1: enable carrier vt, 0: disable carrier vt
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetCarrierVtConfig(int32_t slotId, int32_t active);
+
+    /**
      * @brief Set the ims switch status
      *
      * @param slotId Indicates the card slot index number,

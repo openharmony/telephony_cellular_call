@@ -371,6 +371,15 @@ private:
     int32_t OnSetImsSwitchStatusInner(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * On Get Carrier Vt Config
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnGetCarrierVtConfigInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * On Get Ims Switch Status
      *
      * @param data send data

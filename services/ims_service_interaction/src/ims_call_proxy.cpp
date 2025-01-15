@@ -427,6 +427,20 @@ int32_t ImsCallProxy::GetDomainPreferenceMode(int32_t slotId)
     return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_GET_DOMAIN_PREFERENCE_MODE));
 }
 
+int32_t ImsCallProxy::SetCarrierVtConfig(int32_t slotId, int32_t active)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteInt32(active)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write active fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_SET_VT_CONFIG));
+}
+
 int32_t ImsCallProxy::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
     MessageParcel in;

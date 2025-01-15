@@ -406,6 +406,16 @@ int32_t ImsCallClient::GetDomainPreferenceMode(int32_t slotId)
     return imsCallProxy_->GetDomainPreferenceMode(slotId);
 }
 
+int32_t ImsCallClient::SetCarrierVtConfig(int32_t slotId, int32_t active)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    return imsCallProxy_->SetCarrierVtConfig(slotId, active);
+}
+
 int32_t ImsCallClient::SetImsSwitchStatus(int32_t slotId, int32_t active)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
