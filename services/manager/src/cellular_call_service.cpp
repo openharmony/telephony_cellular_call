@@ -1177,7 +1177,7 @@ int32_t CellularCallService::GetCarrierVtConfig(int32_t slotId, bool &enabled)
         return CALL_ERR_INVALID_SLOT_ID;
     }
     CellularCallConfig config;
-    return config.GetCarrierVtConfig(slotId);
+    return config.GetCarrierVtConfig(slotId, enabled);
 }
 
 int32_t CellularCallService::SetImsSwitchStatus(int32_t slotId, bool active)
