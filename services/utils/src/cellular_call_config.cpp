@@ -65,6 +65,7 @@ std::map<int32_t, bool> CellularCallConfig::imsPreferForEmergency_;
 std::map<int32_t, int32_t> CellularCallConfig::callWaitingServiceClass_;
 std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnectResoninfoMapping_;
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
+std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::mutex mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
@@ -103,6 +104,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::cellularNetworkState cellularState;
         CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
             cellularState));
+        CellularCallConfig::videoCallWaiting_.insert(std::pair<int, bool>(i, false));
     }
 }
 
@@ -411,6 +413,9 @@ void CellularCallConfig::UpdateImsConfiguration(int32_t slotId, int32_t configSt
     saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true, isOpcChanged, configState);
+    if (videoCallWaiting_.find(slotId) == videoCallWaiting_.end()) {
+        configRequest_.SetVideoCallWaiting(slotId, videoCallWaiting_[slotId]);
+    }
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
@@ -432,6 +437,7 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
     ParseBoolOperatorConfigs(slotId, utProvisioningSupported_, poc, KEY_UT_PROVISIONING_SUPPORTED_BOOL);
     ParseBoolOperatorConfigs(slotId, imsPreferForEmergency_, poc, KEY_IMS_PREFER_FOR_EMERGENCY_BOOL);
     ParseBoolOperatorConfigs(slotId, forceVolteSwitchOn_, poc, KEY_FORCE_VOLTE_SWITCH_ON_BOOL);
+    ParseBoolOperatorConfigs(slotId, videoCallWaiting_, poc, KEY_VIDEO_CALL_WAITING_ON_BOOL);
 
     if (poc.intArrayValue.count(KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY) > 0) {
         nrModeSupportedList_[slotId] = poc.intArrayValue[KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY];

@@ -84,6 +84,7 @@ public:
         int32_t slotId, const std::string &fac, int32_t mode, const std::string &pw, int32_t index) override;
     int32_t GetCallRestriction(int32_t slotId, const std::string &fac, int32_t index) override;
     int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index) override;
+    int32_t SetVideoCallWaiting(int32_t slotId, bool activate) override;
     int32_t GetCallWaiting(int32_t slotId, int32_t index) override;
     int32_t SetColr(int32_t slotId, int32_t presentation, int32_t index) override;
     int32_t GetColr(int32_t slotId, int32_t index) override;

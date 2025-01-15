@@ -505,6 +505,16 @@ public:
     virtual int32_t SetCallWaiting(int32_t slotId, bool activate, int32_t classType, int32_t index) = 0;
 
     /**
+     * @brief SetVideoCallWaiting IMS SetVideoCallWaiting interface
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from 0 to the maximum card slot index number supported by the device.
+     * @param activate Indicates the action for SetVideoCallWaiting,
+     * true, means turn on VideoCallWaiting; false, means turn off VideoCallWaiting.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t SetVideoCallWaiting(int32_t slotId, bool activate) = 0;
+    /**
      * @brief GetCallWaiting IMS GetCallWaiting interface
      *
      * @param slotId Indicates the card slot index number,
@@ -512,6 +522,7 @@ public:
      * @param index Indicates the index of command.
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
+    
     virtual int32_t GetCallWaiting(int32_t slotId, int32_t index) = 0;
 
     /**

@@ -175,6 +175,17 @@ public:
      */
     int32_t NotifyOperatorConfigChanged(int32_t slotId, int32_t state);
 
+    /**
+     * @brief SetVideoCallWaiting IMS SetVideoCallWaiting interface
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from 0 to the maximum card slot index number supported by the device.
+     * @param activate Indicates the action for SetVideoCallWaiting,
+     * true, means turn on VideoCallWaiting; false, means turn off VideoCallWaiting.
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetVideoCallWaiting(int32_t slotId, bool activate);
+
 private:
     ModuleServiceUtils moduleUtils_;
 };

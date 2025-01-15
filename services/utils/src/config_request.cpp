@@ -250,5 +250,16 @@ int32_t ConfigRequest::NotifyOperatorConfigChanged(int32_t slotId, int32_t state
     }
     return imsCallClient->NotifyOperatorConfigChanged(slotId, state);
 }
+
+int32_t ConfigRequest::SetVideoCallWaiting(int32_t slotId, bool activate)
+{
+    auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    if (imsCallClient == nullptr || imsCallClient->GetImsCallProxy() == nullptr) {
+        TELEPHONY_LOGE("ImsCallClient is nullptr or ims service SA not exists.");
+        return CALL_ERR_RESOURCE_UNAVAILABLE;
+    }
+    imsCallClient->SetVideoCallWaiting(slotId, activate);
+    return TELEPHONY_SUCCESS;
+}
 } // namespace Telephony
 } // namespace OHOS

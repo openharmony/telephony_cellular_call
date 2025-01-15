@@ -160,5 +160,20 @@ HWTEST_F(ConfigRequestTest, ConfigRequestTest_0007, Function | MediumTest | Leve
     EXPECT_EQ(configRequest.GetEmergencyCallListRequest(slotId), CALL_ERR_RESOURCE_UNAVAILABLE);
     EXPECT_EQ(configRequest.SetEmergencyCallListRequest(slotId, eccVec), CALL_ERR_RESOURCE_UNAVAILABLE);
 }
+
+/**
+ * @tc.number   Telephony_ConfigRequestTest_0008
+ * @tc.name     Test SetVideoCallWating
+ * @tc.desc     Function test
+ */
+HWTEST_F(ConfigRequestTest, ConfigRequestTest_0008, Function | MediumTest | Level1)
+{
+    ConfigRequest configRequest;
+    int32_t slotId = 1;
+    bool activate = false;
+    EXPECT_EQ(configRequest.SetVideoCallWaiting(slotId, activate), TELEPHONY_SUCCESS);
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
+    EXPECT_EQ(configRequest.SetVideoCallWaiting(slotId, activate), CALL_ERR_RESOURCE_UNAVAILABLE);
+}
 } // namespace Telephony
 } // namespace OHOS

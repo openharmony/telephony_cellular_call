@@ -513,6 +513,7 @@ private:
     static std::map<int32_t, int32_t> callWaitingServiceClass_;
     static std::map<int32_t, std::vector<std::string>> imsCallDisconnectResoninfoMapping_;
     static std::map<int32_t, bool> forceVolteSwitchOn_;
+    static std::map<int32_t, bool> videoCallWaiting_;
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
     static bool isOperatorConfigInit_;

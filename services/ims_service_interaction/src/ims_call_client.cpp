@@ -669,6 +669,15 @@ int32_t ImsCallClient::SetCallWaiting(int32_t slotId, bool activate, int32_t cla
     return imsCallProxy_->SetCallWaiting(slotId, activate, classType, index);
 }
 
+int32_t ImsCallClient::SetVideoCallWaiting(int32_t slotId, bool activate)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    return imsCallProxy_->SetVideoCallWaiting(slotId, activate);
+}
+
 int32_t ImsCallClient::GetCallWaiting(int32_t slotId, int32_t index)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
