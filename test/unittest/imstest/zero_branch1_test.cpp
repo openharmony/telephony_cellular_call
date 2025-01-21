@@ -768,13 +768,13 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallbaseconnection_001, Function | M
     BaseConnection BConnection;
     char c = ' ';
     BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_CANCELED;
-    BConnection.ProcessNextChar(SIM1_SLOTID, c);
-    BConnection.GetLeftPostDialCallString();
+    EXPECT_EQ(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
+    EXPECT_EQ(BConnection.GetLeftPostDialCallString(), "");
     BConnection.postDialCallString_ = "111111";
-    BConnection.ProcessNextChar(SIM1_SLOTID, c);
+    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
     BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
-    BConnection.ProcessNextChar(SIM1_SLOTID, c);
-    BConnection.GetLeftPostDialCallString();
+    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
+    EXPECT_NE(BConnection.GetLeftPostDialCallString(), "");
 }
 /**
  * @tc.number   Telephony_CellularCallHiSysEvent_001
