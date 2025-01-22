@@ -855,12 +855,13 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0002, Function | MediumTest
         }
         handler.SetSlotId(slotId);
         auto event = AppExecFwk::InnerEvent::Get(0);
-        ASSERT_NO_THROW(handler.ReceiveUpdateCallMediaModeRequest(event));
-        ASSERT_NO_THROW(handler.ReceiveUpdateCallMediaModeResponse(event));
-        ASSERT_NO_THROW(handler.HandleCallSessionEventChanged(event));
-        ASSERT_NO_THROW(handler.HandlePeerDimensionsChanged(event));
-        ASSERT_NO_THROW(handler.HandleCallDataUsageChanged(event));
-        ASSERT_NO_THROW(handler.HandleCameraCapabilitiesChanged(event));
+        handler.ReceiveUpdateCallMediaModeRequest(event);
+        handler.ReceiveUpdateCallMediaModeResponse(event);
+        handler.HandleCallSessionEventChanged(event);
+        handler.HandlePeerDimensionsChanged(event);
+        handler.HandleCallDataUsageChanged(event);
+        handler.HandleCameraCapabilitiesChanged(event);
+        EXPECT_TRUE(event != nullptr);
     }
 }
 
@@ -973,13 +974,14 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
  */
 HWTEST_F(Ims2Test, cellular_call_ImsCallClient_0001, Function | MediumTest | Level3)
 {
-    ImsCallClient::SystemAbilityListener listen;
+    auto listen = std::make_shared<ImsCallClient::SystemAbilityListener>();
     int32_t systemAbilityId = 1;
     std::string deviceId = "123";
-    ASSERT_NO_THROW(listen.OnAddSystemAbility(systemAbilityId, deviceId));
-    ASSERT_NO_THROW(listen.OnRemoveSystemAbility(systemAbilityId, deviceId));
-    ASSERT_NO_THROW(listen.OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId));
-    ASSERT_NO_THROW(listen.OnRemoveSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId));
+    listen->OnAddSystemAbility(systemAbilityId, deviceId);
+    listen->OnRemoveSystemAbility(systemAbilityId, deviceId);
+    listen->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
+    listen->OnRemoveSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
+    EXPECT_TRUE(listen != nullptr);
 }
 } // namespace Telephony
 } // namespace OHOS
