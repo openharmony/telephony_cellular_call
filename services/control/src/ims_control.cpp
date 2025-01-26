@@ -501,7 +501,8 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     }
 
     StandardizeUtils standardizeUtils;
-    std::string phoneNumber = callInfo.number.empty() ? callInfo.name : callInfo.number;
+    std::string phoneNumber = callInfo.number;
+    callReportInfo.name = callInfo.number.empty() ? "" : callInfo.name;
     std::string newString = standardizeUtils.FormatNumberAndToa(phoneNumber, callInfo.toa);
     size_t cpyLen = strlen(newString.c_str()) + 1;
     if (cpyLen > static_cast<size_t>(kMaxNumberLen + 1)) {
@@ -537,7 +538,6 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.mpty = callInfo.mpty;
     callReportInfo.crsType = callInfo.toneType;
     callReportInfo.originalCallType = callInfo.callInitialType;
-    callReportInfo.name = callInfo.name;
     callReportInfo.namePresentation = callInfo.namePresentation;
     return callReportInfo;
 }

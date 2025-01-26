@@ -585,6 +585,9 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0002, Function | MediumTest | Level3
         callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING);
         callList.calls.push_back(callInfo);
         EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        callList.calls[0].number = "";
+        callList.calls[0].name = "anonymous";
+        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->HangUpAllConnection(slotId), TELEPHONY_SUCCESS);
         callList.callSize = 2;
         callInfo.index = 2;
