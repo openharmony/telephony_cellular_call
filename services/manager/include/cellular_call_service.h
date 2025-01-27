@@ -653,6 +653,10 @@ public:
 
     int32_t GetSrvccState();
 
+    void setRadioOnFlag(bool flag);
+
+    bool isRadioOnFlag();
+
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     /**
      * Get call manager service
@@ -736,6 +740,7 @@ private:
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
     std::mutex mutex_;
+    bool isRadioOn_ = false;
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {

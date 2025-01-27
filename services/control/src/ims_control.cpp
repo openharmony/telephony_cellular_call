@@ -36,6 +36,11 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
         callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
     int32_t ret = DialPreJudgment(callInfo, isEcc);
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    if (ret == CALL_ERR_GET_RADIO_STATE_FAILED) {
+        return SavePendingEmcCallInfo(callInfo);
+    }
+#endif
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
@@ -123,6 +128,28 @@ int32_t IMSControl::EncapsulateDial(
     CellularCallConnectionIMS cellularCallConnectionIms;
     return cellularCallConnectionIms.DialRequest(slotId, dialInfo);
 }
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+int32_t IMSControl::SavePendingEmcCallInfo(const CellularCallInfo &callInfo)
+{
+        pendingEmcDialCallInfo_.callId = callInfo.callId;
+        pendingEmcDialCallInfo_.slotId = callInfo.slotId;
+        pendingEmcDialCallInfo_.accountId = callInfo.accountId;
+        pendingEmcDialCallInfo_.callType = callInfo.callType;
+        pendingEmcDialCallInfo_.videoState = callInfo.videoState;
+        pendingEmcDialCallInfo_.index = callInfo.index;
+        if (memset_s(pendingEmcDialCallInfo_.phoneNum, kMaxNumberLen, 0, kMaxNumberLen) != EOK) {
+            TELEPHONY_LOGE("memset_s failed!");
+            return TELEPHONY_ERR_MEMSET_FAIL;
+        }
+        if (memcpy_s(pendingEmcDialCallInfo_.phoneNum, kMaxNumberLen, callInfo.phoneNum, kMaxNumberLen) != EOK) {
+            TELEPHONY_LOGE("memcpy_s failed!");
+            return TELEPHONY_ERR_MEMCPY_FAIL;
+        }
+        isPendingEmc_ = true;
+        return TELEPHONY_SUCCESS;
+}
+#endif
 
 int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
@@ -735,5 +762,22 @@ void IMSControl::UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReaso
         }
     }
 }
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+CellularCallInfo IMSControl::GetPendingEmcCallInfo()
+{
+    return pendingEmcDialCallInfo_;
+}
+
+bool IMSControl::isPendingEmcFlag()
+{
+    return isPendingEmc_;
+}
+
+void IMSControl::setPendingEmcFlag(bool flag)
+{
+    isPendingEmc_ = flag;
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

@@ -201,6 +201,11 @@ public:
 
     void UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason);
 
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    CellularCallInfo GetPendingEmcCallInfo();
+    bool isPendingEmcFlag();
+    void setPendingEmcFlag(bool flag);
+#endif
 private:
     /**
      * handle dial judgment
@@ -260,11 +265,22 @@ private:
      *
      */
     int32_t CheckAndHangupHoldingCall();
-
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    /**
+     * save pending emc callinfo, wait modem radio on and dial again
+     *
+     * @param CallInfo
+     */
+    int32_t SavePendingEmcCallInfo(const CellularCallInfo &callInfo);
+#endif
 private:
     ImsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
     std::recursive_mutex connectionMapMutex_;
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    CellularCallInfo pendingEmcDialCallInfo_;
+    bool isPendingEmc_ = false;
+#endif
 };
 } // namespace Telephony
 } // namespace OHOS
