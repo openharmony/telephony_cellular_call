@@ -43,7 +43,7 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEc
         TELEPHONY_LOGE("serviceInstance get failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    if (!(serviceInstance->isRadioOnFlag())) {
+    if (!(serviceInstance->isRadioOnFlag(callInfo.slotId))) {
         TELEPHONY_LOGE("DialPreJudgment return, radio state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
             callInfo.videoState, CALL_ERR_GET_RADIO_STATE_FAILED, "radio state error");

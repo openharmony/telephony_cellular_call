@@ -62,6 +62,9 @@ bool CellularCallService::Init()
 #endif
     CreateHandler();
     SendEventRegisterHandler();
+    for (int32_t i = DEFAULT_SIM_SLOT_ID; i < SIM_SLOT_COUNT; ++i) {
+        isRadioOn_.insert(std::pair<int, bool>(i, false));
+    }
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     callManagerListener_ = new (std::nothrow) SystemAbilityStatusChangeListener();
     if (samgrProxy == nullptr || callManagerListener_ == nullptr) {
@@ -1613,14 +1616,14 @@ void CellularCallService::StartCallManagerService()
 }
 #endif
 
-void CellularCallService::setRadioOnFlag(bool flag)
+void CellularCallService::setRadioOnFlag(bool flag, int32_t slotId)
 {
-    isRadioOn_ = flag;
+    isRadioOn_[slotId] = flag;
 }
 
-bool CellularCallService::isRadioOnFlag()
+bool CellularCallService::isRadioOnFlag(int32_t slotId)
 {
-    return isRadioOn_;
+    return isRadioOn_[slotId];
 }
 } // namespace Telephony
 } // namespace OHOS

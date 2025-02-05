@@ -1841,7 +1841,7 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         StartCallManagerService();
 #endif
-        serviceInstance->setRadioOnFlag(true);
+        serviceInstance->setRadioOnFlag(true, slotId_);
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
         auto imsControl = serviceInstance->GetImsControl(slotId_);
         if (imsControl == nullptr) {
@@ -1862,7 +1862,7 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         }
 #endif
     } else {
-        serviceInstance->setRadioOnFlag(false);
+        serviceInstance->setRadioOnFlag(false, slotId_);
     }
 }
 

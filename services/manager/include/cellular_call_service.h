@@ -653,9 +653,9 @@ public:
 
     int32_t GetSrvccState();
 
-    void setRadioOnFlag(bool flag);
+    void setRadioOnFlag(bool flag, int32_t slotId);
 
-    bool isRadioOnFlag();
+    bool isRadioOnFlag(int32_t slotId);
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     /**
@@ -736,11 +736,11 @@ private:
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
     std::map<int32_t, std::shared_ptr<SatelliteControl>> satelliteControlMap_;
+    std::map<int32_t, bool> isRadioOn_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
     std::mutex mutex_;
-    bool isRadioOn_ = false;
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {
