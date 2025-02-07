@@ -29,6 +29,7 @@
 #include "satellite_call_client.h"
 #include "satellite_radio_event.h"
 #include "securec.h"
+#include "call_manager_info.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -207,12 +208,10 @@ void CellularCallHandler::InitActiveReportFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { FactoryReset(event); };
     requestFuncMap_[RadioEvent::RADIO_NV_REFRESH_FINISHED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { NvCfgFinishedIndication(event); };
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     requestFuncMap_[RadioEvent::RADIO_GET_STATUS] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { GetRadioStateProcess(event); };
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { RadioStateChangeProcess(event); };
-#endif
 }
 
 void CellularCallHandler::InitSatelliteCallFuncMap()
@@ -1822,6 +1821,7 @@ void CellularCallHandler::StartCallManagerService()
     }
     serviceInstance->StartCallManagerService();
 }
+#endif
 
 void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -1830,9 +1830,39 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("[slot%{public}d] object is null", slotId_);
         return;
     }
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("serviceInstance get failed!");
+        return;
+    }
+    
     TELEPHONY_LOGI("[slot%{public}d] Radio changed with state: %{public}d", slotId_, object->data);
     if (object->data == CORE_SERVICE_POWER_ON) {
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         StartCallManagerService();
+#endif
+        serviceInstance->setRadioOnFlag(true, slotId_);
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+        auto imsControl = serviceInstance->GetImsControl(slotId_);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("imsControl get failed!");
+            return;
+        }
+        
+        if (imsControl->isPendingEmcFlag()) {
+            CellularCallInfo callInfo = imsControl->GetPendingEmcCallInfo();
+            int32_t ret = imsControl->Dial(callInfo, true);
+            if (ret != TELEPHONY_ERR_SUCCESS) {
+                imsControl->ReportHangUpInfo(slotId_);
+                TELEPHONY_LOGE("imsControl dial failed!");
+                imsControl->setPendingEmcFlag(false);
+                return;
+            }
+            imsControl->setPendingEmcFlag(false);
+        }
+#endif
+    } else {
+        serviceInstance->setRadioOnFlag(false, slotId_);
     }
 }
 
@@ -1845,10 +1875,11 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
     }
     TELEPHONY_LOGI("GetRadioStateProcess [slot%{public}d], state=%{public}d", slotId_, object->state);
     if (object->state == CORE_SERVICE_POWER_ON) {
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         StartCallManagerService();
+#endif
     }
 }
-#endif
 
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {

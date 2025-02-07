@@ -653,6 +653,10 @@ public:
 
     int32_t GetSrvccState();
 
+    void setRadioOnFlag(bool flag, int32_t slotId);
+
+    bool isRadioOnFlag(int32_t slotId);
+
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     /**
      * Get call manager service
@@ -732,6 +736,7 @@ private:
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
     std::map<int32_t, std::shared_ptr<SatelliteControl>> satelliteControlMap_;
+    std::map<int32_t, bool> isRadioOn_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;

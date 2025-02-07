@@ -23,7 +23,8 @@
             "SystemCapability.Telephony.CellularCall"
         ],
         "features": [
-            "cellular_call_dynamic_start"
+            "cellular_call_dynamic_start",
+            "cellular_call_emc_set_radio_on"
         ],
         "adapted_system_type": [
             "standard"

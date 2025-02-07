@@ -249,7 +249,6 @@ private:
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
     void HandleCallDisconnectReason(RilDisconnectedReason reason);
 
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     /**
      * If radio state change get call manager service
      *
@@ -263,7 +262,7 @@ private:
      * @param AppExecFwk::InnerEvent::Pointer
      */
     void GetRadioStateProcess(const AppExecFwk::InnerEvent::Pointer &event);
-
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     void StartCallManagerService();
 #endif
 

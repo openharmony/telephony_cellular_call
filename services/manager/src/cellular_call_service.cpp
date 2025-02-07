@@ -62,6 +62,9 @@ bool CellularCallService::Init()
 #endif
     CreateHandler();
     SendEventRegisterHandler();
+    for (int32_t i = DEFAULT_SIM_SLOT_ID; i < SIM_SLOT_COUNT; ++i) {
+        isRadioOn_.insert(std::pair<int, bool>(i, false));
+    }
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     callManagerListener_ = new (std::nothrow) SystemAbilityStatusChangeListener();
     if (samgrProxy == nullptr || callManagerListener_ == nullptr) {
@@ -185,9 +188,7 @@ void CellularCallService::HandlerResetUnRegister()
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RESIDENT_NETWORK_CHANGE);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET);
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
-#endif
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -223,10 +224,8 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NV_REFRESH_FINISHED, nullptr);
-#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
             coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
-#endif
         }
         lock.unlock();
         CellularCallConfig config;
@@ -740,6 +739,11 @@ int32_t CellularCallService::HangUpAllConnection()
             GetCsControl(it)->HangUpAllConnection(it);
         }
         if (GetImsControl(it)) {
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+            if (GetImsControl(it)->isPendingEmcFlag()) {
+                return TELEPHONY_SUCCESS;
+            }
+#endif
             GetImsControl(it)->HangUpAllConnection(it);
         }
     }
@@ -1611,5 +1615,15 @@ void CellularCallService::StartCallManagerService()
     }
 }
 #endif
+
+void CellularCallService::setRadioOnFlag(bool flag, int32_t slotId)
+{
+    isRadioOn_[slotId] = flag;
+}
+
+bool CellularCallService::isRadioOnFlag(int32_t slotId)
+{
+    return isRadioOn_[slotId];
+}
 } // namespace Telephony
 } // namespace OHOS
