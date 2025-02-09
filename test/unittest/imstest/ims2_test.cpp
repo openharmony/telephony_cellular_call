@@ -971,6 +971,40 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
 }
 
 /**
+ * @tc.number   cellular_call_CellularCallHandler_0006
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+
+    int32_t slotId = 0;
+    handler.SetSlotId(slotId);
+    auto event = AppExecFwk::InnerEvent::Get(0);
+    handler.ProcessRadioProtocolNotify(event);
+
+    auto radioProtocol = std::make_shared<RadioProtocol>();
+    radioProtocol->slotId = 1;
+    auto radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
+    handler.ProcessRadioProtocolNotify(radioEvent);
+
+    radioProtocol->slotId = slotId;
+    radioProtocol->status = RadioProtocolStatus::RADIO_PROTOCOL_STATUS_FAIL;
+    radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
+    handler.ProcessRadioProtocolNotify(radioEvent);
+
+    radioProtocol->status = RadioProtocolStatus::RADIO_PROTOCOL_STATUS_SUCCESS;
+    radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
+    handler.ProcessRadioProtocolNotify(radioEvent);
+
+    ASSERT_EQ(handler.GetSlotId(), slotId);
+}
+
+/**
  * @tc.number   cellular_call_ImsCallClient_0001
  * @tc.name     test for ImsCallClient
  * @tc.desc     Function test

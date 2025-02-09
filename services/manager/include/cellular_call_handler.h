@@ -37,6 +37,7 @@ namespace OHOS {
 namespace Telephony {
 
 constexpr const char *KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV = "const.telephony.is_use_cloud_ims_nv";
+constexpr const char *KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP = "persist.telephony.volte_cap_in_chip";
 class CellularCallHandler : public TelEventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
@@ -248,6 +249,7 @@ private:
     void ProcessCsPhoneNumber(CallInfoList &list);
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
     void HandleCallDisconnectReason(RilDisconnectedReason reason);
+    void ProcessRadioProtocolNotify(const AppExecFwk::InnerEvent::Pointer &event);
 
     /**
      * If radio state change get call manager service
