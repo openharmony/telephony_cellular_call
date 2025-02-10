@@ -61,9 +61,9 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
             return TELEPHONY_ERR_SUCCESS;
         }
     } else {
+        //Determine whether the watch device is DYNAMIC_POWEROFF_MODEM
+        bool isDynamicPoweroffModem = system::GetBoolParameter(DYNAMIC_POWEROFF_MODEM, false);
         for (auto it = eccCallList.begin(); it != eccCallList.end(); it++) {
-            //Determine whether the watch device is DYNAMIC_POWEROFF_MODEM
-            bool isDynamicPoweroffModem = system::GetBoolParameter(DYNAMIC_POWEROFF_MODEM, false);
             if ((mcc == it->mcc || isDynamicPoweroffModem) && formatString == it->eccNum) {
                 TELEPHONY_LOGI("IsEmergencyCallProcessing, Complies with sim data.");
                 return TELEPHONY_ERR_SUCCESS;
