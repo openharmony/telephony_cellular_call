@@ -189,6 +189,7 @@ void CellularCallService::HandlerResetUnRegister()
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_RIL_ADAPTER_HOST_DIED);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_FACTORY_RESET);
         coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED);
+        coreInner.UnRegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY);
         if (GetCsControl(slot) != nullptr) {
             GetCsControl(slot)->ReleaseAllConnection();
         }
@@ -226,6 +227,7 @@ void CellularCallService::RegisterCoreServiceHandler()
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_NV_REFRESH_FINISHED, nullptr);
             coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_STATE_CHANGED, nullptr);
             coreInner.GetRadioState(slot, RadioEvent::RADIO_GET_STATUS, handler);
+            coreInner.RegisterCoreNotify(slot, handler, RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, nullptr);
         }
         lock.unlock();
         CellularCallConfig config;

@@ -212,6 +212,8 @@ void CellularCallHandler::InitActiveReportFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { GetRadioStateProcess(event); };
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { RadioStateChangeProcess(event); };
+    requestFuncMap_[RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ProcessRadioProtocolNotify(event); };
 }
 
 void CellularCallHandler::InitSatelliteCallFuncMap()
@@ -1916,8 +1918,48 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
         return;
     }
 
-    CellularCallConfig config;
-    config.UpdateImsCapFromChip(slotId_, *imsCap);
+    std::string volteCapKey = KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP + std::string("_slot") + std::to_string(slotId_);
+    int32_t volteCapInProp = GetIntParameter(volteCapKey.c_str(), -1);
+    TELEPHONY_LOGI("[slot%{public}d] volteCapInProp = %{public}d, volteCap = %{public}d",
+        slotId_, volteCapInProp, imsCap->volteCap);
+    if (volteCapInProp != imsCap->volteCap) {
+        std::string strVolteCap = std::to_string(imsCap->volteCap);
+        SetParameter(volteCapKey.c_str(), strVolteCap.c_str());
+        CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId_, *imsCap);
+    }
+
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (const auto &slotId : slotVector) {
+        bool hasSimCard = false;
+        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+        if (!hasSimCard) {
+            continue;
+        }
+        CellularCallConfig config;
+        config.UpdateImsConfiguration(slotId, INVALID_OPERATOR_CONFIG_STATE, false);
+    }
+}
+
+void CellularCallHandler::ProcessRadioProtocolNotify(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("event is nullptr");
+        return;
+    }
+    std::shared_ptr<RadioProtocol> radioProtocol = event->GetSharedObject<RadioProtocol>();
+    if (radioProtocol == nullptr || radioProtocol->slotId != slotId_) {
+        TELEPHONY_LOGE("RadioProtocol is null or invalid slotId");
+        return;
+    }
+
+    bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, true);
+    TELEPHONY_LOGI("[slot%{public}d] entry, isUseCloudImsNV = %{public}d", slotId_, isUseCloudImsNV);
+    if (!isUseCloudImsNV || radioProtocol->status == RadioProtocolStatus::RADIO_PROTOCOL_STATUS_FAIL) {
+        TELEPHONY_LOGE("RadioProtocol update failed or isUseCloudImsNV is false");
+        return;
+    }
+    GetImsCapabilities(radioProtocol->slotId);
 }
 
 void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reason)
