@@ -29,6 +29,7 @@ const uint32_t WAIT_TIME_SECOND = 5;
 
 int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEcc)
 {
+    bool isRadioOn = false;
     HandleEcc(callInfo, isEcc, CheckAirplaneModeScene(callInfo), CheckActivateSimScene(callInfo.slotId));
     std::string dialString(callInfo.phoneNum);
     if (dialString.empty()) {
@@ -38,12 +39,18 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEc
         return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
 
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance == nullptr) {
         TELEPHONY_LOGE("serviceInstance get failed!");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    if (!(serviceInstance->isRadioOnFlag(callInfo.slotId))) {
+    isRadioOn = serviceInstance->isRadioOnFlag(callInfo.slotId);
+#else
+    ModuleServiceUtils moduleServiceUtils;
+    isRadioOn = moduleServiceUtils.GetRadioState(callInfo.slotId);
+#endif
+    if (!isRadioOn) {
         TELEPHONY_LOGE("DialPreJudgment return, radio state error.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(callInfo.accountId, static_cast<int32_t>(callInfo.callType),
             callInfo.videoState, CALL_ERR_GET_RADIO_STATE_FAILED, "radio state error");
