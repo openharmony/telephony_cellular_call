@@ -21,6 +21,7 @@
 #include "system_ability_definition.h"
 #include "telephony_errors.h"
 #include "telephony_log_wrapper.h"
+#include "cellular_call_service.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -233,6 +234,7 @@ void SatelliteCallClient::Clean()
 void SatelliteCallClient::OnRemoteDied(const wptr<IRemoteObject> &remote)
 {
     RemoveDeathRecipient(remote);
+    ClearAllCallsInfo();
 }
 
 void SatelliteCallClient::RemoveDeathRecipient(const wptr<IRemoteObject> &remote)
@@ -259,6 +261,24 @@ void SatelliteCallClient::RemoveDeathRecipient(const wptr<IRemoteObject> &remote
     satelliteServiceProxy_ = nullptr;
     satelliteCallProxy_ = nullptr;
     TELEPHONY_LOGI("SatelliteCallClient:RemoveDeathRecipient success");
+}
+
+void SatelliteCallClient::ClearAllCallsInfo()
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("SatelliteCallClient::serviceInstance is null");
+        return;
+    }
+    auto satelliteControl = std::make_shared<SatelliteControl>();
+    for (int slotId = DEFAULT_SIM_SLOT_ID; slotId < SIM_SLOT_COUNT; slotId++) {
+        satelliteControl = serviceInstance->GetSatelliteControl(slotId);
+        if (satelliteControl == nullptr) {
+            TELEPHONY_LOGE("SatelliteCallClient::[slot%{public}d] serviceControl is null", slotId);
+            continue;
+        }
+        satelliteControl->ReportHangUpInfo(slotId);
+    }
 }
 
 } // namespace Telephony

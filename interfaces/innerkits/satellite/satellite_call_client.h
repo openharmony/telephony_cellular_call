@@ -147,6 +147,8 @@ private:
 
     void OnRemoteDied(const wptr<IRemoteObject> &remote);
 
+    void ClearAllCallsInfo();
+
 private:
     sptr<ISatelliteService> satelliteServiceProxy_ = nullptr;
     sptr<SatelliteCallInterface> satelliteCallProxy_ = nullptr;
