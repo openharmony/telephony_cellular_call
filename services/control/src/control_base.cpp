@@ -39,6 +39,7 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEc
         return CALL_ERR_PHONE_NUMBER_EMPTY;
     }
 
+//The wearer does not register satellite radio status. Currently, the wearer does not support SkyTone satellite calls.
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance == nullptr) {
