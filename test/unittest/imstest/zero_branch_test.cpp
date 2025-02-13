@@ -234,7 +234,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
     config.UpdateImsCapabilities(SIM1_SLOTID, true, false, -1);
     bool enabled = false;
-    config.ChangeImsSwitchWithOperatorConfig(SIM1_SLOTID, true);
     config.SaveImsSwitch(SIM1_SLOTID, true);
     config.IsUtProvisioned(SIM1_SLOTID);
     config.utProvisioningSupported_[SIM1_SLOTID] = true;
