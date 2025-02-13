@@ -88,7 +88,7 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
             connection.second.SetHoldToDialInfo(phoneNum, clirMode, videoState, isEmergency);
             connection.second.SetDialFlag(true);
             // - a call can be temporarily disconnected from the ME but the connection is retained by the network
-            return connection.second.SwitchCallRequest(slotId);
+            return connection.second.SwitchCallRequest(slotId, videoState);
         }
     }
     return EncapsulateDial(slotId, phoneNum, clirMode, videoState);
@@ -222,7 +222,7 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     if (con != nullptr && !con->IsPendingHold() &&
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
         TELEPHONY_LOGI("Answer there is an active call when you call, or third party call waiting");
-        return con->SwitchCallRequest(callInfo.slotId);
+        return con->SwitchCallRequest(callInfo.slotId, callInfo.videoState);
     }
     if (pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_INCOMING ||
@@ -286,15 +286,31 @@ int32_t IMSControl::HoldCall(int32_t slotId)
 int32_t IMSControl::UnHoldCall(int32_t slotId)
 {
     TELEPHONY_LOGI("UnHoldCall start");
-    CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.UnHoldCallRequest(slotId);
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+    for (auto &it : connectionMap_) {
+        CallReportInfo reportInfo = it.second.GetCallReportInfo();
+        if (slotId == reportInfo.accountId && reportInfo.state == TelCallState::CALL_STATUS_HOLDING) {
+            return it.second.UnHoldCallRequest(slotId);
+        }
+    }
+    TELEPHONY_LOGE("UnHoldCall return, not exist hold call.");
+    return TELEPHONY_ERROR;
 }
 
 int32_t IMSControl::SwitchCall(int32_t slotId)
 {
     TELEPHONY_LOGI("SwitchCall start");
+    std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
+    VideoStateType callMode = VideoStateType::TYPE_VOICE;
+    for (auto &it : connectionMap_) {
+        CallReportInfo reportInfo = it.second.GetCallReportInfo();
+        if (slotId == reportInfo.accountId) {
+            callMode = reportInfo.callMode;
+            break;
+        }
+    }
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.SwitchCallRequest(slotId);
+    return cellularCallConnectionIms.SwitchCallRequest(slotId, static_cast<int32_t>(callMode));
 }
 
 /**

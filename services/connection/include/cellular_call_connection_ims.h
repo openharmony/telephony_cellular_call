@@ -95,9 +95,10 @@ public:
      * SwitchCall Request
      *
      * @param slotId
+     * @param videoState
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwitchCallRequest(int32_t slotId);
+    int32_t SwitchCallRequest(int32_t slotId, int32_t videoState);
 
     /**
      * CombineConference Request
