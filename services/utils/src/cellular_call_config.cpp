@@ -172,8 +172,7 @@ int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
         enabled = true;
         return TELEPHONY_SUCCESS;
     }
-    int32_t imsSwitchStatus = GetSwitchStatus(slotId);
-    enabled = imsSwitchStatus;
+    enabled = GetSwitchStatus(slotId);
     return TELEPHONY_SUCCESS;
 }
 
