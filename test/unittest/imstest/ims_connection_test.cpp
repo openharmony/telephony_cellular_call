@@ -162,7 +162,8 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0009, Function | Mediu
 {
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     int32_t slotId = 0;
-    int32_t ret = cellularCallConnectionIMS->SwitchCallRequest(slotId);
+    int32_t videoState = 0;
+    int32_t ret = cellularCallConnectionIMS->SwitchCallRequest(slotId, videoState);
     EXPECT_EQ(ret, TELEPHONY_ERROR);
 }
 
