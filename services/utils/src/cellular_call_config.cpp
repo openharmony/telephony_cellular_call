@@ -148,7 +148,6 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
         return TELEPHONY_ERR_SLOTID_INVALID;
     }
 
-    active = ChangeImsSwitchWithOperatorConfig(slotId, active);
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(active));
     if (ret == SAVE_IMS_SWITCH_FAILED) {
         return TELEPHONY_ERR_DATABASE_WRITE_FAIL;
@@ -169,21 +168,11 @@ int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
 {
     TELEPHONY_LOGD("entry, slotId: %{public}d", slotId);
     auto itorHide = hideImsSwitch_.find(slotId);
-    if (itorHide != hideImsSwitch_.end()) {
-        if (itorHide->second) {
-            auto itorSwitch = imsSwitchOnByDefault_.find(slotId);
-            if (itorSwitch != imsSwitchOnByDefault_.end()) {
-                enabled = imsSwitchOnByDefault_[slotId];
-            }
-        } else {
-            int32_t imsSwitchStatus = GetSwitchStatus(slotId);
-            enabled = imsSwitchStatus;
-        }
-    } else {
-        TELEPHONY_LOGI("do not find hideImsSwitch");
-        int32_t imsSwitchStatus = GetSwitchStatus(slotId);
-        enabled = imsSwitchStatus;
+    if (itorHide != hideImsSwitch_.end() && itorHide->second) {
+        enabled = true;
+        return TELEPHONY_SUCCESS;
     }
+    enabled = GetSwitchStatus(slotId);
     return TELEPHONY_SUCCESS;
 }
 
@@ -635,22 +624,6 @@ bool CellularCallConfig::IsSimChanged(int32_t slotId, std::string iccid)
         return true;
     }
     return false;
-}
-
-bool CellularCallConfig::ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active)
-{
-    auto itorHide = hideImsSwitch_.find(slotId);
-    if (itorHide != hideImsSwitch_.end()) {
-        if (itorHide->second) {
-            auto itorSwitch = imsSwitchOnByDefault_.find(slotId);
-            if (itorSwitch != imsSwitchOnByDefault_.end()) {
-                active = imsSwitchOnByDefault_[slotId];
-                return active;
-            }
-        }
-    }
-    TELEPHONY_LOGE("do not find hideImsSwitch or imsSwitchOnByDefault config");
-    return active;
 }
 
 int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue)

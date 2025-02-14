@@ -472,7 +472,6 @@ private:
     bool IsUtProvisioned(int32_t slotId);
     bool IsNeedTurnOnIms(const ImsCapabilityList &imsCapabilityList);
     bool IsSimChanged(int32_t slotId, std::string iccid);
-    bool ChangeImsSwitchWithOperatorConfig(int32_t slotId, bool active);
     int32_t SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue);
     int32_t GetSwitchStatus(int32_t slotId);
     void saveImsSwitchStatusToLocalForPowerOn(int32_t slotId);
