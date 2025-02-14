@@ -183,7 +183,7 @@ int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId, int32_t videoState)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -191,8 +191,7 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId)
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
-        int32_t ret = DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, callType);
+        int32_t ret = DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, videoState);
         if (ret == TELEPHONY_SUCCESS) {
             UpdatePendingHoldFlag(true);
         }

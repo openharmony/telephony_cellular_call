@@ -972,6 +972,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ImsDialInfoStruct dialRequest;
     std::vector<std::string> numberList = {};
     std::string msg = "";
+    int32_t videoState = 0;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     ASSERT_EQ(callConn.DialRequest(SIM1_SLOTID, dialRequest), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
     ASSERT_EQ(callConn.HangUpRequest(SIM1_SLOTID, PHONE_NUMBER, 0), INVALID_VALUE);
@@ -979,7 +980,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ASSERT_EQ(callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0), INVALID_VALUE);
     ASSERT_EQ(callConn.HoldCallRequest(SIM1_SLOTID), INVALID_VALUE);
     ASSERT_EQ(callConn.UnHoldCallRequest(SIM1_SLOTID), INVALID_VALUE);
-    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID), INVALID_VALUE);
+    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID, videoState), INVALID_VALUE);
     ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), INVALID_VALUE);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
@@ -998,7 +999,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ASSERT_EQ(callConn.RejectRequest(SIM1_SLOTID, PHONE_NUMBER, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.HoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.UnHoldCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
-    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.SwitchCallRequest(SIM1_SLOTID, videoState), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.CombineConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
