@@ -405,6 +405,9 @@ void CellularCallConfig::UpdateImsConfiguration(int32_t slotId, int32_t configSt
     if (videoCallWaiting_.find(slotId) == videoCallWaiting_.end()) {
         configRequest_.SetVideoCallWaiting(slotId, videoCallWaiting_[slotId]);
     }
+    if (carrierVtAvailable_.find(slotId) != carrierVtAvailable_.end()) {
+        configRequest_.SetCarrierVtConfigRequest(slotId, carrierVtAvailable_[slotId]);
+    }
 }
 
 int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, OperatorConfig &poc)
@@ -488,9 +491,6 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
     }
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
     configRequest_.SetImsSwitchStatusRequest(slotId, IsNeedTurnOnIms(imsCapabilityList));
-    if (carrierVtAvailable_.find(slotId) != carrierVtAvailable_.end()) {
-        configRequest_.SetCarrierVtConfigRequest(slotId, carrierVtAvailable_[slotId]);
-    }
 }
 bool CellularCallConfig::IsGbaValid(int32_t slotId)
 {
