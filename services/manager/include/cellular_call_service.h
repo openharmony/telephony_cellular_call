@@ -357,6 +357,15 @@ public:
     int32_t GetCallWaiting(int32_t slotId) override;
 
     /**
+     * GetVideoCallWaiting
+     *
+     * @param slotId
+     * @param enabled
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetVideoCallWaiting(int32_t slotId, bool &enabled) override;
+
+    /**
      * Set Call Restriction
      *
      * @param slotId

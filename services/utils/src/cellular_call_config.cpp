@@ -402,7 +402,7 @@ void CellularCallConfig::UpdateImsConfiguration(int32_t slotId, int32_t configSt
     saveImsSwitchStatusToLocalForPowerOn(slotId);
     ResetImsSwitch(slotId);
     UpdateImsCapabilities(slotId, true, isOpcChanged, configState);
-    if (videoCallWaiting_.find(slotId) == videoCallWaiting_.end()) {
+    if (videoCallWaiting_.find(slotId) != videoCallWaiting_.end()) {
         configRequest_.SetVideoCallWaiting(slotId, videoCallWaiting_[slotId]);
     }
     if (carrierVtAvailable_.find(slotId) != carrierVtAvailable_.end()) {
@@ -1122,5 +1122,19 @@ bool CellularCallConfig::NeedReadThirdParyLib()
     }
     return true;
 }
+
+int32_t CellularCallConfig::GetVideoCallWaiting(int32_t slotId, bool &enabled)
+{
+    TELEPHONY_LOGE("entry, slotId: %{public}d", slotId);
+    auto it = videoCallWaiting_.find(slotId);
+    if (it != videoCallWaiting_.end()) {
+        enabled = it->second;
+    } else {
+        TELEPHONY_LOGI("videoCallWaiting_ not find slotId:%{public}d", slotId);
+        enabled = false;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
 } // namespace Telephony
 } // namespace OHOS
