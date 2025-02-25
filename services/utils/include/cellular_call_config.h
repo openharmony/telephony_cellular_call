@@ -17,7 +17,7 @@
 #define CELLULAR_CALL_CONFIG_H
 
 #include <map>
-#include <mutex>
+#include <shared_mutex>
 
 #include "config_request.h"
 #include "global_params_data.h"
@@ -502,8 +502,8 @@ private:
     static std::map<int32_t, std::vector<EmergencyCall>> allEccList_;
     static std::map<int32_t, int32_t> simState_;
     static std::map<int32_t, std::string> curPlmn_;
-    std::mutex mutex_;
-    std::mutex simStateLock_;
+    static std::shared_mutex simStateLock_;
+    static std::shared_mutex mutex_;
     static std::mutex operatorMutex_;
     ConfigRequest configRequest_;
     static std::map<int32_t, bool> imsSwitchOnByDefault_;
