@@ -324,7 +324,7 @@ int32_t CellularCallConfig::CheckHomeAndPresentState(int32_t slotId, bool &isHom
     bool isHomeNetRegister = isNetworkInService && !isRoam;
     bool isSimPresent = false;
     {
-        std::unique_lock<std::shared_mutex> lock(simStateLock_);
+        std::shared_lock<std::shared_mutex> lock(simStateLock_);
         isSimPresent = simState_[slotId] == SIM_PRESENT;
     }
     isHomeAndPresent = isHomeNetRegister && isSimPresent;
