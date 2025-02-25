@@ -214,6 +214,8 @@ void CellularCallStub::InitSupplementFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnUnRegisterCallBackInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::CLOSE_UNFINISHED_USSD] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnCloseUnFinishedUssdInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::GET_VIDEO_CALL_WAITING] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnGetVideoCallWaitingInner(data, reply); };
 }
 
 int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)
@@ -820,6 +822,24 @@ int32_t CellularCallStub::OnGetCallWaitingInner(MessageParcel &data, MessageParc
     int32_t slotId = data.ReadInt32();
     TELEPHONY_LOGI("CellularCallStub::OnGetCallWaitingInner data.ReadInt32()");
     reply.WriteInt32(GetCallWaiting(slotId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnGetVideoCallWaitingInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnGetVideoCallWaitingInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("CellularCallStub::OnGetVideoCallWaitingInner data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    TELEPHONY_LOGI("CellularCallStub::OnGetVideoCallWaitingInner data.ReadInt32()");
+    bool enable = false;
+    int32_t result = GetVideoCallWaiting(slotId, enable);
+    reply.WriteBool(enable);
+    reply.WriteInt32(result);
     return TELEPHONY_SUCCESS;
 }
 

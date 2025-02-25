@@ -1102,6 +1102,17 @@ int32_t CellularCallService::GetCallWaiting(int32_t slotId)
     return cellularCallSupplement.GetCallWaiting(slotId);
 }
 
+int32_t CellularCallService::GetVideoCallWaiting(int32_t slotId, bool &enabled)
+{
+    TELEPHONY_LOGD("CellularCallService::GetVideoCallWaiting");
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::GetVideoCallWaiting return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallConfig cellularCallConfig;
+    return cellularCallConfig.GetVideoCallWaiting(slotId, enabled);
+}
+
 int32_t CellularCallService::SetCallRestriction(int32_t slotId, const CallRestrictionInfo &crInfo)
 {
     TELEPHONY_LOGD("CellularCallService::SetCallRestriction");

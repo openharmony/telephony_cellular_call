@@ -452,6 +452,15 @@ public:
 
     bool NeedReadThirdParyLib();
 
+        /**
+     * On Inquire video Call Waiting
+     *
+     * @param data  send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t GetVideoCallWaiting(int32_t slotId, bool &enabled);
+
 private:
     static void InitDefaultOperatorConfig();
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);

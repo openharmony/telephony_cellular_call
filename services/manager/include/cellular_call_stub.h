@@ -317,6 +317,15 @@ private:
     int32_t OnGetCallWaitingInner(MessageParcel &data, MessageParcel &reply);
 
     /**
+     * On Inquire video Call Waiting
+     *
+     * @param data  send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnGetVideoCallWaitingInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
      * On Set Call Restriction
      *
      * @param data send data
