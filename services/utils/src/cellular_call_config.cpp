@@ -67,7 +67,7 @@ std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnec
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
-std::mutex mutex_;
+std::shared_mutex CellularCallConfig::mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
 std::shared_mutex CellularCallConfig::simStateLock_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
@@ -781,7 +781,7 @@ void CellularCallConfig::InitModeActive()
     TELEPHONY_LOGI("InitModeActive");
     int32_t slotId = DEFAULT_SIM_SLOT_ID;
     modeMap_[slotId] = DomainPreferenceMode::IMS_PS_VOICE_PREFERRED;
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     eccListRadioMap_.clear();
     eccList3gppHasSim_.clear();
     eccList3gppNoSim_.clear();
@@ -951,7 +951,7 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
 void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList)
 {
     TELEPHONY_LOGD("UpdateEmergencyCallFromRadio %{publid}d size %{public}d", slotId, eccList.callSize);
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     eccListRadioMap_[slotId].clear();
     for (auto ecc : eccList.calls) {
         TELEPHONY_LOGD("UpdateEmergencyCallFromRadio , data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(),
@@ -964,7 +964,7 @@ void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const Emer
 std::vector<EmergencyCall> CellularCallConfig::GetEccCallList(int32_t slotId)
 {
     TELEPHONY_LOGD("GetEccCallList  start %{public}d", slotId);
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::shared_lock<std::shared_mutex> lock(mutex_);
     TELEPHONY_LOGD("GetEccCallList size %{public}zu", allEccList_[slotId].size());
     for (auto ecc : allEccList_[slotId]) {
         TELEPHONY_LOGD("GetEccCallList, data: eccNum %{public}s mcc %{public}s", ecc.eccNum.c_str(), ecc.mcc.c_str());
