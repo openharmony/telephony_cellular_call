@@ -69,6 +69,7 @@ std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::mutex mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
+std::shared_mutex CellularCallConfig::simStateLock_;
 std::map<int32_t, std::vector<EmergencyCall>> CellularCallConfig::eccListRadioMap_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppHasSim_;
 std::vector<EmergencyCall> CellularCallConfig::eccList3gppNoSim_;
@@ -323,7 +324,7 @@ int32_t CellularCallConfig::CheckHomeAndPresentState(int32_t slotId, bool &isHom
     bool isHomeNetRegister = isNetworkInService && !isRoam;
     bool isSimPresent = false;
     {
-        std::lock_guard<std::mutex> lock(simStateLock_);
+        std::unique_lock<std::shared_mutex> lock(simStateLock_);
         isSimPresent = simState_[slotId] == SIM_PRESENT;
     }
     isHomeAndPresent = isHomeNetRegister && isSimPresent;
@@ -941,7 +942,7 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
             break;
         }
     }
-    std::lock_guard<std::mutex> lock(simStateLock_);
+    std::unique_lock<std::shared_mutex> lock(simStateLock_);
     bool result = (simState_[slotId] != simStateForEcc);
     simState_[slotId] = simStateForEcc;
     return result;
