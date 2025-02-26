@@ -402,7 +402,7 @@ int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList 
 {
     std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     if (callInfoList.callSize <= 0) {
-        if (isNeedQuery && HasEndCallWithoutReason(callInfoList)) {
+        if (isNeedQuery) {
             GetCallFailReason(slotId, connectionMap_);
             return TELEPHONY_SUCCESS;
         }
@@ -410,7 +410,7 @@ int32_t IMSControl::ReportImsCallsData(int32_t slotId, const ImsCurrentCallList 
     } else if (callInfoList.callSize > 0 && connectionMap_.empty()) {
         return ReportIncomingInfo(slotId, callInfoList);
     } else if (callInfoList.callSize > 0 && !connectionMap_.empty()) {
-        if (isNeedQuery && HasEndCallWithoutReason(callInfoList)) {
+        if (isNeedQuery) {
             GetCallFailReason(slotId, connectionMap_);
             return TELEPHONY_SUCCESS;
         }
