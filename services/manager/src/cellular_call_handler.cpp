@@ -413,10 +413,11 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
             TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
             return;
         }
-        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
+        bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
+        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(imsCallInfo.state);
         }
-        if (!imsControl->HasEndCallWithoutReason(imsCallInfoList)) {
+        if (!hasEndCallWithoutReason) {
             serviceInstance->SetImsControl(slotId_, nullptr);
         }
         return;
@@ -436,7 +437,8 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         CellularCallIncomingFinishTrace(imsCallInfo.state);
         return;
     }
-    if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList) != TELEPHONY_SUCCESS) {
+    bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
+    if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(imsCallInfo.state);
     }
 }
