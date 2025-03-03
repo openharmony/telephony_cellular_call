@@ -113,7 +113,6 @@ public:
     MockTelRilManager *mockTelRilManager = new MockTelRilManager();
     MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
     MockSimManager *mockSimManager = new MockSimManager();
-
 };
 
 void Ims2Test::SetUpTestCase(void)
