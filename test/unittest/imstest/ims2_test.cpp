@@ -32,7 +32,7 @@
 #include "cellular_call_interface.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"
-#inclide "gmock/gmock.h"
+#include "gmock/gmock.h"
 #include "mock_sim_manager.h"
 #include "mock_tel_ril_manager.h"
 #include "mock_network_search.h"
@@ -1025,7 +1025,7 @@ HWTEST_F(Ims2Test, cellular_call_NvCfgFinishedIndication_0001, Function | Medium
     handler.SetSlotId(SIM1_SLOTID);
     auto responseEvent = AppExecFwk::InnerEvent::Get(0);
     handler.NvCfgFinishedIndication(responseEvent);
-    auto nvCfgFinishedIndication = std::make_shared<Int32Parcel>()
+    auto nvCfgFinishedIndication = std::make_shared<Int32Parcel>();
     nvCfgFinishedIndication->data = 0;
     responseEvent = AppExecFwk::InnerEvent::Get(0, nvCfgFinishedIndication);
     handler.NvCfgFinishedIndication(responseEvent);
