@@ -1139,6 +1139,10 @@ void CellularCallConfig::GetImsSwitchStatusRequest(int32_t slotId)
 
 bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 {
+    if (!isValidSlotId(slotId)) {
+        TELEPHONY_LOGE("inValid slot id %{public}d", slotId);
+        return false;
+    }
     bool imsSwitch = false;
     GetImsSwitchStatus(slotId, imsSwitch);
     bool isGbaValid = IsGbaValid(slotId);
@@ -1147,6 +1151,5 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
         "isVolteProvisioned[%{public}d]", slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
     return volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
 }
-
 } // namespace Telephony
 } // namespace OHOS
