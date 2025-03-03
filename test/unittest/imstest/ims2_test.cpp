@@ -1058,7 +1058,8 @@ HWTEST_F(Ims2Test, cellular_call_GetImsCapResponse_0001, Function | MediumTest |
     imsCap->volteCap = 1;
     responseEvent = AppExecFwk::InnerEvent::Get(0, imsCap);
     handler.GetImsCapResponse(responseEvent);
-    std::string volteCapKey = KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP + std::string("_slot") + std::to_string(SIM1_SLOTID);
+    std::string volteCapKey =
+        KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP + std::string("_slot") + std::to_string(SIM1_SLOTID);
     int32_t voltCapInProp = GetIntParameter(volteCapKey.c_str(), -1);
     ASSERT_EQ(voltCapInProp, 1);
 }
