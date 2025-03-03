@@ -209,6 +209,7 @@ ohos_unittest("cellular_call_ims2_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
+    "${CELLULAR_CALL_PATH}/test/mock",
   ]
 
   deps = [
@@ -239,6 +240,8 @@ ohos_unittest("cellular_call_ims2_test") {
     "samgr:samgr_proxy",
     "samgr:samgr_proxy",
     "telephony_data:tel_telephony_data",
+    "googletest:gmock_main",
+    "googletest:gtest_main"
   ]
   defines = [
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",

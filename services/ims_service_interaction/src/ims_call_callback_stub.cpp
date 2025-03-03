@@ -898,11 +898,12 @@ int32_t ImsCallCallbackStub::GetImsSwitchResponse(int32_t slotId, int32_t active
 {
     TELEPHONY_LOGI("[slot%{public}d] entry active:%{public}d", slotId, active);
     auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
-    if (handler == nullptr || handler.get() == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+    std::shared_ptr<int32_t> imsActiveState = std::make_shared<int32_t>(active);
+    if (handler == nullptr || handler.get() == nullptr || imsActiveState == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler or imsActiveState is null", slotId);
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
-    TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, active);
+    TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_GET_IMS_SWITCH_STATUS, imsActiveState);
     return TELEPHONY_SUCCESS;
 }
 

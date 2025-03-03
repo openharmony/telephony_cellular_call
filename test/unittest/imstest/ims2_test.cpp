@@ -15,6 +15,7 @@
 
 #define private public
 #define protected public
+#include "core_manager_inner.h"
 #include "cellular_call_config.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_proxy.h"
@@ -31,6 +32,10 @@
 #include "cellular_call_interface.h"
 #include "core_service_client.h"
 #include "gtest/gtest.h"
+#inclide "gmock/gmock.h"
+#include "mock_sim_manager.h"
+#include "mock_tel_ril_manager.h"
+#include "mock_network_search.h"
 #include "ims_core_service_client.h"
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
@@ -39,6 +44,13 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+using ::testing::_;
+using ::testing::AtLeast;
+using ::testing::DoAll;
+using ::testing::Invoke;
+using ::testing::Mock;
+using ::testing::Return;
+using ::testing::SetArgReferee;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
@@ -56,6 +68,14 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+
+    Ims2Test()
+    {
+        std::shared_ptr<MockTelRilManager> mockTelRilManagerPtr(mockTelRilManager);
+        std::shared_ptr<MockNetworkSearch> mockNetworkSearchPtr(mockNetworkSearch);
+        std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+        CoreManagerInner::GetInstance().OnInit(mockNetworkSearchPtr, mockSimManagerPtr, mockTelRilManagerPtr);
+    }
 
     bool HasSimCard(int32_t slotId)
     {
@@ -89,6 +109,11 @@ public:
         }
         return TELEPHONY_SUCCESS;
     };
+
+    MockTelRilManager *mockTelRilManager = new MockTelRilManager();
+    MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
+    MockSimManager *mockSimManager = new MockSimManager();
+
 };
 
 void Ims2Test::SetUpTestCase(void)
@@ -765,7 +790,7 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0002, Function | MediumTest 
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         CellularCallConfig cellularCallConfig;
         ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
-        ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
+        ASSERT_FALSE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
@@ -971,40 +996,6 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
 }
 
 /**
- * @tc.number   cellular_call_CellularCallHandler_0006
- * @tc.name     Test for CellularCallHandler
- * @tc.desc     Function test
- */
-HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest | Level3)
-{
-    EventFwk::MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
-    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-    CellularCallHandler handler { subscriberInfo };
-
-    int32_t slotId = 0;
-    handler.SetSlotId(slotId);
-    auto event = AppExecFwk::InnerEvent::Get(0);
-    handler.ProcessRadioProtocolNotify(event);
-
-    auto radioProtocol = std::make_shared<RadioProtocol>();
-    radioProtocol->slotId = 1;
-    auto radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
-    handler.ProcessRadioProtocolNotify(radioEvent);
-
-    radioProtocol->slotId = slotId;
-    radioProtocol->status = RadioProtocolStatus::RADIO_PROTOCOL_STATUS_FAIL;
-    radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
-    handler.ProcessRadioProtocolNotify(radioEvent);
-
-    radioProtocol->status = RadioProtocolStatus::RADIO_PROTOCOL_STATUS_SUCCESS;
-    radioEvent = AppExecFwk::InnerEvent::Get(RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY, radioProtocol);
-    handler.ProcessRadioProtocolNotify(radioEvent);
-
-    ASSERT_EQ(handler.GetSlotId(), slotId);
-}
-
-/**
  * @tc.number   cellular_call_ImsCallClient_0001
  * @tc.name     test for ImsCallClient
  * @tc.desc     Function test
@@ -1019,6 +1010,78 @@ HWTEST_F(Ims2Test, cellular_call_ImsCallClient_0001, Function | MediumTest | Lev
     listen->OnAddSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
     listen->OnRemoveSystemAbility(COMMON_EVENT_SERVICE_ID, deviceId);
     EXPECT_TRUE(listen != nullptr);
+}
+
+/**
+ * @tc.number   cellular_call_NvCfgFinishedIndication_0001
+ * @tc.name     test for NvCfgFinishedIndication
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_NvCfgFinishedIndication_0001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    handler.SetSlotId(SIM1_SLOTID);
+    auto responseEvent = AppExecFwk::InnerEvent::Get(0);
+    handler.NvCfgFinishedIndication(responseEvent);
+    auto nvCfgFinishedIndication = std::make_shared<Int32Parcel>()
+    nvCfgFinishedIndication->data = 0;
+    responseEvent = AppExecFwk::InnerEvent::Get(0, nvCfgFinishedIndication);
+    handler.NvCfgFinishedIndication(responseEvent);
+    nvCfgFinishedIndication->data = 1;
+    responseEvent = AppExecFwk::InnerEvent::Get(0, nvCfgFinishedIndication);
+    handler.NvCfgFinishedIndication(responseEvent);
+    EXPECT_CALL(*mockSimManager, HasSimCard(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(true), Return(0)));
+    handler.NvCfgFinishedIndication(responseEvent);
+    ASSERT_EQ(handler.GetSlotId(), SIM1_SLOTID);
+}
+
+/**
+ * @tc.number   cellular_call_GetImsCapResponse_0001
+ * @tc.name     test for GetImsCapResponse
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_GetImsCapResponse_0001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    handler.SetSlotId(SIM1_SLOTID);
+    auto imsCap1 = std::make_shared<Int32Parcel>();
+    auto responseEvent = AppExecFwk::InnerEvent::Get(0, imsCap1);
+    handler.GetImsCapResponse(responseEvent);
+    EXPECT_CALL(*mockSimManager, HasSimCard(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(true), Return(0)));
+    auto imsCap = std::make_shared<ImsCapFromChip>();
+    imsCap->volteCap = 1;
+    responseEvent = AppExecFwk::InnerEvent::Get(0, imsCap);
+    handler.GetImsCapResponse(responseEvent);
+    std::string volteCapKey = KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP + std::string("_slot") + std::to_string(SIM1_SLOTID);
+    int32_t voltCapInProp = GetIntParameter(volteCapKey.c_str(), -1);
+    ASSERT_EQ(voltCapInProp, 1);
+}
+
+/**
+ * @tc.number   cellular_call_GetImsSwitchStatusResponse_0001
+ * @tc.name     test for GetImsSwitchStatusResponse
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_GetImsSwitchStatusResponse_0001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler { subscriberInfo };
+    handler.SetSlotId(SIM1_SLOTID);
+    auto responseInfo = std::make_shared<RadioResponseInfo>();
+    auto responseEvent = AppExecFwk::InnerEvent::Get(0, responseInfo);
+    handler.GetImsSwitchStatusResponse(responseEvent);
+    auto imsActive = std::make_shared<int32_t>(1);
+    responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
+    handler.GetImsSwitchStatusResponse(responseEvent);
+    ASSERT_EQ(handler.GetSlotId(), SIM1_SLOTID);
 }
 } // namespace Telephony
 } // namespace OHOS

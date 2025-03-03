@@ -42,6 +42,9 @@ const int64_t DELAY_TIME = 100;
 const int32_t MAX_REQUEST_COUNT = 50;
 // message was null, mean report the default message to user which have been define at CellularCallSupplement
 const std::string DEFAULT_NULL_MESSAGE = "";
+// NV refresh state
+constexpr int32_t STATE_NV_REFRESH_FINISHED = 1;
+constexpr int32_t STATE_NV_REFRESH_ALREADY_FINISHED = 4;
 
 CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
     : TelEventHandler("CellularCallHandler"), CommonEventSubscriber(subscriberInfo)
@@ -212,8 +215,6 @@ void CellularCallHandler::InitActiveReportFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { GetRadioStateProcess(event); };
     requestFuncMap_[RadioEvent::RADIO_STATE_CHANGED] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { RadioStateChangeProcess(event); };
-    requestFuncMap_[RadioEvent::RADIO_SIM_RADIO_PROTOCOL_NOTIFY] =
-        [this](const AppExecFwk::InnerEvent::Pointer &event) { ProcessRadioProtocolNotify(event); };
 }
 
 void CellularCallHandler::InitSatelliteCallFuncMap()
@@ -1085,7 +1086,22 @@ void CellularCallHandler::SetImsSwitchStatusResponse(const AppExecFwk::InnerEven
     config.HandleSetLteImsSwitchResult(slotId_, info->error);
 }
 
-void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event) {}
+void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto info = event->GetSharedObject<RadioResponseInfo>();
+    if (info == nullptr) {
+        auto active = event->GetSharedObject<int32_t>();
+        CellularCallConfig config;
+        bool isVolteSupport = config.IsVolteSupport(slotId_);
+        TELEPHONY_LOGI("[slot%{public}d] GetImsSwitchStatusResponse active %{public}d, isVolteSupport %{public}d",
+            slotId_, *active, isVolteSupport);
+        if (static_cast<int>(*active) != static_cast<int>(isVolteSupport)) {
+            UpdateImsConfiguration();
+        }
+        return;
+    }
+    UpdateImsConfiguration();
+}
 
 void CellularCallHandler::SetVoNRSwitchStatusResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -1846,6 +1862,7 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         StartCallManagerService();
 #endif
         serviceInstance->setRadioOnFlag(true, slotId_);
+        GetImsSwitchStatusRequest();
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
         auto imsControl = serviceInstance->GetImsControl(slotId_);
         if (imsControl == nullptr) {
@@ -1887,13 +1904,27 @@ void CellularCallHandler::GetRadioStateProcess(const AppExecFwk::InnerEvent::Poi
 
 void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::Pointer &event)
 {
+    std::shared_ptr<Int32Parcel> object = event->GetSharedObject<Int32Parcel>();
+    if (object == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] object is null", slotId_);
+        return;
+    }
+    TELEPHONY_LOGI("[slot%{public}d] NvCfgFinishedIndication state is %{public}d", slotId_, object->data);
+    if (!(object->data == STATE_NV_REFRESH_FINISHED || object->data >= STATE_NV_REFRESH_ALREADY_FINISHED)) {
+        return;
+    }
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
+        TELEPHONY_LOGE("[slot%{public}d] NvCfgFinishedIndication no simcard", slotId_);
+        return;
+    }
     bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, true);
     TELEPHONY_LOGI("[slot%{public}d] entry, isUseCloudImsNV = %{public}d", slotId_, isUseCloudImsNV);
     if (isUseCloudImsNV && GetImsCapabilities(slotId_) == TELEPHONY_ERR_SUCCESS) {
         TELEPHONY_LOGI("[slot%{public}d] GetImsCapabilities success", slotId_);
         return;
     }
-
     CellularCallConfig config;
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
@@ -1924,44 +1955,41 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
     int32_t volteCapInProp = GetIntParameter(volteCapKey.c_str(), -1);
     TELEPHONY_LOGI("[slot%{public}d] volteCapInProp = %{public}d, volteCap = %{public}d",
         slotId_, volteCapInProp, imsCap->volteCap);
-    if (volteCapInProp != imsCap->volteCap) {
-        std::string strVolteCap = std::to_string(imsCap->volteCap);
-        SetParameter(volteCapKey.c_str(), strVolteCap.c_str());
-        CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId_, *imsCap);
-    }
-
-    ModuleServiceUtils obtain;
-    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
-    for (const auto &slotId : slotVector) {
-        bool hasSimCard = false;
-        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
-        if (!hasSimCard) {
-            continue;
-        }
-        CellularCallConfig config;
-        config.UpdateImsConfiguration(slotId, INVALID_OPERATOR_CONFIG_STATE, false);
-    }
+    std::string strVolteCap = std::to_string(imsCap->volteCap);
+    SetParameter(volteCapKey.c_str(), strVolteCap.c_str());
+    CoreManagerInner::GetInstance().UpdateImsCapFromChip(slotId_, *imsCap);
+    UpdateImsConfiguration();
+    GetImsSwitchStatusRequest();
 }
 
-void CellularCallHandler::ProcessRadioProtocolNotify(const AppExecFwk::InnerEvent::Pointer &event)
+void CellularCallHandler::UpdateImsConfiguration()
 {
-    if (event == nullptr) {
-        TELEPHONY_LOGE("event is nullptr");
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
+        TELEPHONY_LOGE("[slot%{public}d] UpdateImsConfiguration no simcard", slotId_);
         return;
     }
-    std::shared_ptr<RadioProtocol> radioProtocol = event->GetSharedObject<RadioProtocol>();
-    if (radioProtocol == nullptr || radioProtocol->slotId != slotId_) {
-        TELEPHONY_LOGE("RadioProtocol is null or invalid slotId");
-        return;
-    }
+    CellularCallConfig config;
+    TELEPHONY_LOGI("[slot%{public}d] UpdateImsConfiguration", slotId_);
+    config.UpdateImsConfiguration(slotId_, INVALID_OPERATOR_CONFIG_STATE, false);
+}
 
-    bool isUseCloudImsNV = system::GetBoolParameter(KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV, true);
-    TELEPHONY_LOGI("[slot%{public}d] entry, isUseCloudImsNV = %{public}d", slotId_, isUseCloudImsNV);
-    if (!isUseCloudImsNV || radioProtocol->status == RadioProtocolStatus::RADIO_PROTOCOL_STATUS_FAIL) {
-        TELEPHONY_LOGE("RadioProtocol update failed or isUseCloudImsNV is false");
+void CellularCallHandler::GetImsSwitchStatusRequest()
+{
+    bool hasSimCard = false;
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    if (!hasSimCard) {
+        TELEPHONY_LOGE("[slot%{public}d] GetImsSwitchStatusRequest no simcard", slotId_);
         return;
     }
-    GetImsCapabilities(radioProtocol->slotId);
+    CellularCallConfig config;
+    ModuleServiceUtils moduleUtils;
+    if (config.IsVolteSupport(slotId_) ||
+        (moduleUtils.GetImsRegistrationState(slotId_) && !config.IsVolteSupport(slotId_))) {
+        TELEPHONY_LOGI("[slot%{public}d] GetImsSwitchStatusRequest", slotId_);
+        config.GetImsSwitchStatusRequest();
+    }
 }
 
 void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reason)
