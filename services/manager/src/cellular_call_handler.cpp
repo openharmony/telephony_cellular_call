@@ -1914,7 +1914,7 @@ void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::
         return;
     }
     bool hasSimCard = false;
-    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId_, hasSimCard);
     if (!hasSimCard) {
         TELEPHONY_LOGE("[slot%{public}d] NvCfgFinishedIndication no simcard", slotId_);
         return;
@@ -1965,7 +1965,7 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
 void CellularCallHandler::UpdateImsConfiguration()
 {
     bool hasSimCard = false;
-    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId_, hasSimCard);
     if (!hasSimCard) {
         TELEPHONY_LOGE("[slot%{public}d] UpdateImsConfiguration no simcard", slotId_);
         return;
@@ -1978,7 +1978,7 @@ void CellularCallHandler::UpdateImsConfiguration()
 void CellularCallHandler::GetImsSwitchStatusRequest()
 {
     bool hasSimCard = false;
-    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId_, hasSimCard);
     if (!hasSimCard) {
         TELEPHONY_LOGE("[slot%{public}d] GetImsSwitchStatusRequest no simcard", slotId_);
         return;
@@ -1988,7 +1988,7 @@ void CellularCallHandler::GetImsSwitchStatusRequest()
     if (config.IsVolteSupport(slotId_) ||
         (moduleUtils.GetImsRegistrationState(slotId_) && !config.IsVolteSupport(slotId_))) {
         TELEPHONY_LOGI("[slot%{public}d] GetImsSwitchStatusRequest", slotId_);
-        config.GetImsSwitchStatusRequest();
+        config.GetImsSwitchStatusRequest(slotId_);
     }
 }
 
