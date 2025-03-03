@@ -508,8 +508,7 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
     return true;
 }
 
-void CellularCallConfig::UpdateImsVoiceCapabilities(
-    int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
+void CellularCallConfig::UpdateImsVoiceCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
 {
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
@@ -1135,7 +1134,7 @@ int32_t CellularCallConfig::GetVideoCallWaiting(int32_t slotId, bool &enabled)
 
 void CellularCallConfig::GetImsSwitchStatusRequest(int32_t slotId)
 {
-    configRequest_.GetImsSwitchStatusRequest(slotId):
+    configRequest_.GetImsSwitchStatusRequest(slotId);
 }
 
 bool CellularCallConfig::IsVolteSupport(int32_t slotId)
@@ -1145,8 +1144,8 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
     bool isGbaValid = IsGbaValid(slotId);
     bool isVolteProvisioned = IsVolteProvisioned(slotId);
     TELEPHONY_LOGI("Slot[%{public}d] voltesupport[%{public}d], isGbaValid[%{public}d], imsSwitch[%{public}d], "
-        "isVolteProvisioned[%{public}d]", slotId, volteSupport_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
-    return volteSupport_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
+        "isVolteProvisioned[%{public}d]", slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
+    return volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
 }
 
 } // namespace Telephony
