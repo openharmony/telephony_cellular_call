@@ -1139,7 +1139,7 @@ void CellularCallConfig::GetImsSwitchStatusRequest(int32_t slotId)
 
 bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 {
-    if (!isValidSlotId(slotId)) {
+    if (!IsValidSlotId(slotId)) {
         TELEPHONY_LOGE("inValid slot id %{public}d", slotId);
         return false;
     }
