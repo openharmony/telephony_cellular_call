@@ -1391,5 +1391,35 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest |
     cellularCallCallback.SetReadyToCall(SIM1_SLOTID, csType, isReadyToCall);
     EXPECT_EQ(CellularCallConfig.IsReadyToCall(SIM1_SLOTID), TELEPHONY_SUCCESS);
 }
+
+/**
+ * @tc.number   EncapsulationCallReportInfo_0001
+ * @tc.name     CsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(Cs2Test, EncapsulationCallReportInfo_0001, Function | MediumTest | Level3)
+{
+    auto csControl = std::make_shared<CSControl>();
+    CallInfo callInfo;
+    callInfo.number = "";
+    callInfo.name = "aaa";
+    CallReportInfo reportInfo = csControl->EncapsulationCallReportInfo(SIM1_SLOTID, callInfo);
+    EXPECT_EQ("", reportInfo.name);
+}
+
+/**
+ * @tc.number   EncapsulationCallReportInfo_0002
+ * @tc.name     CsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(Cs2Test, EncapsulationCallReportInfo_0002, Function | MediumTest | Level3)
+{
+    auto csControl = std::make_shared<CSControl>();
+    CallInfo callInfo;
+    callInfo.number = "1234567";
+    callInfo.name = "aaa";
+    CallReportInfo reportInfo = csControl->EncapsulationCallReportInfo(SIM1_SLOTID, callInfo);
+    EXPECT_EQ("1234567", reportInfo.name);
+}
 } // namespace Telephony
 } // namespace OHOS
