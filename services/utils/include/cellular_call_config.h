@@ -461,6 +461,21 @@ public:
      */
     int32_t GetVideoCallWaiting(int32_t slotId, bool &enabled);
 
+    /**
+     * get ims switch from modem.
+     *
+     * @param slotId
+     */
+    void GetImsSwitchStatusRequest(int32_t slotId);
+
+    /**
+     * Is volte support from ap
+     *
+     * @param slotId
+     * @return bool
+     */
+    bool IsVolteSupport(int32_t slotId);
+
 private:
     static void InitDefaultOperatorConfig();
     EmergencyCall BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType);
@@ -472,8 +487,8 @@ private:
     void ParseBoolOperatorConfigs(
         int32_t slotId, std::map<int32_t, bool> &config, OperatorConfig &poc, std::string configName);
     void ResetImsSwitch(int32_t slotId);
-    void UpdateImsUtCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
-    void UpdateImsVoiceCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList);
+    void UpdateImsUtCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList);
+    void UpdateImsVoiceCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList);
     bool IsGbaValid(int32_t slotId);
     bool IsVolteProvisioned(int32_t slotId);
     bool IsVonrSupported(int32_t slotId, bool isGbaValid);

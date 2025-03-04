@@ -480,15 +480,14 @@ void CellularCallConfig::ResetImsSwitch(int32_t slotId)
 void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability,
     bool isOperatorConfigChanged, int32_t state)
 {
-    bool isGbaValid = IsGbaValid(slotId);
     ImsCapabilityList imsCapabilityList;
-    TELEPHONY_LOGI("UpdateImsCapabilities entry");
-    UpdateImsVoiceCapabilities(slotId, isGbaValid, imsCapabilityList);
+    TELEPHONY_LOGI("UpdateImsCapabilities entry, slotId is %{public}d", slotId);
+    UpdateImsVoiceCapabilities(slotId, imsCapabilityList);
     if (isOperatorConfigChanged) {
         configRequest_.NotifyOperatorConfigChanged(slotId, state);
     }
     if (needUpdateUtCapability) {
-        UpdateImsUtCapabilities(slotId, isGbaValid, imsCapabilityList);
+        UpdateImsUtCapabilities(slotId, imsCapabilityList);
     }
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
     configRequest_.SetImsSwitchStatusRequest(slotId, IsNeedTurnOnIms(imsCapabilityList));
@@ -509,30 +508,26 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
     return true;
 }
 
-void CellularCallConfig::UpdateImsVoiceCapabilities(
-    int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
+void CellularCallConfig::UpdateImsVoiceCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
 {
     ImsCapability vonrCapability;
     vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = IsVonrSupportedForImsSwitch(slotId, isGbaValid);
+    vonrCapability.enable = IsVonrSupportedForImsSwitch(slotId, IsGbaValid(slotId));
     imsCapabilityList.imsCapabilities.push_back(vonrCapability);
 
-    bool imsSwitch = false;
-    GetImsSwitchStatus(slotId, imsSwitch);
-    bool isVolteProvisioned = IsVolteProvisioned(slotId);
     ImsCapability volteCapability;
     volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
-    volteCapability.enable = (volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned);
+    volteCapability.enable = IsVolteSupport(slotId);
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
-    TELEPHONY_LOGI("slotId = %{public}d, vonrCapability = %{public}d, volteSupported = %{public}d, "
-        "isGbaValid = %{public}d, imsSwitch = %{public}d, isVolteProvisioned = %{public}d",
-        slotId, vonrCapability.enable, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
+    TELEPHONY_LOGI("slotId = %{public}d, vonrCapability = %{public}d, volteCapability = %{public}d,",
+        slotId, vonrCapability.enable, volteCapability.enable);
 }
 
-void CellularCallConfig::UpdateImsUtCapabilities(int32_t slotId, bool isGbaValid, ImsCapabilityList &imsCapabilityList)
+void CellularCallConfig::UpdateImsUtCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
 {
+    bool isGbaValid = IsGbaValid(slotId);
     ImsCapability utCapability;
     utCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_UT;
     utCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
@@ -708,7 +703,7 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, ErrType resul
     }
     SaveVoNRState(slotId, vonrSwithStatus_[slotId]);
     ImsCapabilityList imsCapabilityList;
-    UpdateImsVoiceCapabilities(slotId, IsGbaValid(slotId), imsCapabilityList);
+    UpdateImsVoiceCapabilities(slotId, imsCapabilityList);
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 
@@ -1137,5 +1132,24 @@ int32_t CellularCallConfig::GetVideoCallWaiting(int32_t slotId, bool &enabled)
     return TELEPHONY_SUCCESS;
 }
 
+void CellularCallConfig::GetImsSwitchStatusRequest(int32_t slotId)
+{
+    configRequest_.GetImsSwitchStatusRequest(slotId);
+}
+
+bool CellularCallConfig::IsVolteSupport(int32_t slotId)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("inValid slot id %{public}d", slotId);
+        return false;
+    }
+    bool imsSwitch = false;
+    GetImsSwitchStatus(slotId, imsSwitch);
+    bool isGbaValid = IsGbaValid(slotId);
+    bool isVolteProvisioned = IsVolteProvisioned(slotId);
+    TELEPHONY_LOGI("Slot[%{public}d] voltesupport[%{public}d], isGbaValid[%{public}d], imsSwitch[%{public}d], "
+        "isVolteProvisioned[%{public}d]", slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
+    return volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
+}
 } // namespace Telephony
 } // namespace OHOS

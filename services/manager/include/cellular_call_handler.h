@@ -249,7 +249,8 @@ private:
     void ProcessCsPhoneNumber(CallInfoList &list);
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
     void HandleCallDisconnectReason(RilDisconnectedReason reason);
-    void ProcessRadioProtocolNotify(const AppExecFwk::InnerEvent::Pointer &event);
+    void UpdateImsConfiguration();
+    void GetImsSwitchStatusRequest();
 
     /**
      * If radio state change get call manager service
