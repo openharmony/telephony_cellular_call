@@ -1093,6 +1093,9 @@ void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEven
     if (info == nullptr) {
         // if dont have modem error, the response just contain the imsswitch active state.
         auto active = event->GetSharedObject<int32_t>();
+        if (active == nullptr) {
+            return;
+        }
         CellularCallConfig config;
         bool isVolteSupport = config.IsVolteSupport(slotId_);
         TELEPHONY_LOGI("[slot%{public}d] GetImsSwitchStatusResponse active %{public}d, isVolteSupport %{public}d",
