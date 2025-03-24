@@ -84,7 +84,7 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
         TELEPHONY_LOGI("IsNeedExecuteMMI return, isn't need to execute mmi");
         return false;
     }
-    if (mmiCodeUtils->GetMMIData().serviceCode == "30" && !mmiCodeUtils->GetMMIData().dialString.empty()) {
+    if (!mmiCodeUtils->GetMMIData().serviceCode.empty() && !mmiCodeUtils->GetMMIData().dialString.empty()) {
         TELEPHONY_LOGI("IsNeedExecuteMMI, handle additional CLIR mode");
         if (mmiCodeUtils->GetMMIData().actionString == "*") {
             phoneString = mmiCodeUtils->GetMMIData().dialString;

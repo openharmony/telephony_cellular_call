@@ -1431,7 +1431,8 @@ void CellularCallHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::P
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
@@ -1439,7 +1440,7 @@ void CellularCallHandler::SetCallWaitingResponse(const AppExecFwk::InnerEvent::P
     if (result->result != TELEPHONY_SUCCESS) {
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
-    supplement.EventSetCallWaiting(result->result, result->message, flag);
+    supplement.EventSetCallWaiting(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetClirResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1466,12 +1467,13 @@ void CellularCallHandler::SetClirResponse(const AppExecFwk::InnerEvent::Pointer 
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventSetClir(result->result, result->message, flag);
+    supplement.EventSetClir(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetClipResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1498,12 +1500,13 @@ void CellularCallHandler::SetClipResponse(const AppExecFwk::InnerEvent::Pointer 
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventSetClip(result->result, result->message, flag);
+    supplement.EventSetClip(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetColrResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1530,12 +1533,13 @@ void CellularCallHandler::SetColrResponse(const AppExecFwk::InnerEvent::Pointer 
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventSetColr(result->result, result->message, flag);
+    supplement.EventSetColr(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetColpResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1562,12 +1566,13 @@ void CellularCallHandler::SetColpResponse(const AppExecFwk::InnerEvent::Pointer 
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
     CellularCallSupplement supplement;
-    supplement.EventSetColp(result->result, result->message, flag);
+    supplement.EventSetColp(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetCallTransferResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1599,7 +1604,8 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
@@ -1616,7 +1622,7 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
     } else {
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
-    supplement.EventSetCallTransferInfo(result->result, result->message, flag);
+    supplement.EventSetCallTransferInfo(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1643,7 +1649,8 @@ void CellularCallHandler::SetCallRestrictionResponse(const AppExecFwk::InnerEven
         return;
     }
     int32_t flag = SS_FROM_MMI_CODE;
-    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag);
+    int32_t action = INVALID_INDEX;
+    int32_t ret = ConfirmAndRemoveSsRequestCommand(result->index, flag, action);
     if (ret != TELEPHONY_SUCCESS) {
         return;
     }
@@ -1651,7 +1658,7 @@ void CellularCallHandler::SetCallRestrictionResponse(const AppExecFwk::InnerEven
     if (result->result != TELEPHONY_SUCCESS) {
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
-    supplement.EventSetCallRestriction(result->result, result->message, flag);
+    supplement.EventSetCallRestriction(result->result, result->message, flag, action);
 }
 
 void CellularCallHandler::SetBarringPasswordResponse(const AppExecFwk::InnerEvent::Pointer &event)
@@ -1763,6 +1770,25 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
         return TELEPHONY_ERROR;
     }
     flag = itor->second->flag;
+    utCommandMap_.erase(index);
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int32_t &flag, int32_t &action)
+{
+    if (index == INVALID_INDEX) {
+        // -1 mean this command index wasn't come from app, so don't need report result
+        TELEPHONY_LOGI("[slot%{public}d] index is invalid, nothing need to do", slotId_);
+        return TELEPHONY_ERROR;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto itor = utCommandMap_.find(index);
+    if (itor == utCommandMap_.end()) {
+        TELEPHONY_LOGE("[slot%{public}d] the index(%{public}d) in utCommandMap_ haven't been found", slotId_, index);
+        return TELEPHONY_ERROR;
+    }
+    flag = itor->second->flag;
+    action = itor->second->action;
     utCommandMap_.erase(index);
     return TELEPHONY_SUCCESS;
 }

@@ -17,7 +17,9 @@
 
 #include <regex>
 
+#include "cellular_call_service.h"
 #include "cellular_call_supplement.h"
+#include "core_manager_inner.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 
@@ -212,6 +214,9 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 
 bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 {
+    if (IsShortCode(analyseString)) {
+        return true;
+    }
     std::string symbols =
         "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)";
     std::regex pattern(symbols);
@@ -261,6 +266,51 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 MMIData MMICodeUtils::GetMMIData()
 {
     return mmiData_;
+}
+
+bool MMICodeUtils::IsShortCode(const std::string &analyseString)
+{
+    std::string symbols = "^(?!1\\d)\\d{2}";
+    if (HasCellularCallExist()) {
+        symbols = "\\d{1,2}";
+    }
+    TELEPHONY_LOGI("IsShortCode HasCellularCallExist = %{public}d", HasCellularCallExist());
+    std::regex shortCodePattern(symbols);
+    std::smatch shortCodeResult;
+    if (regex_match(analyseString, shortCodeResult, shortCodePattern)) {
+        TELEPHONY_LOGI("IsShortCode: shortCodeResult true");
+        mmiData_.fullString = analyseString;
+        return true;
+    }
+    return false;
+}
+
+bool MMICodeUtils::HasCellularCallExist()
+{
+    int32_t simCount = CoreManagerInner::GetInstance().GetMaxSimCount();
+    if (simCount == 0) {
+        return false;
+    }
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("serviceInstance is null");
+        return false;
+    }
+    for (int32_t i = 0; i < simCount; i++) {
+        auto imsControl = serviceInstance->GetImsControl(i);
+        if (imsControl != nullptr && !imsControl->GetConnectionMap().empty()) {
+            return true;
+        }
+        auto csControl = serviceInstance->GetCsControl(i);
+        if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
+            return true;
+        }
+        auto satelliteControl = serviceInstance->GetSatelliteControl(i);
+        if (satelliteControl != nullptr && !satelliteControl->GetConnectionMap().empty()) {
+            return true;
+        }
+    }
+    return false;
 }
 } // namespace Telephony
 } // namespace OHOS

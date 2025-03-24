@@ -216,6 +216,8 @@ void CellularCallStub::InitSupplementFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnCloseUnFinishedUssdInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::GET_VIDEO_CALL_WAITING] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnGetVideoCallWaitingInner(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::SEND_USSD_RESPONSE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnSendUssdResponse(data, reply); };
 }
 
 int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)
@@ -1263,6 +1265,32 @@ int32_t CellularCallStub::OnClearAllCallsInner(MessageParcel &data, MessageParce
         }
     }
     reply.WriteInt32(ClearAllCalls(callInfos));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnSendUssdResponse(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("CellularCallStub::OnSendUssdResponse entry");
+    int32_t size = data.ReadInt32();
+    if (size <= 0 || size > MAX_CALL_NUM) {
+        TELEPHONY_LOGE("data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    std::string content = data.ReadString();
+    bool enable = false;
+    int32_t ret = SendUssdResponse(slotId, content);
+    if (!reply.WriteInt32(ret)) {
+        TELEPHONY_LOGE("fail to write ret");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!reply.WriteBool(enable)) {
+        TELEPHONY_LOGE("fail to write enabled");
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
     return TELEPHONY_SUCCESS;
 }
 } // namespace Telephony

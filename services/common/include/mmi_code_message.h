@@ -134,6 +134,35 @@ const std::string CLIR_DEFAULT_ON_NEXT_OFF = "Caller ID defaults to restricted. 
 const std::string CLIR_DEFAULT_OFF_NEXT_OFF = "Caller ID defaults to not restricted. Next call: Not restricted";
 const std::string CLIR_DEFAULT_OFF_NEXT_ON = "Caller ID defaults to not restricted. Next call: Restricted";
 
+const int32_t SUB_TYPE_QUERY = 0;
+const int32_t SUB_TYPE_ACTICE = 1;
+const int32_t SUB_TYPE_DEACTIVE = 2;
+
+// Call waiting
+const int32_t SC_WAIT = 43;
+
+// Call waiting
+const int32_t SC_CFU = 21;
+const int32_t SC_CFB = 67;
+const int32_t SC_CFNRy = 61;
+const int32_t SC_CFNR = 62;
+
+// Call Barring
+const int32_t SC_BAOC = 33;
+const int32_t SC_BAOIC = 331;
+const int32_t SC_BAOICxH = 332;
+const int32_t SC_BAIC = 35;
+const int32_t SC_BAICr = 351;
+
+// Called line presention
+const int32_t SC_CLIP = 30;
+const int32_t SC_CLIR = 31;
+const int32_t SC_COLP = 76;
+const int32_t SC_COLR = 77;
+
+// called USSD
+const int32_t SC_USSD = 10001;
+
 /**
  * Create get call waiting result message
  *

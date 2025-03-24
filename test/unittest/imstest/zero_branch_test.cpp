@@ -318,18 +318,18 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_002, Function | Medium
     std::string message = "";
     callSup.EventGetClip(getClipResult, message, 0);
     callSup.EventGetClip(getClipResult, message, 1);
-    callSup.EventSetClip(0, message, 0);
-    callSup.EventSetClip(0, message, 1);
+    callSup.EventSetClip(0, message, 0, 1);
+    callSup.EventSetClip(0, message, 1, 1);
     GetClirResult getClirResult;
     callSup.EventGetClir(getClirResult, message, 0);
     callSup.EventGetClir(getClirResult, message, 1);
-    callSup.EventSetClir(0, message, 0);
-    callSup.EventSetClir(0, message, 1);
+    callSup.EventSetClir(0, message, 0, 1);
+    callSup.EventSetClir(0, message, 1, 1);
     GetColrResult getColrResult;
     callSup.EventGetColr(getColrResult, message, 0);
     callSup.EventGetColr(getColrResult, message, 1);
-    callSup.EventSetColr(0, message, 0);
-    callSup.EventSetColr(0, message, 1);
+    callSup.EventSetColr(0, message, 0, 1);
+    callSup.EventSetColr(0, message, 1, 1);
     ASSERT_TRUE(mmiDataPin.actionString.empty());
 }
 
@@ -346,8 +346,8 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     std::string message = "";
     callSup.EventGetColp(getColpResult, message, 0);
     callSup.EventGetColp(getColpResult, message, 1);
-    callSup.EventSetColp(0, message, 0);
-    callSup.EventSetColp(0, message, 1);
+    callSup.EventSetColp(0, message, 0, 1);
+    callSup.EventSetColp(0, message, 1, 1);
     CallRestrictionResult callResResult;
     callSup.EventGetCallRestriction(callResResult, message, 0);
     callSup.EventGetCallRestriction(callResResult, message, 1);
@@ -355,12 +355,12 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     callSup.EventGetCallRestriction(callResResult, message, 0);
     callResResult.result.result = 1;
     callSup.EventGetCallRestriction(callResResult, message, 0);
-    callSup.EventSetCallRestriction(0, message, 0);
-    callSup.EventSetCallRestriction(0, message, 1);
+    callSup.EventSetCallRestriction(0, message, 0, 1);
+    callSup.EventSetCallRestriction(0, message, 1, 1);
     callSup.EventSetBarringPassword(0, message, 0);
     callSup.EventSetBarringPassword(0, message, 1);
-    callSup.EventSetCallWaiting(0, message, 0);
-    callSup.EventSetCallWaiting(0, message, 1);
+    callSup.EventSetCallWaiting(0, message, 0, 1);
+    callSup.EventSetCallWaiting(0, message, 1, 1);
     CallForwardQueryInfoList cFQueryList;
     callSup.EventGetCallTransferInfo(cFQueryList, message, 0);
     CallForwardQueryResult queryResult;
@@ -372,8 +372,8 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
     queryResult.reason = 2;
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
-    callSup.EventSetCallTransferInfo(0, message, 0);
-    callSup.EventSetCallTransferInfo(0, message, 1);
+    callSup.EventSetCallTransferInfo(0, message, 0, 1);
+    callSup.EventSetCallTransferInfo(0, message, 1, 1);
     RadioResponseInfo responseInfo;
     callSup.EventSendUssd(responseInfo);
     SsNoticeInfo ssNoticeInfo;
