@@ -25,6 +25,8 @@
 
 namespace OHOS {
 namespace Telephony {
+const int32_t MAX_LENGTH_SHORT_CODE = 2;
+
 // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
@@ -278,7 +280,7 @@ bool MMICodeUtils::IsShortCode(const std::string &analyseString)
 
 bool MMICodeUtils::IsShortCodeWithoutCellularCall(const std::string &analyseString)
 {
-    if (analyseString.length() != 2) {
+    if (analyseString.length() != MAX_LENGTH_SHORT_CODE) {
         return false;
     }
     if (analyseString[0] == '1' && std::isdigit(analyseString[1])) {
@@ -289,7 +291,7 @@ bool MMICodeUtils::IsShortCodeWithoutCellularCall(const std::string &analyseStri
 
 bool MMICodeUtils::IsShortCodeWithCellularCall(const std::string &analyseString)
 {
-    if (analyseString.length() < 1 || analyseString.length() > 2) {
+    if (analyseString.length() < 1 || analyseString.length() > MAX_LENGTH_SHORT_CODE) {
         return false;
     }
     return true;

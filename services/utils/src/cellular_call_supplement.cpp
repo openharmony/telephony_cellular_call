@@ -608,7 +608,7 @@ void CellularCallSupplement::EventGetCallWaiting(
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = callWaitResponse.result;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         mmiCodeInfo.mmiCodeType = SC_WAIT;
         mmiCodeInfo.action = SUB_TYPE_QUERY;
@@ -632,7 +632,7 @@ void CellularCallSupplement::EventSetCallWaiting(int32_t result,
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = result;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         mmiCodeInfo.mmiCodeType = SC_WAIT;
         mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
@@ -712,7 +712,7 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
         mmiCodeInfo.reason = queryResult.reason;
         mmiCodeInfo.status = queryResult.status;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         mmiCodeInfo.time = queryResult.time;
         ReportMmiCodeMessage(mmiCodeInfo);
@@ -739,7 +739,7 @@ void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std:
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = result;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         mmiCodeInfo.mmiCodeType = SC_CFU;
         mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
@@ -777,7 +777,7 @@ void CellularCallSupplement::EventGetCallRestriction(
         mmiCodeInfo.action = SUB_TYPE_QUERY;
         mmiCodeInfo.status = response.status;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
@@ -799,7 +799,7 @@ void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::
         mmiCodeInfo.mmiCodeType = SC_CLIP;
         mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
@@ -820,7 +820,7 @@ void CellularCallSupplement::EventSetBarringPassword(int32_t result, const std::
         mmiCodeInfo.mmiCodeType = SC_BAOC;
         mmiCodeInfo.action = SUB_TYPE_ACTIVE;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
-            TELEPHONY_LOGE("strcpy_s fial");
+            TELEPHONY_LOGE("strcpy_s fail");
         }
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {

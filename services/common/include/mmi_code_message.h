@@ -141,7 +141,7 @@ const int32_t SUB_TYPE_DEACTIVE = 2;
 // Call waiting
 const int32_t SC_WAIT = 43;
 
-// Call waiting
+// Call transfer
 const int32_t SC_CFU = 21;
 const int32_t SC_CFB = 67;
 const int32_t SC_CFNRy = 61;
