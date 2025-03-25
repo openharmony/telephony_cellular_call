@@ -36,8 +36,7 @@ const int32_t DEACTIVATE_ACTION = 2;
 const int32_t USSD_MODE_NOTIFY = 0;
 const int32_t USSD_MODE_REQUEST = 1;
 const int32_t USSD_MODE_NW_RELEASE = 2;
-const int32_t USSD_SUCCESS = 0;
-const int32_t USSD_FAILED = 1;
+const int32_t USSD_FAILED = 2;
 const int32_t RESULT_SUCCESS = 0;
 const int32_t MMI_CODE_FAILED = 1;
 const int32_t PIN_PUK_MIN = 4;
@@ -165,12 +164,12 @@ void CellularCallSupplement::HandleColr(int32_t slotId, const MMIData &mmiData)
     int32_t index;
     handler->RequestSsRequestCommandIndex(index);
     if (mmiData.actionString == activate) {
-        utCommand->action = NUM_PRESENTATION_ALLOWED;
+        utCommand->action = ACTIVATE_ACTION;
         if (NeedUseImsToHandle(slotId)) {
             result = supplementRequestIms_.SetColrRequest(slotId, NUM_PRESENTATION_ALLOWED, index);
         }
     } else if (mmiData.actionString == deactivate) {
-        utCommand->action = NUM_PRESENTATION_RESTRICTED;
+        utCommand->action = DEACTIVATE_ACTION;
         if (NeedUseImsToHandle(slotId)) {
             result = supplementRequestIms_.SetColrRequest(slotId, NUM_PRESENTATION_RESTRICTED, index);
         }
@@ -396,6 +395,7 @@ void CellularCallSupplement::HandleSetCallTransfer(int32_t slotId, int32_t servi
     auto utCommand = std::make_shared<SsRequestCommand>();
     utCommand->cfReason = cause;
     utCommand->cfAction = static_cast<int32_t>(callTransferAction);
+    utCommand->action = static_cast<int32_t>(callTransferAction);
     utCommand->number = phoneNumber;
     int32_t index;
     handler->RequestSsRequestCommandIndex(index);
@@ -559,6 +559,7 @@ void CellularCallSupplement::HandleCallWaiting(int32_t slotId, const MMIData &mm
     handler->RequestSsRequestCommandIndex(index);
     if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
         utCommand->enable = mmiData.actionString == activate;
+        utCommand->action = mmiData.actionString == activate;
         if (NeedUseImsToHandle(slotId)) {
             result =
                 supplementRequestIms_.SetCallWaitingRequest(slotId, mmiData.actionString == activate, classType, index);
@@ -604,14 +605,23 @@ void CellularCallSupplement::EventGetCallWaiting(
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_CALL_WAITING_SUCCESS;
         CreateGetCallWaitingResultMessage(successMessage, callWaitResponse);
-        ReportMmiCodeMessage(
-            callWaitResponse.result, successMessage, message.empty() ? GET_CALL_WAITING_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = callWaitResponse.result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        mmiCodeInfo.mmiCodeType = SC_WAIT;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = waitingInfo.status;
+        mmiCodeInfo.classCw = waitingInfo.classCw;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportGetWaitingResult(callWaitResponse);
     }
 }
 
-void CellularCallSupplement::EventSetCallWaiting(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetCallWaiting(int32_t result,
+    const std::string &message, int32_t flag, int32_t action)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -619,7 +629,15 @@ void CellularCallSupplement::EventSetCallWaiting(int32_t result, const std::stri
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_CALL_WAITING_SUCCESS, message.empty() ? SET_CALL_WAITING_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        mmiCodeInfo.mmiCodeType = SC_WAIT;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetWaitingResult(result);
     }
@@ -686,7 +704,18 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_CALL_TRANSFER_SUCCESS;
         CreateGetCallTransferResultMessage(successMessage, response);
-        ReportMmiCodeMessage(queryResult.result, successMessage, message.empty() ? GET_CALL_TRANSFER_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.mmiCodeType = SC_CFU;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.result = queryResult.result;
+        mmiCodeInfo.classCw = queryResult.classx;
+        mmiCodeInfo.reason = queryResult.reason;
+        mmiCodeInfo.status = queryResult.status;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        mmiCodeInfo.time = queryResult.time;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
         if (callRegister == nullptr) {
@@ -697,7 +726,8 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
     }
 }
 
-void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag,
+    int32_t action)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -706,7 +736,14 @@ void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std:
     }
 
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_CALL_TRANSFER_SUCCESS, message.empty() ? SET_CALL_TRANSFER_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        mmiCodeInfo.mmiCodeType = SC_CFU;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetTransferResult(result);
     }
@@ -734,15 +771,22 @@ void CellularCallSupplement::EventGetCallRestriction(
 
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_CALL_RESTRICTION_SUCCESS;
-        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.status);
-        ReportMmiCodeMessage(
-            result.result.result, successMessage, message.empty() ? GET_CALL_RESTRICTION_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = response.result;
+        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = response.status;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportGetRestrictionResult(response);
     }
 }
 
-void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag,
+    int32_t action)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -750,8 +794,14 @@ void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(
-            result, SET_CALL_RESTRICTION_SUCCESS, message.empty() ? SET_CALL_RESTRICTION_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetRestrictionResult(result);
     }
@@ -765,8 +815,14 @@ void CellularCallSupplement::EventSetBarringPassword(int32_t result, const std::
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(
-            result, SET_SET_BARRING_PASSWORD_SUCCESS, message.empty() ? SET_SET_BARRING_PASSWORD_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        mmiCodeInfo.mmiCodeType = SC_BAOC;
+        mmiCodeInfo.action = SUB_TYPE_ACTIVE;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetBarringPasswordResult(result);
     }
@@ -941,6 +997,7 @@ int32_t CellularCallSupplement::SetCallWaiting(int32_t slotId, bool activate)
     utCommand->flag = SS_FROM_SETTING_MENU;
     utCommand->classType = classType;
     utCommand->enable = activate;
+    utCommand->action = activate;
     int32_t index;
     if (NeedUseImsToHandle(slotId)) {
         handler->RequestSsRequestCommandIndex(index);
@@ -1022,6 +1079,7 @@ int32_t CellularCallSupplement::SetCallRestriction(int32_t slotId, const CallRes
     utCommand->flag = SS_FROM_SETTING_MENU;
     utCommand->facility = fac;
     utCommand->enable = static_cast<int32_t>(cRInfo.mode);
+    utCommand->action = static_cast<int32_t>(cRInfo.mode);
     size_t cpyLen = strlen(info.c_str()) + 1;
     size_t maxCpyLen = sizeof(utCommand->password);
     if (strcpy_s(utCommand->password, cpyLen > maxCpyLen ? maxCpyLen : cpyLen, info.c_str()) != EOK) {
@@ -1192,17 +1250,31 @@ void CellularCallSupplement::EventGetClip(const GetClipResult &getClipResult, co
 
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_CLIP_SUCCESS;
-        CreateSuppSvcQueryResultMessage(successMessage, clipResponse.result, clipResponse.clipStat);
-        ReportMmiCodeMessage(clipResponse.result, successMessage, message.empty() ? GET_CLIP_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = clipResponse.result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), successMessage.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = clipResponse.clipStat;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportGetClipResult(clipResponse);
     }
 }
 
-void CellularCallSupplement::EventSetClip(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetClip(int32_t result, const std::string &message, int32_t flag, int32_t action)
 {
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_CLIP_SUCCESS, message.empty() ? SET_CLIP_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
@@ -1225,14 +1297,22 @@ void CellularCallSupplement::EventGetClir(const GetClirResult &result, const std
     }
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_CLIR_SUCCESS;
-        CreateGetClirResultMessage(successMessage, response);
-        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_CLIR_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = response.result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), successMessage.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_CLIR;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = response.clirStat;
+        mmiCodeInfo.classCw = response.action;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportGetClirResult(response);
     }
 }
 
-void CellularCallSupplement::EventSetClir(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetClir(int32_t result, const std::string &message, int32_t flag, int32_t action)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -1240,7 +1320,14 @@ void CellularCallSupplement::EventSetClir(int32_t result, const std::string &mes
         return;
     }
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_CLIR_SUCCESS, message.empty() ? SET_CLIR_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_CLIR;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetClirResult(result);
     }
@@ -1257,17 +1344,31 @@ void CellularCallSupplement::EventGetColr(const GetColrResult &result, const std
     response.colrStat = result.colrStat;
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_COLR_SUCCESS;
-        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.colrStat);
-        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_COLR_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = response.result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), successMessage.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_COLR;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = response.colrStat;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
 }
 
-void CellularCallSupplement::EventSetColr(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetColr(int32_t result, const std::string &message, int32_t flag, int32_t action)
 {
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_COLR_SUCCESS, message.empty() ? SET_COLR_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_COLR;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
@@ -1284,17 +1385,31 @@ void CellularCallSupplement::EventGetColp(const GetColpResult &result, const std
     response.colpStat = result.colpStat;
     if (flag == SS_FROM_MMI_CODE) {
         std::string successMessage = GET_COLP_SUCCESS;
-        CreateSuppSvcQueryResultMessage(successMessage, response.result, response.colpStat);
-        ReportMmiCodeMessage(response.result, successMessage, message.empty() ? GET_COLP_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = response.result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), successMessage.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_COLP;
+        mmiCodeInfo.action = SUB_TYPE_QUERY;
+        mmiCodeInfo.status = response.colpStat;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
 }
 
-void CellularCallSupplement::EventSetColp(int32_t result, const std::string &message, int32_t flag)
+void CellularCallSupplement::EventSetColp(int32_t result, const std::string &message, int32_t flag, int32_t action)
 {
     if (flag == SS_FROM_MMI_CODE) {
-        ReportMmiCodeMessage(result, SET_COLP_SUCCESS, message.empty() ? SET_COLP_FAILED : message);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = result;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        mmiCodeInfo.mmiCodeType = SC_COLP;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
     }
@@ -1302,15 +1417,16 @@ void CellularCallSupplement::EventSetColp(int32_t result, const std::string &mes
 
 int32_t CellularCallSupplement::SendUssd(int32_t slotId, const std::string &msg)
 {
-    if (!PhoneTypeGsmOrNot(slotId)) {
-        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
-        TELEPHONY_LOGE("[slot%{public}d] network type is not supported!", slotId);
-        return CALL_ERR_UNSUPPORTED_NETWORK_TYPE;
-    }
     int32_t result = TELEPHONY_SUCCESS;
     result = supplementRequestCs_.SendUssdRequest(slotId, msg);
     if (result != TELEPHONY_SUCCESS) {
-        ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
+        MmiCodeInfo mmiCodeInfo;
+        mmiCodeInfo.result = USSD_FAILED;
+        mmiCodeInfo.mmiCodeType = SC_USSD;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), GENERIC_FAILURE.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail.");
+        }
+        ReportMmiCodeMessage(mmiCodeInfo);
     }
     return result;
 }
@@ -1323,7 +1439,13 @@ void CellularCallSupplement::EventSendUssd(const RadioResponseInfo &responseInfo
         return;
     }
     callRegister->ReportSendUssdResult(static_cast<int32_t>(responseInfo.error));
-    ReportMmiCodeMessage(static_cast<int32_t>(responseInfo.error), SEND_USSD_SUCCESS, INVALID_MMI_CODE);
+    if (responseInfo.error == ErrType::NONE) {
+        return;
+    }
+    MmiCodeInfo mmiCodeInfo;
+    mmiCodeInfo.result = USSD_FAILED;
+    mmiCodeInfo.mmiCodeType = SC_USSD;
+    ReportMmiCodeMessage(mmiCodeInfo);
 }
 
 void CellularCallSupplement::EventSsNotify(SsNoticeInfo &ssNoticeInfo)
@@ -1411,6 +1533,8 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
         TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_(slotId, ussdNoticeInfo.str);
     }
     MmiCodeInfo mmiCodeInfo;
+    mmiCodeInfo.mmiCodeType = SC_USSD;
+    mmiCodeInfo.action = slotId;
     bool isUssdError = ussdNoticeInfo.m != USSD_MODE_NOTIFY && ussdNoticeInfo.m != USSD_MODE_REQUEST;
     if (TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ != nullptr) {
         if (TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_(slotId)) {
@@ -1419,7 +1543,7 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
         }
     }
     if (!isUssdError && !ussdNoticeInfo.str.empty()) {
-        mmiCodeInfo.result = USSD_SUCCESS;
+        mmiCodeInfo.result = ussdNoticeInfo.m;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), ussdNoticeInfo.str.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s ussdNoticeInfo.str fail.");
             return;
@@ -1431,6 +1555,7 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
             return;
         }
     } else {
+        mmiCodeInfo.result = USSD_FAILED;
         TELEPHONY_LOGE("Invaild ussd notify.");
     }
 
@@ -1599,6 +1724,16 @@ void CellularCallSupplement::EventCloseUnFinishedUssd(const RadioResponseInfo &r
         result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
     callRegister->ReportCloseUnFinishedUssdResult(result);
+}
+
+void CellularCallSupplement::ReportMmiCodeMessage(const MmiCodeInfo &mmiCodeInfo)
+{
+    auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
+    if (callRegister == nullptr) {
+        TELEPHONY_LOGE("callRegister is null.");
+        return;
+    }
+    callRegister->ReportMmiCodeResult(mmiCodeInfo);
 }
 } // namespace Telephony
 } // namespace OHOS

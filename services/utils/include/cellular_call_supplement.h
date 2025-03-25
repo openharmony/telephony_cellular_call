@@ -19,13 +19,14 @@
 #include <string>
 
 #include "cellular_call_data_struct.h"
-#include "tel_ril_call_parcel.h"
-#include "tel_ril_types.h"
 #include "ims_call_types.h"
+#include "mmi_code_utils.h"
 #include "module_service_utils.h"
 #include "supplement_request_cs.h"
 #include "supplement_request_ims.h"
 #include "telephony_log_wrapper.h"
+#include "tel_ril_call_parcel.h"
+#include "tel_ril_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -306,9 +307,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetClip(int32_t result, const std::string &message, int32_t flag);
+    void EventSetClip(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Get clir result
@@ -330,9 +332,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetClir(int32_t result, const std::string &message, int32_t flag);
+    void EventSetClir(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Get colr result
@@ -354,9 +357,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetColr(int32_t result, const std::string &message, int32_t flag);
+    void EventSetColr(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Get colp result
@@ -378,9 +382,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetColp(int32_t result, const std::string &message, int32_t flag);
+    void EventSetColp(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Get call restriction result
@@ -402,9 +407,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag);
+    void EventSetCallRestriction(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Set call restriction password result
@@ -438,9 +444,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallWaiting(int32_t result, const std::string &message, int32_t flag);
+    void EventSetCallWaiting(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Get call transfer result
@@ -463,9 +470,10 @@ public:
      * @param result
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
+     * @param action, query,active or deactive
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag);
+    void EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag, int32_t action);
 
     /**
      * Send ussd result
@@ -595,6 +603,7 @@ private:
     void BuildCallForwardQueryInfo(const CallForwardQueryResult &queryResult, const std::string &message, int32_t flag);
     void ReportMmiCodeMessage(int32_t result, const std::string successMsg, const std::string failedMsg);
     bool IsVaildPinOrPuk(std::string newPinOrPuk, std::string newPinOrPukCheck);
+    void ReportMmiCodeMessage(const MmiCodeInfo &mmiCodeInfo);
 
 private:
     SupplementRequestCs supplementRequestCs_;

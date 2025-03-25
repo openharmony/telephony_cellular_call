@@ -17,12 +17,16 @@
 
 #include <regex>
 
+#include "cellular_call_service.h"
 #include "cellular_call_supplement.h"
+#include "core_manager_inner.h"
 #include "standardize_utils.h"
 #include "telephony_log_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
+const int32_t MAX_LENGTH_SHORT_CODE = 2;
+
 // 3GPP TS 22.030 V16.0.0 (2020-07) 6.5.3.2	Handling of not-implemented supplementary services
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
@@ -212,6 +216,9 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 
 bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 {
+    if (IsShortCode(analyseString)) {
+        return true;
+    }
     std::string symbols =
         "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)";
     std::regex pattern(symbols);
@@ -261,6 +268,61 @@ bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 MMIData MMICodeUtils::GetMMIData()
 {
     return mmiData_;
+}
+
+bool MMICodeUtils::IsShortCode(const std::string &analyseString)
+{
+    if (HasCellularCallExist()) {
+        return IsShortCodeWithCellularCall(analyseString);
+    }
+    return IsShortCodeWithoutCellularCall(analyseString);
+}
+
+bool MMICodeUtils::IsShortCodeWithoutCellularCall(const std::string &analyseString)
+{
+    if (analyseString.length() != MAX_LENGTH_SHORT_CODE) {
+        return false;
+    }
+    if (analyseString[0] == '1' && std::isdigit(analyseString[1])) {
+        return false;
+    }
+    return true;
+}
+
+bool MMICodeUtils::IsShortCodeWithCellularCall(const std::string &analyseString)
+{
+    if (analyseString.length() < 1 || analyseString.length() > MAX_LENGTH_SHORT_CODE) {
+        return false;
+    }
+    return true;
+}
+
+bool MMICodeUtils::HasCellularCallExist()
+{
+    int32_t simCount = CoreManagerInner::GetInstance().GetMaxSimCount();
+    if (simCount == 0) {
+        return false;
+    }
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (serviceInstance == nullptr) {
+        TELEPHONY_LOGE("serviceInstance is null");
+        return false;
+    }
+    for (int32_t i = 0; i < simCount; i++) {
+        auto imsControl = serviceInstance->GetImsControl(i);
+        if (imsControl != nullptr && !imsControl->GetConnectionMap().empty()) {
+            return true;
+        }
+        auto csControl = serviceInstance->GetCsControl(i);
+        if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
+            return true;
+        }
+        auto satelliteControl = serviceInstance->GetSatelliteControl(i);
+        if (satelliteControl != nullptr && !satelliteControl->GetConnectionMap().empty()) {
+            return true;
+        }
+    }
+    return false;
 }
 } // namespace Telephony
 } // namespace OHOS

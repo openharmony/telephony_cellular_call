@@ -1636,5 +1636,15 @@ bool CellularCallService::isRadioOnFlag(int32_t slotId)
 {
     return isRadioOn_[slotId];
 }
+
+int32_t CellularCallService::SendUssdResponse(int32_t slotId, const std::string &content)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("CellularCallService::SendUssdResponse return, invalid slot id");
+        return CALL_ERR_INVALID_SLOT_ID;
+    }
+    CellularCallSupplement supplement;
+    return supplement.SendUssd(slotId, content);
+}
 } // namespace Telephony
 } // namespace OHOS
