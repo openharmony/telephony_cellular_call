@@ -635,7 +635,7 @@ void CellularCallSupplement::EventSetCallWaiting(int32_t result,
             TELEPHONY_LOGE("strcpy_s fial");
         }
         mmiCodeInfo.mmiCodeType = SC_WAIT;
-        mmiCodeInfo.action = action ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
 
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
@@ -742,7 +742,7 @@ void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std:
             TELEPHONY_LOGE("strcpy_s fial");
         }
         mmiCodeInfo.mmiCodeType = SC_CFU;
-        mmiCodeInfo.action = action ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetTransferResult(result);
@@ -797,7 +797,7 @@ void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = result;
         mmiCodeInfo.mmiCodeType = SC_CLIP;
-        mmiCodeInfo.action = action ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fial");
         }
@@ -818,7 +818,7 @@ void CellularCallSupplement::EventSetBarringPassword(int32_t result, const std::
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = result;
         mmiCodeInfo.mmiCodeType = SC_BAOC;
-        mmiCodeInfo.action = SUB_TYPE_ACTICE;
+        mmiCodeInfo.action = SUB_TYPE_ACTIVE;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fial");
         }
@@ -1273,7 +1273,7 @@ void CellularCallSupplement::EventSetClip(int32_t result, const std::string &mes
             TELEPHONY_LOGE("strcpy_s fail.");
         }
         mmiCodeInfo.mmiCodeType = SC_CLIP;
-        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
@@ -1326,7 +1326,7 @@ void CellularCallSupplement::EventSetClir(int32_t result, const std::string &mes
             TELEPHONY_LOGE("strcpy_s fail.");
         }
         mmiCodeInfo.mmiCodeType = SC_CLIR;
-        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetClirResult(result);
@@ -1367,7 +1367,7 @@ void CellularCallSupplement::EventSetColr(int32_t result, const std::string &mes
             TELEPHONY_LOGE("strcpy_s fail.");
         }
         mmiCodeInfo.mmiCodeType = SC_COLR;
-        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);
@@ -1408,7 +1408,7 @@ void CellularCallSupplement::EventSetColp(int32_t result, const std::string &mes
             TELEPHONY_LOGE("strcpy_s fail.");
         }
         mmiCodeInfo.mmiCodeType = SC_COLP;
-        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTICE : SUB_TYPE_DEACTIVE;
+        mmiCodeInfo.action = action == ACTIVATE_ACTION ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         TELEPHONY_LOGE("report the result of GetColp failed since the flag %{public}d was wrong", flag);

@@ -135,7 +135,7 @@ const std::string CLIR_DEFAULT_OFF_NEXT_OFF = "Caller ID defaults to not restric
 const std::string CLIR_DEFAULT_OFF_NEXT_ON = "Caller ID defaults to not restricted. Next call: Restricted";
 
 const int32_t SUB_TYPE_QUERY = 0;
-const int32_t SUB_TYPE_ACTICE = 1;
+const int32_t SUB_TYPE_ACTIVE = 1;
 const int32_t SUB_TYPE_DEACTIVE = 2;
 
 // Call waiting

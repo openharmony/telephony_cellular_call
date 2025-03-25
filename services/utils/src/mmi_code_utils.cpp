@@ -270,19 +270,29 @@ MMIData MMICodeUtils::GetMMIData()
 
 bool MMICodeUtils::IsShortCode(const std::string &analyseString)
 {
-    std::string symbols = "^(?!1\\d)\\d{2}";
     if (HasCellularCallExist()) {
-        symbols = "\\d{1,2}";
+        return IsShortCodeWithCellularCall(analyseString);
     }
-    TELEPHONY_LOGI("IsShortCode HasCellularCallExist = %{public}d", HasCellularCallExist());
-    std::regex shortCodePattern(symbols);
-    std::smatch shortCodeResult;
-    if (regex_match(analyseString, shortCodeResult, shortCodePattern)) {
-        TELEPHONY_LOGI("IsShortCode: shortCodeResult true");
-        mmiData_.fullString = analyseString;
-        return true;
+    return IsShortCodeWithoutCellularCall(analyseString);
+}
+
+bool MMICodeUtils::IsShortCodeWithoutCellularCall(const std::string &analyseString)
+{
+    if (analyseString.length() != 2) {
+        return false;
     }
-    return false;
+    if (analyseString[0] == '1' && std::isdigit(analyseString[1])) {
+        return false;
+    }
+    return true;
+}
+
+bool MMICodeUtils::IsShortCodeWithCellularCall(const std::string &analyseString)
+{
+    if (analyseString.length() < 1 || analyseString.length() > 2) {
+        return false;
+    }
+    return true;
 }
 
 bool MMICodeUtils::HasCellularCallExist()

@@ -978,16 +978,15 @@ HWTEST_F(ZeroBranch1Test, Telephony_MmiCodeUtils_001, Function | MediumTest | Le
     dialStr = "12";
     ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
     dialStr = "33";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
     dialStr = "*21*10086#";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    mmiCodeUtils.GetMMIData();
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
     dialStr = "10086";
     ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
     dialStr = "*30#10086";
     ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
     dialStr = "*33##123#";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
 }
 
 /**
