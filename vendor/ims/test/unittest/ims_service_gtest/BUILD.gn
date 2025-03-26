@@ -18,7 +18,7 @@ ohos_unittest("tel_vendor_ims_service_gtest") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "tel_vendor_ims_service_gtest"
-  module_out_path = part_name + "/" + test_module
+  module_out_path = part_name + "/" + part_name + "/" + test_module
   SUBSYSTEM_DIR = "../../../../.."
 
   sources = [ "ims_service_test.cpp" ]

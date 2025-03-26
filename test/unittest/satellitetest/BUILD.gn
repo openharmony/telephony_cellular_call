@@ -18,7 +18,7 @@ ohos_unittest("cellular_call_satellite_callback_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "satellitetest"
-  module_out_path = part_name + "/" + test_module
+  module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [ "satellite_callback_test.cpp" ]
 
@@ -67,7 +67,7 @@ ohos_unittest("cellular_call_satellite_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "satellitetest"
-  module_out_path = part_name + "/" + test_module
+  module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [ "satellite_test.cpp" ]
 
@@ -116,7 +116,7 @@ ohos_unittest("cellular_call_satellite_zero_branch_test") {
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "satellitetest"
-  module_out_path = part_name + "/" + test_module
+  module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [ "zero_branch_test.cpp" ]
 
