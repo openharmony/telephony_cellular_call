@@ -830,12 +830,15 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
 {
     std::map<int32_t, std::vector<EmergencyCall>> tempEccList;
     std::string mcc = GetMcc(slotId);
-    for (auto ecc : eccListRadioMap_[slotId]) {
-        ecc.mcc = mcc;
-        tempEccList[slotId].push_back(ecc);
+    {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
+        for (auto ecc : eccListRadioMap_[slotId]) {
+            ecc.mcc = mcc;
+            tempEccList[slotId].push_back(ecc);
+            TELEPHONY_LOGD("MergeEccCallList merge radio slotId  %{public}d size  %{public}d", slotId,
+                static_cast<int32_t>(eccListRadioMap_[slotId].size()));
+        }
     }
-    TELEPHONY_LOGD("MergeEccCallList merge radio slotId  %{public}d size  %{public}d", slotId,
-        static_cast<int32_t>(eccListRadioMap_[slotId].size()));
     SimState simState = SimState::SIM_STATE_UNKNOWN;
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     bool hasSim = simState == SimState::SIM_STATE_READY || simState == SimState::SIM_STATE_LOADED;
