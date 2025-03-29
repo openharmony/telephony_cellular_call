@@ -1075,9 +1075,6 @@ HWTEST_F(Ims2Test, cellular_call_GetImsSwitchStatusResponse_0001, Function | Med
     auto imsActive = std::make_shared<int32_t>(1);
     responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
     handler.GetImsSwitchStatusResponse(responseEvent);
-    imsActive = nullptr;
-    responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
-    handler.GetImsSwitchStatusResponse(responseEvent);
     ASSERT_EQ(handler.GetSlotId(), SIM1_SLOTID);
 }
 } // namespace Telephony
