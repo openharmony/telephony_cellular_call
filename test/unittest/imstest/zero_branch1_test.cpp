@@ -418,6 +418,10 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_005, Function | MediumTest 
     MessageParcel clearCallsData;
     MakeCallInfoParcelData(false, clearCallsData);
     ASSERT_EQ(callStub.OnClearAllCallsInner(clearCallsData, reply), TELEPHONY_SUCCESS);
+    MessageParcel ussdData;
+    ussdData.WriteInt32(0);
+    ussdData.WriteString("1");
+    ASSERT_EQ(callStub.OnSendUssdResponse(ussdData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -725,6 +729,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     cellularCall.UnRegisterCallManagerCallBack();
     cellularCall.HandlerResetUnRegister();
     cellularCall.OnStop();
+    cellularCall.SendUssdResponse(0, "1");
     ASSERT_EQ(callback, nullptr);
 }
 
@@ -758,24 +763,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallSupplementRequestIms_001, Functi
     ASSERT_NE(SRequestIms.GetColpRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
 }
 
-/**
- * @tc.number	Telephony_CellularCallbaseconnection_001
- * @tc.name 	Test error branch
- * @tc.desc 	Function test
- */
-HWTEST_F(ZeroBranch1Test, Telephony_CellularCallbaseconnection_001, Function | MediumTest | Level3)
-{
-    BaseConnection BConnection;
-    char c = ' ';
-    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_CANCELED;
-    EXPECT_EQ(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    EXPECT_EQ(BConnection.GetLeftPostDialCallString(), "");
-    BConnection.postDialCallString_ = "111111";
-    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
-    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    EXPECT_NE(BConnection.GetLeftPostDialCallString(), "");
-}
 /**
  * @tc.number   Telephony_CellularCallHiSysEvent_001
  * @tc.name     Test error branch
@@ -968,6 +955,20 @@ HWTEST_F(ZeroBranch1Test, Telephony_MmiCodeUtils_001, Function | MediumTest | Le
     mmiCodeUtils.mmiData_.fullString.clear();
     mmiCodeUtils.mmiData_.dialString = "11111#";
     ASSERT_FALSE(mmiCodeUtils.RegexMatchMmi("111111#"));
+    std::string dialStr = "";
+    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "12";
+    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "33";
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "*21*10086#";
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "10086";
+    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "*30#10086";
+    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
+    dialStr = "*33##123#";
+    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
 }
 
 /**

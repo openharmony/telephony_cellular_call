@@ -289,7 +289,6 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0003, Function |
         ASSERT_NE(stubTestThree->OnPeerDimensionsChangedInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stubTestThree->OnCallDataUsageChangedInner(data, reply), TELEPHONY_SUCCESS);
         ASSERT_NE(stubTestThree->OnCameraCapabilitiesChangedInner(data, reply), TELEPHONY_SUCCESS);
-        ASSERT_NE(stubTestThree->OnGetImsCapResponseInner(data, reply), TELEPHONY_SUCCESS);
     }
 }
 

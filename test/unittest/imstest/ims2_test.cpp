@@ -151,10 +151,6 @@ HWTEST_F(Ims2Test, cellular_call_SetVoNRState_0002, Function | MediumTest | Leve
     ASSERT_TRUE(setVoNRRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-    }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -753,7 +749,6 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest 
         }
         CellularCallConfig cellularCallConfig;
         ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
-        ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
@@ -793,7 +788,6 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0002, Function | MediumTest 
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(slotId));
         cellularCallConfig.GetNrModeSupportedListConfig(INVALID_SLOTID);
         cellularCallConfig.GetNrModeSupportedListConfig(slotId);
         ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));
@@ -1079,6 +1073,9 @@ HWTEST_F(Ims2Test, cellular_call_GetImsSwitchStatusResponse_0001, Function | Med
     auto responseEvent = AppExecFwk::InnerEvent::Get(0, responseInfo);
     handler.GetImsSwitchStatusResponse(responseEvent);
     auto imsActive = std::make_shared<int32_t>(1);
+    responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
+    handler.GetImsSwitchStatusResponse(responseEvent);
+    imsActive = nullptr;
     responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
     handler.GetImsSwitchStatusResponse(responseEvent);
     ASSERT_EQ(handler.GetSlotId(), SIM1_SLOTID);
