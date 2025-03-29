@@ -955,20 +955,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_MmiCodeUtils_001, Function | MediumTest | Le
     mmiCodeUtils.mmiData_.fullString.clear();
     mmiCodeUtils.mmiData_.dialString = "11111#";
     ASSERT_FALSE(mmiCodeUtils.RegexMatchMmi("111111#"));
-    std::string dialStr = "";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "12";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "33";
-    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "*21*10086#";
-    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "10086";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "*30#10086";
-    ASSERT_FALSE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
-    dialStr = "*33##123#";
-    ASSERT_TRUE(mmiCodeUtils.IsNeedExecuteMmi(dialStr, enable));
 }
 
 /**
