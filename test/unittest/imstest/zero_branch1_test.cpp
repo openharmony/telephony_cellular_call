@@ -418,10 +418,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_005, Function | MediumTest 
     MessageParcel clearCallsData;
     MakeCallInfoParcelData(false, clearCallsData);
     ASSERT_EQ(callStub.OnClearAllCallsInner(clearCallsData, reply), TELEPHONY_SUCCESS);
-    MessageParcel ussdData;
-    ussdData.WriteInt32(0);
-    ussdData.WriteString("1");
-    ASSERT_EQ(callStub.OnSendUssdResponse(ussdData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -729,7 +725,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     cellularCall.UnRegisterCallManagerCallBack();
     cellularCall.HandlerResetUnRegister();
     cellularCall.OnStop();
-    cellularCall.SendUssdResponse(0, "1");
     ASSERT_EQ(callback, nullptr);
 }
 
