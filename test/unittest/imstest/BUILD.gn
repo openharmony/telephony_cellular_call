@@ -24,7 +24,6 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
     "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
-    "ims_callback_proxy_test.cpp",
   ]
 
   include_dirs = [
