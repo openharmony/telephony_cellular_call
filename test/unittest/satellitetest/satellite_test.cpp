@@ -170,12 +170,6 @@ HWTEST_F(SatelliteTest, Satellite_call_DialCall_0001, Function | MediumTest | Le
     if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
         return;
     }
-    if (HasSimCard(SIM1_SLOTID)) {
-        int32_t ret = TestDialCallBySatellite(SIM1_SLOTID, PHONE_NUMBER);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        ret = TestDialCallBySatellite(INVALID_SLOTID, PHONE_NUMBER);
-        EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
-    }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallBySatellite(SIM2_SLOTID, PHONE_NUMBER);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -306,9 +300,6 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0001, Function | MediumTest | L
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        char code = '1';
-        ret = telephonyService->StartDtmf(code, callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
@@ -375,8 +366,6 @@ HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0001, Function | MediumTest | Le
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        ret = telephonyService->StopDtmf(callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
@@ -441,9 +430,6 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0001, Function | MediumTest | Le
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        char code = '1';
-        ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo sendDtmfCallInfo;

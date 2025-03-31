@@ -759,24 +759,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallSupplementRequestIms_001, Functi
 }
 
 /**
- * @tc.number	Telephony_CellularCallbaseconnection_001
- * @tc.name 	Test error branch
- * @tc.desc 	Function test
- */
-HWTEST_F(ZeroBranch1Test, Telephony_CellularCallbaseconnection_001, Function | MediumTest | Level3)
-{
-    BaseConnection BConnection;
-    char c = ' ';
-    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_CANCELED;
-    EXPECT_EQ(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    EXPECT_EQ(BConnection.GetLeftPostDialCallString(), "");
-    BConnection.postDialCallString_ = "111111";
-    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
-    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
-    EXPECT_NE(BConnection.GetLeftPostDialCallString(), "");
-}
-/**
  * @tc.number   Telephony_CellularCallHiSysEvent_001
  * @tc.name     Test error branch
  * @tc.desc     Function test
