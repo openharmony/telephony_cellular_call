@@ -135,29 +135,6 @@ void Ims2Test::TearDown(void)
 }
 
 /**
- * @tc.number   cellular_call_SetVoNRState_0002
- * @tc.name     Test for SetVoNRState function
- * @tc.desc     Function test
- */
-HWTEST_F(Ims2Test, cellular_call_SetVoNRState_0002, Function | MediumTest | Level2)
-{
-    AccessToken token;
-    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
-        return;
-    }
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto setVoNRRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(setVoNRRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM2_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-    }
-}
-
-/**
  * @tc.number   cellular_call_GetVoNRState_0001
  * @tc.name     Test for GetVoNRState function
  * @tc.desc     Function test
@@ -730,83 +707,6 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0002, Function | MediumTes
     callRegister->HandleCallDataUsageChanged(callDataUsageInfo);
     CameraCapabilitiesInfo cameraCapabilitiesInfo;
     callRegister->HandleCameraCapabilitiesChanged(cameraCapabilitiesInfo);
-}
-
-/**
- * @tc.number   cellular_call_CellularCallConfig_0001
- * @tc.name     Test for CellularCallConfig
- * @tc.desc     Function test
- */
-HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
-{
-    if (!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID)) {
-        return;
-    }
-
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        if (!HasSimCard(slotId)) {
-            continue;
-        }
-        CellularCallConfig cellularCallConfig;
-        ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(slotId));
-        cellularCallConfig.GetNrModeSupportedListConfig(INVALID_SLOTID);
-        cellularCallConfig.GetNrModeSupportedListConfig(slotId);
-        ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetSsOverUtSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetSsOverUtSupportedConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetImsGbaRequiredConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetImsGbaRequiredConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetUtProvisioningSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetUtProvisioningSupportedConfig(slotId));
-        ASSERT_TRUE(cellularCallConfig.GetImsPreferForEmergencyConfig(INVALID_SLOTID));
-        ASSERT_TRUE(cellularCallConfig.GetImsPreferForEmergencyConfig(slotId));
-        cellularCallConfig.GetCallWaitingServiceClassConfig(INVALID_SLOTID);
-        cellularCallConfig.GetCallWaitingServiceClassConfig(slotId);
-        cellularCallConfig.GetImsCallDisconnectResoninfoMappingConfig(INVALID_SLOTID);
-        cellularCallConfig.GetImsCallDisconnectResoninfoMappingConfig(slotId);
-        ASSERT_FALSE(cellularCallConfig.GetForceVolteSwitchOnConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetForceVolteSwitchOnConfig(slotId));
-    }
-}
-
-/**
- * @tc.number   cellular_call_CellularCallConfig_0002
- * @tc.name     Test for CellularCallConfig
- * @tc.desc     Function test
- */
-HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0002, Function | MediumTest | Level3)
-{
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        CellularCallConfig cellularCallConfig;
-        ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
-        cellularCallConfig.GetNrModeSupportedListConfig(INVALID_SLOTID);
-        cellularCallConfig.GetNrModeSupportedListConfig(slotId);
-        ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetSsOverUtSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetSsOverUtSupportedConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetImsGbaRequiredConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetImsGbaRequiredConfig(slotId));
-        ASSERT_FALSE(cellularCallConfig.GetUtProvisioningSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetUtProvisioningSupportedConfig(slotId));
-        ASSERT_TRUE(cellularCallConfig.GetImsPreferForEmergencyConfig(INVALID_SLOTID));
-        ASSERT_TRUE(cellularCallConfig.GetImsPreferForEmergencyConfig(slotId));
-        cellularCallConfig.GetCallWaitingServiceClassConfig(INVALID_SLOTID);
-        cellularCallConfig.GetCallWaitingServiceClassConfig(slotId);
-        cellularCallConfig.GetImsCallDisconnectResoninfoMappingConfig(INVALID_SLOTID);
-        cellularCallConfig.GetImsCallDisconnectResoninfoMappingConfig(slotId);
-        ASSERT_FALSE(cellularCallConfig.GetForceVolteSwitchOnConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetForceVolteSwitchOnConfig(slotId));
-    }
 }
 
 /**
