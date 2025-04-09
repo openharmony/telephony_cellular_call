@@ -36,6 +36,7 @@ const int32_t DEACTIVATE_ACTION = 2;
 const int32_t USSD_MODE_NOTIFY = 0;
 const int32_t USSD_MODE_REQUEST = 1;
 const int32_t USSD_MODE_NW_RELEASE = 2;
+const int32_t USSD_SUCCESS = 0;
 const int32_t USSD_FAILED = 2;
 const int32_t RESULT_SUCCESS = 0;
 const int32_t MMI_CODE_FAILED = 1;
@@ -1555,8 +1556,12 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
             return;
         }
     } else {
-        mmiCodeInfo.result = USSD_FAILED;
-        TELEPHONY_LOGE("Invaild ussd notify.");
+        mmiCodeInfo.result = USSD_SUCCESS;
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), INVALID_MMI_CODE.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s INVALID_MMI_CODE fail.");
+            return;
+        }
+        TELEPHONY_LOGI("vaild ussd notify.");
     }
 
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
