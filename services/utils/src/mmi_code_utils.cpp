@@ -40,6 +40,9 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNee
         TELEPHONY_LOGE("analyseString is empty.");
         return false;
     }
+    if (IsShortCode(analyseString)) {
+        return true;
+    }
     if (RegexMatchMmi(analyseString)) {
         return true;
     }
@@ -50,7 +53,6 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNee
         mmiData_.fullString = analyseString;
         return true;
     }
-
     return false;
 }
 
@@ -216,15 +218,12 @@ bool MMICodeUtils::ExecuteMmiCode(int32_t slotId)
 
 bool MMICodeUtils::RegexMatchMmi(const std::string &analyseString)
 {
-    if (IsShortCode(analyseString)) {
-        return true;
-    }
     std::string symbols =
         "((\\*|#|\\*#|\\*\\*|##)(\\d{2,3})(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*)(\\*([^*#]*))?)?)?)?#)(.*)";
     std::regex pattern(symbols);
     std::smatch results;
     if (regex_match(analyseString, results, pattern)) {
-        TELEPHONY_LOGD("regex_match ture");
+        TELEPHONY_LOGD("regex_match true");
 
         /**
          * The following sequence of functions shall be used for the control of Supplementary Services:
