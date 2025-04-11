@@ -41,6 +41,7 @@ bool MMICodeUtils::IsNeedExecuteMmi(const std::string &analyseString, bool isNee
         return false;
     }
     if (IsShortCode(analyseString)) {
+        mmiData_.fullString = analyseString;
         return true;
     }
     if (RegexMatchMmi(analyseString)) {
