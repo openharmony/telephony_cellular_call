@@ -76,9 +76,11 @@ void ImsCallClient::UnInit()
 
 sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
 {
-    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
-    if (imsCallProxy_ != nullptr) {
-        return imsCallProxy_;
+    {
+        Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+        if (imsCallProxy_ != nullptr) {
+            return imsCallProxy_;
+        }
     }
     auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (managerPtr == nullptr) {
@@ -90,6 +92,7 @@ sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
         TELEPHONY_LOGE("GetImsCallProxy return, remote service not exists.");
         return nullptr;
     }
+    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
     imsCoreServiceProxy_ = iface_cast<ImsCoreServiceInterface>(remoteObjectPtr);
     if (imsCoreServiceProxy_ == nullptr) {
         TELEPHONY_LOGE("GetImsCallProxy return, imsCoreServiceProxy_ is nullptr.");
