@@ -280,7 +280,7 @@ bool MMICodeUtils::IsShortCode(const std::string &analyseString)
 
 bool MMICodeUtils::IsShortCodeWithoutCellularCall(const std::string &analyseString)
 {
-    if (analyseString.length() != MAX_LENGTH_SHORT_CODE) {
+    if (analyseString.length() > MAX_LENGTH_SHORT_CODE) {
         return false;
     }
     if (analyseString[0] == '1' && std::isdigit(analyseString[1])) {
