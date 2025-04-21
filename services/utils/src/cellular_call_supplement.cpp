@@ -1557,7 +1557,7 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
         }
     } else {
         mmiCodeInfo.result = USSD_SUCCESS;
-        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), INVALID_MMI_CODE.c_str()) != EOK) {
+        if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), ussdNoticeInfo.str.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s INVALID_MMI_CODE fail.");
             return;
         }
