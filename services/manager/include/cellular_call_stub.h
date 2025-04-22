@@ -551,6 +551,16 @@ private:
 
     int32_t OnSetEmergencyCallList(MessageParcel &data, MessageParcel &reply);
 
+    /**
+     * Send ussd response to modem
+     *
+     * @brief Send ussd response to modem
+     * @param slotId[in], The slot id
+     * @param  content the content need send to modem
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnSendUssdResponse(MessageParcel &data, MessageParcel &reply);
+
 private:
     using RequestFuncType = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     std::map<CellularCallInterfaceCode, RequestFuncType> requestFuncMap_;

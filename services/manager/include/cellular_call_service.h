@@ -673,6 +673,15 @@ public:
     void StartCallManagerService();
 #endif
 
+    /**
+     * Send ussd response to modem
+     *
+     * @param slotId
+     * @param  content the content need send to modem
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SendUssdResponse(int32_t slotId, const std::string &content) override;
+
 private:
     /**
      * Init service
