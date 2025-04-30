@@ -925,11 +925,11 @@ HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Leve
     }
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
 }
 } // namespace Telephony

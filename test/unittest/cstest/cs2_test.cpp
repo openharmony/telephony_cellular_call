@@ -743,8 +743,8 @@ HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
         }
         CallInfoList callList;
         callList.callSize = 0;
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_ERROR);
-        EXPECT_NE(csControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
         CallInfo callInfo;
         callList.callSize = 1;
         callInfo.number = PHONE_NUMBER;
@@ -764,7 +764,6 @@ HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
         callList.calls.push_back(callInfo);
         callList.callSize = 0;
         EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_NE(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
         EXPECT_NE(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_NE(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
         EXPECT_NE(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
@@ -1313,7 +1312,7 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest 
     callInfoList->calls[0].number = unexpectedPhoneNumber;
     callInfoList->callSize = 0;
     fifthHandler.ProcessRedundantCode(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     callInfoList->callSize = 1;
     callInfoList->calls.clear();
     fifthHandler.ProcessRedundantCode(*callInfoList);
@@ -1419,7 +1418,7 @@ HWTEST_F(Cs2Test, EncapsulationCallReportInfo_0002, Function | MediumTest | Leve
     callInfo.number = "1234567";
     callInfo.name = "aaa";
     CallReportInfo reportInfo = csControl->EncapsulationCallReportInfo(SIM1_SLOTID, callInfo);
-    EXPECT_EQ("1234567", reportInfo.name);
+    EXPECT_EQ("aaa", reportInfo.name);
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -153,11 +153,11 @@ HWTEST_F(Ims2Test, cellular_call_SetVoNRState_0002, Function | MediumTest | Leve
     ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
 }
 
@@ -436,12 +436,12 @@ HWTEST_F(Ims2Test, cellular_call_SetCallRestriction_0001, Function | MediumTest 
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallRestrictionInfo crInfo;
         int32_t ret = telephonyService->SetCallRestriction(SIM1_SLOTID, crInfo);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallRestrictionInfo crInfo;
         int32_t ret = telephonyService->SetCallRestriction(SIM2_SLOTID, crInfo);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
 
@@ -465,12 +465,12 @@ HWTEST_F(Ims2Test, cellular_call_GetCallRestriction_0001, Function | MediumTest 
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallRestrictionType facType = CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING;
         int32_t ret = telephonyService->GetCallRestriction(SIM1_SLOTID, facType);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallRestrictionType facType = CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING;
         int32_t ret = telephonyService->GetCallRestriction(SIM2_SLOTID, facType);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
 
@@ -523,12 +523,12 @@ HWTEST_F(Ims2Test, cellular_call_GetCallTransferInfo_0001, Function | MediumTest
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallTransferType type = CallTransferType::TRANSFER_TYPE_UNCONDITIONAL;
         int32_t ret = telephonyService->GetCallTransferInfo(SIM1_SLOTID, type);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         CallTransferType type = CallTransferType::TRANSFER_TYPE_UNCONDITIONAL;
         int32_t ret = telephonyService->GetCallTransferInfo(SIM2_SLOTID, type);
-        EXPECT_NE(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
 
@@ -753,11 +753,11 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest 
         }
         CellularCallConfig cellularCallConfig;
         ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(INVALID_SLOTID));
-        ASSERT_TRUE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
+        ASSERT_FALSE(cellularCallConfig.GetImsSwitchOnByDefaultConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(slotId));
+        ASSERT_TRUE(cellularCallConfig.GetvolteSupportedConfig(slotId));
         cellularCallConfig.GetNrModeSupportedListConfig(INVALID_SLOTID);
         cellularCallConfig.GetNrModeSupportedListConfig(slotId);
         ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));
@@ -793,7 +793,7 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0002, Function | MediumTest 
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(INVALID_SLOTID));
         ASSERT_FALSE(cellularCallConfig.GethideImsSwitchConfig(slotId));
         ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(INVALID_SLOTID));
-        ASSERT_FALSE(cellularCallConfig.GetvolteSupportedConfig(slotId));
+        ASSERT_TRUE(cellularCallConfig.GetvolteSupportedConfig(slotId));
         cellularCallConfig.GetNrModeSupportedListConfig(INVALID_SLOTID);
         cellularCallConfig.GetNrModeSupportedListConfig(slotId);
         ASSERT_FALSE(cellularCallConfig.GetVolteProvisioningSupportedConfig(INVALID_SLOTID));

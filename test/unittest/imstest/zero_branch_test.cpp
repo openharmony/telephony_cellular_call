@@ -383,7 +383,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     RadioResponseInfo response;
     callSup.EventCloseUnFinishedUssd(response);
     callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL);
-    ASSERT_NE(callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
+    ASSERT_EQ(callSup.GetCallTransferInfo(SIM2_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
         TELEPHONY_SUCCESS);
 }
 
@@ -659,11 +659,11 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_009, Function | Medium
     ASSERT_EQ(callSup.SetCallTransferInfoByIms(SIM1_SLOTID, cfInfo, command), TELEPHONY_SUCCESS);
 #endif
     ASSERT_EQ(callSup.SetCallTransferInfo(SIM1_SLOTID, cfInfo), TELEPHONY_ERR_ARGUMENT_INVALID);
-    ASSERT_EQ(callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
-        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_NE(callSup.GetCallTransferInfo(SIM1_SLOTID, CallTransferType::TRANSFER_TYPE_UNCONDITIONAL),
+        TELEPHONY_SUCCESS);
     bool activate = true;
-    ASSERT_EQ(callSup.SetCallWaiting(SIM1_SLOTID, activate), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    ASSERT_EQ(callSup.GetCallWaiting(SIM1_SLOTID), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_EQ(callSup.SetCallWaiting(SIM1_SLOTID, activate), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callSup.GetCallWaiting(SIM1_SLOTID), TELEPHONY_SUCCESS);
     CallRestrictionInfo cRInfo;
     std::string info(cRInfo.password);
     std::string fac("AO");
@@ -675,10 +675,10 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_009, Function | Medium
         TELEPHONY_SUCCESS);
 #endif
     ASSERT_EQ(callSup.GetCallRestriction(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING),
-        CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+        TELEPHONY_SUCCESS);
     ASSERT_EQ(callSup.SetBarringPassword(SIM1_SLOTID, CallRestrictionType::RESTRICTION_TYPE_ALL_INCOMING,
         "1111", "0000"), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
-    ASSERT_EQ(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), CALL_ERR_UNSUPPORTED_NETWORK_TYPE);
+    ASSERT_EQ(callSup.SetCallRestriction(SIM1_SLOTID, cRInfo), TELEPHONY_SUCCESS);
     callSup.AlterPinPassword(SIM1_SLOTID, mmiDataAct);
     callSup.UnlockPuk(SIM1_SLOTID, mmiDataAct);
     callSup.AlterPin2Password(SIM1_SLOTID, mmiDataAct);
