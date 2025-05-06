@@ -960,7 +960,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SeparateConference_0001, Function | 
     auto telephonyService = iface_cast<CellularCallInterface>(separateRemote);
     ASSERT_TRUE(telephonyService != nullptr);
     ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
-    if (HasSimASSERT_FALSECard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
