@@ -127,12 +127,6 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
-        EventFwk::MatchingSkills matchingSkills;
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
-        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
         EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
@@ -181,12 +175,6 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
-        EventFwk::MatchingSkills matchingSkills;
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
-        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
         ImsCallModeReceiveInfo callModeReceiveInfo;
         callModeReceiveInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(
