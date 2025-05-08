@@ -951,6 +951,12 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
     imsCurrent.number = unexpected;
     imsCurrentCallList->calls.push_back(imsCurrent);
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
+    EXPECT_EQ(imsCurrentCallList->calls[0].number, expected);
+    imsCurrentCallList->calls.clear();
+    unexpected = "08761565910xxxx";
+    imsCurrent.number = unexpected;
+    imsCurrentCallList->calls.push_back(imsCurrent);
+    handler.ProcessImsPhoneNumber(*imsCurrentCallList);
     EXPECT_EQ(imsCurrentCallList->calls[0].number, unexpected);
 }
 
