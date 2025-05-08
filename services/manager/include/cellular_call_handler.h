@@ -195,8 +195,8 @@ public:
 
 public:
     const uint32_t REGISTER_HANDLER_ID = 10003;
-    const std::string PHONE_CONTEXT_UNEXPECTED = "0086";
-    const std::string PHONE_CONTEXT_UNEXPECTED_1 = "086";
+    const std::string PHONE_CONTEXT_UNEXPECTED_SCENARIO_1 = "0086";
+    const std::string PHONE_CONTEXT_UNEXPECTED_SCENARIO_2 = "086";
     const std::string PHONE_CONTEXT_EXPECTED = "+86";
     const std::string DOUBLE_PHONE_CONTEXT_STRING = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
         "|18[0-9]|19[0-9])\\d{8}$";
