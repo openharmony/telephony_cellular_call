@@ -1222,6 +1222,13 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0004, Function | MediumTest 
     callInfoLists.push_back(callInfo);
     callInfoListThird->calls = callInfoLists;
     fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
+    EXPECT_EQ(callInfoListThird->calls[0].number, expectedPhoneNumber);
+    callInfoLists.clear();
+    unexpectedPhoneNumber = "0871565910xxxx";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoLists.push_back(callInfo);
+    callInfoListThird->calls = callInfoLists;
+    fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
     EXPECT_EQ(callInfoListThird->calls[0].number, unexpectedPhoneNumber);
 }
 
