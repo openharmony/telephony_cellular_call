@@ -78,43 +78,37 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
-        EventFwk::MatchingSkills matchingSkills;
-        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
-        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
         RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
-        ASSERT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->AnswerResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->HoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_GE(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->CallStateChangeReport(slotId), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->AnswerResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->HoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_GE(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CallStateChangeReport(slotId), TELEPHONY_SUCCESS);
         ImsCurrentCallList imsCallList;
         imsCallList.callSize = 0;
-        ASSERT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, imsCallList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, imsCallList), TELEPHONY_SUCCESS);
         DisconnectedDetails details;
-        ASSERT_EQ(callCallbackProxy->LastCallFailReasonResponse(slotId, details), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->LastCallFailReasonResponse(slotId, details), TELEPHONY_SUCCESS);
         RingbackVoice ringback;
-        ASSERT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_SUCCESS);
         int32_t active = 0;
-        ASSERT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
         ImsCapFromChip imsCap = {0};
-        ASSERT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_SUCCESS);
         MuteControlResponse muteResponse;
-        ASSERT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
     }
 }
 
@@ -141,34 +135,34 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         handler->RegisterImsCallCallbackHandler();
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
         GetClirResult clirResult;
         clirResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetClirResponse(slotId, clirResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetClirResponse(slotId, clirResult), TELEPHONY_SUCCESS);
         SsBaseResult normalResult;
         normalResult.index = DEFAULT_INDEX;
-        ASSERT_EQ(callCallbackProxy->SetClipResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetClirResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetCallTransferResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetCallRestrictionResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetCallWaitingResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetColrResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        ASSERT_EQ(callCallbackProxy->SetColpResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetClipResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetClirResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetCallTransferResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetCallRestrictionResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetCallWaitingResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetColrResponse(slotId, normalResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetColpResponse(slotId, normalResult), TELEPHONY_SUCCESS);
         CallForwardQueryInfoList callList;
         callList.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetCallTransferResponse(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetCallTransferResponse(slotId, callList), TELEPHONY_SUCCESS);
         CallRestrictionResult crResult;
         crResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetCallRestrictionResponse(slotId, crResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetCallRestrictionResponse(slotId, crResult), TELEPHONY_SUCCESS);
         CallWaitResult cwResult;
         cwResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetCallWaitingResponse(slotId, cwResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetCallWaitingResponse(slotId, cwResult), TELEPHONY_SUCCESS);
         GetColrResult colrResult;
         colrResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetColrResponse(slotId, colrResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetColrResponse(slotId, colrResult), TELEPHONY_SUCCESS);
         GetColpResult colpResult;
         colpResult.result.index = INVALID_INDEX;
-        ASSERT_EQ(callCallbackProxy->GetColpResponse(slotId, colpResult), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetColpResponse(slotId, colpResult), TELEPHONY_SUCCESS);
     }
 }
 
@@ -195,22 +189,22 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         handler->RegisterImsCallCallbackHandler();
         ImsCallModeReceiveInfo callModeReceiveInfo;
         callModeReceiveInfo.callIndex = DEFAULT_INDEX;
-        ASSERT_EQ(
+        EXPECT_EQ(
             callCallbackProxy->ReceiveUpdateCallMediaModeResponse(slotId, callModeReceiveInfo), TELEPHONY_SUCCESS);
-        ASSERT_EQ(
+        EXPECT_EQ(
             callCallbackProxy->ReceiveUpdateCallMediaModeRequest(slotId, callModeReceiveInfo), TELEPHONY_SUCCESS);
         ImsCallSessionEventInfo callSessionEventInfo;
         callSessionEventInfo.callIndex = DEFAULT_INDEX;
-        ASSERT_EQ(callCallbackProxy->CallSessionEventChanged(slotId, callSessionEventInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CallSessionEventChanged(slotId, callSessionEventInfo), TELEPHONY_SUCCESS);
         ImsCallPeerDimensionsInfo callPeerDimensionsInfo;
         callPeerDimensionsInfo.callIndex = DEFAULT_INDEX;
-        ASSERT_EQ(callCallbackProxy->PeerDimensionsChanged(slotId, callPeerDimensionsInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->PeerDimensionsChanged(slotId, callPeerDimensionsInfo), TELEPHONY_SUCCESS);
         ImsCallDataUsageInfo callDataUsageInfo;
         callDataUsageInfo.callIndex = DEFAULT_INDEX;
-        ASSERT_EQ(callCallbackProxy->CallDataUsageChanged(slotId, callDataUsageInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CallDataUsageChanged(slotId, callDataUsageInfo), TELEPHONY_SUCCESS);
         CameraCapabilitiesInfo cameraCapabilitiesInfo;
         cameraCapabilitiesInfo.callIndex = DEFAULT_INDEX;
-        ASSERT_EQ(callCallbackProxy->CameraCapabilitiesChanged(slotId, cameraCapabilitiesInfo), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CameraCapabilitiesChanged(slotId, cameraCapabilitiesInfo), TELEPHONY_SUCCESS);
     }
 }
 } // namespace Telephony

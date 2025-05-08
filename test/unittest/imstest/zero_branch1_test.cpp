@@ -56,6 +56,7 @@ const int32_t SIM2_SLOTID = 1;
 const int32_t ACTIVATE_ACTION = 1;
 const std::string PHONE_NUMBER = "00000000";
 const int32_t DEFAULT_INDEX = 1;
+const int32_t FIVE_MINUTES = 5;
 } // namespace
 
 class DemoHandler : public AppExecFwk::EventHandler {
@@ -88,7 +89,10 @@ void ZeroBranch1Test::TearDownTestCase() {}
 
 void ZeroBranch1Test::SetUp() {}
 
-void ZeroBranch1Test::TearDown() {}
+void ZeroBranch1Test::TearDown()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(FIVE_MINUTES));
+}
 
 int32_t ZeroBranch1Test::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
 {
