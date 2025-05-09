@@ -1399,11 +1399,13 @@ void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
         if (callInfo.number.length() <= PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length()) {
             continue;
         }
-        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(), PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
+        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
+                                    PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
             list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
                 PHONE_CONTEXT_EXPECTED);
         }
-        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(), PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
+        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(), 
+                                    PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
             list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
                 PHONE_CONTEXT_EXPECTED);
         }
@@ -1420,11 +1422,13 @@ void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
         if (currentCall.number.length() <= PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length()) {
             continue;
         }
-        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(), PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
+        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
+                                       PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
             list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
                 PHONE_CONTEXT_EXPECTED);
         }
-        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(), PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
+        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
+                                       PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
             list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
                 PHONE_CONTEXT_EXPECTED);
         }
