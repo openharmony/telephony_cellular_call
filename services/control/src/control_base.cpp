@@ -64,10 +64,7 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEc
 bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode, bool isNeedUseIms)
 {
     TELEPHONY_LOGI("IsNeedExecuteMMI start");
-    EmergencyUtils emergencyUtils;
-    bool isEmergencyCall = false;
-    emergencyUtils.IsEmergencyCall(slotId, phoneString, isEmergencyCall);
-    if (isEmergencyCall) {
+    if (IsEmergencyCall(slotId, phoneString)) {
         return false;
     }
     // Also supplementary services may be controlled using dial command according to 3GPP TS 22.030 [19].
@@ -117,6 +114,14 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
     }
     return DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->SendEvent(
         MMIHandlerId::EVENT_MMI_Id, mmiCodeUtils);
+}
+
+bool ControlBase::IsEmergencyCall(int32_t slotId, std::string &phoneString)
+{
+    EmergencyUtils emergencyUtils;
+    bool isEmergencyCall = false;
+    emergencyUtils.IsEmergencyCall(slotId, phoneString, isEmergencyCall);
+    return isEmergencyCall;
 }
 
 bool ControlBase::IsDtmfKey(char c) const
