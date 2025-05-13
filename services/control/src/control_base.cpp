@@ -19,6 +19,7 @@
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
 #include "core_service_client.h"
+#include "emergency_utils.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
 #include "telephony_ext_wrapper.h"
@@ -63,6 +64,9 @@ int32_t ControlBase::DialPreJudgment(const CellularCallInfo &callInfo, bool isEc
 bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLIRMode &clirMode, bool isNeedUseIms)
 {
     TELEPHONY_LOGI("IsNeedExecuteMMI start");
+    if (IsEmergencyCall(slotId, phoneString)) {
+        return false;
+    }
     // Also supplementary services may be controlled using dial command according to 3GPP TS 22.030 [19].
     // An example of call forwarding on no reply for telephony with the adjustment of the
     // no reply condition timer on 25 seconds:
@@ -110,6 +114,14 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
     }
     return DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId)->SendEvent(
         MMIHandlerId::EVENT_MMI_Id, mmiCodeUtils);
+}
+
+bool ControlBase::IsEmergencyCall(int32_t slotId, std::string &phoneString)
+{
+    EmergencyUtils emergencyUtils;
+    bool isEmergencyCall = false;
+    emergencyUtils.IsEmergencyCall(slotId, phoneString, isEmergencyCall);
+    return isEmergencyCall;
 }
 
 bool ControlBase::IsDtmfKey(char c) const
