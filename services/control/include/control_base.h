@@ -435,6 +435,8 @@ private:
      */
     int32_t HandleEcc(const CellularCallInfo &callInfo, bool isEcc, bool isAirplaneModeOn, bool isActivateSim);
 
+    bool IsEmergencyCall(int32_t slotId, std::string &phoneString);
+
 private:
     std::shared_ptr<AppExecFwk::EventRunner> eventLoop_;
     std::condition_variable cv_;
