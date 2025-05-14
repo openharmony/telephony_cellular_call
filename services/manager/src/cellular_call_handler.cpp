@@ -33,6 +33,9 @@
 
 namespace OHOS {
 namespace Telephony {
+const std:: string PHONE_CONTEXT_EXPECTED = "+86";
+const std::string DOUBLE_PHONE_CONTEXT_STRING = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
+        "|18[0-9]|19[0-9])\\d{8}$";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
@@ -1389,6 +1392,24 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     }
 }
 
+void replacePrefix(std::string &number)
+{
+    // Handle ths case where the number does not start with +86
+    std::string prefix1 = "0086";
+    std::string prefix2 = "086";
+
+    if (number.length() > prefix1.length() &&
+        number.compare(0, prefix1.length(), prefix1) == 0) {
+        number.replace(0, prefix1.length(), PHONE_CONTEXT_EXPECTED);
+        return;
+    }
+    if (number.length() > prefix2.length() &&
+        number.compare(0, prefix2.length(), prefix2) == 0) {
+        number.replace(0, prefix2.length(), PHONE_CONTEXT_EXPECTED);
+        return;
+    }
+}
+
 void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
 {
     if (list.callSize == 0 || list.calls.empty()) {
@@ -1396,19 +1417,7 @@ void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
         CallInfo callInfo = list.calls[i];
-        if (callInfo.number.length() <= PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length()) {
-            continue;
-        }
-        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
-                                    PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
-            list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
-        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(), 
-                                    PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
-            list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
+        replacePrefix(list.calls[i].number);
     }
 }
 
@@ -1419,19 +1428,7 @@ void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
         ImsCurrentCall currentCall = list.calls[i];
-        if (currentCall.number.length() <= PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length()) {
-            continue;
-        }
-        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
-                                       PHONE_CONTEXT_UNEXPECTED_SCENARIO_1) == 0) {
-            list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_1.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
-        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
-                                       PHONE_CONTEXT_UNEXPECTED_SCENARIO_2) == 0) {
-            list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED_SCENARIO_2.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
+        replacePrefix(list.calls[i].number);
     }
 }
 
