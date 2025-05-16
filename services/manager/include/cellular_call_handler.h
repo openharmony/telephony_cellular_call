@@ -245,6 +245,7 @@ private:
     void ProcessRedundantCode(CallInfoList &callInfoList);
     void ProcessCsPhoneNumber(CallInfoList &list);
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
+    void replacePrefix(std::string &number);
     void HandleCallDisconnectReason(RilDisconnectedReason reason);
     void UpdateImsConfiguration();
     void GetImsSwitchStatusRequest();

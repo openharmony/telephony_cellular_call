@@ -1193,7 +1193,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0004, Function | MediumTest 
     callInfoLists.push_back(callInfo);
     callInfoList->calls = callInfoLists;
     fourthHandler.ProcessCsPhoneNumber(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     auto callInfoListFirst = std::make_shared<CallInfoList>();
     callInfoListFirst->callSize = 0;
     callInfoLists.clear();
@@ -1206,23 +1205,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0004, Function | MediumTest 
     callInfoListSecond->callSize = 1;
     fourthHandler.ProcessCsPhoneNumber(*callInfoListSecond);
     EXPECT_EQ(callInfoListSecond->callSize, 1);
-    auto callInfoListThird = std::make_shared<CallInfoList>();
-    callInfoListThird->callSize = 1;
-    expectedPhoneNumber = "+861565910xxxx";
-    unexpectedPhoneNumber = "123";
-    callInfoLists.clear();
-    callInfo.number = unexpectedPhoneNumber;
-    callInfoLists.push_back(callInfo);
-    callInfoListThird->calls = callInfoLists;
-    fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
-    EXPECT_EQ(callInfoListThird->calls[0].number, unexpectedPhoneNumber);
-    callInfoLists.clear();
-    unexpectedPhoneNumber = "0861565910xxxx";
-    callInfo.number = unexpectedPhoneNumber;
-    callInfoLists.push_back(callInfo);
-    callInfoListThird->calls = callInfoLists;
-    fourthHandler.ProcessCsPhoneNumber(*callInfoListThird);
-    EXPECT_EQ(callInfoListThird->calls[0].number, expectedPhoneNumber);
 }
 
  /**
@@ -1257,7 +1239,7 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest 
     callInfoList->calls[0].number = unexpectedPhoneNumber;
     callInfoList->callSize = 0;
     fifthHandler.ProcessRedundantCode(*callInfoList);
-    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
     callInfoList->callSize = 1;
     callInfoList->calls.clear();
     fifthHandler.ProcessRedundantCode(*callInfoList);

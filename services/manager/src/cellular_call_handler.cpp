@@ -1392,19 +1392,26 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     }
 }
 
-void replacePrefix(std::string &number)
+void CellularCallHandler::replacePrefix(std::string &number)
 {
+    std::u16string imsi;
+    CoreManagerInner::GetInstance().GetIMSI(slotId_, imsi);
+    if (imsi.empty()) {
+        return;
+    }
+    // only 460 country code need replace prefix
+    if (imsi.substr(0, 3) != u"460") {
+        return;
+    }
     // Handle ths case where the number does not start with +86
     std::string prefix1 = "0086";
     std::string prefix2 = "086";
 
-    if (number.length() > prefix1.length() &&
-        number.compare(0, prefix1.length(), prefix1) == 0) {
+    if (number.length() > prefix1.length() && number.compare(0, prefix1.length(), prefix1) == 0) {
         number.replace(0, prefix1.length(), PHONE_CONTEXT_EXPECTED);
         return;
     }
-    if (number.length() > prefix2.length() &&
-        number.compare(0, prefix2.length(), prefix2) == 0) {
+    if (number.length() > prefix2.length() && number.compare(0, prefix2.length(), prefix2) == 0) {
         number.replace(0, prefix2.length(), PHONE_CONTEXT_EXPECTED);
         return;
     }
