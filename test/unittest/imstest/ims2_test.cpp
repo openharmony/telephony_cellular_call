@@ -925,7 +925,7 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     CellularCallHandler handler { subscriberInfo };
-    EXPECT_CALL(*mockSimManagerPtr, GetIMSI(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(u"460xx"), Return(0)));
+    EXPECT_CALL(*mockSimManager, GetIMSI(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(u"460xx"), Return(0)));
     auto imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
     imsCurrentCallList->callSize = 0;
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
