@@ -33,7 +33,7 @@
 
 namespace OHOS {
 namespace Telephony {
-const std:: string PHONE_CONTEXT_EXPECTED = "+86";
+const std::string PHONE_CONTEXT_EXPECTED = "+86";
 const std::string DOUBLE_PHONE_CONTEXT_STRING = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
         "|18[0-9]|19[0-9])\\d{8}$";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
@@ -1423,7 +1423,6 @@ void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
         return;
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
-        CallInfo callInfo = list.calls[i];
         replacePrefix(list.calls[i].number);
     }
 }
@@ -1434,7 +1433,6 @@ void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
         return;
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
-        ImsCurrentCall currentCall = list.calls[i];
         replacePrefix(list.calls[i].number);
     }
 }
