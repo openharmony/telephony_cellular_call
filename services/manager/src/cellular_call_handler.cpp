@@ -1403,10 +1403,8 @@ void CellularCallHandler::replacePrefix(std::string &number)
     if (imsi.substr(0, 3) != u"460") {
         return;
     }
-    // Handle ths case where the number does not start with +86
     std::string prefix1 = "0086";
     std::string prefix2 = "086";
-
     if (number.length() > prefix1.length() && number.compare(0, prefix1.length(), prefix1) == 0) {
         number.replace(0, prefix1.length(), CN_INTERNATIONAL_NUMBER_PREFIX);
         return;
