@@ -19,9 +19,7 @@
     "component": {
         "name": "cellular_call",
         "subsystem": "telephony",
-        "syscap": [
-            "SystemCapability.Telephony.CellularCall"
-        ],
+        "syscap": [],
         "features": [
             "cellular_call_dynamic_start",
             "cellular_call_emc_set_radio_on"
