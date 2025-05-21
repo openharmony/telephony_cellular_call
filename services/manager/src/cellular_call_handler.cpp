@@ -33,6 +33,9 @@
 
 namespace OHOS {
 namespace Telephony {
+const std::string CN_INTERNATIONAL_NUMBER_PREFIX = "+86";
+const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
+        "|18[0-9]|19[0-9])\\d{8}$";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
@@ -1381,11 +1384,34 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
 
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
-        std::regex phoneContextPattern(DOUBLE_PHONE_CONTEXT_STRING);
+        std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
         if (callInfo.type == INTERNATION_CODE && std::regex_match(callInfo.number, phoneContextPattern)) {
             callInfoList.calls[i].number = callInfo.number.substr(0, 1) +
-                callInfo.number.substr(PHONE_CONTEXT_EXPECTED.length());
+                callInfo.number.substr(CN_INTERNATIONAL_NUMBER_PREFIX.length());
         }
+    }
+}
+
+void CellularCallHandler::replacePrefix(std::string &number)
+{
+    std::u16string imsi;
+    CoreManagerInner::GetInstance().GetIMSI(slotId_, imsi);
+    if (imsi.empty()) {
+        return;
+    }
+    // only 460 country code need replace prefix
+    if (imsi.substr(0, 3) != u"460") {
+        return;
+    }
+    std::string prefix1 = "0086";
+    std::string prefix2 = "086";
+    if (number.length() > prefix1.length() && number.compare(0, prefix1.length(), prefix1) == 0) {
+        number.replace(0, prefix1.length(), CN_INTERNATIONAL_NUMBER_PREFIX);
+        return;
+    }
+    if (number.length() > prefix2.length() && number.compare(0, prefix2.length(), prefix2) == 0) {
+        number.replace(0, prefix2.length(), CN_INTERNATIONAL_NUMBER_PREFIX);
+        return;
     }
 }
 
@@ -1395,14 +1421,7 @@ void CellularCallHandler::ProcessCsPhoneNumber(CallInfoList &list)
         return;
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
-        CallInfo callInfo = list.calls[i];
-        if (callInfo.number.length() <= PHONE_CONTEXT_UNEXPECTED.length()) {
-            continue;
-        }
-        if (callInfo.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
-            list.calls[i].number = callInfo.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
+        replacePrefix(list.calls[i].number);
     }
 }
 
@@ -1412,14 +1431,7 @@ void CellularCallHandler::ProcessImsPhoneNumber(ImsCurrentCallList &list)
         return;
     }
     for (uint64_t i = 0; i < list.calls.size(); i++) {
-        ImsCurrentCall currentCall = list.calls[i];
-        if (currentCall.number.length() <= PHONE_CONTEXT_UNEXPECTED.length()) {
-            continue;
-        }
-        if (currentCall.number.compare(0, PHONE_CONTEXT_UNEXPECTED.length(), PHONE_CONTEXT_UNEXPECTED) == 0) {
-            list.calls[i].number = currentCall.number.replace(0, PHONE_CONTEXT_UNEXPECTED.length(),
-                PHONE_CONTEXT_EXPECTED);
-        }
+        replacePrefix(list.calls[i].number);
     }
 }
 
