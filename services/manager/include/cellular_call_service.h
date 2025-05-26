@@ -682,6 +682,15 @@ public:
      */
     int32_t SendUssdResponse(int32_t slotId, const std::string &content) override;
 
+    /**
+     * Is mmi code
+     *
+     * @param slotId
+     * @param  number the phone number
+     * @return Returns true on number is mmi code,else return false.
+     */
+    bool IsMmiCode(int32_t slotId, std::string &number) override;
+
 private:
     /**
      * Init service

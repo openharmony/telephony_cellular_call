@@ -218,6 +218,8 @@ void CellularCallStub::InitSupplementFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnGetVideoCallWaitingInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::SEND_USSD_RESPONSE] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnSendUssdResponse(data, reply); };
+    requestFuncMap_[CellularCallInterfaceCode::IS_MMI_CODE] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnIsMmiCodeInner(data, reply); };
 }
 
 int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)
@@ -236,6 +238,24 @@ int32_t CellularCallStub::OnDialInner(MessageParcel &data, MessageParcel &reply)
     }
 
     reply.WriteInt32(Dial(*pCallInfo));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t CellularCallStub::OnIsMmiCodeInner(MessageParcel &data, MessageParcel &reply)
+{
+    TELEPHONY_LOGI("OnIsMmiCodeInner entry");
+    int32_t size = data.ReadInt32();
+    size = ((size > MAX_SIZE) ? 0 : size);
+    if (size <= 0) {
+        TELEPHONY_LOGE("data size error");
+        return TELEPHONY_ERR_FAIL;
+    }
+    int32_t slotId = data.ReadInt32();
+    std::string number = data.ReadString();
+    bool result = IsMmiCode(slotId, number);
+    if (!reply.WriteBool(result)) {
+        TELEPHONY_LOGE("write reply failed.");
+    }
     return TELEPHONY_SUCCESS;
 }
 

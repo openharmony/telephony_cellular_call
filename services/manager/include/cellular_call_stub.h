@@ -561,6 +561,16 @@ private:
      */
     int32_t OnSendUssdResponse(MessageParcel &data, MessageParcel &reply);
 
+    /**
+     * Is mmi code
+     *
+     * @brief Is mmi code
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnIsMmiCodeInner(MessageParcel &data, MessageParcel &reply);
+
 private:
     using RequestFuncType = std::function<int32_t(MessageParcel &data, MessageParcel &reply)>;
     std::map<CellularCallInterfaceCode, RequestFuncType> requestFuncMap_;
