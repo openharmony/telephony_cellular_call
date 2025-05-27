@@ -69,6 +69,7 @@ HWTEST_F(CellularCallStubTest, CellularCallStubTest_0001, Function | MediumTest 
     EXPECT_NE(cellularCallStub.OnSendUpdateCallMediaModeRequestInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnSendUpdateCallMediaModeResponseInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnCancelCallUpgradeInner(data, reply), TELEPHONY_SUCCESS);
+    EXPECT_NE(cellularCallStub.OnIsMmiCodeInner(data, reply), TELEPHONY_SUCCESS);
 }
 
 /**

@@ -40,6 +40,7 @@
 #include "cellular_call_dump_helper.h"
 #include "emergency_utils.h"
 #include "satellite_call_client.h"
+#include "telephony_ext_wrapper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -92,6 +93,16 @@ void ZeroBranch1Test::SetUp() {}
 void ZeroBranch1Test::TearDown()
 {
     std::this_thread::sleep_for(std::chrono::seconds(FIVE_MINUTES));
+}
+
+bool IsMmiCodeMockTrue(int32_t slotId, std::string &number)
+{
+    return true;
+}
+
+bool IsMmiCodeMockFalse(int32_t slotId, std::string &number)
+{
+    return false;
 }
 
 int32_t ZeroBranch1Test::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
@@ -520,6 +531,60 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_007, Function | MediumTest 
     cameraCapabilitiesData.WriteInt32(SIM1_SLOTID);
     cameraCapabilitiesData.WriteInt32(DEFAULT_INDEX);
     ASSERT_EQ(callStub.OnRequestCameraCapabilitiesInner(cameraCapabilitiesData, reply), TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_008
+ * @tc.name     Test OnIsMmiCodeInner
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_008, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t size = 1;
+    MessageParcel reply;
+    
+    MessageParcel mmiCodeData;
+    mmiCodeData.WriteInt32(size);
+    mmiCodeData.WriteInt32(SIM1_SLOTID);
+    mmiCodeData.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel mmiCodeDataInvalid;
+    mmiCodeDataInvalid.WriteInt32(size);
+    mmiCodeDataInvalid.WriteInt32(-1);
+    mmiCodeDataInvalid.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeDataInvalid, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel mmiCodeErrData;
+    mmiCodeErrData.WriteInt32(-1);
+    mmiCodeErrData.WriteInt32(SIM1_SLOTID);
+    mmiCodeErrData.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeErrData, reply), TELEPHONY_SUCCESS);
+
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockTrue;
+    MessageParcel mmiCodeData1;
+    mmiCodeData1.WriteInt32(size);
+    mmiCodeData1.WriteInt32(SIM1_SLOTID);
+    mmiCodeData1.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData1, reply), TELEPHONY_SUCCESS);
+    
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockFalse;
+    MessageParcel mmiCodeData2;
+    mmiCodeData2.WriteInt32(size);
+    mmiCodeData2.WriteInt32(SIM1_SLOTID);
+    mmiCodeData2.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData2, reply), TELEPHONY_SUCCESS);
+
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = nullptr;
+    MessageParcel mmiCodeData3;
+    mmiCodeData3.WriteInt32(size);
+    mmiCodeData3.WriteInt32(SIM1_SLOTID);
+    mmiCodeData3.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData3, reply), TELEPHONY_SUCCESS);
+
+    TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
 }
 
 /**

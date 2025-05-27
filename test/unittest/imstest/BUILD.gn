@@ -332,6 +332,7 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
     "${CELLULAR_CALL_PATH}/services/connection/include",
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
+    "${CELLULAR_CALL_PATH}/services/telephony_ext_wrapper/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
   ]
 

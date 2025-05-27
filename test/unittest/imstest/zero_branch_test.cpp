@@ -90,6 +90,7 @@ void ZeroBranchTest::SetUp() {}
 
 void ZeroBranchTest::TearDown() {}
 
+
 int32_t ZeroBranchTest::InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
 {
     callInfo.accountId = accountId;

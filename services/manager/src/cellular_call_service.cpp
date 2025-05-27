@@ -367,6 +367,27 @@ int32_t CellularCallService::DialNormalCall(const CellularCallInfo &callInfo, bo
     return csControl->Dial(callInfo, isEcc);
 }
 
+bool CellularCallService::IsMmiCode(int32_t slotId, std::string &number)
+{
+    if (!IsValidSlotId(slotId)) {
+        TELEPHONY_LOGE("invalid slot id");
+        return false;
+    }
+    if (TELEPHONY_EXT_WRAPPER.isMmiCode_ != nullptr) {
+        bool isMmiCode = TELEPHONY_EXT_WRAPPER.isMmiCode_(slotId, number);
+        if (!isMmiCode) {
+            TELEPHONY_LOGI("don't need to execute mmi");
+            return false;
+        }
+    }
+    std::unique_ptr<MMICodeUtils> mmiCodeUtils = std::make_unique<MMICodeUtils>();
+    if (mmiCodeUtils == nullptr) {
+        TELEPHONY_LOGE("mmiCodeUtils is nullptr");
+        return false;
+    }
+    return mmiCodeUtils->IsNeedExecuteMmi(number, false);
+}
+
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
