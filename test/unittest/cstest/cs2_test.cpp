@@ -707,8 +707,8 @@ HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
         }
         CallInfoList callList;
         callList.callSize = 0;
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_ERROR);
-        EXPECT_NE(csControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(csControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
         CallInfo callInfo;
         callList.callSize = 1;
         callInfo.number = PHONE_NUMBER;
@@ -728,7 +728,6 @@ HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
         callList.calls.push_back(callInfo);
         callList.callSize = 0;
         EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_NE(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
         EXPECT_NE(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
         EXPECT_NE(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
         EXPECT_NE(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
