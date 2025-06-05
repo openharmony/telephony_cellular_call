@@ -624,7 +624,7 @@ HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest |
     auto combineRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
     ASSERT_TRUE(combineRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(combineRemote);
-    ASSERT_TRUE(telephonyService != nullptr);    
+    ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);

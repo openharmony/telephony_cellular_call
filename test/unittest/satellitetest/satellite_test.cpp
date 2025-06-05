@@ -32,6 +32,8 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+const int32_t SIM1_SLOTID = 0;
+const int32_t SIM2_SLOTID = 1;
 const int32_t INVALID_SLOTID = 10;
 const std::string PHONE_NUMBER = "0000000";
 
