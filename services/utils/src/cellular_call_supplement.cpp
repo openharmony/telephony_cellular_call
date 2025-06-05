@@ -50,6 +50,8 @@ const std::string BARR_INCOMING_CALLS_OUTSIDE_HOME = "IR";
 const std::string ALL_BARRING_SERVICES = "AB";
 const std::string ALL_OUTGOING_BARRING_SERVICES = "AG";
 const std::string ALL_INCOMING_BARRING_SERVICES = "AC";
+const std::string HW_SHOW_MMI_ERROR = "const.telephony.hw_show_mmi_error";
+const std::string BOOL_TRUE_STRING = "true";
 
 constexpr unsigned long long operator"" _hash(char const *p, size_t s)
 {
@@ -1556,7 +1558,9 @@ void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int
             return;
         }
     } else {
-        mmiCodeInfo.result = USSD_SUCCESS;
+        std::string showMmiErrStr = OHOS::system::GetParameter(HW_SHOW_MMI_ERROR, BOOL_TRUE_STRING);
+        bool isMmiErr = TrimStr(ussdNoticeInfo.str).empty() && showMmiErrStr == BOOL_TRUE_STRING;
+        mmiCodeInfo.result = isMmiErr ? USSD_FAILED : USSD_SUCCESS;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), ussdNoticeInfo.str.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s INVALID_MMI_CODE fail.");
             return;
