@@ -402,6 +402,7 @@ HWTEST_F(Ims1Test, cellular_call_DialCall_0014, Function | MediumTest | Level2)
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_UT)) {
         int32_t ret = TestDialCallByIms(SIM2_SLOTID, "#43#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
+    }
 }
 
 /**
