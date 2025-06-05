@@ -412,7 +412,7 @@ HWTEST_F(Ims1Test, cellular_call_DialCall_0014, Function | MediumTest | Level2)
  */
 HWTEST_F(Ims1Test, cellular_call_DialCall_0015, Function | MediumTest | Level2)
 {
-    AccessToken token;    
+    AccessToken token;
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_UT)) {
         int32_t ret = TestDialCallByIms(SIM1_SLOTID, "*#43#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -440,7 +440,7 @@ HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2
     auto hangUpCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
     ASSERT_TRUE(hangUpCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(hangUpCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);    
+    ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);

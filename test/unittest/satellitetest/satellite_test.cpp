@@ -310,7 +310,7 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0001, Function | MediumTest | L
  */
 HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0002, Function | MediumTest | Level2)
 {
-    AccessToken token;    
+    AccessToken token;
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto startDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
