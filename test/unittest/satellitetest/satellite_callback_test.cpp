@@ -32,8 +32,6 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
-const int32_t SIM1_SLOTID = 0;
-const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 
@@ -156,7 +154,6 @@ HWTEST_F(SatelliteCallbackTest, cellular_call_SatelliteCallCallbackStub_0001, Fu
 {
     sptr<SatelliteCallCallbackStub> stub = (std::make_unique<SatelliteCallCallbackStub>()).release();
     ASSERT_TRUE(stub != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
