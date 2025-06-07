@@ -26,6 +26,7 @@ group("unittest") {
     "unittest/imstest:cellular_call_ims_callback_proxy_test",
     "unittest/imstest:cellular_call_ims_callback_stub_test",
     "unittest/imstest:cellular_call_ims_cellular_call_stub_test",
+    "unittest/imstest:cellular_call_ims_cellular_call_supplement_test",
     "unittest/imstest:cellular_call_ims_config_request_test",
     "unittest/imstest:cellular_call_ims_connection_test",
     "unittest/imstest:cellular_call_ims_emergency_utils_test",

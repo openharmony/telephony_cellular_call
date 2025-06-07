@@ -21,6 +21,7 @@
 #include "cellular_call_supplement.h"
 #include "telephony_ext_wrapper.h"
 #include "ims_control.h"
+#include "parameters.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -90,6 +91,11 @@ void CellularCallSupplementTest::SetUp()
 void CellularCallSupplementTest::TearDown()
 {}
 
+/**
+ * @tc.number   CellularCallSupplementTest_001
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_001, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMock;
@@ -100,6 +106,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_001, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_002
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_002, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMock;
@@ -110,6 +121,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_002, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_003
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_003, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = IsEmptyMmiResultFilteredMockFalse;
@@ -120,6 +136,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_003, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_004
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_004, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ = nullptr;
@@ -130,6 +151,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_004, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_005
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_005, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = IsUssdReleaseMsgFilteredMock;
@@ -140,6 +166,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_005, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_006
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_006, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = IsUssdReleaseMsgFilteredMockFalse;
@@ -150,6 +181,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_006, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_007
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_007, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ = nullptr;
@@ -160,6 +196,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_007, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_008
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_008, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ = UnescapeHtmlCodeMock;
@@ -170,6 +211,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_008, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_009
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_009, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ = nullptr;
@@ -180,6 +226,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_009, Function | 
     EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_010
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_010, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMock;
@@ -190,6 +241,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_010, Function | 
     EXPECT_FALSE(isNeed);
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_011
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_011, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isMmiCode_ = nullptr;
@@ -200,6 +256,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_011, Function | 
     EXPECT_FALSE(isNeed);
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_012
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_012, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockFalse;
@@ -210,6 +271,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_012, Function | 
     EXPECT_FALSE(isNeed);
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_013
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_013, Function | MediumTest | Level1)
 {
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
@@ -221,6 +287,11 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_013, Function | 
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
 }
 
+/**
+ * @tc.number   CellularCallSupplementTest_014
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
 HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_014, Function | MediumTest | Level1)
 {
     std::string filePath = "/system/lib64/libtelephony_ext_service.z.so";
@@ -234,6 +305,28 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_014, Function | 
     TELEPHONY_EXT_WRAPPER.~TelephonyExtWrapper();
     RenameFile(bakFilePath, filePath);
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
+}
+
+/**
+ * @tc.number   CellularCallSupplementTest_015
+ * @tc.name     Test CellularCallSupplement
+ * @tc.desc     Function test
+ */
+HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_015, Function | MediumTest | Level1)
+{
+    UssdNoticeInfo ussdNoticeInfo;
+    ussdNoticeInfo.str = "";
+    ussdNoticeInfo.m = 2;
+    CellularCallSupplement callSup;
+    SetParameter("const.telephony.hw_show_mmi_error", "true");
+    EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
+    SetParameter("const.telephony.hw_show_mmi_error", "false");
+    EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
+    ussdNoticeInfo.str = "12345";
+    SetParameter("const.telephony.hw_show_mmi_error", "true");
+    EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
+    SetParameter("const.telephony.hw_show_mmi_error", "false");
+    EXPECT_NO_FATAL_FAILURE(callSup.EventUssdNotify(ussdNoticeInfo, 0));
 }
 
 }  // namespace Telephony
