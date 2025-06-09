@@ -18,6 +18,7 @@
 #include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
+#include "core_service_client.h"
 #include "core_manager_inner.h"
 #include "emergency_utils.h"
 #include "module_service_utils.h"
