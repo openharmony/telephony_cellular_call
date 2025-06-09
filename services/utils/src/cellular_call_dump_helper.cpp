@@ -33,7 +33,7 @@ bool CellularCallDumpHelper::Dump(const std::vector<std::string> &args, std::str
 bool CellularCallDumpHelper::WhetherHasSimCard(const int32_t slotId) const
 {
     bool hasSimCard = false;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
     return hasSimCard;
 }
 
