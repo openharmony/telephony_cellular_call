@@ -243,7 +243,7 @@ void CellularCallConfig::HandleFactoryReset(int32_t slotId)
         return;
     }
     bool hasSimCard = false;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
     if (!hasSimCard) {
         TELEPHONY_LOGE("return due to no sim card");
         return;

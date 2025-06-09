@@ -16,7 +16,7 @@
 #include "cellular_call_dump_helper.h"
 
 #include "cellular_call_service.h"
-#include "core_service_client.h"
+#include "core_manager_inner.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
 
@@ -33,7 +33,7 @@ bool CellularCallDumpHelper::Dump(const std::vector<std::string> &args, std::str
 bool CellularCallDumpHelper::WhetherHasSimCard(const int32_t slotId) const
 {
     bool hasSimCard = false;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
     return hasSimCard;
 }
 
