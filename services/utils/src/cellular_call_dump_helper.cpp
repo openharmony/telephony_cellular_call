@@ -16,7 +16,7 @@
 #include "cellular_call_dump_helper.h"
 
 #include "cellular_call_service.h"
-#include "core_service_client.h"
+#include "core_manager_inner.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
 
