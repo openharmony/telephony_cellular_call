@@ -18,7 +18,7 @@
 #include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
-#include "core_service_client.h"
+#include "core_manager_inner.h"
 #include "emergency_utils.h"
 #include "module_service_utils.h"
 #include "standardize_utils.h"
@@ -152,10 +152,10 @@ bool ControlBase::CheckAirplaneModeScene(const CellularCallInfo &callInfo)
 bool ControlBase::CheckActivateSimScene(int32_t slotId)
 {
     bool hasSimCard = false;
-    DelayedRefSingleton<CoreServiceClient>::GetInstance().HasSimCard(slotId, hasSimCard);
+    CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimCard);
     bool isActivateSim = true;
     if (hasSimCard) {
-        isActivateSim = DelayedRefSingleton<CoreServiceClient>::GetInstance().IsSimActive(slotId);
+        isActivateSim = CoreManagerInner::GetInstance().IsSimActive(slotId);
     }
     return isActivateSim;
 }
