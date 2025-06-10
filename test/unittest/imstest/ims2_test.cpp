@@ -701,8 +701,6 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0002, Function | MediumTes
  */
 HWTEST_F(Ims2Test, cellular_call_CellularCallConfig_0001, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;

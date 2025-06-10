@@ -1124,7 +1124,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0002, Function | MediumTest 
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0003, Function | MediumTest | Level3)
 {
-    
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -1144,7 +1143,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0003, Function | MediumTest 
         ussdNoticeResponse->str = "";
         auto errorEvent = AppExecFwk::InnerEvent::Get(0, ussdNoticeResponse);
         thirdhandler.UssdNotifyResponse(errorEvent);
-
         auto ssNoticeResponse = std::make_shared<SsNoticeInfo>();
         ssNoticeResponse->result = ERROR_RESULT;
         auto defaultEvent = AppExecFwk::InnerEvent::Get(0, ssNoticeResponse);

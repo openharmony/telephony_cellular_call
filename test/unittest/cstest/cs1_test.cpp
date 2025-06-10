@@ -119,8 +119,6 @@ void Cs1Test::JudgeIsEmergencyPhoneNumber()
     ASSERT_TRUE(remote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(remote);
     ASSERT_TRUE(telephonyService != nullptr);
-
-    
     bool enabled = false;
     int32_t successCode = 1;
     if (HasSimCard(SIM1_SLOTID)) {
@@ -219,9 +217,6 @@ HWTEST_F(Cs1Test, cellular_call_SetEmergencyCallList_0101, Function | MediumTest
     ASSERT_TRUE(emergencyRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(emergencyRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-
-    
-
     std::vector<EmergencyCall> eccVec;
     EmergencyCall temp0 = { "499", "460", EccType::TYPE_CATEGORY, SimpresentType::TYPE_NO_CARD,
         AbnormalServiceType::TYPE_ALL };
@@ -253,8 +248,6 @@ HWTEST_F(Cs1Test, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function
     ASSERT_TRUE(operatorRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(operatorRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-
-    
     OperatorConfig opc;
     if (HasSimCard(SIM1_SLOTID)) {
         DelayedRefSingleton<CoreServiceClient>::GetInstance().GetOperatorConfigs(SIM1_SLOTID, opc);
@@ -285,7 +278,6 @@ HWTEST_F(Cs1Test, cellular_call_IsOperatorConfigEmergencyCallList_0001, Function
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0001, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*30#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -303,7 +295,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0001, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0002, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#30#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -321,7 +312,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0002, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0003, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#30#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -339,7 +329,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0003, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0004, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*31#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -357,7 +346,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0004, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0005, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#31#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -375,7 +363,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0005, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0006, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#31#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -393,7 +380,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0006, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0007, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*21#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -411,7 +397,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0007, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0008, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#21#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -429,7 +414,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0008, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0009, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#21#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -447,7 +431,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0009, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0010, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*33#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -465,7 +448,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0010, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0011, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#33#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -483,7 +465,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0011, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0012, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#33#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -501,7 +482,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0012, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0013, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*43#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -519,7 +499,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0013, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0014, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#43#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -537,7 +516,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0014, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0015, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#43#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -555,7 +533,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0015, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0016, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*04#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -573,7 +550,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0016, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0017, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*05#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -591,7 +567,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0017, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0018, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*042#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -609,7 +584,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0018, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0019, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*052#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -627,7 +601,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0019, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0020, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*4444#");
         EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
@@ -645,7 +618,6 @@ HWTEST_F(Cs1Test, cellular_call_DialCall_0020, Function | MediumTest | Level2)
  */
 HWTEST_F(Cs1Test, cellular_call_DialCall_0021, Function | MediumTest | Level2)
 {
-    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(INVALID_SLOTID, PHONE_NUMBER);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);

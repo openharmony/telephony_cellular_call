@@ -297,7 +297,6 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0002, Function | MediumTest | L
     ASSERT_TRUE(startDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(startDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    CellularCallInfo callInfo;
 }
 
 /**
@@ -362,7 +361,6 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0001, Function | MediumTest | Le
     ASSERT_TRUE(sendDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(sendDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    
 }
 
 /**

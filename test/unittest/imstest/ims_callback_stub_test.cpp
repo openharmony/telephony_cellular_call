@@ -35,8 +35,6 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
-const int32_t SIM1_SLOTID = 0;
-const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
 const std::string PHONE_NUMBER = "0000000";
 const int32_t DEFAULT_INDEX = 1;
@@ -251,8 +249,6 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0002, Function |
  */
 HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0003, Function | MediumTest | Level3)
 {
-    
-
     sptr<ImsCallCallbackStub> stubTestThree = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestThree != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
@@ -598,8 +594,6 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0009, Function |
  */
 HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0010, Function | MediumTest | Level3)
 {
-    
-
     sptr<ImsCallCallbackStub> stubTestTen = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestTen != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
@@ -652,7 +646,6 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0010, Function |
  */
 HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0011, Function | MediumTest | Level3)
 {
-    
     sptr<ImsCallCallbackStub> stubTestEleven = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestEleven != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
@@ -696,7 +689,6 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0011, Function |
  */
 HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0012, Function | MediumTest | Level3)
 {
-    
     sptr<ImsCallCallbackStub> stubTestEleven = (std::make_unique<ImsCallCallbackStub>()).release();
     ASSERT_TRUE(stubTestEleven != nullptr);
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
