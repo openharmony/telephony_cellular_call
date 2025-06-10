@@ -748,7 +748,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallConnectionCS_0001, Function | Medium
     auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
     ASSERT_TRUE(remote != nullptr);
     
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -845,8 +844,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallRegister_0002, Function | MediumTest
  */
 HWTEST_F(Cs2Test, cellular_call_SupplementRequestCs_0001, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -881,8 +878,6 @@ HWTEST_F(Cs2Test, cellular_call_SupplementRequestCs_0001, Function | MediumTest 
  */
 HWTEST_F(Cs2Test, cellular_call_ConfigRequest_0001, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -903,8 +898,6 @@ HWTEST_F(Cs2Test, cellular_call_ConfigRequest_0001, Function | MediumTest | Leve
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0001, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -941,8 +934,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0001, Function | MediumTe
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0002, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -987,8 +978,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0002, Function | MediumTe
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0003, Function | MediumTest | Level3)
 {
-    
-
     for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
         if (!HasSimCard(slotId)) {
             continue;
@@ -1017,8 +1006,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallSupplement_0003, Function | MediumTe
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0001, Function | MediumTest | Level3)
 {
-    
-
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
