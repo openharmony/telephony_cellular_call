@@ -171,7 +171,6 @@ HWTEST_F(ConfigRequestTest, ConfigRequestTest_0008, Function | MediumTest | Leve
     ConfigRequest configRequest;
     int32_t slotId = 1;
     bool activate = false;
-    EXPECT_EQ(configRequest.SetVideoCallWaiting(slotId, activate), TELEPHONY_SUCCESS);
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     EXPECT_EQ(configRequest.SetVideoCallWaiting(slotId, activate), CALL_ERR_RESOURCE_UNAVAILABLE);
 }

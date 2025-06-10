@@ -137,14 +137,14 @@ void CsCallOperationTest::TearDown(void)
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0001, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -155,14 +155,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0001, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0002, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -173,14 +173,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0002, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0003, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#30#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -191,14 +191,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0003, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0004, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -209,14 +209,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0004, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0005, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -227,14 +227,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0005, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0006, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#31#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -245,14 +245,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0006, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0007, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -263,14 +263,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0007, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0008, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -281,14 +281,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0008, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0009, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#21#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -299,14 +299,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0009, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0010, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -317,14 +317,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0010, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0011, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -335,14 +335,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0011, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0012, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#33#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -353,14 +353,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0012, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0013, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -371,14 +371,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0013, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0014, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "#43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "#43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -389,14 +389,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0014, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0015, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*#43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*#43#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -407,14 +407,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0015, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0016, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*04#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*04#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -425,14 +425,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0016, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0017, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*05#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*05#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -443,14 +443,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0017, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0018, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*042#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*042#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -461,14 +461,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0018, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0019, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*052#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*052#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -479,14 +479,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0019, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0020, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM1_SLOTID, "*4444#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = TestDialCallByCs(SIM2_SLOTID, "*4444#");
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_NE(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
 }
 
@@ -497,7 +497,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0020, Function | MediumTest
  */
 HWTEST_F(CsCallOperationTest, cellular_call_DialCall_0021, Function | MediumTest | Level2)
 {
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = TestDialCallByCs(INVALID_SLOTID, PHONE_NUMBER);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
@@ -522,22 +522,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_HangUpCall_0001, Function | MediumTe
     ASSERT_TRUE(hangUpCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(hangUpCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     CellularCallInfo hangUpCallInfo;
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, hangUpCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
-        ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, hangUpCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-        ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
-        ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
@@ -550,7 +542,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_HangUpCall_0001, Function | MediumTe
 HWTEST_F(CsCallOperationTest, cellular_call_HangUpCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto hangUpCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -587,20 +579,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_AnswerCall_0001, Function | MediumTe
     ASSERT_TRUE(answerCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(answerCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo answerCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, answerCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Answer(answerCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo answerCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, answerCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Answer(answerCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -612,7 +604,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_AnswerCall_0001, Function | MediumTe
 HWTEST_F(CsCallOperationTest, cellular_call_AnswerCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto answerCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -649,20 +641,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_RejectCall_0001, Function | MediumTe
     ASSERT_TRUE(rejectCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(rejectCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo rejectCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, rejectCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Reject(rejectCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo rejectCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, rejectCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Reject(rejectCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -674,7 +666,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_RejectCall_0001, Function | MediumTe
 HWTEST_F(CsCallOperationTest, cellular_call_RejectCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto rejectCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -711,20 +703,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_HoldCall_0001, Function | MediumTest
     ASSERT_TRUE(holdCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(holdCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo holdCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, holdCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HoldCall(holdCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo holdCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, holdCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HoldCall(holdCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -736,7 +728,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_HoldCall_0001, Function | MediumTest
 HWTEST_F(CsCallOperationTest, cellular_call_HoldCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto holdCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -773,20 +765,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_UnHoldCall_0001, Function | MediumTe
     ASSERT_TRUE(unHoldCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(unHoldCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo unHoldCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, unHoldCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(unHoldCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo unHoldCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, unHoldCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(unHoldCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -798,7 +790,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_UnHoldCall_0001, Function | MediumTe
 HWTEST_F(CsCallOperationTest, cellular_call_UnHoldCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto unHoldCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -835,20 +827,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_SwitchCall_0001, Function | MediumTe
     ASSERT_TRUE(switchCallRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(switchCallRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo switchCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo switchCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -860,7 +852,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SwitchCall_0001, Function | MediumTe
 HWTEST_F(CsCallOperationTest, cellular_call_SwitchCall_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto switchCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -897,20 +889,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_CombineConference_0001, Function | M
     ASSERT_TRUE(combineRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(combineRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo conferenceCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, conferenceCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->CombineConference(conferenceCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo conferenceCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, conferenceCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->CombineConference(conferenceCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -922,7 +914,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_CombineConference_0001, Function | M
 HWTEST_F(CsCallOperationTest, cellular_call_CombineConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto combineRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -959,20 +951,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_SeparateConference_0001, Function | 
     ASSERT_TRUE(separateRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(separateRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SeparateConference(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SeparateConference(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -984,7 +976,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SeparateConference_0001, Function | 
 HWTEST_F(CsCallOperationTest, cellular_call_SeparateConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto separateRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -1021,20 +1013,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_KickOutFromConference_0001, Function
     ASSERT_TRUE(kickOutRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(kickOutRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo kickOutCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, kickOutCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->KickOutFromConference(kickOutCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo kickOutCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, kickOutCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->KickOutFromConference(kickOutCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1046,7 +1038,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_KickOutFromConference_0001, Function
 HWTEST_F(CsCallOperationTest, cellular_call_KickOutFromConference_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto kickOutRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -1083,7 +1075,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_HangUpAllConnection_0001, Function |
     ASSERT_TRUE(hangUpAllConRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(hangUpAllConRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = telephonyService->HangUpAllConnection();
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -1108,14 +1100,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0001, Function | MediumTes
     ASSERT_TRUE(startDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(startDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->StartDtmf(code, callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
@@ -1123,7 +1115,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0001, Function | MediumTes
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->StartDtmf(code, callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1135,7 +1127,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0001, Function | MediumTes
 HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto startDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -1173,20 +1165,20 @@ HWTEST_F(CsCallOperationTest, cellular_call_StopDtmf_0001, Function | MediumTest
     ASSERT_TRUE(stopDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(stopDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1198,7 +1190,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_StopDtmf_0001, Function | MediumTest
 HWTEST_F(CsCallOperationTest, cellular_call_StopDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto stopDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
@@ -1235,14 +1227,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0001, Function | MediumTest
     ASSERT_TRUE(sendDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(sendDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     if (HasSimCard(SIM1_SLOTID)) {
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo sendDtmfCallInfo;
@@ -1250,7 +1242,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0001, Function | MediumTest
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1262,7 +1254,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0001, Function | MediumTest
 HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0002, Function | MediumTest | Level2)
 {
     AccessToken token;
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto sendDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);

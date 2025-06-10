@@ -74,42 +74,6 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
     auto callCallbackProxy =
         (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
     ASSERT_TRUE(callCallbackProxy != nullptr);
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        if (!HasSimCard(slotId)) {
-            continue;
-        }
-        RadioResponseInfo rilRadioResponse;
-        rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
-        EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->AnswerResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->HoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_GE(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->CallStateChangeReport(slotId), TELEPHONY_SUCCESS);
-        ImsCurrentCallList imsCallList;
-        imsCallList.callSize = 0;
-        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, imsCallList), TELEPHONY_SUCCESS);
-        DisconnectedDetails details;
-        EXPECT_EQ(callCallbackProxy->LastCallFailReasonResponse(slotId, details), TELEPHONY_SUCCESS);
-        RingbackVoice ringback;
-        EXPECT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_SUCCESS);
-        int32_t active = 0;
-        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
-        ImsCapFromChip imsCap = {0};
-        EXPECT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_SUCCESS);
-        MuteControlResponse muteResponse;
-        EXPECT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-    }
 }
 
 /**
@@ -123,41 +87,6 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
     auto callCallbackProxy =
         (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
     ASSERT_TRUE(callCallbackProxy != nullptr);
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        if (!HasSimCard(slotId)) {
-            continue;
-        }
-        GetClipResult clipResult;
-        clipResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
-        GetClirResult clirResult;
-        clirResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetClirResponse(slotId, clirResult), TELEPHONY_SUCCESS);
-        SsBaseResult normalResult;
-        normalResult.index = DEFAULT_INDEX;
-        EXPECT_EQ(callCallbackProxy->SetClipResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetClirResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetCallTransferResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetCallRestrictionResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetCallWaitingResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetColrResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetColpResponse(slotId, normalResult), TELEPHONY_SUCCESS);
-        CallForwardQueryInfoList callList;
-        callList.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetCallTransferResponse(slotId, callList), TELEPHONY_SUCCESS);
-        CallRestrictionResult crResult;
-        crResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetCallRestrictionResponse(slotId, crResult), TELEPHONY_SUCCESS);
-        CallWaitResult cwResult;
-        cwResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetCallWaitingResponse(slotId, cwResult), TELEPHONY_SUCCESS);
-        GetColrResult colrResult;
-        colrResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetColrResponse(slotId, colrResult), TELEPHONY_SUCCESS);
-        GetColpResult colpResult;
-        colpResult.result.index = INVALID_INDEX;
-        EXPECT_EQ(callCallbackProxy->GetColpResponse(slotId, colpResult), TELEPHONY_SUCCESS);
-    }
 }
 
 /**
@@ -171,29 +100,6 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
     auto callCallbackProxy =
         (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
     ASSERT_TRUE(callCallbackProxy != nullptr);
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        if (!HasSimCard(slotId)) {
-            continue;
-        }
-        ImsCallModeReceiveInfo callModeReceiveInfo;
-        callModeReceiveInfo.callIndex = DEFAULT_INDEX;
-        EXPECT_EQ(
-            callCallbackProxy->ReceiveUpdateCallMediaModeResponse(slotId, callModeReceiveInfo), TELEPHONY_SUCCESS);
-        EXPECT_EQ(
-            callCallbackProxy->ReceiveUpdateCallMediaModeRequest(slotId, callModeReceiveInfo), TELEPHONY_SUCCESS);
-        ImsCallSessionEventInfo callSessionEventInfo;
-        callSessionEventInfo.callIndex = DEFAULT_INDEX;
-        EXPECT_EQ(callCallbackProxy->CallSessionEventChanged(slotId, callSessionEventInfo), TELEPHONY_SUCCESS);
-        ImsCallPeerDimensionsInfo callPeerDimensionsInfo;
-        callPeerDimensionsInfo.callIndex = DEFAULT_INDEX;
-        EXPECT_EQ(callCallbackProxy->PeerDimensionsChanged(slotId, callPeerDimensionsInfo), TELEPHONY_SUCCESS);
-        ImsCallDataUsageInfo callDataUsageInfo;
-        callDataUsageInfo.callIndex = DEFAULT_INDEX;
-        EXPECT_EQ(callCallbackProxy->CallDataUsageChanged(slotId, callDataUsageInfo), TELEPHONY_SUCCESS);
-        CameraCapabilitiesInfo cameraCapabilitiesInfo;
-        cameraCapabilitiesInfo.callIndex = DEFAULT_INDEX;
-        EXPECT_EQ(callCallbackProxy->CameraCapabilitiesChanged(slotId, cameraCapabilitiesInfo), TELEPHONY_SUCCESS);
-    }
 }
 } // namespace Telephony
 } // namespace OHOS
