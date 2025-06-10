@@ -1066,8 +1066,6 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0001, Function | MediumTest 
  */
 HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0002, Function | MediumTest | Level3)
 {
-    
-
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);

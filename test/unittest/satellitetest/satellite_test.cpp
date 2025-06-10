@@ -313,7 +313,6 @@ HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0001, Function | MediumTest | Le
     ASSERT_TRUE(stopDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(stopDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    
 }
 
 /**

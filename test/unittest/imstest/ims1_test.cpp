@@ -864,7 +864,6 @@ HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Leve
     ASSERT_TRUE(setVoNRRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    
 }
 } // namespace Telephony
 } // namespace OHOS
