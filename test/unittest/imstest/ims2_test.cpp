@@ -54,7 +54,6 @@ using ::testing::SetArgReferee;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t SLOT_COUNT = 2;
-const int32_t INVALID_SLOTID = -1;
 const int32_t INVALID_HANG_UP_TYPE = -1;
 const int32_t RESULT = 1;
 const std::string PHONE_NUMBER = "0000000";
