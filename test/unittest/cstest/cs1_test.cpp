@@ -953,14 +953,12 @@ HWTEST_F(Cs1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2)
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo switchCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
 }
 

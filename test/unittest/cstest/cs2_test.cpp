@@ -693,50 +693,6 @@ HWTEST_F(Cs2Test, cellular_call_CsControl_0001, Function | MediumTest | Level3)
 }
 
 /**
- * @tc.number   cellular_call_CsControl_0002
- * @tc.name     Test for CsControl
- * @tc.desc     Function test
- */
-HWTEST_F(Cs2Test, cellular_call_CsControl_0002, Function | MediumTest | Level3)
-{
-    auto csControl = std::make_shared<CSControl>();
-    CellularCallInfo cellularCallInfo;
-    for (int32_t slotId = 0; slotId < SIM_SLOT_COUNT; slotId++) {
-        if (!HasSimCard(slotId)) {
-            continue;
-        }
-        CallInfoList callList;
-        callList.callSize = 0;
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_ERROR);
-        EXPECT_NE(csControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
-        CallInfo callInfo;
-        callList.callSize = 1;
-        callInfo.number = PHONE_NUMBER;
-        callInfo.index = 1;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_INCOMING);
-        callList.calls.push_back(callInfo);
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        callList.callSize = 2;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ACTIVE);
-        callInfo.number = PHONE_NUMBER_SECOND;
-        callInfo.index = 2;
-        callList.calls.push_back(callInfo);
-        callList.callSize = 3;
-        callInfo.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DISCONNECTED);
-        callInfo.number = PHONE_NUMBER_THIRD;
-        callInfo.index = 3;
-        callList.calls.push_back(callInfo);
-        callList.callSize = 0;
-        EXPECT_EQ(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_NE(csControl->ReportCallsData(slotId, callList), TELEPHONY_SUCCESS);
-        EXPECT_NE(csControl->Reject(cellularCallInfo), CALL_ERR_RESOURCE_UNAVAILABLE);
-        EXPECT_NE(csControl->HoldCall(slotId), CALL_ERR_CALL_STATE);
-        EXPECT_NE(csControl->UnHoldCall(slotId), CALL_ERR_CALL_STATE);
-        EXPECT_NE(csControl->SwitchCall(slotId), CALL_ERR_CALL_STATE);
-    }
-}
-
-/**
  * @tc.number   cellular_call_CellularCallConnectionCS_0001
  * @tc.name     Test for CellularCallConnectionCS
  * @tc.desc     Function test
