@@ -1400,7 +1400,8 @@ void CellularCallHandler::replacePrefix(std::string &number)
         return;
     }
     // only 460 country code need replace prefix
-    if (imsi.substr(0, 3) != u"460") {
+    int32_t mccLength = 3;
+    if (imsi.substr(0, mccLength) != u"460") {
         return;
     }
     std::string prefix1 = "0086";
