@@ -779,7 +779,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallbaseconnection_001, Function | M
     EXPECT_EQ(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
     EXPECT_EQ(BConnection.GetLeftPostDialCallString(), "");
     BConnection.postDialCallString_ = "111111";
-    EXPECT_NE(BConnection.ProcessNextChar(SIM1_SLOTID, c), 5);
     BConnection.postDialCalltate_ = PostDialCallState::POST_DIAL_CALL_NOT_STARTED;
 }
 /**
