@@ -154,7 +154,7 @@ int32_t IMSControl::SavePendingEmcCallInfo(const CellularCallInfo &callInfo)
 int32_t IMSControl::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     TELEPHONY_LOGI("HangUp start");
-    std::string message = "USER_TERMINATED";
+    std::string message = "";
     switch (type) {
         case CallSupplementType::TYPE_DEFAULT: {
             std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
