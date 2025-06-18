@@ -427,5 +427,15 @@ void CellularCallConnectionIMS::SetDisconnectReason(RilDisconnectedReason reason
 {
     disconnectReason_ = reason;
 }
+
+std::string CellularCallConnectionIMS::GetDisconnectMessage()
+{
+    return disconnectMessage_;
+}
+
+void CellularCallConnectionIMS::SetDisconnectMessage(const std::string &message)
+{
+    disconnectMessage_ = message;
+}
 } // namespace Telephony
 } // namespace OHOS

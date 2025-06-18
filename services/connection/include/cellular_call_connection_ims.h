@@ -218,6 +218,10 @@ public:
 
     void SetDisconnectReason(RilDisconnectedReason reason);
 
+    std::string GetDisconnectMessage();
+
+    void SetDisconnectMessage(const std::string &message);
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
 
@@ -227,6 +231,7 @@ private:
     ImsDialInfoStruct holdToDialInfo_;
     bool isPendingHangup_ = false;
     RilDisconnectedReason disconnectReason_ = RilDisconnectedReason::DISCONNECTED_REASON_INVALID;
+    std::string disconnectMessage_ = "";
 };
 } // namespace Telephony
 } // namespace OHOS
