@@ -236,7 +236,7 @@ void CellularCallHiSysEvent::WriteCallTansferEvent(uint8_t state)
     char timeStr[TIME_STR_LENGTH] = {0};
     time_t nowTime = time(0);
     struct tm *lt = localtime(&nowTime);
-    if (0 == strftime(timeStr, TIME_STR_LENGTH, "%Y%m%d%H%M%S", lt)) {
+    if (lt == nullptr || 0 == strftime(timeStr, TIME_STR_LENGTH, "%Y%m%d%H%M%S", lt)) {
         TELEPHONY_LOGE("strftime error");
         return;
     }

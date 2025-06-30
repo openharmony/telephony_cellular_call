@@ -945,7 +945,7 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
 
 void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList)
 {
-    TELEPHONY_LOGD("UpdateEmergencyCallFromRadio %{publid}d size %{public}d", slotId, eccList.callSize);
+    TELEPHONY_LOGD("UpdateEmergencyCallFromRadio %{public}d size %{public}d", slotId, eccList.callSize);
     std::unique_lock<std::shared_mutex> lock(mutex_);
     eccListRadioMap_[slotId].clear();
     for (auto ecc : eccList.calls) {
