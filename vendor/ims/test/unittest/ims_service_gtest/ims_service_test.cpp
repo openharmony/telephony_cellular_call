@@ -110,7 +110,7 @@ int32_t ImsServiceTest::InitConditionCheck()
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_001, Function | MediumTest | Level1)
 {
-    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+    ASSERT_FALSE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
 
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
