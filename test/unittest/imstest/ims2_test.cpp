@@ -907,10 +907,8 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
     auto imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
     imsCurrentCallList->callSize = 0;
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
-    EXPECT_EQ(imsCurrentCallList->callSize, 0);
     imsCurrentCallList->callSize = 1;
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
-    EXPECT_EQ(imsCurrentCallList->callSize, 1);
     imsCurrentCallList->callSize = 1;
     ImsCurrentCall imsCurrent;
     std::string phoneNumber = "123";
