@@ -741,7 +741,7 @@ int32_t CSControl::ReportHangUp(const std::vector<CellularCallInfo> &infos, int3
     return TELEPHONY_SUCCESS;
 }
 
-void CSControl::UpdateDisconnectedReason(const CallInfoList &callInfoList, RilDisconnectedReason reason)//whr
+void CSControl::UpdateDisconnectedReason(const CallInfoList &callInfoList, RilDisconnectedReason reason)
 {
     std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     for (auto &connection : connectionMap_) {
@@ -761,7 +761,7 @@ void CSControl::UpdateDisconnectedReason(const CallInfoList &callInfoList, RilDi
     }
 }
 
-bool CSControl::HasEndCallWithoutReason(const CallInfoList &callInfoList)//whr
+bool CSControl::HasEndCallWithoutReason(const CallInfoList &callInfoList)
 {
     std::lock_guard<std::recursive_mutex> lock(connectionMapMutex_);
     for (auto &connection : connectionMap_) {
