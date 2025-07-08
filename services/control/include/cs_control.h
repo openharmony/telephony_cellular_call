@@ -21,6 +21,7 @@
 #include "tel_ril_call_parcel.h"
 #include "cellular_call_connection_cs.h"
 #include "control_base.h"
+#include "call_manager_disconnected_details.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -179,6 +180,15 @@ public:
      */
     int32_t ReportCallsData(int32_t slotId, const CallInfoList &callInfoList) override;
 
+    /**
+     * CSControl ReportCsCallsData.
+     *
+     * @param slotId
+     * @param CallInfoList
+     * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t ReportCsCallsData(int32_t slotId, const CallInfoList &callInfoList, bool isNeedQuery = true) ;
+
     int32_t ExecutePostDial(int32_t slotId, int64_t callId);
 
     int32_t PostDialProceed(const CellularCallInfo &callInfo, const bool proceed);
@@ -191,6 +201,12 @@ public:
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t ReportHangUpInfo(int32_t slotId);
+
+    void UpdateDisconnectedReason(const CallInfoList &callInfoList, RilDisconnectedReason reason);
+
+    bool HasEndCallWithoutReason(const CallInfoList &callInfoList);
+
+    void UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason);
 
 private:
     /**
