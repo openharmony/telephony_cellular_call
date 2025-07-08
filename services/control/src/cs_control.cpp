@@ -529,7 +529,6 @@ void CSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const CallInf
             callReportInfo.reason = static_cast<DisconnectedReason>(it->second.GetDisconnectReason());
             callsReportInfo.callVec.push_back(callReportInfo);
             it = connectionMap_.erase(it);
-            GetCallFailReason(callsReportInfo.slotId, connectionMap_);
         } else {
             it->second.SetFlag(false);
             ++it;
@@ -624,7 +623,6 @@ int32_t CSControl::ReportHangUpInfo(int32_t slotId)
         callReportInfo.accountId = slotId;
         callReportInfo.reason = static_cast<DisconnectedReason>(it.second.GetDisconnectReason());
         callsReportInfo.callVec.push_back(callReportInfo);
-        GetCallFailReason(slotId, connectionMap_);
     }
     if (connectionMap_.empty()) {
         TELEPHONY_LOGI("connectionMap_ is empty");
