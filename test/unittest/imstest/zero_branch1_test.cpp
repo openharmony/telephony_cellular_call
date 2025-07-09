@@ -763,6 +763,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     std::vector<CellularCallInfo> infos = {};
     cellularCall.ClearAllCalls(infos);
     cellularCall.IsNeedIms(SIM1_SLOTID);
+    cellularCall.IsNeedIms(SIM2_SLOTID);
     cellularCall.GetCsControl(SIM1_SLOTID);
     cellularCall.GetImsControl(SIM1_SLOTID);
     std::shared_ptr<CSControl> csControl;
