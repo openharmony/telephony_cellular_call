@@ -1634,7 +1634,7 @@ void CellularCallHandler::SetCallTransferInfoResponse(const AppExecFwk::InnerEve
     } else {
         result->result = TELEPHONY_ERR_RIL_CMD_FAIL;
     }
-    supplement.EventSetCallTransferInfo(result->result, result->message, flag, action);
+    supplement.EventSetCallTransferInfo(result->result, result->message, flag, action, info.number);
 }
 
 void CellularCallHandler::GetCallRestrictionResponse(const AppExecFwk::InnerEvent::Pointer &event)

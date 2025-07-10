@@ -471,9 +471,11 @@ public:
      * @param message the remain message for user which come from network
      * @param flag, {@code SS_FROM_MMI_CODE} mean the request action come from dial api
      * @param action, query,active or deactive
+     * @param targetNumber the transfer target number
      * {@code SS_FROM_SETTING_MENU} means the request action come from setting app.
      */
-    void EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag, int32_t action);
+    void EventSetCallTransferInfo(
+        int32_t result, const std::string &message, int32_t flag, int32_t action, const std::string &targetNumber);
 
     /**
      * Send ussd result

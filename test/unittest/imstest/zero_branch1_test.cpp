@@ -561,7 +561,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_008, Function | MediumTest 
     mmiCodeErrData.WriteInt32(-1);
     mmiCodeErrData.WriteInt32(SIM1_SLOTID);
     mmiCodeErrData.WriteString("*100#");
-    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeErrData, reply), TELEPHONY_SUCCESS);
+    ASSERT_NE(callStub.OnIsMmiCodeInner(mmiCodeErrData, reply), TELEPHONY_SUCCESS);
 
     TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockTrue;
     MessageParcel mmiCodeData1;
@@ -582,6 +582,46 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_008, Function | MediumTest 
     mmiCodeData3.WriteInt32(size);
     mmiCodeData3.WriteInt32(SIM1_SLOTID);
     mmiCodeData3.WriteString("*100#");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData3, reply), TELEPHONY_SUCCESS);
+
+    TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
+}
+
+/**
+ * @tc.number   Telephony_CellularCallStub_009
+ * @tc.name     Test OnIsMmiCodeInner
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_009, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t size = 1;
+    MessageParcel reply;
+
+    TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockTrue;
+    MessageParcel mmiCodeData1;
+    mmiCodeData1.WriteInt32(size);
+    mmiCodeData1.WriteInt32(SIM1_SLOTID);
+    mmiCodeData1.WriteString("*31#1234567");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData1, reply), TELEPHONY_SUCCESS);
+    
+    MessageParcel mmiCodeData2;
+    mmiCodeData2.WriteInt32(size);
+    mmiCodeData2.WriteInt32(SIM1_SLOTID);
+    mmiCodeData2.WriteString("#31#1234567");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData2, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel mmiCodeData3;
+    mmiCodeData3.WriteInt32(size);
+    mmiCodeData3.WriteInt32(SIM1_SLOTID);
+    mmiCodeData3.WriteString("*#31#1234567");
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData3, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel mmiCodeData4;
+    mmiCodeData4.WriteInt32(size);
+    mmiCodeData4.WriteInt32(SIM1_SLOTID);
+    mmiCodeData4.WriteString("1234567");
     ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData3, reply), TELEPHONY_SUCCESS);
 
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
