@@ -18,6 +18,7 @@
 
 #include "tel_ril_call_parcel.h"
 #include "base_connection.h"
+#include "call_manager_disconnected_details.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -185,8 +186,13 @@ public:
      */
     void RegisterHandler();
 
+    RilDisconnectedReason GetDisconnectReason();
+
+    void SetDisconnectReason(RilDisconnectedReason reason);
+
 private:
     virtual int32_t ProcessPostDialCallChar(int32_t slotId, char c) override;
+    RilDisconnectedReason disconnectReason_ = RilDisconnectedReason::DISCONNECTED_REASON_INVALID;
 };
 } // namespace Telephony
 } // namespace OHOS
