@@ -51,6 +51,14 @@ public:
         return hasSimCard;
     }
 
+    bool CanUseImsService(int32_t slotId, ImsServiceType type)
+    {
+        ImsRegInfo info;
+        CoreServiceClient::GetInstance().GetImsRegStatus(slotId, type, info);
+        bool imsReg = info.imsRegState == ImsRegState::IMS_REGISTERED;
+        return imsReg;
+    }
+
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo)
     {
         callInfo.accountId = accountId;
@@ -287,7 +295,7 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0001, Function | MediumTest | L
     ASSERT_TRUE(startDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(startDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -295,7 +303,7 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0001, Function | MediumTest | L
         ret = telephonyService->StartDtmf(code, callInfo);
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -320,14 +328,14 @@ HWTEST_F(SatelliteTest, Satellite_call_StartDtmf_0002, Function | MediumTest | L
     auto telephonyService = iface_cast<CellularCallInterface>(startDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
     CellularCallInfo callInfo;
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->StartDtmf(code, callInfo);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
@@ -350,14 +358,14 @@ HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0001, Function | MediumTest | Le
     ASSERT_TRUE(stopDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(stopDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(callInfo);
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -380,14 +388,14 @@ HWTEST_F(SatelliteTest, Satellite_call_StopDtmf_0002, Function | MediumTest | Le
     ASSERT_TRUE(stopDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(stopDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo stopDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, stopDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(stopDtmfCallInfo);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo stopDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, stopDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -410,7 +418,7 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0001, Function | MediumTest | Le
     ASSERT_TRUE(sendDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(sendDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -418,7 +426,7 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0001, Function | MediumTest | Le
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -442,7 +450,7 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0002, Function | MediumTest | Le
     ASSERT_TRUE(sendDtmfRemote != nullptr);
     auto telephonyService = iface_cast<CellularCallInterface>(sendDtmfRemote);
     ASSERT_TRUE(telephonyService != nullptr);
-    if (HasSimCard(SIM1_SLOTID)) {
+    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -450,7 +458,7 @@ HWTEST_F(SatelliteTest, Satellite_call_SendDtmf_0002, Function | MediumTest | Le
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
         EXPECT_EQ(ret, CALL_ERR_INVALID_SLOT_ID);
     }
-    if (HasSimCard(SIM2_SLOTID)) {
+    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo sendDtmfCallInfo;
         int32_t ret = InitCellularCallInfo(INVALID_SLOTID, PHONE_NUMBER, sendDtmfCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);

@@ -317,5 +317,15 @@ int32_t CellularCallConnectionCS::ProcessPostDialCallChar(int32_t slotId, char c
     }
     return TELEPHONY_SUCCESS;
 }
+
+RilDisconnectedReason CellularCallConnectionCS::GetDisconnectReason()
+{
+    return disconnectReason_;
+}
+
+void CellularCallConnectionCS::SetDisconnectReason(RilDisconnectedReason reason)
+{
+    disconnectReason_ = reason;
+}
 } // namespace Telephony
 } // namespace OHOS

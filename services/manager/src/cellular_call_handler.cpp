@@ -359,6 +359,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     TELEPHONY_LOGI("[slot%{public}d] callInfoList.callSize:%{public}d", slotId_, callInfoList.callSize);
     CellularCallIncomingStartTrace(callInfo.state);
     auto csControl = serviceInstance->GetCsControl(slotId_);
+    currentCsCallInfoList_ = callInfoList;
     if (callInfoList.callSize == 0) {
         if (isInCsRedial_) {
             TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
@@ -370,10 +371,12 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
             CellularCallIncomingFinishTrace(callInfo.state);
             return;
         }
-        if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+        if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
             CellularCallIncomingFinishTrace(callInfo.state);
         }
-        serviceInstance->SetCsControl(slotId_, nullptr);
+        if (!csControl->HasEndCallWithoutReason(callInfoList)) {
+            serviceInstance->SetCsControl(slotId_, nullptr);
+        }
         return;
     }
     if (isInCsRedial_) {
@@ -391,7 +394,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         CellularCallIncomingFinishTrace(callInfo.state);
         return;
     }
-    if (csControl->ReportCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+    if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(callInfo.state);
     }
 }
@@ -2044,15 +2047,26 @@ void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reaso
         return;
     }
     auto imsControl = serviceInstance->GetImsControl(slotId_);
-    if (imsControl == nullptr) {
-        TELEPHONY_LOGE("imsControl get failed!");
+    auto csControl = serviceInstance->GetCsControl(slotId_);
+    if (imsControl != nullptr) {
+        imsControl->UpdateDisconnectedReason(currentCallList_, reason);
+        imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
+    } else if (csControl != nullptr) {
+        csControl->UpdateDisconnectedReason(currentCsCallInfoList_, reason);
+        csControl->ReportCsCallsData(slotId_, currentCsCallInfoList_, false);
+    } else {
+        TELEPHONY_LOGE("imsControl and csControl get failed!");
         return;
     }
     imsControl->UpdateDisconnectedReason(currentCallList_, reason, message);
     imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
     if (currentCallList_.callSize == 0) {
-        TELEPHONY_LOGW("all calls disconnected, set ims control to nullptr.");
+        TELEPHONY_LOGW("all ims calls disconnected, set ims control to nullptr.");
         serviceInstance->SetImsControl(slotId_, nullptr);
+    }
+    if (currentCsCallInfoList_.callSize == 0) {
+        TELEPHONY_LOGW("all cs calls disconnected, set cs control to nullptr.");
+        serviceInstance->SetCsControl(slotId_, nullptr);
     }
 }
 } // namespace Telephony

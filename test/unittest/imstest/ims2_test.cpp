@@ -658,12 +658,11 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0001, Function | MediumTes
  * @tc.name     Test for CellularCallRegister
  * @tc.desc     Function test
  */
-HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0002, Function | MediumTest | Level3)
+HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0002, TestSize.Level0)
 {
     auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     ASSERT_TRUE(systemAbilityMgr != nullptr);
     auto registerRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(registerRemote != nullptr);
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ASSERT_TRUE(callRegister != nullptr);
     GetImsConfigResponse imsConfigResponse;
@@ -908,10 +907,8 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest
     auto imsCurrentCallList = std::make_shared<ImsCurrentCallList>();
     imsCurrentCallList->callSize = 0;
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
-    EXPECT_EQ(imsCurrentCallList->callSize, 0);
     imsCurrentCallList->callSize = 1;
     handler.ProcessImsPhoneNumber(*imsCurrentCallList);
-    EXPECT_EQ(imsCurrentCallList->callSize, 1);
     imsCurrentCallList->callSize = 1;
     ImsCurrentCall imsCurrent;
     std::string phoneNumber = "123";

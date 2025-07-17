@@ -110,9 +110,8 @@ int32_t ImsServiceTest::InitConditionCheck()
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -130,9 +129,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_001, Function | MediumTest | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
+
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot1_, sizeof(callInfoForSlot1_), 0, sizeof(callInfoForSlot1_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -150,9 +148,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_DIAL_002, Function | MediumTest | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -169,9 +166,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_001, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot1_, sizeof(callInfoForSlot1_), 0, sizeof(callInfoForSlot1_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -188,9 +183,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HangUP_002, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -207,9 +201,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot1_, sizeof(callInfoForSlot1_), 0, sizeof(callInfoForSlot1_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -226,9 +218,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_RejectWithReason_002, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -245,9 +236,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_001, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot1_, sizeof(callInfoForSlot1_), 0, sizeof(callInfoForSlot1_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -264,9 +253,8 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_Answer_002, Function | MediumTest 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
+
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->HoldCall(DEFAULT_SLOTID, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -279,9 +267,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->HoldCall(SIM_SLOT_ID_1, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -294,9 +280,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_HoldCall_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->UnHoldCall(DEFAULT_SLOTID, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -309,9 +293,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->UnHoldCall(SIM_SLOT_ID_1, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -324,9 +306,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UnHoldCall_002, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SwitchCall(DEFAULT_SLOTID, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -339,9 +319,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SwitchCall(SIM_SLOT_ID_1, CALL_TYPE_IMS);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -354,9 +332,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SwitchCall_002, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->CombineConference(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -369,9 +345,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_001, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->CombineConference(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -384,9 +358,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CombineConference_002, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::vector<std::string> numberList;
     numberList.push_back(PHONE_NUMBER);
@@ -401,9 +373,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     std::vector<std::string> numberList;
     numberList.push_back(PHONE_NUMBER);
@@ -418,9 +388,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_InviteToConference_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t index = 1;
     int32_t ret = imsCallPtr_->KickOutFromConference(DEFAULT_SLOTID, index);
@@ -434,9 +402,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_001, Functio
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t index = 1;
     int32_t ret = imsCallPtr_->KickOutFromConference(SIM_SLOT_ID_1, index);
@@ -450,9 +416,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_KickOutFromConference_002, Functio
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot0_, sizeof(callInfoForSlot0_), 0, sizeof(callInfoForSlot0_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -469,9 +433,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_001, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     if (memset_s(&callInfoForSlot1_, sizeof(callInfoForSlot1_), 0, sizeof(callInfoForSlot1_)) == EOK) {
         ret = TELEPHONY_SUCCESS;
@@ -488,9 +450,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsCallMode_002, Function | 
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     char dtmfCode = '#';
     ret = imsCallPtr_->StartDtmf(DEFAULT_SLOTID, dtmfCode, DEFAULT_INDEX);
@@ -504,9 +464,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_001, Function | MediumTe
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     char dtmfCode = '#';
     ret = imsCallPtr_->StartDtmf(SIM_SLOT_ID_1, dtmfCode, DEFAULT_INDEX);
@@ -520,9 +478,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartDtmf_002, Function | MediumTe
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     char dtmfCode = '#';
     ret = imsCallPtr_->SendDtmf(DEFAULT_SLOTID, dtmfCode, DEFAULT_INDEX);
@@ -536,9 +492,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     char dtmfCode = '#';
     ret = imsCallPtr_->SendDtmf(SIM_SLOT_ID_1, dtmfCode, DEFAULT_INDEX);
@@ -552,9 +506,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendDtmf_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StopDtmf(DEFAULT_SLOTID, DEFAULT_INDEX);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -567,9 +519,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StopDtmf(SIM_SLOT_ID_1, DEFAULT_INDEX);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -582,9 +532,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StartRtt(DEFAULT_SLOTID, RTT_MSG);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -597,9 +545,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_001, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StartRtt(SIM_SLOT_ID_1, RTT_MSG);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -612,9 +558,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_002, Function | MediumTes
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StopRtt(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -627,9 +571,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->StopRtt(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -642,9 +584,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetDomainPreferenceMode(DEFAULT_SLOTID, DEFAULT_MODE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -657,9 +597,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_001, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetDomainPreferenceMode(SIM_SLOT_ID_1, DEFAULT_MODE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -672,9 +610,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDomainPreferenceMode_002, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetDomainPreferenceMode(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -687,9 +623,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_001, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetDomainPreferenceMode(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -702,9 +636,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetDomainPreferenceMode_002, Funct
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetImsSwitchStatus(DEFAULT_SLOTID, DEFAULT_ACTIVE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -717,9 +649,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetImsSwitchStatus(SIM_SLOT_ID_1, DEFAULT_ACTIVE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -732,9 +662,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsSwitchStatus_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetImsSwitchStatus(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -747,9 +675,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetImsSwitchStatus(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -762,9 +688,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsSwitchStatus_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigString_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::string value = "0";
     ret = imsCallPtr_->SetImsConfig(DEFAULT_ITEM, value);
@@ -778,9 +702,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigString_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigInt_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t value = 0;
     ret = imsCallPtr_->SetImsConfig(DEFAULT_ITEM, value);
@@ -794,9 +716,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsConfigInt_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsConfig_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetImsConfig(DEFAULT_ITEM);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -809,9 +729,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsFeatureValue_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t value = 0;
     ret = imsCallPtr_->SetImsFeatureValue(DEFAULT_FEATURE_TYPE, value);
@@ -825,9 +743,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetImsFeatureValue_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsFeatureValue_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t value;
     ret = imsCallPtr_->GetImsFeatureValue(DEFAULT_FEATURE_TYPE, value);
@@ -842,9 +758,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsFeatureValue_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t mute = 0;
     ret = imsCallPtr_->SetMute(DEFAULT_SLOTID, mute);
@@ -858,9 +772,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t mute = 0;
     ret = imsCallPtr_->SetMute(SIM_SLOT_ID_1, mute);
@@ -874,9 +786,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetMute_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetMute(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -888,9 +798,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetMute(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -903,9 +811,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetMute_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_CtrlCamera_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::u16string cameraId = u"cameraId";
     int32_t callingUid = 0;
@@ -921,9 +827,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_CtrlCamera_001, Function | MediumT
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPreviewWindow_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t x = 0;
     int32_t y = 0;
@@ -941,9 +845,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPreviewWindow_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDisplayWindow_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t x = 0;
     int32_t y = 0;
@@ -961,9 +863,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDisplayWindow_001, Function | M
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCameraZoom_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     float zoomRatio = 1.0;
     ret = imsCallPtr_->SetCameraZoom(zoomRatio);
@@ -977,9 +877,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCameraZoom_001, Function | Medi
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPauseImage_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::u16string path = u"path";
     ret = imsCallPtr_->SetPauseImage(path);
@@ -993,9 +891,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetPauseImage_001, Function | Medi
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDeviceDirection_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t rotation = 0;
     ret = imsCallPtr_->SetDeviceDirection(rotation);
@@ -1009,9 +905,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetDeviceDirection_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetClip(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1024,9 +918,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetClip(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1039,9 +931,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClip_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t action = 0;
     ret = imsCallPtr_->SetClir(DEFAULT_SLOTID, action);
@@ -1055,9 +945,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t action = 0;
     ret = imsCallPtr_->SetClir(SIM_SLOT_ID_1, action);
@@ -1071,9 +959,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetClir_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetClir(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1086,9 +972,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_001, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetClir(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1101,9 +985,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetClir_002, Function | MediumTest
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::string transferNum = "000000";
     int32_t classType = 1;
@@ -1118,9 +1000,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     std::string transferNum = "000000";
     int32_t classType = 1;
@@ -1135,14 +1015,11 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallTransfer_002, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     if (imsCallPtr_ == nullptr) {
         TELEPHONY_LOGE("imsCallPtr is nullptr, Init Failed!");
-        EXPECT_EQ(TELEPHONY_SUCCESS, ret);
-        return;
+        ASSERT_EQ(TELEPHONY_SUCCESS, ret);
     }
     ret = imsCallPtr_->GetCallTransfer(DEFAULT_SLOTID, DEFAULT_TRANSFER_TYPE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1155,9 +1032,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_001, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetCallTransfer(SIM_SLOT_ID_1, DEFAULT_TRANSFER_TYPE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1170,9 +1045,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallTransfer_002, Function | Me
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::string fac = "AO";
     std::string password = "000000";
@@ -1187,9 +1060,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     std::string fac = "AO";
     std::string password = "000000";
@@ -1204,9 +1075,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallRestriction_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     std::string facType = "AO";
     ret = imsCallPtr_->GetCallRestriction(DEFAULT_SLOTID, facType);
@@ -1220,9 +1089,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_001, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     std::string facType = "AO";
     ret = imsCallPtr_->GetCallRestriction(SIM_SLOT_ID_1, facType);
@@ -1236,9 +1103,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallRestriction_002, Function |
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetCallWaiting(DEFAULT_SLOTID, DEFAULT_ACTIVE, ServiceClassType::VOICE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1251,9 +1116,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_001, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->SetCallWaiting(SIM_SLOT_ID_1, DEFAULT_ACTIVE, ServiceClassType::VOICE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1266,9 +1129,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetCallWaiting_002, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetCallWaiting(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1281,9 +1142,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_001, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCallPtr_->GetCallWaiting(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1296,9 +1155,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetCallWaiting_002, Function | Med
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t imsSmsConfig = 1;
     ret = imsSmsPtr_->ImsSetSmsConfig(DEFAULT_SLOTID, imsSmsConfig);
@@ -1312,9 +1169,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t imsSmsConfig = 1;
     ret = imsSmsPtr_->ImsSetSmsConfig(SIM_SLOT_ID_1, imsSmsConfig);
@@ -1328,9 +1183,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SetSmsConfig_002, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsSmsPtr_->ImsGetSmsConfig(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1343,9 +1196,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_001, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsSmsPtr_->ImsGetSmsConfig(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1358,9 +1209,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetSmsConfig_002, Function | Mediu
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     int32_t refld = 1;
     ImsMessageInfo imsMessageInfo;
@@ -1376,9 +1225,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_001, Function | Medium
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     int32_t refld = 1;
     ImsMessageInfo imsMessageInfo;
@@ -1394,9 +1241,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_SendMessage_002, Function | Medium
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_001, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(DEFAULT_SLOTID)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCoreServicePtr_->GetImsRegistrationStatus(DEFAULT_SLOTID);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
@@ -1409,9 +1254,7 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_001, Func
  */
 HWTEST_F(ImsServiceTest, Telephony_ImsService_GetImsRegistrationStatus_002, Function | MediumTest | Level1)
 {
-    if ((ImsServiceTest::InitConditionCheck() != TELEPHONY_SUCCESS) || !HasSimCard(SIM_SLOT_ID_1)) {
-        return;
-    }
+    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
     int32_t ret = TELEPHONY_ERROR;
     ret = imsCoreServicePtr_->GetImsRegistrationStatus(SIM_SLOT_ID_1);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);

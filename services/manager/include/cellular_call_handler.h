@@ -282,6 +282,7 @@ private:
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
     std::mutex mutex_;
     ImsCurrentCallList currentCallList_{};
+    CallInfoList currentCsCallInfoList_{};
 };
 } // namespace Telephony
 } // namespace OHOS

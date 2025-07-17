@@ -153,7 +153,7 @@ void ZeroBranchTest::InitCsCallInfoList(CallInfoList &callInfoList, int32_t num)
  * @tc.name     Test error branch
  * @tc.desc     Function test
  */
-HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_001, TestSize.Level0)
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_001, TestSize.Level1)
 {
     AccessToken token;
     CellularCallConfig config;
