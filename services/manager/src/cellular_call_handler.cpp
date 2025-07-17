@@ -2049,7 +2049,7 @@ void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reaso
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     auto csControl = serviceInstance->GetCsControl(slotId_);
     if (imsControl != nullptr) {
-        imsControl->UpdateDisconnectedReason(currentCallList_, reason);
+        imsControl->UpdateDisconnectedReason(currentCallList_, reason, message);
         imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
     } else if (csControl != nullptr) {
         csControl->UpdateDisconnectedReason(currentCsCallInfoList_, reason);
@@ -2058,8 +2058,6 @@ void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reaso
         TELEPHONY_LOGE("imsControl and csControl get failed!");
         return;
     }
-    imsControl->UpdateDisconnectedReason(currentCallList_, reason, message);
-    imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
     if (currentCallList_.callSize == 0) {
         TELEPHONY_LOGW("all ims calls disconnected, set ims control to nullptr.");
         serviceInstance->SetImsControl(slotId_, nullptr);
