@@ -246,7 +246,7 @@ private:
     void ProcessCsPhoneNumber(CallInfoList &list);
     void ProcessImsPhoneNumber(ImsCurrentCallList &list);
     void replacePrefix(std::string &number);
-    void HandleCallDisconnectReason(RilDisconnectedReason reason);
+    void HandleCallDisconnectReason(RilDisconnectedReason reason, const std::string &message);
     void UpdateImsConfiguration();
     void GetImsSwitchStatusRequest();
 

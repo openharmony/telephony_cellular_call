@@ -195,11 +195,12 @@ public:
 
     void RecoverPendingHold();
 
-    void UpdateDisconnectedReason(const ImsCurrentCallList &currentCallList, RilDisconnectedReason reason);
+    void UpdateDisconnectedReason(const ImsCurrentCallList &currentCallList, RilDisconnectedReason reason,
+        const std::string &message);
 
     bool HasEndCallWithoutReason(const ImsCurrentCallList &callList);
 
-    void UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason);
+    void UpdateCallDisconnectReason(int32_t callId, RilDisconnectedReason reason, const std::string &message);
 
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     CellularCallInfo GetPendingEmcCallInfo();
