@@ -385,7 +385,19 @@ bool CellularCallService::IsMmiCode(int32_t slotId, std::string &number)
         TELEPHONY_LOGE("mmiCodeUtils is nullptr");
         return false;
     }
-    return mmiCodeUtils->IsNeedExecuteMmi(number, false);
+    if (!mmiCodeUtils->IsNeedExecuteMmi(number, false)) {
+        return false;
+    }
+    // In temporary mode, to supress CLIR for a single call, enter:
+    //   "*31#[called number] SEND"
+    // In temporary mode, to invoke CLIR for a single call, enter:
+    //   "#31#[called number] SEND"
+    MMIData mmiData = mmiCodeUtils->GetMMIData();
+    if (!mmiData.serviceCode.empty() && !mmiData.dialString.empty() &&
+        (mmiData.actionString == "*" || mmiData.actionString == "#")) {
+        return false;
+    }
+    return true;
 }
 
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)

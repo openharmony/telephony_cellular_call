@@ -348,6 +348,10 @@ int32_t CellularCallSupplement::ObtainCause(const std::string &actionStr)
             return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NO_REPLY);
         case "62"_hash:
             return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_NOT_REACHABLE);
+        case "002"_hash:
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_ALL);
+        case "004"_hash:
+            return static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_CONDITIONAL);
         default:
             TELEPHONY_LOGE("actionStr out of range!");
             return TELEPHONY_ERROR;
@@ -717,6 +721,9 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fail");
         }
+        if (strcpy_s(mmiCodeInfo.number, sizeof(mmiCodeInfo.number), queryResult.number.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
         mmiCodeInfo.time = queryResult.time;
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
@@ -730,7 +737,7 @@ void CellularCallSupplement::BuildCallForwardQueryInfo(
 }
 
 void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std::string &message, int32_t flag,
-    int32_t action)
+    int32_t action, const std::string &targetNumber)
 {
     auto callRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     if (callRegister == nullptr) {
@@ -746,6 +753,9 @@ void CellularCallSupplement::EventSetCallTransferInfo(int32_t result, const std:
         }
         mmiCodeInfo.mmiCodeType = SC_CFU;
         mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
+        if (strcpy_s(mmiCodeInfo.number, sizeof(mmiCodeInfo.number), targetNumber.c_str()) != EOK) {
+            TELEPHONY_LOGE("strcpy_s fail");
+        }
         ReportMmiCodeMessage(mmiCodeInfo);
     } else {
         callRegister->ReportSetTransferResult(result);

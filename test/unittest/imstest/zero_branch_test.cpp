@@ -284,6 +284,8 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_001, Function | Medium
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataEmp);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataAct);
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataDeact);
+    ASSERT_EQ(callSup.ObtainCause("002"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_ALL));
+    ASSERT_EQ(callSup.ObtainCause("004"), static_cast<int32_t>(CallTransferType::TRANSFER_TYPE_CONDITIONAL));
     ASSERT_FALSE(mmiDataAct.actionString.empty());
 }
 
@@ -373,8 +375,9 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_003, Function | Medium
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
     queryResult.reason = 2;
     callSup.BuildCallForwardQueryInfo(queryResult, message, 0);
-    callSup.EventSetCallTransferInfo(0, message, 0, 1);
-    callSup.EventSetCallTransferInfo(0, message, 1, 1);
+    std::string targetNumber = "1234567";
+    callSup.EventSetCallTransferInfo(0, message, 0, 1, targetNumber);
+    callSup.EventSetCallTransferInfo(0, message, 1, 1, targetNumber);
     RadioResponseInfo responseInfo;
     callSup.EventSendUssd(responseInfo);
     SsNoticeInfo ssNoticeInfo;

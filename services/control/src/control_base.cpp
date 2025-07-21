@@ -94,13 +94,13 @@ bool ControlBase::IsNeedExecuteMMI(int32_t slotId, std::string &phoneString, CLI
         if (mmiCodeUtils->GetMMIData().actionString == "*") {
             phoneString = mmiCodeUtils->GetMMIData().dialString;
             if (mmiCodeUtils->GetMMIData().serviceCode == "31") {
-                clirMode = CLIRMode::TRANSFER;
+                clirMode = CLIRMode::INHIBITION;
             }
             return false;
         } else if (mmiCodeUtils->GetMMIData().actionString == "#") {
             phoneString = mmiCodeUtils->GetMMIData().dialString;
             if (mmiCodeUtils->GetMMIData().serviceCode == "31") {
-                clirMode = CLIRMode::INHIBITION;
+                clirMode = CLIRMode::TRANSFER;
             }
             return false;
         }
