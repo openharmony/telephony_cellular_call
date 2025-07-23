@@ -21,9 +21,6 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims_callback_proxy_test.cpp",
   ]
 
@@ -79,9 +76,6 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims_callback_stub_test.cpp",
   ]
 
@@ -137,9 +131,6 @@ ohos_unittest("cellular_call_ims1_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims1_test.cpp",
   ]
 
@@ -195,9 +186,6 @@ ohos_unittest("cellular_call_ims2_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims2_test.cpp",
   ]
 
@@ -256,9 +244,6 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "zero_branch_test.cpp",
   ]
 
@@ -319,9 +304,6 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "zero_branch1_test.cpp",
   ]
 
@@ -383,9 +365,6 @@ ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "cellular_call_stub_test.cpp",
   ]
 
@@ -496,9 +475,6 @@ ohos_unittest("cellular_call_ims_call_callback_stub_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims_call_callback_stub_test.cpp",
   ]
 
@@ -554,9 +530,6 @@ ohos_unittest("cellular_call_ims_hisysevent_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "cellular_call_hisysevent_test.cpp",
   ]
 
@@ -613,9 +586,6 @@ ohos_unittest("cellular_call_ims_emergency_utils_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "emergency_utils_test.cpp",
   ]
 
@@ -671,9 +641,6 @@ ohos_unittest("cellular_call_ims_connection_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "ims_connection_test.cpp",
   ]
 
@@ -729,9 +696,6 @@ ohos_unittest("cellular_call_ims_mmi_code_message_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "mmi_code_message_test.cpp",
   ]
 
@@ -787,9 +751,6 @@ ohos_unittest("cellular_call_ims_config_request_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "config_request_test.cpp",
   ]
 
@@ -845,9 +806,6 @@ ohos_unittest("cellular_call_ims_standardize_utils_test") {
   module_out_path = part_name + "/" + part_name + "/" + test_module
 
   sources = [
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_client.cpp",
-    "${CELLULAR_CALL_PATH}/../core_service/services/ims_service_interaction/src/ims_core_service_proxy.cpp",
     "standardize_utils_test.cpp",
   ]
 

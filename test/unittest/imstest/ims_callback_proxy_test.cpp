@@ -53,8 +53,6 @@ public:
 void ImsCallbackProxyTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
-    std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
-    DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
 }
 
 void ImsCallbackProxyTest::TearDownTestCase(void) {}

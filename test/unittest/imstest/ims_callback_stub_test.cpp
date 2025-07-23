@@ -112,8 +112,6 @@ public:
 void ImsCallbackStubTest::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
-    std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
-    DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
 }
 
 void ImsCallbackStubTest::TearDownTestCase(void)
