@@ -361,22 +361,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     auto csControl = serviceInstance->GetCsControl(slotId_);
     currentCsCallInfoList_ = callInfoList;
     if (callInfoList.callSize == 0) {
-        if (isInCsRedial_) {
-            TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
-            isInCsRedial_ = false;
-            return;
-        }
-        if (csControl == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] cs_control is null", slotId_);
-            CellularCallIncomingFinishTrace(callInfo.state);
-            return;
-        }
-        if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
-            CellularCallIncomingFinishTrace(callInfo.state);
-        }
-        if (!csControl->HasEndCallWithoutReason(callInfoList)) {
-            serviceInstance->SetCsControl(slotId_, nullptr);
-        }
+        ReportNoCsCallsData(callInfoList, callInfo, csControl);
         return;
     }
     if (isInCsRedial_) {
@@ -396,6 +381,27 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(callInfo.state);
+    }
+}
+
+void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, CallInfo callInfo,
+    const std::shared_ptr<CSControl> &csControl)
+{
+    if (isInCsRedial_) {
+        TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
+        isInCsRedial_ = false;
+        return;
+    }
+    if (csControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] cs_control is null", slotId_);
+        CellularCallIncomingFinishTrace(callInfo.state);
+        return;
+    }
+    if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
+        CellularCallIncomingFinishTrace(callInfo.state);
+    }
+    if (!csControl->HasEndCallWithoutReason(callInfoList)) {
+        DelayedSingleton<CellularCallService>::GetInstance()->SetCsControl(slotId_, nullptr);
     }
 }
 
