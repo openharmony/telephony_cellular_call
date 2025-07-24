@@ -704,14 +704,14 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallCsControl_001, Function | MediumT
     CellularCallInfo cellularCallInfo;
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
     CallInfoList callInfoList;
-    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.ReportCsCallsData(SIM1_SLOTID, callInfoList);
     csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
-    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.ReportCsCallsData(SIM1_SLOTID, callInfoList);
     csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
     InitCsCallInfoList(callInfoList, 5);
-    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.ReportCsCallsData(SIM1_SLOTID, callInfoList);
     csControl.connectionMap_.clear();
-    csControl.ReportCallsData(SIM1_SLOTID, callInfoList);
+    csControl.ReportCsCallsData(SIM1_SLOTID, callInfoList);
     bool enabled = false;
     csControl.Dial(cellularCallInfo, enabled);
     csControl.DialCdma(cellularCallInfo);
