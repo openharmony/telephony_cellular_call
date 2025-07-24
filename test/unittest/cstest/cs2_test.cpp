@@ -1262,15 +1262,15 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     CellularCallHandler seventhHandler { subscriberInfo };
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     int32_t slotId = seventhHandler.GetSlotId();
     std::shared_ptr<CSControl> csControl;
     serviceInstance->SetCsControl(slotId, csControl);
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     std::shared_ptr<IMSControl> imsControl;
     serviceInstance->SetImsControl(slotId, imsControl);
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
 }
 
 /**
