@@ -361,7 +361,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     auto csControl = serviceInstance->GetCsControl(slotId_);
     currentCsCallInfoList_ = callInfoList;
     if (callInfoList.callSize == 0) {
-        ReportNoCsCallsData(callInfoList, callInfo, csControl);
+        ReportNoCsCallsData(callInfoList, callInfo.state, csControl);
         return;
     }
     if (isInCsRedial_) {
@@ -384,7 +384,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
 }
 
-void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, CallInfo callInfo,
+void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, const int32_t state,
     const std::shared_ptr<CSControl> &csControl)
 {
     if (isInCsRedial_) {
@@ -394,11 +394,11 @@ void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, 
     }
     if (csControl == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] cs_control is null", slotId_);
-        CellularCallIncomingFinishTrace(callInfo.state);
+        CellularCallIncomingFinishTrace(state);
         return;
     }
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
-        CellularCallIncomingFinishTrace(callInfo.state);
+        CellularCallIncomingFinishTrace(state);
     }
     if (!csControl->HasEndCallWithoutReason(callInfoList)) {
         DelayedSingleton<CellularCallService>::GetInstance()->SetCsControl(slotId_, nullptr);
