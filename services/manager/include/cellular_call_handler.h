@@ -238,7 +238,7 @@ private:
     void InitAdditionalFuncMap();
 
     void ReportCsCallsData(const CallInfoList &callInfoList);
-    void ReportNoCsCallsData(const CallInfoList &callInfoList, CallInfo callInfo,
+    void ReportNoCsCallsData(const CallInfoList &callInfoList,  const int32_t state,
         const std::shared_ptr<CSControl> &csControl);
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
     void ReportSatelliteCallsData(const SatelliteCurrentCallList &callInfoList);

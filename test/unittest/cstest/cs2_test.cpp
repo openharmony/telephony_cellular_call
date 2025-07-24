@@ -1241,14 +1241,14 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest 
     CellularCallHandler sixthHandler { subscriberInfo };
     auto callInfoList = std::make_shared<CallInfoList>();
     callInfoList->callSize = 0;
-    sixthHandler.ReportCsCallsData(*callInfoList);
+    ASSERT_NO_THROW(sixthHandler.ReportCsCallsData(*callInfoList));
     callInfoList->callSize = 1;
     CallInfo call;
     call.index = 1;
     call.state = 4;
     callInfoList->calls.push_back(call);
     sixthHandler.isInCsRedial_ = false;
-    sixthHandler.ReportCsCallsData(*callInfoList);
+    ASSERT_NO_THROW(sixthHandler.ReportCsCallsData(*callInfoList));
 }
  
  /**
@@ -1262,15 +1262,15 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     CellularCallHandler seventhHandler { subscriberInfo };
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     int32_t slotId = seventhHandler.GetSlotId();
     std::shared_ptr<CSControl> csControl;
     serviceInstance->SetCsControl(slotId, csControl);
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
     std::shared_ptr<IMSControl> imsControl;
     serviceInstance->SetImsControl(slotId, imsControl);
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
 }
 
 /**
