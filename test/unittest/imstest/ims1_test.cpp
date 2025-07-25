@@ -120,8 +120,6 @@ public:
 void Ims1Test::SetUpTestCase(void)
 {
     // step 3: Set Up Test Case
-    std::cout << "---------- ImsCoreServiceClient start ------------" << std::endl;
-    DelayedSingleton<ImsCoreServiceClient>::GetInstance()->Init();
 }
 
 void Ims1Test::TearDownTestCase(void)
