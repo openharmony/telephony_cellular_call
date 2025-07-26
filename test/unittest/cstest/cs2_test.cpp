@@ -1239,16 +1239,22 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest 
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     CellularCallHandler sixthHandler { subscriberInfo };
+    sixthHandler.SetSlotId(DEFAULT_SIM_SLOT_ID);
     auto callInfoList = std::make_shared<CallInfoList>();
     callInfoList->callSize = 0;
-    ASSERT_NO_THROW(sixthHandler.ReportCsCallsData(*callInfoList));
+    sixthHandler.ReportCsCallsData(*callInfoList);
+    int32_t slotId = sixthHandler.GetSlotId();
+    auto csControl = std::make_shared<CSControl>();
+    EXPECT_EQ(csControl->ReportCsCallsData(slotId, *callInfoList), TELEPHONY_ERROR);
     callInfoList->callSize = 1;
     CallInfo call;
+    call.number = PHONE_NUMBER;
     call.index = 1;
     call.state = 4;
     callInfoList->calls.push_back(call);
     sixthHandler.isInCsRedial_ = false;
-    ASSERT_NO_THROW(sixthHandler.ReportCsCallsData(*callInfoList));
+    sixthHandler.ReportCsCallsData(*callInfoList);
+    EXPECT_EQ(csControl->ReportCsCallsData(slotId, *callInfoList), TELEPHONY_SUCCESS);
 }
  
  /**
@@ -1262,15 +1268,22 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     CellularCallHandler seventhHandler { subscriberInfo };
-    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    seventhHandler.SetSlotId(DEFAULT_SIM_SLOT_ID);
     int32_t slotId = seventhHandler.GetSlotId();
     std::shared_ptr<CSControl> csControl;
     serviceInstance->SetCsControl(slotId, csControl);
-    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
+    EXPECT_TRUE(serviceInstance->GetCsControl(slotId) != nullptr);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    CellularCallConnectionCS csConnection;
+    EXPECT_EQ(csConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
     std::shared_ptr<IMSControl> imsControl;
     serviceInstance->SetImsControl(slotId, imsControl);
-    ASSERT_NO_THROW(seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, ""));
+    EXPECT_TRUE(serviceInstance->GetCsControl(slotId) != nullptr);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
+    CellularCallConnectionIMS imsConnection;
+    EXPECT_EQ(imsConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
 }
 
 /**
