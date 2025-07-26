@@ -1281,7 +1281,7 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     std::shared_ptr<IMSControl> imsControl;
     serviceInstance->SetImsControl(slotId, imsControl);
     EXPECT_TRUE(serviceInstance->GetCsControl(slotId) != nullptr);
-    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
+    seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     CellularCallConnectionIMS imsConnection;
     EXPECT_EQ(imsConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
 }
