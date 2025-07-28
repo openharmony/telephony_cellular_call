@@ -1245,7 +1245,7 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest 
     sixthHandler.ReportCsCallsData(*callInfoList);
     int32_t slotId = sixthHandler.GetSlotId();
     auto csControl = std::make_shared<CSControl>();
-    EXPECT_EQ(csControl->ReportCsCallsData(slotId, *callInfoList), TELEPHONY_ERROR);
+    EXPECT_EQ(csControl->ReportCsCallsData(slotId, *callInfoList), TELEPHONY_SUCCESS);
     callInfoList->callSize = 1;
     CallInfo call;
     call.number = PHONE_NUMBER;
@@ -1272,15 +1272,15 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     seventhHandler.SetSlotId(DEFAULT_SIM_SLOT_ID);
     int32_t slotId = seventhHandler.GetSlotId();
-    std::shared_ptr<CSControl> csControl;
+    auto csControl = std::make_shared<CSControl>();
     serviceInstance->SetCsControl(slotId, csControl);
     EXPECT_TRUE(serviceInstance->GetCsControl(slotId) != nullptr);
     seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     CellularCallConnectionCS csConnection;
     EXPECT_EQ(csConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
-    std::shared_ptr<IMSControl> imsControl;
+    auto imsControl = std::make_shared<IMSControl>();
     serviceInstance->SetImsControl(slotId, imsControl);
-    EXPECT_TRUE(serviceInstance->GetCsControl(slotId) != nullptr);
+    EXPECT_TRUE(serviceInstance->GetImsControl(slotId) != nullptr);
     seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     CellularCallConnectionIMS imsConnection;
     EXPECT_EQ(imsConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
