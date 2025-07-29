@@ -312,6 +312,12 @@ struct ImsCurrentCall {
      * - 3：Payphone
      */
     int32_t namePresentation = 0;
+    /**
+     * Whether to use the message box.
+     * - 0: No
+     * - 1: Yes
+     */
+    int32_t newCallUseBox = 0;
 };
 
 /**

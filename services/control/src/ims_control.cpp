@@ -587,6 +587,7 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.crsType = callInfo.toneType;
     callReportInfo.originalCallType = callInfo.callInitialType;
     callReportInfo.namePresentation = callInfo.namePresentation;
+    callReportInfo.newCallUseBox = callInfo.newCallUseBox;
     return callReportInfo;
 }
 

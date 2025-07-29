@@ -354,6 +354,7 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
             call.toneType = data.ReadInt32();
             call.callInitialType = data.ReadInt32();
             call.namePresentation = data.ReadInt32();
+            call.newCallUseBox = data.ReadInt32();
             callList->calls.push_back(call);
         }
         reply.WriteInt32(GetImsCallsDataResponse(slotId, *callList));
