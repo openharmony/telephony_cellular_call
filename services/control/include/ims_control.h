@@ -21,6 +21,7 @@
 #include "cellular_call_connection_ims.h"
 #include "control_base.h"
 #include "call_manager_disconnected_details.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -277,7 +278,7 @@ private:
 private:
     ImsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
-    std::recursive_mutex connectionMapMutex_;
+    ffrt::recursive_mutex connectionMapMutex_;
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     CellularCallInfo pendingEmcDialCallInfo_;
     bool isPendingEmc_ = false;

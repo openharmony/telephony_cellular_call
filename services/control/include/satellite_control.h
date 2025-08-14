@@ -21,6 +21,7 @@
 #include "control_base.h"
 #include "tel_ril_call_parcel.h"
 #include "satellite_call_types.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -205,7 +206,7 @@ private:
 private:
     SatelliteConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
-    std::recursive_mutex connectionMapMutex_;
+    ffrt::recursive_mutex connectionMapMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
