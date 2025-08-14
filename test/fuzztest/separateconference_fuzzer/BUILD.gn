@@ -51,6 +51,7 @@ ohos_fuzztest("SeparateConferenceFuzzTest") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
+    "ffrt:libffrt",
     "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",

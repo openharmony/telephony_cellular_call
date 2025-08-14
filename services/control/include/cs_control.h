@@ -22,6 +22,7 @@
 #include "cellular_call_connection_cs.h"
 #include "control_base.h"
 #include "call_manager_disconnected_details.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -284,7 +285,7 @@ private:
     CsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
     const int32_t VOICE_CALL = 0;
-    std::recursive_mutex connectionMapMutex_;
+    ffrt::recursive_mutex connectionMapMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
