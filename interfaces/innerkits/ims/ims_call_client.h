@@ -20,7 +20,7 @@
 #include "ims_call_interface.h"
 #include "ims_core_service_interface.h"
 #include "iremote_stub.h"
-#include "rwlock.h"
+#include "ffrt.h"
 #include "singleton.h"
 #include "system_ability_status_change_stub.h"
 
@@ -680,9 +680,9 @@ private:
     sptr<ImsCallInterface> imsCallProxy_ = nullptr;
     sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
-    Utils::RWLock rwClientLock_;
+    ffrt::shared_mutex clientLock_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
-    std::mutex mutexMap_;
+    ffrt::mutex mutexMap_;
 };
 } // namespace Telephony
 } // namespace OHOS
