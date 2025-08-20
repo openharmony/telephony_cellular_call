@@ -680,7 +680,7 @@ private:
     sptr<ImsCallInterface> imsCallProxy_ = nullptr;
     sptr<ImsCallCallbackInterface> imsCallCallback_ = nullptr;
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
-    ffrt::shared_mutex clientLock_;
+    ffrt::shared_mutex clientLock_{};
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     ffrt::mutex mutexMap_;
 };
