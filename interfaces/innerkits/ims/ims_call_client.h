@@ -682,7 +682,7 @@ private:
     std::map<int32_t, std::shared_ptr<AppExecFwk::EventHandler>> handlerMap_;
     ffrt::shared_mutex clientLock_{};
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
-    ffrt::mutex mutexMap_;
+    ffrt::mutex mutexMap_{};
 };
 } // namespace Telephony
 } // namespace OHOS
