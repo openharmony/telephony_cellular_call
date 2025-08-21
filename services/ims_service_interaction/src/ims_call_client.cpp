@@ -40,7 +40,7 @@ void ImsCallClient::Init()
     }
 
     GetImsCallProxy();
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     if (imsCallProxy_ == nullptr) {
         TELEPHONY_LOGE("Init, get ims call proxy failed!");
     }
@@ -70,14 +70,14 @@ void ImsCallClient::UnInit()
         statusChangeListener_.clear();
         statusChangeListener_ = nullptr;
     }
-    std::lock_guard<std::mutex> lock(mutexMap_);
+    std::lock_guard<ffrt::mutex> lock(mutexMap_);
     handlerMap_.clear();
 }
 
 sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
 {
     {
-        Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+        std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
         if (imsCallProxy_ != nullptr) {
             return imsCallProxy_;
         }
@@ -92,7 +92,7 @@ sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
         TELEPHONY_LOGE("GetImsCallProxy return, remote service not exists.");
         return nullptr;
     }
-    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
+    std::lock_guard<ffrt::shared_mutex> lock(clientLock_);
     imsCoreServiceProxy_ = iface_cast<ImsCoreServiceInterface>(remoteObjectPtr);
     if (imsCoreServiceProxy_ == nullptr) {
         TELEPHONY_LOGE("GetImsCallProxy return, imsCoreServiceProxy_ is nullptr.");
@@ -117,7 +117,7 @@ sptr<ImsCallInterface> ImsCallClient::GetImsCallProxy()
 
 bool ImsCallClient::IsConnect()
 {
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return (imsCallProxy_ != nullptr);
 }
 
@@ -149,7 +149,7 @@ int32_t ImsCallClient::RegisterImsCallCallbackHandler(
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
 
-    std::lock_guard<std::mutex> lock(mutexMap_);
+    std::lock_guard<ffrt::mutex> lock(mutexMap_);
     handlerMap_.insert(std::make_pair(slotId, handler));
     TELEPHONY_LOGI("RegisterImsCallCallbackHandler success.");
     return TELEPHONY_SUCCESS;
@@ -157,7 +157,7 @@ int32_t ImsCallClient::RegisterImsCallCallbackHandler(
 
 std::shared_ptr<AppExecFwk::EventHandler> ImsCallClient::GetHandler(int32_t slotId)
 {
-    std::lock_guard<std::mutex> lock(mutexMap_);
+    std::lock_guard<ffrt::mutex> lock(mutexMap_);
     return handlerMap_[slotId];
 }
 
@@ -169,7 +169,7 @@ int32_t ImsCallClient::Dial(const ImsCallInfo &callInfo, CLIRMode mode)
             TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->Dial(callInfo, mode);
 }
 
@@ -181,7 +181,7 @@ int32_t ImsCallClient::HangUp(const ImsCallInfo &callInfo)
             callInfo.slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "HangUp ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->HangUp(callInfo);
 }
 
@@ -193,7 +193,7 @@ int32_t ImsCallClient::Reject(const ImsCallInfo &callInfo)
             callInfo.slotId, INVALID_PARAMETER, TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "Reject ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->RejectWithReason(callInfo, ImsRejectReason::USER_DECLINE);
 }
 
@@ -203,7 +203,7 @@ int32_t ImsCallClient::RejectWithReason(const ImsCallInfo &callInfo, const ImsRe
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->RejectWithReason(callInfo, reason);
 }
 
@@ -215,7 +215,7 @@ int32_t ImsCallClient::Answer(const ImsCallInfo &callInfo)
             TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL, "answer ims ipc reconnect failed");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->Answer(callInfo);
 }
 
@@ -225,7 +225,7 @@ int32_t ImsCallClient::HoldCall(int32_t slotId, int32_t callType)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->HoldCall(slotId, callType);
 }
 
@@ -235,7 +235,7 @@ int32_t ImsCallClient::UnHoldCall(int32_t slotId, int32_t callType)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->UnHoldCall(slotId, callType);
 }
 
@@ -245,7 +245,7 @@ int32_t ImsCallClient::SwitchCall(int32_t slotId, int32_t callType)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SwitchCall(slotId, callType);
 }
 
@@ -255,7 +255,7 @@ int32_t ImsCallClient::CombineConference(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->CombineConference(slotId);
 }
 
@@ -265,7 +265,7 @@ int32_t ImsCallClient::InviteToConference(int32_t slotId, const std::vector<std:
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->InviteToConference(slotId, numberList);
 }
 
@@ -275,7 +275,7 @@ int32_t ImsCallClient::KickOutFromConference(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->KickOutFromConference(slotId, index);
 }
 
@@ -285,7 +285,7 @@ int32_t ImsCallClient::SendUpdateCallMediaModeRequest(const ImsCallInfo &callInf
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SendUpdateCallMediaModeRequest(callInfo, callType);
 }
 
@@ -295,7 +295,7 @@ int32_t ImsCallClient::SendUpdateCallMediaModeResponse(const ImsCallInfo &callIn
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SendUpdateCallMediaModeResponse(callInfo, callType);
 }
 
@@ -305,7 +305,7 @@ int32_t ImsCallClient::CancelCallUpgrade(int32_t slotId, int32_t callIndex)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->CancelCallUpgrade(slotId, callIndex);
 }
 
@@ -315,7 +315,7 @@ int32_t ImsCallClient::RequestCameraCapabilities(int32_t slotId, int32_t callInd
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->RequestCameraCapabilities(slotId, callIndex);
 }
 
@@ -325,7 +325,7 @@ int32_t ImsCallClient::GetImsCallsDataRequest(int32_t slotId, int64_t lastCallsD
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetImsCallsDataRequest(slotId, lastCallsDataFlag);
 }
 
@@ -335,7 +335,7 @@ int32_t ImsCallClient::GetLastCallFailReason(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetLastCallFailReason(slotId);
 }
 
@@ -345,7 +345,7 @@ int32_t ImsCallClient::StartDtmf(int32_t slotId, char cDtmfCode, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->StartDtmf(slotId, cDtmfCode, index);
 }
 
@@ -355,7 +355,7 @@ int32_t ImsCallClient::SendDtmf(int32_t slotId, char cDtmfCode, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SendDtmf(slotId, cDtmfCode, index);
 }
 
@@ -365,7 +365,7 @@ int32_t ImsCallClient::StopDtmf(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->StopDtmf(slotId, index);
 }
 
@@ -375,7 +375,7 @@ int32_t ImsCallClient::StartRtt(int32_t slotId, const std::string &msg)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->StartRtt(slotId, msg);
 }
 
@@ -385,7 +385,7 @@ int32_t ImsCallClient::StopRtt(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->StopRtt(slotId);
 }
 
@@ -395,7 +395,7 @@ int32_t ImsCallClient::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetDomainPreferenceMode(slotId, mode);
 }
 
@@ -405,7 +405,7 @@ int32_t ImsCallClient::GetDomainPreferenceMode(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetDomainPreferenceMode(slotId);
 }
 
@@ -415,7 +415,7 @@ int32_t ImsCallClient::SetCarrierVtConfig(int32_t slotId, int32_t active)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetCarrierVtConfig(slotId, active);
 }
 
@@ -425,7 +425,7 @@ int32_t ImsCallClient::SetImsSwitchStatus(int32_t slotId, int32_t active)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetImsSwitchStatus(slotId, active);
 }
 
@@ -435,7 +435,7 @@ int32_t ImsCallClient::GetImsSwitchStatus(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetImsSwitchStatus(slotId);
 }
 
@@ -445,7 +445,7 @@ int32_t ImsCallClient::SetImsConfig(ImsConfigItem item, const std::string &value
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetImsConfig(item, value);
 }
 
@@ -455,7 +455,7 @@ int32_t ImsCallClient::SetImsConfig(ImsConfigItem item, int32_t value)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetImsConfig(item, value);
 }
 
@@ -465,7 +465,7 @@ int32_t ImsCallClient::GetImsConfig(ImsConfigItem item)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetImsConfig(item);
 }
 
@@ -475,7 +475,7 @@ int32_t ImsCallClient::SetImsFeatureValue(FeatureType type, int32_t value)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetImsFeatureValue(type, value);
 }
 
@@ -485,7 +485,7 @@ int32_t ImsCallClient::GetImsFeatureValue(FeatureType type, int32_t &value)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetImsFeatureValue(type, value);
 }
 
@@ -495,7 +495,7 @@ int32_t ImsCallClient::SetMute(int32_t slotId, int32_t mute)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetMute(slotId, mute);
 }
 
@@ -505,7 +505,7 @@ int32_t ImsCallClient::GetMute(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetMute(slotId);
 }
 
@@ -515,7 +515,7 @@ int32_t ImsCallClient::ControlCamera(int32_t slotId, int32_t callIndex, const st
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->ControlCamera(slotId, callIndex, cameraId);
 }
 
@@ -526,7 +526,7 @@ int32_t ImsCallClient::SetPreviewWindow(
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetPreviewWindow(slotId, callIndex, surfaceID, surface);
 }
 
@@ -537,7 +537,7 @@ int32_t ImsCallClient::SetDisplayWindow(
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetDisplayWindow(slotId, callIndex, surfaceID, surface);
 }
 
@@ -547,7 +547,7 @@ int32_t ImsCallClient::SetCameraZoom(float zoomRatio)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetCameraZoom(zoomRatio);
 }
 
@@ -557,7 +557,7 @@ int32_t ImsCallClient::SetPausePicture(int32_t slotId, int32_t callIndex, const 
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetPausePicture(slotId, callIndex, path);
 }
 
@@ -567,7 +567,7 @@ int32_t ImsCallClient::SetDeviceDirection(int32_t slotId, int32_t callIndex, int
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetDeviceDirection(slotId, callIndex, rotation);
 }
 
@@ -577,7 +577,7 @@ int32_t ImsCallClient::SetClip(int32_t slotId, int32_t action, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetClip(slotId, action, index);
 }
 
@@ -587,7 +587,7 @@ int32_t ImsCallClient::GetClip(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetClip(slotId, index);
 }
 
@@ -597,7 +597,7 @@ int32_t ImsCallClient::SetClir(int32_t slotId, int32_t action, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetClir(slotId, action, index);
 }
 
@@ -607,7 +607,7 @@ int32_t ImsCallClient::GetClir(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetClir(slotId, index);
 }
 
@@ -617,7 +617,7 @@ int32_t ImsCallClient::SetCallTransfer(int32_t slotId, const CallTransferInfo &c
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetCallTransfer(slotId, cfInfo, classType, index);
 }
 
@@ -627,7 +627,7 @@ int32_t ImsCallClient::CanSetCallTransferTime(int32_t slotId, bool &result)
         TELEPHONY_LOGE("[slot%{public}d] ipc reconnect failed!", slotId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->CanSetCallTransferTime(slotId, result);
 }
 
@@ -637,7 +637,7 @@ int32_t ImsCallClient::GetCallTransfer(int32_t slotId, int32_t reason, int32_t i
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetCallTransfer(slotId, reason, index);
 }
 
@@ -648,7 +648,7 @@ int32_t ImsCallClient::SetCallRestriction(
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetCallRestriction(slotId, fac, mode, pw, index);
 }
 
@@ -658,7 +658,7 @@ int32_t ImsCallClient::GetCallRestriction(int32_t slotId, const std::string &fac
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetCallRestriction(slotId, fac, index);
 }
 
@@ -668,7 +668,7 @@ int32_t ImsCallClient::SetCallWaiting(int32_t slotId, bool activate, int32_t cla
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetCallWaiting(slotId, activate, classType, index);
 }
 
@@ -687,7 +687,7 @@ int32_t ImsCallClient::GetCallWaiting(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetCallWaiting(slotId, index);
 }
 
@@ -697,7 +697,7 @@ int32_t ImsCallClient::SetColr(int32_t slotId, int32_t presentation, int32_t ind
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetColr(slotId, presentation, index);
 }
 
@@ -707,7 +707,7 @@ int32_t ImsCallClient::GetColr(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetColr(slotId, index);
 }
 
@@ -717,7 +717,7 @@ int32_t ImsCallClient::SetColp(int32_t slotId, int32_t action, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->SetColp(slotId, action, index);
 }
 
@@ -727,7 +727,7 @@ int32_t ImsCallClient::GetColp(int32_t slotId, int32_t index)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetColp(slotId, index);
 }
 
@@ -746,7 +746,7 @@ int32_t ImsCallClient::ReConnectService()
 
 void ImsCallClient::Clean()
 {
-    Utils::UniqueWriteGuard<Utils::RWLock> guard(rwClientLock_);
+    std::lock_guard<ffrt::shared_mutex> lock(clientLock_);
     if (imsCoreServiceProxy_ != nullptr) {
         imsCoreServiceProxy_.clear();
         imsCoreServiceProxy_ = nullptr;
@@ -803,7 +803,7 @@ int32_t ImsCallClient::UpdateImsCapabilities(int32_t slotId, const ImsCapability
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 
@@ -813,7 +813,7 @@ int32_t ImsCallClient::GetUtImpuFromNetwork(int32_t slotId, std::string &impu)
         TELEPHONY_LOGE("[slot%{public}d]ipc reconnect failed!", slotId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetUtImpuFromNetwork(slotId, impu);
 }
 
@@ -823,7 +823,7 @@ int32_t ImsCallClient::NotifyOperatorConfigChanged(int32_t slotId, int32_t state
         TELEPHONY_LOGE("[slot%{public}d]ipc reconnect failed!", slotId);
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->NotifyOperatorConfigChanged(slotId, state);
 }
 
@@ -833,7 +833,7 @@ int32_t ImsCallClient::GetImsCapabilities(int32_t slotId)
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
-    Utils::UniqueReadGuard<Utils::RWLock> guard(rwClientLock_);
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
     return imsCallProxy_->GetImsCapabilities(slotId);
 }
 } // namespace Telephony
