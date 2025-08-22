@@ -35,9 +35,7 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
   ]
 
   external_deps = [
@@ -53,7 +51,7 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -91,7 +89,7 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -109,7 +107,7 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -147,7 +145,7 @@ ohos_unittest("cellular_call_ims1_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -165,7 +163,7 @@ ohos_unittest("cellular_call_ims1_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -204,7 +202,7 @@ ohos_unittest("cellular_call_ims2_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -222,7 +220,7 @@ ohos_unittest("cellular_call_ims2_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "googletest:gmock_main",
     "googletest:gtest_main",
     "graphic_surface:surface",
@@ -262,7 +260,7 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -280,7 +278,7 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
@@ -324,7 +322,7 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -342,7 +340,7 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
@@ -385,7 +383,7 @@ ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -403,7 +401,7 @@ ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -441,7 +439,7 @@ ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -459,7 +457,7 @@ ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -497,7 +495,7 @@ ohos_unittest("cellular_call_ims_call_callback_stub_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -515,7 +513,7 @@ ohos_unittest("cellular_call_ims_call_callback_stub_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -553,7 +551,7 @@ ohos_unittest("cellular_call_ims_hisysevent_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -571,7 +569,7 @@ ohos_unittest("cellular_call_ims_hisysevent_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
@@ -610,7 +608,7 @@ ohos_unittest("cellular_call_ims_emergency_utils_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -628,7 +626,7 @@ ohos_unittest("cellular_call_ims_emergency_utils_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -666,7 +664,7 @@ ohos_unittest("cellular_call_ims_connection_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -684,7 +682,7 @@ ohos_unittest("cellular_call_ims_connection_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -722,7 +720,7 @@ ohos_unittest("cellular_call_ims_mmi_code_message_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -740,7 +738,7 @@ ohos_unittest("cellular_call_ims_mmi_code_message_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -778,7 +776,7 @@ ohos_unittest("cellular_call_ims_config_request_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -796,7 +794,7 @@ ohos_unittest("cellular_call_ims_config_request_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -834,7 +832,7 @@ ohos_unittest("cellular_call_ims_standardize_utils_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
+    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
   ]
@@ -852,7 +850,7 @@ ohos_unittest("cellular_call_ims_standardize_utils_test") {
     "data_share:datashare_common",
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
