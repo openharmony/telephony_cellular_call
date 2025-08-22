@@ -41,8 +41,6 @@ const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const int32_t INVALID_SLOTID = 0xFF;
 const std::string PHONE_NUMBER = "0000000";
-const std::string PHONE_NUMBER_SECOND = "1111111";
-const std::string PHONE_NUMBER_THIRD = "2222222";
 
 class Cs1Test : public testing::Test {
 public:

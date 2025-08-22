@@ -33,7 +33,6 @@
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
-const std::string PHONE_NUMBER = "0000000";
 const int32_t DEFAULT_INDEX = 1;
 
 class ImsCallbackProxyTest : public testing::Test {

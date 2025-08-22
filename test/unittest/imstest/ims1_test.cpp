@@ -42,9 +42,6 @@ using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const std::string PHONE_NUMBER = "0000000";
-const std::string PHONE_NUMBER_SECOND = "1111111";
-const std::string PHONE_NUMBER_THIRD = "2222222";
-const std::string PHONE_NUMBER_FOUR = "3333333";
 
 class Ims1Test : public testing::Test {
 public:

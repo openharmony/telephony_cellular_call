@@ -33,7 +33,7 @@ namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
 const int32_t SLOT_COUNT = 2;
-const std::string PHONE_NUMBER = "0000000";
+
 
 class SatelliteCallbackTest : public testing::Test {
 public:
