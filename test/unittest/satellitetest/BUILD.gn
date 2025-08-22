@@ -33,7 +33,7 @@ ohos_unittest("cellular_call_satellite_callback_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
@@ -81,9 +81,7 @@ ohos_unittest("cellular_call_satellite_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
@@ -131,9 +129,7 @@ ohos_unittest("cellular_call_satellite_zero_branch_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}/test::cellular_call_test_base",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
