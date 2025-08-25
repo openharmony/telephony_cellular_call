@@ -31,6 +31,7 @@ ohos_static_library("cellular_call_test_base") {
   external_deps = cellular_call_external_deps
   external_deps +=[ "core_service:ffrt_mocked" ]
   defines = cellular_call_defines
+  cflags = cellular_call_cflags_cc
   part_name = "cellular_call"
   subsystem_name = "telephony"
 }
