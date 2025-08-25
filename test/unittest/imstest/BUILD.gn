@@ -180,7 +180,7 @@ ohos_unittest("cellular_call_ims2_test") {
   sanitize = {
     boundary_sanitize = true
     cfi = true
-    cgi_cross_dso = true
+    cfi_cross_dso = true
     debug = false
     integer_overflow = true
     ubsan = true
@@ -246,7 +246,7 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
   sanitize = {
     boundary_sanitize = true
     cfi = true
-    cgi_cross_dso = true
+    cfi_cross_dso = true
     debug = false
     integer_overflow = true
     ubsan = true
@@ -314,7 +314,7 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
   sanitize = {
     boundary_sanitize = true
     cfi = true
-    cgi_cross_dso = true
+    cfi_cross_dso = true
     debug = false
     integer_overflow = true
     ubsan = true
@@ -437,7 +437,7 @@ ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
   sanitize = {
     boundary_sanitize = true
     cfi = true
-    cgi_cross_dso = true
+    cfi_cross_dso = true
     debug = false
     integer_overflow = true
     ubsan = true
