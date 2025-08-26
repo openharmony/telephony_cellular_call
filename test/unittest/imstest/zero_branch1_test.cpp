@@ -867,7 +867,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTe
     AAFwk::Want want = AAFwk::Want();
     want.SetAction(ENTER_STR_TELEPHONY_NOTIFY);
     eventData.SetWant(want);
-    handler->OnReceiveEvent(eventData);   
+    handler->OnReceiveEvent(eventData);
     CSControl csControl;
     CellularCallInfo cellularCallInfo;
     InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
