@@ -690,7 +690,12 @@ public:
      * @return Returns true on number is mmi code,else return false.
      */
     bool IsMmiCode(int32_t slotId, std::string &number) override;
-
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    bool isCellularCallExist();
+    void SetAsyncCommonEvent(const std::shared_ptr<EventFwk::AsyncCommonEventResult> &result);
+    std::shared_ptr<EventFwk::AsyncCommonEventResult> GetAsyncCommonEvent();
+    void ProcessFinishCommonEvent();
+#endif
 private:
     /**
      * Init service
@@ -746,6 +751,12 @@ private:
     void HandleCellularControlException(const CellularCallInfo &callInfo);
 
     CallReportInfo EncapsulationCallReportInfo(const CellularCallInfo &callInfo);
+    void StartDisorderEventSubscriber();
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    void StartOrderEventSubscriber();
+#endif
+    void SubscribeToEvents(const std::vector<std::string>& events, int priority = 0,
+        const std::string& permission = "");
 
 private:
     enum class SatelliteState {
@@ -768,6 +779,9 @@ private:
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
     std::mutex mutex_;
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_ = nullptr;
+#endif
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {

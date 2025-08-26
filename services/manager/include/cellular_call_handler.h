@@ -241,6 +241,8 @@ private:
     void ReportNoCsCallsData(const CallInfoList &callInfoList,  const int32_t state,
         const std::shared_ptr<CSControl> &csControl);
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
+    void ReportNoImsCallsData(const ImsCurrentCallList &imsCallInfoList, const int32_t state,
+        const std::shared_ptr<IMSControl> &imsControl);
     void ReportSatelliteCallsData(const SatelliteCurrentCallList &callInfoList);
     void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
     void UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);

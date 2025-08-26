@@ -30,6 +30,7 @@
 #include "satellite_radio_event.h"
 #include "securec.h"
 #include "call_manager_info.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -313,6 +314,16 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
         }
         this->SendEvent(NETWORK_STATE_CHANGED, 0, Priority::HIGH);
     }
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    if (action == ENTER_STR_TELEPHONY_NOTIFY) {
+        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+        if (serviceInstance->isCellularCallExist()) {
+            TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY and cellularcall existed");
+            serviceInstance->SetAsyncCommonEvent(GoAsyncCommonEvent());
+            serviceInstance->HangUpAllConnection();
+        }
+    }
+#endif
 }
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -387,6 +398,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, const int32_t state,
     const std::shared_ptr<CSControl> &csControl)
 {
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     if (isInCsRedial_) {
         TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
         isInCsRedial_ = false;
@@ -397,11 +409,17 @@ void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, 
         CellularCallIncomingFinishTrace(state);
         return;
     }
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    if (!csControl->GetConnectionMap().empty()) {
+        TELEPHONY_LOGI("[slot%{public}d] csControl ProcessFinishCommonEvent", slotId_);
+        serviceInstance->ProcessFinishCommonEvent();
+    }
+#endif
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(state);
     }
     if (!csControl->HasEndCallWithoutReason(callInfoList)) {
-        DelayedSingleton<CellularCallService>::GetInstance()->SetCsControl(slotId_, nullptr);
+        serviceInstance->SetCsControl(slotId_, nullptr);
     }
 }
 
@@ -422,17 +440,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     currentCallList_ = imsCallInfoList;
     if (imsCallInfoList.callSize == 0) {
-        if (imsControl == nullptr) {
-            TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
-            return;
-        }
-        bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
-        if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {
-            CellularCallIncomingFinishTrace(imsCallInfo.state);
-        }
-        if (!hasEndCallWithoutReason) {
-            serviceInstance->SetImsControl(slotId_, nullptr);
-        }
+        ReportNoImsCallsData(imsCallInfoList, imsCallInfo.state, imsControl);
         return;
     }
     if (srvccState_ == SrvccState::STARTED) {
@@ -453,6 +461,29 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
     if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(imsCallInfo.state);
+    }
+}
+
+void CellularCallHandler::ReportNoImsCallsData(const ImsCurrentCallList &imsCallInfoList, const int32_t state,
+    const std::shared_ptr<IMSControl> &imsControl)
+{
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    if (imsControl == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
+        return;
+    }
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    if (!imsControl->GetConnectionMap().empty()) {
+        TELEPHONY_LOGI("[slot%{public}d] imsControl ProcessFinishCommonEvent", slotId_);
+        serviceInstance->ProcessFinishCommonEvent();
+    }
+#endif
+    bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
+    if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {
+        CellularCallIncomingFinishTrace(state);
+    }
+    if (!hasEndCallWithoutReason) {
+        serviceInstance->SetImsControl(slotId_, nullptr);
     }
 }
 
