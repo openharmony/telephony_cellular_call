@@ -843,6 +843,45 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
     ASSERT_EQ(callback, nullptr);
 }
 
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+/**
+ * @tc.number   Telephony_CellularCallService_005
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+
+    IMSControl imsControl;
+    ImsCurrentCallList ImsCallList;
+    handler->ReportImsCallsData(ImsCallList);
+    InitImsCallInfoList(ImsCallList, 1);
+    imsControl.ReportIncomingInfo(SIM1_SLOTID, ImsCallList);
+    handler->ReportImsCallsData(ImsCallList);
+
+    EventFwk::CommonEventData eventData = EventFwk::CommonEventData();
+    AAFwk::Want want = AAFwk::Want();
+    want.SetAction(ENTER_STR_TELEPHONY_NOTIFY);
+    eventData.SetWant(want);
+    handler->OnReceiveEvent(eventData);
+    CSControl csControl;
+    CellularCallInfo cellularCallInfo;
+    InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, cellularCallInfo);
+    CallInfoList callInfoList;
+    handler->ReportCsCallsData(callInfoList);
+    csControl.connectionMap_.insert(std::make_pair(1, CellularCallConnectionCS()));
+    handler->ReportCsCallsData(callInfoList);
+    handler->OnReceiveEvent(eventData);
+    InitImsCallInfoList(ImsCallList, 0);
+    handler->ReportImsCallsData(ImsCallList);
+    csControl.connectionMap_.clear();
+    handler->ReportCsCallsData(callInfoList);
+}
+#endif
 /**
  * @tc.number	Telephony_CellularCallSupplementRequestIms_001
  * @tc.name 	Test error branch

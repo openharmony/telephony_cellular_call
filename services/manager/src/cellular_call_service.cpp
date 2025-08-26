@@ -37,6 +37,9 @@ namespace Telephony {
 const uint32_t CONNECT_MAX_TRY_COUNT = 20;
 const uint32_t CONNECT_CORE_SERVICE_WAIT_TIME = 2000; // ms
 const uint32_t TELEPHONY_SATELLITE_SYS_ABILITY_ID = 4012;
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+constexpr const char *PERMISSION_STARTUP_COMPLETED = "ohos.permission.RECEIVER_STARTUP_COMPLETED";
+#endif
 bool g_registerResult =
     SystemAbility::MakeAndRegisterAbility(DelayedSingleton<CellularCallService>::GetInstance().get());
 
@@ -129,15 +132,25 @@ void CellularCallService::RegisterHandler()
     TELEPHONY_LOGI("connect core service Register Handler end");
 }
 
-void CellularCallService::CreateHandler()
+void CellularCallService::SubscribeToEvents(const std::vector<std::string>& events, int priority,
+    const std::string& permission)
 {
     ModuleServiceUtils obtain;
     std::vector<int32_t> slotVector = obtain.GetSlotInfo();
     EventFwk::MatchingSkills matchingSkills;
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
-    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED);
+    for (const auto& event : events) {
+        matchingSkills.AddEvent(event);
+    }
+ 
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
+    if (priority != 0) {
+        subscriberInfo.SetPriority(static_cast<CommonEventPriority>(priority));
+    }
+    if (!permission.empty()) {
+        subscriberInfo.SetPermission(permission);
+    }
+
     for (const auto &it : slotVector) {
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         TELEPHONY_LOGI("setSlotId:%{public}d", it);
@@ -148,21 +161,46 @@ void CellularCallService::CreateHandler()
             handlerMap_.insert(std::make_pair(it, handler));
         }
         auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        statusChangeListener_ = new (std::nothrow) SystemAbilityStatusChangeListener(handler);
-        if (samgrProxy == nullptr || statusChangeListener_ == nullptr) {
+        if (samgrProxy == nullptr) {
             TELEPHONY_LOGE("samgrProxy or statusChangeListener_ is nullptr");
-        } else {
-            int32_t retSubCommnetEvent =
-                samgrProxy->SubscribeSystemAbility(COMMON_EVENT_SERVICE_ID, statusChangeListener_);
-            TELEPHONY_LOGI("SubscribeSystemAbility COMMON_EVENT_SERVICE_ID result:%{public}d", retSubCommnetEvent);
-            int32_t retSubSateEvent =
-                samgrProxy->SubscribeSystemAbility(TELEPHONY_SATELLITE_SYS_ABILITY_ID, statusChangeListener_);
-            TELEPHONY_LOGI(
-                "SubscribeSystemAbility TELEPHONY_SATELLITE_SYS_ABILITY_ID result:%{public}d", retSubSateEvent);
+            return;
         }
+        statusChangeListener_ = new SystemAbilityStatusChangeListener(handler);
+        int32_t retSubCommnetEvent =
+            samgrProxy->SubscribeSystemAbility(COMMON_EVENT_SERVICE_ID, statusChangeListener_);
+        TELEPHONY_LOGI("SubscribeSystemAbility COMMON_EVENT_SERVICE_ID result:%{public}d", retSubCommnetEvent);
+        int32_t retSubSateEvent =
+            samgrProxy->SubscribeSystemAbility(TELEPHONY_SATELLITE_SYS_ABILITY_ID, statusChangeListener_);
+        TELEPHONY_LOGI(
+            "SubscribeSystemAbility TELEPHONY_SATELLITE_SYS_ABILITY_ID result:%{public}d", retSubSateEvent);
     }
 }
 
+void CellularCallService::CreateHandler()
+{
+    StartDisorderEventSubscriber();
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    StartOrderEventSubscriber();
+#endif
+}
+
+void CellularCallService::StartDisorderEventSubscriber()
+{
+    std::vector<std::string> events = {
+        EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED,
+        EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED
+    };
+ 
+    SubscribeToEvents(events);
+}
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+void CellularCallService::StartOrderEventSubscriber()
+{
+    std::vector<std::string> events = { ENTER_STR_TELEPHONY_NOTIFY };
+    SubscribeToEvents(events, CommonEventPriority::FIRST_PRIORITY, PERMISSION_STARTUP_COMPLETED);
+}
+#endif
 void CellularCallService::HandlerResetUnRegister()
 {
     TELEPHONY_LOGI("HandlerResetUnRegister");
@@ -1676,5 +1714,43 @@ int32_t CellularCallService::SendUssdResponse(int32_t slotId, const std::string 
     CellularCallSupplement supplement;
     return supplement.SendUssd(slotId, content);
 }
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+bool CellularCallService::isCellularCallExist()
+{
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    for (const auto &it : slotVector) {
+        auto csControl = GetCsControl(it);
+        if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
+            TELEPHONY_LOGI("CsControl isCellularCallExist");
+            return true;
+        }
+        auto imsControl = GetImsControl(it);
+        if (imsControl != nullptr && !imsControl->GetConnectionMap().empty()) {
+            TELEPHONY_LOGI("ImsControl isCellularCallExist");
+            return true;
+        }
+    }
+    return false;
+}
+
+void CellularCallService::SetAsyncCommonEvent(const std::shared_ptr<EventFwk::AsyncCommonEventResult> &result)
+{
+    strEnterEventResult_ = result;
+}
+ 
+std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallService::GetAsyncCommonEvent()
+{
+    return strEnterEventResult_;
+}
+
+void CellularCallService::ProcessFinishCommonEvent()
+{
+    if (strEnterEventResult_ != nullptr) {
+        strEnterEventResult_->FinishCommonEvent();
+    }
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS
