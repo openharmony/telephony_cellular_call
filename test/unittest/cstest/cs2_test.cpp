@@ -1283,10 +1283,10 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
     auto imsControl = std::make_shared<IMSControl>();
     serviceInstance->SetImsControl(slotId, imsControl);
     EXPECT_TRUE(serviceInstance->GetImsControl(slotId) != nullptr);
-    reason = RilDisconnectedReason::DISCONNECTED_REASON_NORMAL;
-    imsConnection.SetDisconnectReason(reason);
     seventhHandler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
     CellularCallConnectionIMS imsConnection;
+    reason = RilDisconnectedReason::DISCONNECTED_REASON_NORMAL;
+    imsConnection.SetDisconnectReason(reason);
     EXPECT_EQ(imsConnection.GetDisconnectReason(), RilDisconnectedReason::DISCONNECTED_REASON_NORMAL);
 }
 
