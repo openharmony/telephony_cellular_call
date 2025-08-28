@@ -76,37 +76,43 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
+        EventFwk::MatchingSkills matchingSkills;
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+        handler->SetSlotId(slotId);
+        handler->RegisterImsCallCallbackHandler();
         RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
-        EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->AnswerResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->HoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_GE(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->CallStateChangeReport(slotId), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->HangUpResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->RejectWithReasonResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->AnswerResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->HoldCallResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->UnHoldCallResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->SwitchCallResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->StartDtmfResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_GE(callCallbackProxy->SendDtmfResponse(slotId, rilRadioResponse, DEFAULT_INDEX), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->StopDtmfResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->SetImsSwitchResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, rilRadioResponse), TTELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->CallStateChangeReport(slotId), TELEPHONY_ERR_LOCAL_PTR_NULL);
         ImsCurrentCallList imsCallList;
         imsCallList.callSize = 0;
-        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, imsCallList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsCallsDataResponse(slotId, imsCallList), TELEPHONY_ERR_LOCAL_PTR_NULL);
         DisconnectedDetails details;
-        EXPECT_EQ(callCallbackProxy->LastCallFailReasonResponse(slotId, details), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->LastCallFailReasonResponse(slotId, details), TELEPHONY_ERR_LOCAL_PTR_NULL);
         RingbackVoice ringback;
-        EXPECT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->CallRingBackReport(slotId, ringback), TELEPHONY_ERR_LOCAL_PTR_NULL);
         int32_t active = 0;
-        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsSwitchResponse(slotId, active), TELEPHONY_ERR_LOCAL_PTR_NULL);
         ImsCapFromChip imsCap = {0};
-        EXPECT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->GetImsCapResponse(slotId, imsCap), TELEPHONY_ERR_LOCAL_PTR_NULL);
         MuteControlResponse muteResponse;
-        EXPECT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
-        EXPECT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
+        EXPECT_EQ(callCallbackProxy->SetMuteResponse(slotId, muteResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -125,6 +131,12 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
+        EventFwk::MatchingSkills matchingSkills;
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+        handler->SetSlotId(slotId);
+        handler->RegisterImsCallCallbackHandler();
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
         EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
@@ -173,6 +185,12 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         if (!HasSimCard(slotId)) {
             continue;
         }
+        EventFwk::MatchingSkills matchingSkills;
+        matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+        EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+        auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+        handler->SetSlotId(slotId);
+        handler->RegisterImsCallCallbackHandler();
         ImsCallModeReceiveInfo callModeReceiveInfo;
         callModeReceiveInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(

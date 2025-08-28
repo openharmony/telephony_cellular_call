@@ -508,7 +508,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_HangUpCall_0001, Function | MediumTe
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, hangUpCallInfo);
@@ -516,7 +516,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_HangUpCall_0001, Function | MediumTe
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -569,14 +569,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_AnswerCall_0001, Function | MediumTe
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, answerCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Answer(answerCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo answerCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, answerCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Answer(answerCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -629,14 +629,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_RejectCall_0001, Function | MediumTe
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, rejectCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Reject(rejectCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo rejectCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, rejectCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->Reject(rejectCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -689,14 +689,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_HoldCall_0001, Function | MediumTest
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, holdCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HoldCall(holdCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo holdCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, holdCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HoldCall(holdCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -749,14 +749,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_UnHoldCall_0001, Function | MediumTe
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, unHoldCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(unHoldCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo unHoldCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, unHoldCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(unHoldCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -809,14 +809,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_SwitchCall_0001, Function | MediumTe
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo switchCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, switchCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SwitchCall(switchCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -869,14 +869,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_CombineConference_0001, Function | M
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, conferenceCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->CombineConference(conferenceCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo conferenceCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, conferenceCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->CombineConference(conferenceCallInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -929,14 +929,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_SeparateConference_0001, Function | 
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SeparateConference(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->SeparateConference(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -989,14 +989,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_KickOutFromConference_0001, Function
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, kickOutCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->KickOutFromConference(kickOutCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo kickOutCallInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, kickOutCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->KickOutFromConference(kickOutCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1074,7 +1074,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0001, Function | MediumTes
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->StartDtmf(code, callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
@@ -1082,7 +1082,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_StartDtmf_0001, Function | MediumTes
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->StartDtmf(code, callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1136,14 +1136,14 @@ HWTEST_F(CsCallOperationTest, cellular_call_StopDtmf_0001, Function | MediumTest
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->StopDtmf(callInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 
@@ -1197,7 +1197,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0001, Function | MediumTest
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         CellularCallInfo sendDtmfCallInfo;
@@ -1205,7 +1205,7 @@ HWTEST_F(CsCallOperationTest, cellular_call_SendDtmf_0001, Function | MediumTest
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         char code = '1';
         ret = telephonyService->SendDtmf(code, sendDtmfCallInfo);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 

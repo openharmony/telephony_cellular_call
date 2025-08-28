@@ -622,7 +622,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_009, Function | MediumTest 
     mmiCodeData4.WriteInt32(size);
     mmiCodeData4.WriteInt32(SIM1_SLOTID);
     mmiCodeData4.WriteString("1234567");
-    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData3, reply), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData4, reply), TELEPHONY_SUCCESS);
 
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
 }
