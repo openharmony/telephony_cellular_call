@@ -657,7 +657,7 @@ HWTEST_F(Cs1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2)
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, hangUpCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
         EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
@@ -665,7 +665,7 @@ HWTEST_F(Cs1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2)
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, hangUpCallInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_DEFAULT);
-        EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
         ret = telephonyService->HangUp(hangUpCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE);
         EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
