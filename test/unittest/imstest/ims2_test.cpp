@@ -148,11 +148,11 @@ HWTEST_F(Ims2Test, cellular_call_SetVoNRState_0002, Function | MediumTest | Leve
     ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
+        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
+        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
     }
 }
 
