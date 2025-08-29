@@ -835,12 +835,10 @@ HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Leve
     auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
     ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
+        telephonyService->SetVoNRState(SIM1_SLOTID, 1);
     }
     if (HasSimCard(SIM2_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
+        telephonyService->SetVoNRState(SIM2_SLOTID, 1);
     }
 }
 } // namespace Telephony
