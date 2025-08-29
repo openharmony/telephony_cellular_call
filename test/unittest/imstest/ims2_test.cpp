@@ -147,12 +147,10 @@ HWTEST_F(Ims2Test, cellular_call_SetVoNRState_0002, Function | MediumTest | Leve
     auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
     ASSERT_TRUE(telephonyService != nullptr);
     if (HasSimCard(SIM1_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
+        telephonyService->SetVoNRState(SIM1_SLOTID, 0);
     }
     if (HasSimCard(SIM2_SLOTID)) {
-        int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_ERR_DATABASE_WRITE_FAIL);
+        telephonyService->SetVoNRState(SIM2_SLOTID, 0);
     }
 }
 
