@@ -298,10 +298,10 @@ HWTEST_F(CellularCallSupplementTest, CellularCallSupplementTest_014, Function | 
     std::string bakFilePath = "/system/lib64/libtelephony_ext_service.z.so.bak";
     RenameFile(filePath, bakFilePath);
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isMmiCode_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ == nullptr);
-    EXPECT_TRUE(TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ == nullptr);
+    EXPECT_FALSE(TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ == nullptr);
+    EXPECT_FALSE(TELEPHONY_EXT_WRAPPER.isMmiCode_ == nullptr);
+    EXPECT_FALSE(TELEPHONY_EXT_WRAPPER.isUssdReleaseMsgFiltered_ == nullptr);
+    EXPECT_FALSE(TELEPHONY_EXT_WRAPPER.unescapeHtmlCode_ == nullptr);
     TELEPHONY_EXT_WRAPPER.~TelephonyExtWrapper();
     RenameFile(bakFilePath, filePath);
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
