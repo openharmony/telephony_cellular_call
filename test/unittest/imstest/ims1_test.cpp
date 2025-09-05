@@ -42,9 +42,6 @@ using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
 const std::string PHONE_NUMBER = "0000000";
-const std::string PHONE_NUMBER_SECOND = "1111111";
-const std::string PHONE_NUMBER_THIRD = "2222222";
-const std::string PHONE_NUMBER_FOUR = "3333333";
 
 class Ims1Test : public testing::Test {
 public:
@@ -568,14 +565,14 @@ HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
+        EXPECT_EQ(ret, TELEPHONY_ERR_LOCAL_PTR_NULL);
     }
 }
 

@@ -12,6 +12,29 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("cellular_call_test.gni")
+
+config("cellular_call_test_config") {
+  include_dirs = cellular_call_incluedirs
+}
+
+ohos_static_library("cellular_call_test_base") {
+  sanitize = {
+    cfi = false
+    cfi_cross_dso = false
+    debug = false
+  }
+  sources = cellular_call_base_src
+  branch_protector_ret = "pac_ret"
+  public_configs = [ ":cellular_call_test_config" ]
+  external_deps = cellular_call_external_deps
+  external_deps +=[ "core_service:ffrt_mocked" ]
+  defines = cellular_call_defines
+  cflags = cellular_call_cflags_cc
+  part_name = "cellular_call"
+  subsystem_name = "telephony"
+}
+
 
 group("unittest") {
   testonly = true
@@ -38,5 +61,13 @@ group("unittest") {
     "unittest/satellitetest:cellular_call_satellite_callback_test",
     "unittest/satellitetest:cellular_call_satellite_test",
     "unittest/satellitetest:cellular_call_satellite_zero_branch_test",
+  ]
+}
+
+group("test") {
+  testonly = true
+  deps = [
+    ":unittest",
+    "fuzztest:fuzztest"
   ]
 }

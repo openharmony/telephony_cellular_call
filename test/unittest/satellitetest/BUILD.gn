@@ -33,9 +33,7 @@ ohos_unittest("cellular_call_satellite_callback_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
@@ -49,7 +47,7 @@ ohos_unittest("cellular_call_satellite_callback_test") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -83,9 +81,7 @@ ohos_unittest("cellular_call_satellite_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
@@ -99,7 +95,7 @@ ohos_unittest("cellular_call_satellite_test") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -133,9 +129,7 @@ ohos_unittest("cellular_call_satellite_zero_branch_test") {
   ]
 
   deps = [
-    "${CELLULAR_CALL_PATH}:tel_cellular_call",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims:tel_ims_call_api",
-    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite:tel_satellite_call_api",
+    "${CELLULAR_CALL_PATH}/test:cellular_call_test_base",
   ]
 
   external_deps = [
@@ -149,7 +143,7 @@ ohos_unittest("cellular_call_satellite_zero_branch_test") {
     "core_service:libtel_common",
     "core_service:tel_core_service_api",
     "eventhandler:libeventhandler",
-    "ffrt:libffrt",
+    "core_service:ffrt_mocked",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",

@@ -1,0 +1,126 @@
+# Copyright (C) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+CELLULAR_CALL_PATH = ".."
+
+cellular_call_base_src = [
+    "${CELLULAR_CALL_PATH}/services/common/src/base_request.cpp",
+    "${CELLULAR_CALL_PATH}/services/common/src/cellular_call_hisysevent.cpp",
+    "${CELLULAR_CALL_PATH}/services/common/src/cellular_call_rdb_helper.cpp",
+    "${CELLULAR_CALL_PATH}/services/common/src/mmi_code_message.cpp",
+    "${CELLULAR_CALL_PATH}/services/common/src/supplement_request_cs.cpp",
+    "${CELLULAR_CALL_PATH}/services/common/src/supplement_request_ims.cpp",
+    "${CELLULAR_CALL_PATH}/services/connection/src/base_connection.cpp",
+    "${CELLULAR_CALL_PATH}/services/connection/src/cellular_call_connection_cs.cpp",
+    "${CELLULAR_CALL_PATH}/services/connection/src/cellular_call_connection_ims.cpp",
+    "${CELLULAR_CALL_PATH}/services/connection/src/cellular_call_connection_satellite.cpp",
+    "${CELLULAR_CALL_PATH}/services/control/src/control_base.cpp",
+    "${CELLULAR_CALL_PATH}/services/control/src/cs_control.cpp",
+    "${CELLULAR_CALL_PATH}/services/control/src/ims_control.cpp",
+    "${CELLULAR_CALL_PATH}/services/control/src/ims_video_call_control.cpp",
+    "${CELLULAR_CALL_PATH}/services/control/src/satellite_control.cpp",
+    "${CELLULAR_CALL_PATH}/services/ims_service_interaction/src/ims_call_callback_stub.cpp",
+    "${CELLULAR_CALL_PATH}/services/ims_service_interaction/src/ims_call_client.cpp",
+    "${CELLULAR_CALL_PATH}/services/ims_service_interaction/src/ims_call_proxy.cpp",
+    "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_callback.cpp",
+    "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_handler.cpp",
+    "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_register.cpp",
+    "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_service.cpp",
+    "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_stub.cpp",
+    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
+    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_client.cpp",
+    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_proxy.cpp",
+    "${CELLULAR_CALL_PATH}/services/telephony_ext_wrapper/src/telephony_ext_wrapper.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/cellular_call_config.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/cellular_call_dump_helper.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/cellular_call_supplement.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/config_request.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/emergency_utils.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/mmi_code_utils.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/module_service_utils.cpp",
+    "${CELLULAR_CALL_PATH}/services/utils/src/standardize_utils.cpp",
+
+    "${CELLULAR_CALL_PATH}/services/ims_service_interaction/src/ims_call_callback_proxy.cpp",
+    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_proxy.cpp",
+  ]
+
+    cellular_call_incluedirs = [
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims_common",
+    "${CELLULAR_CALL_PATH}/interfaces/innerkits/satellite",
+    "${CELLULAR_CALL_PATH}/services/common/include",
+    "${CELLULAR_CALL_PATH}/services/manager/include",
+    "${CELLULAR_CALL_PATH}/services/control/include",
+    "${CELLULAR_CALL_PATH}/services/connection/include",
+    "${CELLULAR_CALL_PATH}/services/utils/include",
+    "${CELLULAR_CALL_PATH}/services/telephony_ext_wrapper/include",
+  ]
+
+  cellular_call_defines = [
+    "TELEPHONY_LOG_TAG = \"CellularCall\"",
+    "LOG_DOMAIN = 0xD001F11",
+  ]
+
+  cellular_call_external_deps = [
+    "ability_base:want",
+    "ability_base:zuri",
+    "ability_runtime:dataobs_manager",
+    "cJSON:cjson",
+    "c_utils:utils",
+    "call_manager:tel_call_manager_api",
+    "common_event_service:cesfwk_innerkits",
+    "core_service:libtel_common",
+    "core_service:tel_core_service_api",
+    "data_share:datashare_common",
+    "data_share:datashare_consumer",
+    "eventhandler:libeventhandler",
+    "graphic_surface:surface",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "hitrace:hitrace_meter",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "json:nlohmann_json_static",
+    "libphonenumber:phonenumber_standard",
+    "resource_management:global_resmgr",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+    "telephony_data:tel_telephony_data",
+  ]
+
+  cellular_call_cflags_cc = [
+    "-fstack-protector-all",
+    "-O2",
+    "-D_FORTIFY_SOURCE=2",
+    "-fno-exceptions" ,
+  ]
+
+  if (device_name == "rk3568") {
+    cellular_call_defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
+  }
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.security_security_guard)) {
+    cellular_call_external_deps += [ "security_guard:libsg_collect_sdk" ]
+    cellular_call_defines += [ "SECURITY_GUARDE_ENABLE" ]
+  }
+
+  if (defined(global_parts_info) &&
+      defined(global_parts_info.telephony_telephony_enhanced) &&
+      global_parts_info.telephony_telephony_enhanced) {
+    cellular_call_defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
+  }
+
+
+
+
