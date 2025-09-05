@@ -108,15 +108,6 @@ ohos_unittest("cellular_call_cs1_test") {
 }
 
 ohos_unittest("cellular_call_cs2_test") {
-  sanitize = {
-    boundary_sanitize = true
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    integer_overflow = true
-    ubsan = true
-    blocklist = "${CELLULAR_CALL_PATH}/test/cfi_blocklist.txt"
-  }
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "cstest"

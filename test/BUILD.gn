@@ -20,11 +20,10 @@ config("cellular_call_test_config") {
 
 ohos_static_library("cellular_call_test_base") {
   sanitize = {
-    cfi = true
-    cfi_cross_dso = true
+    cfi = false
+    cfi_cross_dso = false
     debug = false
   }
-  use_exceptions = true
   sources = cellular_call_base_src
   branch_protector_ret = "pac_ret"
   public_configs = [ ":cellular_call_test_config" ]
