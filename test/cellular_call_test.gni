@@ -103,6 +103,7 @@ cellular_call_base_src = [
     "-fstack-protector-all",
     "-O2",
     "-D_FORTIFY_SOURCE=2",
+    "-fno-exception" ,
   ]
 
   if (device_name == "rk3568") {
