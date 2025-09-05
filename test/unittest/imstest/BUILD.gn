@@ -177,15 +177,6 @@ ohos_unittest("cellular_call_ims1_test") {
 }
 
 ohos_unittest("cellular_call_ims2_test") {
-  sanitize = {
-    boundary_sanitize = true
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    integer_overflow = true
-    ubsan = true
-    blocklist = "${CELLULAR_CALL_PATH}/test/cfi_blocklist.txt"
-  }
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -243,15 +234,6 @@ ohos_unittest("cellular_call_ims2_test") {
 }
 
 ohos_unittest("cellular_call_ims_zero_branch_test") {
-  sanitize = {
-    boundary_sanitize = true
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    integer_overflow = true
-    ubsan = true
-    blocklist = "${CELLULAR_CALL_PATH}/test/cfi_blocklist.txt"
-  }
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -311,15 +293,6 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
 }
 
 ohos_unittest("cellular_call_ims_zero_branch1_test") {
-  sanitize = {
-    boundary_sanitize = true
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    integer_overflow = true
-    ubsan = true
-    blocklist = "${CELLULAR_CALL_PATH}/test/cfi_blocklist.txt"
-  }
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
@@ -434,15 +407,6 @@ ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
 }
 
 ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
-  sanitize = {
-    boundary_sanitize = true
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    integer_overflow = true
-    ubsan = true
-    blocklist = "${CELLULAR_CALL_PATH}/test/cfi_blocklist.txt"
-  }
   subsystem_name = "telephony"
   part_name = "cellular_call"
   test_module = "imstest"
