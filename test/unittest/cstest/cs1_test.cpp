@@ -238,10 +238,10 @@ HWTEST_F(Cs1Test, cellular_call_SetEmergencyCallList_0101, Function | MediumTest
     eccVec.push_back(temp4);
     eccVec.push_back(temp5);
     if (HasSimCard(SIM1_SLOTID)) {
-        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM1_SLOTID, eccVec), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM1_SLOTID, eccVec), TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID)) {
-        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM2_SLOTID, eccVec), TELEPHONY_ERR_LOCAL_PTR_NULL);
+        EXPECT_EQ(telephonyService->SetEmergencyCallList(SIM2_SLOTID, eccVec), TELEPHONY_SUCCESS);
     }
     JudgeIsEmergencyPhoneNumber();
 }
