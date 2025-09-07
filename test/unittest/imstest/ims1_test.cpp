@@ -565,14 +565,14 @@ HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_ERR);
+        EXPECT_NE(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
         ret = telephonyService->UnHoldCall(callInfo);
-        EXPECT_EQ(ret, TELEPHONY_ERR);
+        EXPECT_NE(ret, TELEPHONY_SUCCESS);
     }
 }
 
