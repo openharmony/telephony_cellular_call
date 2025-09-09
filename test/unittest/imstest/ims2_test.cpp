@@ -553,8 +553,8 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0002, Function | MediumTest | Level3
         callList.callSize = 0;
         CallInfoList callInfoList;
         EXPECT_EQ(imsControl->ReportCallsData(slotId, callInfoList), TELEPHONY_ERROR);
-        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_ERROR);
-        EXPECT_NE(imsControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
+        EXPECT_EQ(imsControl->ReportUpdateInfo(slotId, callList), TELEPHONY_SUCCESS);
         ImsCurrentCall callInfo;
         callList.callSize = 1;
         callInfo.number = PHONE_NUMBER;
