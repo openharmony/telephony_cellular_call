@@ -786,7 +786,7 @@ void CellularCallSupplement::EventGetCallRestriction(
         std::string successMessage = GET_CALL_RESTRICTION_SUCCESS;
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = response.result;
-        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.mmiCodeType = SC_BAOC;
         mmiCodeInfo.action = SUB_TYPE_QUERY;
         mmiCodeInfo.status = response.status;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
@@ -809,7 +809,7 @@ void CellularCallSupplement::EventSetCallRestriction(int32_t result, const std::
     if (flag == SS_FROM_MMI_CODE) {
         MmiCodeInfo mmiCodeInfo;
         mmiCodeInfo.result = result;
-        mmiCodeInfo.mmiCodeType = SC_CLIP;
+        mmiCodeInfo.mmiCodeType = SC_BAOC;
         mmiCodeInfo.action = action ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         if (strcpy_s(mmiCodeInfo.message, sizeof(mmiCodeInfo.message), message.c_str()) != EOK) {
             TELEPHONY_LOGE("strcpy_s fail");
