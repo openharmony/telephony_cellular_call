@@ -274,6 +274,10 @@ private:
 private:
     void CellularCallIncomingStartTrace(const int32_t state);
     void CellularCallIncomingFinishTrace(const int32_t state);
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    bool IsCellularCallExist();
+    void ProcessFinishCommonEvent();
+#endif
 
 private:
     int32_t slotId_ = DEFAULT_SIM_SLOT_ID;
@@ -287,6 +291,9 @@ private:
     std::mutex mutex_;
     ImsCurrentCallList currentCallList_{};
     CallInfoList currentCsCallInfoList_{};
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    static std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_;
+#endif
 };
 } // namespace Telephony
 } // namespace OHOS

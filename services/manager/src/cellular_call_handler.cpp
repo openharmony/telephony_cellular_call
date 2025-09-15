@@ -49,6 +49,9 @@ const std::string DEFAULT_NULL_MESSAGE = "";
 // NV refresh state
 constexpr int32_t STATE_NV_REFRESH_FINISHED = 1;
 constexpr int32_t STATE_NV_REFRESH_ALREADY_FINISHED = 4;
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallHandler::strEnterEventResult_ = nullptr;
+#endif
 
 CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
     : TelEventHandler("CellularCallHandler"), CommonEventSubscriber(subscriberInfo)
@@ -316,15 +319,45 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-        if (serviceInstance->isCellularCallExist()) {
+        if (IsCellularCallExist()) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY and cellularcall existed");
-            serviceInstance->SetAsyncCommonEvent(GoAsyncCommonEvent());
-            serviceInstance->HangUpAllConnection();
+            strEnterEventResult_ = GoAsyncCommonEvent();
+            DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();
         }
     }
 #endif
 }
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+bool CellularCallHandler::IsCellularCallExist()
+{
+    ModuleServiceUtils obtain;
+    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    for (const auto &it : slotVector) {
+        auto imsControl = serviceInstance->GetImsControl(it);
+        if (imsControl != nullptr && !imsControl->GetConnectionMap().empty()) {
+            TELEPHONY_LOGI("ImsControl IsCellularCallExist");
+            return true;
+        }
+        auto csControl = serviceInstance->GetCsControl(it);
+        if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
+            TELEPHONY_LOGI("CsControl IsCellularCallExist");
+            return true;
+        }
+    }
+    return false;
+}
+
+void CellularCallHandler::ProcessFinishCommonEvent()
+{
+    if (strEnterEventResult_ != nullptr) {
+        strEnterEventResult_->FinishCommonEvent();
+        TELEPHONY_LOGI("send FinishCommonEvent");
+        strEnterEventResult_ = nullptr;
+    }
+}
+#endif
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -410,10 +443,7 @@ void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, 
         return;
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
-    if (!csControl->GetConnectionMap().empty()) {
-        TELEPHONY_LOGI("[slot%{public}d] csControl ProcessFinishCommonEvent", slotId_);
-        serviceInstance->ProcessFinishCommonEvent();
-    }
+    ProcessFinishCommonEvent();
 #endif
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(state);
@@ -473,10 +503,7 @@ void CellularCallHandler::ReportNoImsCallsData(const ImsCurrentCallList &imsCall
         return;
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
-    if (!imsControl->GetConnectionMap().empty()) {
-        TELEPHONY_LOGI("[slot%{public}d] imsControl ProcessFinishCommonEvent", slotId_);
-        serviceInstance->ProcessFinishCommonEvent();
-    }
+    ProcessFinishCommonEvent();
 #endif
     bool hasEndCallWithoutReason = imsControl->HasEndCallWithoutReason(imsCallInfoList);
     if (imsControl->ReportImsCallsData(slotId_, imsCallInfoList, hasEndCallWithoutReason) != TELEPHONY_SUCCESS) {

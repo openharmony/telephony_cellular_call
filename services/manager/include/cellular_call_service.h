@@ -692,12 +692,7 @@ public:
      * @return Returns true on number is mmi code,else return false.
      */
     bool IsMmiCode(int32_t slotId, std::string &number) override;
-#ifdef BASE_POWER_IMPROVEMENT_FEATURE
-    bool isCellularCallExist();
-    void SetAsyncCommonEvent(const std::shared_ptr<EventFwk::AsyncCommonEventResult> &result);
-    std::shared_ptr<EventFwk::AsyncCommonEventResult> GetAsyncCommonEvent();
-    void ProcessFinishCommonEvent();
-#endif
+
 private:
     /**
      * Init service
@@ -782,9 +777,6 @@ private:
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;
     sptr<ISystemAbilityStatusChange> callManagerListener_ = nullptr;
     std::mutex mutex_;
-#ifdef BASE_POWER_IMPROVEMENT_FEATURE
-    std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_ = nullptr;
-#endif
     sptr<AAFwk::IDataAbilityObserver> settingsCallback_ = nullptr;
 
 private:
