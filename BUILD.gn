@@ -77,6 +77,7 @@ ohos_shared_library("tel_cellular_call") {
   defines = [
     "TELEPHONY_LOG_TAG = \"CellularCall\"",
     "LOG_DOMAIN = 0xD001F11",
+    "LOG_TAG = \"CellularCall\"",
   ]
 
   external_deps = [
