@@ -319,11 +319,10 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
         if (IsCellularCallExist()) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY and cellularcall existed");
             strEnterEventResult_ = GoAsyncCommonEvent();
-            serviceInstance->HangUpAllConnection();
+            DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();
         }
     }
 #endif
