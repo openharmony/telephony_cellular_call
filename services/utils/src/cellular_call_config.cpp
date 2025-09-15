@@ -351,6 +351,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     if (!hplmn.empty() && isHomeAndPresent) {
         if (ProcessHplmnEccList(slotId, hplmn, isHplmnEccList, callListWithCard, callListNoCard)) {
             return;
+        }
     } else {
         if (ProcessCurrentPlmnEccList(slotId, hplmn, callListWithCard, callListNoCard)) {
             return;
