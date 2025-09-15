@@ -28,6 +28,8 @@
 #include "singleton.h"
 #include "system_ability.h"
 #include "system_ability_status_change_stub.h"
+#include "cellular_call_rdb_helper.h"
+#include "data_ability_observer_stub.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -757,6 +759,7 @@ private:
 #endif
     void SubscribeToEvents(const std::vector<std::string>& events, int priority = 0,
         const std::string& permission = "");
+        void RegisterEccListener();
 
 private:
     enum class SatelliteState {
@@ -781,6 +784,7 @@ private:
     std::mutex mutex_;
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_ = nullptr;
+    sptr<AAFwk::IDataAbilityObserver> settingsCallback_ = nullptr;
 #endif
 
 private:
@@ -795,6 +799,12 @@ private:
     private:
         std::shared_ptr<CellularCallHandler> cellularCallHandler_ = nullptr;
         int32_t count_ = 0;
+    };
+    class EmergencyInfoObserver : public AAFwk::DataAbilityObserverStub {
+    public:
+        EmergencyInfoObserver() = default;
+        virtual ~EmergencyInfoObserver() = default;
+        void OnChange() override;
     };
 };
 } // namespace Telephony

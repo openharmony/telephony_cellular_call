@@ -1149,7 +1149,22 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | Medium
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<EccNum> eccVec;
-    ASSERT_NE(DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
+    auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
+    EXPECT_NE(rdbHelper->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
+    sptr<AAFwk::IDataAbilityObserver> callback = sptr<CellularCallService::EmergencyInfoObserver>::MakeSptr();
+    rdbHelper->RegisterListenState(callback);
+    callback = nullptr;
+    rdbHelper->RegisterListenState(callback);
+    CellularCallConfig config;
+    std::vector<std::string> callListWithCard;
+    std::vector<std::string> callListNoCard;
+    config.hplmnEccList_[0].plmn = "";
+    bool isHplmnEccList = false;
+    config.ProcessHplmnEccList(0, "", isHplmnEccList, callListWithCard, callListNoCard);
+    config.hplmnEccList_[0].plmn = "test";
+    config.ProcessHplmnEccList(0, "", isHplmnEccList, callListWithCard, callListNoCard);
+    callListNoCard.push_back("element1");
+    config.ProcessHplmnEccList(0, "", isHplmnEccList, callListWithCard, callListNoCard);
 }
 
 /**
