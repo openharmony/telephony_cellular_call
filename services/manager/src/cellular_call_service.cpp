@@ -31,6 +31,7 @@
 #include "string_ex.h"
 #include "system_ability_definition.h"
 #include "telephony_ext_wrapper.h"
+#include "telephony_types.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -1715,44 +1716,6 @@ int32_t CellularCallService::SendUssdResponse(int32_t slotId, const std::string 
     CellularCallSupplement supplement;
     return supplement.SendUssd(slotId, content);
 }
-
-#ifdef BASE_POWER_IMPROVEMENT_FEATURE
-bool CellularCallService::isCellularCallExist()
-{
-    ModuleServiceUtils obtain;
-    std::vector<int32_t> slotVector = obtain.GetSlotInfo();
-    for (const auto &it : slotVector) {
-        auto csControl = GetCsControl(it);
-        if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
-            TELEPHONY_LOGI("CsControl isCellularCallExist");
-            return true;
-        }
-        auto imsControl = GetImsControl(it);
-        if (imsControl != nullptr && !imsControl->GetConnectionMap().empty()) {
-            TELEPHONY_LOGI("ImsControl isCellularCallExist");
-            return true;
-        }
-    }
-    return false;
-}
-
-void CellularCallService::SetAsyncCommonEvent(const std::shared_ptr<EventFwk::AsyncCommonEventResult> &result)
-{
-    strEnterEventResult_ = result;
-}
- 
-std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallService::GetAsyncCommonEvent()
-{
-    return strEnterEventResult_;
-}
-
-void CellularCallService::ProcessFinishCommonEvent()
-{
-    if (strEnterEventResult_ != nullptr) {
-        strEnterEventResult_->FinishCommonEvent();
-    }
-}
-#endif
 
 void CellularCallService::RegisterEccListener()
 {
