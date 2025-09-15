@@ -784,8 +784,8 @@ private:
     std::mutex mutex_;
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_ = nullptr;
-    sptr<AAFwk::IDataAbilityObserver> settingsCallback_ = nullptr;
 #endif
+    sptr<AAFwk::IDataAbilityObserver> settingsCallback_ = nullptr;
 
 private:
     class SystemAbilityStatusChangeListener : public OHOS::SystemAbilityStatusChangeStub {
