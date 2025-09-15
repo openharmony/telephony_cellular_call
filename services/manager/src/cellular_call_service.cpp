@@ -79,6 +79,7 @@ bool CellularCallService::Init()
     // connect ims_service
     DelayedSingleton<ImsCallClient>::GetInstance()->Init();
     TELEPHONY_LOGD("CellularCallService::Init, init success");
+    RegisterEccListener();
     return true;
 }
 
@@ -1752,5 +1753,19 @@ void CellularCallService::ProcessFinishCommonEvent()
     }
 }
 #endif
+
+void CellularCallService::RegisterEccListener()
+{
+    if (settingsCallback_ == nullptr) {
+        settingsCallback_ = sptr<EmergencyInfoObserver>::MakeSptr();
+    }
+    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->RegisterListenState(settingsCallback_);
+}
+
+void CellularCallService::EmergencyInfoObserver::OnChange()
+{
+    CellularCallConfig config;
+    config.HandleEccListChange();
+}
 } // namespace Telephony
 } // namespace OHOS

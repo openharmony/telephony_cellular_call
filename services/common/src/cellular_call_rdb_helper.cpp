@@ -89,5 +89,20 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
     dataShareHelper = nullptr;
     return TELEPHONY_SUCCESS;
 }
+
+void CellularCallRdbHelper::RegisterListenState(sptr<AAFwk::IDataAbilityObserver> &settingsCallback)
+{
+    if (settingsCallback == nullptr) {
+        return;
+    }
+    auto dataShareHelper = CreateDataAbilityHelper();
+    if (dataShareHelper == nullptr) {
+        TELEPHONY_LOGE("dataShareHelper is nullptr");
+        return;
+    }
+    OHOS::Uri uri_listen(GLOBAL_ECC_URI_SELECTION);
+    dataShareHelper->RegisterObserver(uri_listen, settingsCallback);
+    dataShareHelper->Release();
+}
 } // namespace Telephony
 } // namespace OHOS

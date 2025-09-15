@@ -17,6 +17,7 @@
 #define CELLULAR_CALL_CONFIG_H
 
 #include <map>
+#include <mutex>
 #include <shared_mutex>
 
 #include "config_request.h"
@@ -24,6 +25,7 @@
 #include "operator_config_types.h"
 #include "sim_state_type.h"
 #include "telephony_log_wrapper.h"
+#include "ffrt.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -475,6 +477,7 @@ public:
      * @return bool
      */
     bool IsVolteSupport(int32_t slotId);
+    void HandleEccListChange();
 
 private:
     static void InitDefaultOperatorConfig();
@@ -507,8 +510,18 @@ private:
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
     int32_t CheckHomeAndPresentState(int32_t slotId, bool &isHoamAndPresent);
     bool GetRoamingState(int32_t slotId);
+    bool RegisterListenState();
+    bool UnRegisterListenState();
+    bool ProcessHplmnEccList(int32_t slotId, std::string hplmn, bool &isHplmnEccList,
+        std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
+    bool ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
+        std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
 
 private:
+    struct EccList {
+        std::string plmn = "";
+        std::vector<EmergencyCall> eccInfoList = {};
+    };
     static std::map<int32_t, int32_t> modeTempMap_;
     static std::map<int32_t, int32_t> modeMap_;
     static std::map<int32_t, std::vector<EmergencyCall>> eccListRadioMap_;
@@ -543,6 +556,9 @@ private:
         bool isRoaming_ = false;
     };
     static std::map<int32_t, cellularNetworkState> networkServiceState_;
+    static EccList hplmnEccList_[2];
+    static EccList currentPlmnEccList_[2];
+    static ffrt::mutex plmnMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS

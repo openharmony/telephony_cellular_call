@@ -38,6 +38,7 @@ class CellularCallRdbHelper : public DelayedSingleton<CellularCallRdbHelper> {
 
 public:
     int32_t QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec);
+    void RegisterListenState(sptr<AAFwk::IDataAbilityObserver> &settingsCallback);
 
 private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataAbilityHelper();

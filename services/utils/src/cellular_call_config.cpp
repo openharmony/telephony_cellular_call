@@ -45,6 +45,7 @@ const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
 const int32_t INVALID_SIM_ID = 0;
 const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
+const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
@@ -79,6 +80,9 @@ std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
 std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
+CellularCallConfig::EccList CellularCallConfig::hplmnEccList_[SLOT_NUM];
+CellularCallConfig::EccList CellularCallConfig::currentPlmnEccList_[SLOT_NUM];
+ffrt::mutex CellularCallConfig::plmnMutex_;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
 {
@@ -333,36 +337,25 @@ int32_t CellularCallConfig::CheckHomeAndPresentState(int32_t slotId, bool &isHom
 
 void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 {
+    std::lock_guard<ffrt::mutex> lock(plmnMutex_);
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<std::string> callListWithCard;
     std::vector<std::string> callListNoCard;
-    std::vector<EccNum> eccVec;
     bool isHomeAndPresent = false;
+    bool isHplmnEccList = false;
     if (CheckHomeAndPresentState(slotId, isHomeAndPresent) != TELEPHONY_SUCCESS) {
         return;
     }
     if (!hplmn.empty() && isHomeAndPresent) {
-        OperatorConfig operatorConfig;
-        CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
-        callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
-        if (callListWithCard.empty()) {
-            DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
-            GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
+        if (ProcessHplmnEccList(slotId, hplmn, isHplmnEccList, callListWithCard, callListNoCard)) {
+            return;
         }
     } else {
-        if (curPlmn_[slotId].empty()) {
-            std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
-            std::string rplmn = Str16ToStr8(u16Rplmn);
-            if (rplmn.empty()) {
-                TELEPHONY_LOGE("rplmn is empty");
-                return;
-            }
-            curPlmn_[slotId] = rplmn;
+        if (ProcessCurrentPlmnEccList(slotId, hplmn, callListWithCard, callListNoCard)) {
+            return;
         }
-        DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec);
-        GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
     }
     std::vector<EmergencyCall> eccInfoList;
     for (auto it : callListWithCard) {
@@ -371,7 +364,55 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     for (auto it : callListNoCard) {
         eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_NO_CARD));
     }
+    if (isHplmnEccList) {
+        hplmnEccList_[slotId].eccInfoList = eccInfoList;
+        hplmnEccList_[slotId].plmn = hplmn;
+    } else {
+        currentPlmnEccList_[slotId].eccInfoList = eccInfoList;
+        currentPlmnEccList_[slotId].plmn = curPlmn_[slotId];
+    }
     SetEmergencyCallList(slotId, eccInfoList);
+}
+
+bool CellularCallConfig::ProcessHplmnEccList(int32_t slotId, std::string hplmn, bool &isHplmnEccList,
+    std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
+{
+    if (hplmnEccList_[slotId].plmn == hplmn) {
+        SetEmergencyCallList(slotId, hplmnEccList_[slotId].eccInfoList);
+        return true;
+    }
+    std::vector<EccNum> eccVec;
+    OperatorConfig operatorConfig;
+    CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
+    callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
+    if (callListWithCard.empty()) {
+        DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
+        GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
+    }
+    isHplmnEccList = true;
+    return false;
+}
+
+bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
+    std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
+{
+    if (curPlmn_[slotId].empty()) {
+        std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
+        std::string rplmn = Str16ToStr8(u16Rplmn);
+        if (rplmn.empty()) {
+            TELEPHONY_LOGE("rplmn is empty");
+            return true;
+        }
+        curPlmn_[slotId] = rplmn;
+    }
+    std::vector<EccNum> eccVec;
+    if (currentPlmnEccList_[slotId].plmn == curPlmn_[slotId]) {
+        SetEmergencyCallList(slotId, currentPlmnEccList_[slotId].eccInfoList);
+        return true;
+    }
+    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec);
+    GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
+    return false;
 }
 
 void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
@@ -1150,6 +1191,22 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
     TELEPHONY_LOGI("Slot[%{public}d] voltesupport[%{public}d], isGbaValid[%{public}d], imsSwitch[%{public}d], "
         "isVolteProvisioned[%{public}d]", slotId, volteSupported_[slotId], isGbaValid, imsSwitch, isVolteProvisioned);
     return volteSupported_[slotId] && isGbaValid && imsSwitch && isVolteProvisioned;
+}
+
+void CellularCallConfig::HandleEccListChange()
+{
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+    hplmnEccList_[0].plmn = "";
+    hplmnEccList_[0].eccInfoList.clear();
+    hplmnEccList_[1].plmn = "";
+    hplmnEccList_[1].eccInfoList.clear();
+    currentPlmnEccList_[0].plmn = "";
+    currentPlmnEccList_[0].eccInfoList.clear();
+    currentPlmnEccList_[1].plmn = "";
+    currentPlmnEccList_[1].eccInfoList.clear();
+    lock.unlock();
+    UpdateEccNumberList(0);
+    UpdateEccNumberList(1);
 }
 } // namespace Telephony
 } // namespace OHOS
