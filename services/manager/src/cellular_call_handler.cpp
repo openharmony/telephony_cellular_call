@@ -1349,7 +1349,7 @@ void CellularCallHandler::UpdateSrvccStateReport(const AppExecFwk::InnerEvent::P
         TELEPHONY_LOGE("[slot%{public}d] srvccStatus is null", slotId_);
         return;
     }
-    TELEPHONY_LOGI("[slot%{public}d] srvccStatus is %{public}d", slotId_, srvccStatus->status);
+    HILOG_COMM_INFO("[slot%{public}d] srvccStatus is %{public}d", slotId_, srvccStatus->status);
     srvccState_ = srvccStatus->status;
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (registerInstance_ == nullptr) {
