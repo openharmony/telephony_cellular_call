@@ -23,7 +23,7 @@
         ],
         "features": [
             "cellular_call_dynamic_start",
-            "cellular_call_emc_set_radio_on"
+            "cellular_call_tel_power_mode"
         ],
         "adapted_system_type": [
             "standard"
