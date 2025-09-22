@@ -12,10 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos/sa_profile/sa_profile.gni")
-
-declare_args() {
-  cellular_call_dynamic_start = false
-}
+import("//base/telephony/cellular_call/cellularcall.gni")
 
 ohos_sa_profile("cellular_call_sa_profile") {
   if (!cellular_call_dynamic_start) {

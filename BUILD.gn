@@ -12,10 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-
-declare_args() {
-  cellular_call_emc_set_radio_on = false
-}
+import("cellularcall.gni")
 
 ohos_shared_library("tel_cellular_call") {
   sanitize = {
@@ -80,6 +77,8 @@ ohos_shared_library("tel_cellular_call") {
     "LOG_TAG = \"CellularCall\"",
   ]
 
+  defines += global_defines
+
   external_deps = [
     "ability_base:want",
     "ability_base:zuri",
@@ -127,10 +126,6 @@ ohos_shared_library("tel_cellular_call") {
       defined(global_parts_info.telephony_telephony_enhanced) &&
       global_parts_info.telephony_telephony_enhanced) {
     defines += [ "OHOS_BUILD_ENABLE_TELEPHONY_EXT" ]
-  }
-
-  if (cellular_call_emc_set_radio_on) {
-    defines += [ "BASE_POWER_IMPROVEMENT_FEATURE" ]
   }
 
   part_name = "cellular_call"
