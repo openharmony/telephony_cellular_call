@@ -13,7 +13,7 @@
 
 declare_args() {
   cellular_call_dynamic_start = false
-  cellular_call_tel_power_mode = true
+  cellular_call_tel_power_mode = false
 }
 
 global_defines = []
