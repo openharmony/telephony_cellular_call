@@ -51,6 +51,7 @@ constexpr int32_t STATE_NV_REFRESH_FINISHED = 1;
 constexpr int32_t STATE_NV_REFRESH_ALREADY_FINISHED = 4;
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
 std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallHandler::strEnterEventResult_ = nullptr;
+bool CellularCallHandler::isNvCfgFinish_ = false;
 #endif
 
 CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
@@ -319,8 +320,8 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        if (IsCellularCallExist()) {
-            TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY and cellularcall existed");
+        if (IsCellularCallExist() || !isNvCfgFinish_) {
+            TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
             strEnterEventResult_ = GoAsyncCommonEvent();
             DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();
         }
@@ -2022,8 +2023,15 @@ void CellularCallHandler::NvCfgFinishedIndication(const AppExecFwk::InnerEvent::
     }
     TELEPHONY_LOGI("[slot%{public}d] NvCfgFinishedIndication state is %{public}d", slotId_, object->data);
     if (!(object->data == STATE_NV_REFRESH_FINISHED || object->data >= STATE_NV_REFRESH_ALREADY_FINISHED)) {
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+        isNvCfgFinish_ = false;
+#endif
         return;
     }
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    isNvCfgFinish_ = true;
+    ProcessFinishCommonEvent();
+#endif
     bool hasSimCard = false;
     CoreManagerInner::GetInstance().HasSimCard(slotId_, hasSimCard);
     if (!hasSimCard) {

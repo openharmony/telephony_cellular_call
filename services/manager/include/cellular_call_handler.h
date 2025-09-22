@@ -293,6 +293,7 @@ private:
     CallInfoList currentCsCallInfoList_{};
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     static std::shared_ptr<EventFwk::AsyncCommonEventResult> strEnterEventResult_;
+    static bool isNvCfgFinish_;
 #endif
 };
 } // namespace Telephony

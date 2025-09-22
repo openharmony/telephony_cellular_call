@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Copyright (C) 2025-2025 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,15 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos/sa_profile/sa_profile.gni")
-import("//base/telephony/cellular_call/cellularcall.gni")
+declare_args() {
+  cellular_call_dynamic_start = false
+  cellular_call_tel_power_mode = false
+}
 
-ohos_sa_profile("cellular_call_sa_profile") {
-  if (!cellular_call_dynamic_start) {
-    sources = [ "4006.json" ]
-  } else {
-    sources = [ "4006_dynamic.json" ]
-  }
+global_defines = []
 
-  part_name = "cellular_call"
+if (cellular_call_tel_power_mode) {
+  global_defines += [ "BASE_POWER_IMPROVEMENT_FEATURE" ]
 }

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//base/telephony/cellular_call/cellularcall.gni")
 CELLULAR_CALL_PATH = "../../.."
 
 ohos_unittest("cellular_call_ims_callback_proxy_test") {
@@ -346,6 +347,8 @@ ohos_unittest("cellular_call_ims_zero_branch1_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+
+  defines += global_defines
 
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
