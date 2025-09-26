@@ -73,8 +73,8 @@ int32_t Cs1Test::TestDialCallByCs(int32_t slotId, std::string code)
     EXPECT_CALL(*mockNetworkSearch, GetImsRegStatus(_, _, _)).WillRepeatedly(Return(1));
     EXPECT_CALL(*mockNetworkSearch, GetCsRegState(_)).WillRepeatedly(Return(1));
     EXPECT_CALL(*mockNetworkSearch, GetPhoneType(_)).WillRepeatedly(Return(honeType::PHONE_TYPE_IS_GSM));
-    CellularCallInfo callInfo;
-
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
     CellularCallInfo callInfo;
     int32_t ret = TELEPHONY_SUCCESS;
     ret = InitCellularCallInfo(slotId, code, callInfo);
