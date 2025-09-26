@@ -29,6 +29,7 @@ ohos_unittest("cellular_call_cs_calloperation_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
+    "${CELLULAR_CALL_PATH}/test/mock",
   ]
 
   deps = [
@@ -49,6 +50,8 @@ ohos_unittest("cellular_call_cs_calloperation_test") {
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
     "core_service:ffrt_mocked",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -77,6 +80,7 @@ ohos_unittest("cellular_call_cs1_test") {
     "${CELLULAR_CALL_PATH}/services/control/include",
     "${CELLULAR_CALL_PATH}/services/manager/include",
     "${CELLULAR_CALL_PATH}/services/utils/include",
+    "${CELLULAR_CALL_PATH}/test/mock",
   ]
 
   deps = [
@@ -97,6 +101,8 @@ ohos_unittest("cellular_call_cs1_test") {
     "data_share:datashare_consumer",
     "eventhandler:libeventhandler",
     "core_service:ffrt_mocked",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_surface:surface",
     "hilog:libhilog",
     "init:libbegetutil",
