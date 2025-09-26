@@ -63,12 +63,11 @@ public:
     MockTelRilManager *mockTelRilManager = new MockTelRilManager();
     MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
     MockSimManager *mockSimManager = new MockSimManager();
-
 };
 
 int32_t CsCallOperationTest::TestDialCallByCs(int32_t slotId, std::string code)
     {
-        EXPECT_CALL(*mockSimManager, GetSimid(_)).WillRepeatedly(Return(1));
+        EXPECT_CALL(*mockSimManager, GetSimId(_)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetRadioState(_)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetImsRegStatus(_, _, _)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetCsRegState(_)).WillRepeatedly(Return(1));

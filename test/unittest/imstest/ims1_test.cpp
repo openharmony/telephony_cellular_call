@@ -94,11 +94,12 @@ public:
 
     int32_t TestDialCallByIms(int32_t slotId, std::string code)
     {
-        EXPECT_CALL(*mockSimManager, GetSimid(_)).WillRepeatedly(Return(1));
+        EXPECT_CALL(*mockSimManager, GetSimId(_)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetRadioState(_)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetImsRegStatus(_, _, _)).WillRepeatedly(Return(1));
         EXPECT_CALL(*mockNetworkSearch, GetPhoneType(_)).WillRepeatedly(Return(PhoneType::PHONE_TYPE_IS_CDMA));
         auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
+        telephonyService->Init();
         CellularCallInfo imsCellularCallInfo;
         int32_t ret = TELEPHONY_SUCCESS;
         ret = InitCellularCallInfo(slotId, code, imsCellularCallInfo);
@@ -125,7 +126,7 @@ void Ims1Test::TearDownTestCase(void)
     // step 3: Tear Down Test Case
 }
 
-void Ims1Test::SetUp(void) 
+void Ims1Test::SetUp(void)
 {
     std::shared_ptr<MockTelRilManager> mockTelRilManagerPtr(mockTelRilManager);
     std::shared_ptr<MockNetworkSearch> mockNetworkSearchPtr(mockNetworkSearch);
