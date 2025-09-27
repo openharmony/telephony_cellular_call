@@ -15,8 +15,8 @@
 
 #include "gtest/gtest.h"
 
-#define PRIVATE public
-#define PROTECTED public
+#define private public
+#define protected public
 #include "cellular_call_callback.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_proxy.h"
