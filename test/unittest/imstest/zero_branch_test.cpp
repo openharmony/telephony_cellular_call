@@ -41,7 +41,7 @@
 #include "emergency_utils.h"
 #include "satellite_call_client.h"
 #include "ims_video_call_control.h"
-
+#include "ims_call_proxy.h"
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;

@@ -35,9 +35,13 @@
 #include "iservice_registry.h"
 #include "system_ability_definition.h"
 #include "token.h"
+#include "mock_sim_manager.h"
+#include "mock_tel_ril_manager.h"
+#include "mock_network_search.h"
 
 namespace OHOS {
 namespace Telephony {
+using namespace testing;
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
@@ -45,6 +49,11 @@ const std::string PHONE_NUMBER = "0000000";
 
 class Ims1Test : public testing::Test {
 public:
+
+    MockTelRilManager *mockTelRilManager = new MockTelRilManager();
+    MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
+    MockSimManager *mockSimManager = new MockSimManager();
+
     static void SetUpTestCase();
     static void TearDownTestCase();
     void SetUp();
@@ -85,19 +94,12 @@ public:
 
     int32_t TestDialCallByIms(int32_t slotId, std::string code)
     {
-        AccessToken token;
-        auto saMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-        if (saMgr == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto remote = saMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-        if (remote == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
-        auto telephonyService = iface_cast<CellularCallInterface>(remote);
-        if (telephonyService == nullptr) {
-            return TELEPHONY_ERR_FAIL;
-        }
+        EXPECT_CALL(*mockSimManager, GetSimId(_)).WillRepeatedly(Return(1));
+        EXPECT_CALL(*mockNetworkSearch, GetRadioState(_)).WillRepeatedly(Return(1));
+        EXPECT_CALL(*mockNetworkSearch, GetImsRegStatus(_, _, _)).WillRepeatedly(Return(1));
+        EXPECT_CALL(*mockNetworkSearch, GetPhoneType(_)).WillRepeatedly(Return(PhoneType::PHONE_TYPE_IS_CDMA));
+        auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
+        telephonyService->Init();
         CellularCallInfo imsCellularCallInfo;
         int32_t ret = TELEPHONY_SUCCESS;
         ret = InitCellularCallInfo(slotId, code, imsCellularCallInfo);
@@ -124,7 +126,13 @@ void Ims1Test::TearDownTestCase(void)
     // step 3: Tear Down Test Case
 }
 
-void Ims1Test::SetUp(void) {}
+void Ims1Test::SetUp(void)
+{
+    std::shared_ptr<MockTelRilManager> mockTelRilManagerPtr(mockTelRilManager);
+    std::shared_ptr<MockNetworkSearch> mockNetworkSearchPtr(mockNetworkSearch);
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(mockNetworkSearchPtr, mockSimManagerPtr, mockTelRilManagerPtr);
+}
 
 void Ims1Test::TearDown(void)
 {

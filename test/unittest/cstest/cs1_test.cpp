@@ -33,9 +33,13 @@
 #include "sim_state_type.h"
 #include "system_ability_definition.h"
 #include "token.h"
+#include "mock_sim_manager.h"
+#include "mock_tel_ril_manager.h"
+#include "mock_network_search.h"
 
 namespace OHOS {
 namespace Telephony {
+using namespace testing;
 using namespace testing::ext;
 const int32_t SIM1_SLOTID = 0;
 const int32_t SIM2_SLOTID = 1;
@@ -57,23 +61,20 @@ public:
         return hasSimCard;
     }
     int32_t InitCellularCallInfo(int32_t accountId, std::string phonenumber, CellularCallInfo &callInfo);
+    MockTelRilManager *mockTelRilManager = new MockTelRilManager();
+    MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
+    MockSimManager *mockSimManager = new MockSimManager();
 };
 
 int32_t Cs1Test::TestDialCallByCs(int32_t slotId, std::string code)
 {
-    AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityMgr == nullptr) {
-        return TELEPHONY_ERR_FAIL;
-    }
-    auto remote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        return TELEPHONY_ERR_FAIL;
-    }
-    auto telephonyService = iface_cast<CellularCallInterface>(remote);
-    if (telephonyService == nullptr) {
-        return TELEPHONY_ERR_FAIL;
-    }
+    EXPECT_CALL(*mockSimManager, GetSimId(_)).WillRepeatedly(Return(1));
+    EXPECT_CALL(*mockNetworkSearch, GetRadioState(_)).WillRepeatedly(Return(1));
+    EXPECT_CALL(*mockNetworkSearch, GetImsRegStatus(_, _, _)).WillRepeatedly(Return(1));
+    EXPECT_CALL(*mockNetworkSearch, GetCsRegState(_)).WillRepeatedly(Return(1));
+    EXPECT_CALL(*mockNetworkSearch, GetPhoneType(_)).WillRepeatedly(Return(PhoneType::PHONE_TYPE_IS_GSM));
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
     CellularCallInfo callInfo;
     int32_t ret = TELEPHONY_SUCCESS;
     ret = InitCellularCallInfo(slotId, code, callInfo);
@@ -162,6 +163,10 @@ void Cs1Test::TearDownTestCase(void)
 
 void Cs1Test::SetUp(void)
 {
+    std::shared_ptr<MockTelRilManager> mockTelRilManagerPtr(mockTelRilManager);
+    std::shared_ptr<MockNetworkSearch> mockNetworkSearchPtr(mockNetworkSearch);
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(mockNetworkSearchPtr, mockSimManagerPtr, mockTelRilManagerPtr);
     // step 3: input testcase setup step
 }
 
