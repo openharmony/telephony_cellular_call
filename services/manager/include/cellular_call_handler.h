@@ -285,7 +285,7 @@ private:
     using RequestFuncType = std::function<void(const AppExecFwk::InnerEvent::Pointer &event)>;
     std::map<uint32_t, RequestFuncType> requestFuncMap_;
     std::shared_ptr<CellularCallRegister> registerInstance_ = DelayedSingleton<CellularCallRegister>::GetInstance();
-    bool isInCsRedial_ = false;
+    bool isDuringRSRVCC_ = false;
     int32_t indexCommand_ = 0;
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
     std::mutex mutex_;

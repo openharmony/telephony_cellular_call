@@ -1252,7 +1252,7 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0006, Function | MediumTest 
     call.index = 1;
     call.state = 4;
     callInfoList->calls.push_back(call);
-    sixthHandler.isInCsRedial_ = false;
+    sixthHandler.isDuringRSRVCC_ = false;
     sixthHandler.ReportCsCallsData(*callInfoList);
     EXPECT_EQ(csControl->ReportCsCallsData(slotId, *callInfoList), TELEPHONY_SUCCESS);
 }
