@@ -409,7 +409,7 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
         ReportNoCsCallsData(callInfoList, callInfo.state, csControl);
         return;
     }
-    if (isInCsRedial_) {
+    if (isDuringRSRVCC_) {
         TELEPHONY_LOGI("[slot%{public}d] Ignore cs call state change during cs redial", slotId_);
         return;
     }
@@ -433,9 +433,9 @@ void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, 
     const std::shared_ptr<CSControl> &csControl)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (isInCsRedial_) {
-        TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during cs redial", slotId_);
-        isInCsRedial_ = false;
+    if (isDuringRSRVCC_) {
+        TELEPHONY_LOGI("[slot%{public}d] Ignore hangup during RSRVCC", slotId_);
+        isDuringRSRVCC_ = false;
         return;
     }
     if (csControl == nullptr) {
@@ -1393,6 +1393,7 @@ void CellularCallHandler::SrvccStateCompleted()
         TELEPHONY_LOGE("[slot%{public}d] srvccState_ != SrvccState::COMPLETED", slotId_);
         return;
     }
+    isDuringRSRVCC_ = false;
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance_ == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
@@ -1807,7 +1808,7 @@ void CellularCallHandler::HandleOperatorConfigChanged(const AppExecFwk::InnerEve
 
 void CellularCallHandler::UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
-    isInCsRedial_ = true;
+    isDuringRSRVCC_ = true;
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     if (serviceInstance == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
