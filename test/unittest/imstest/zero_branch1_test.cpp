@@ -1164,7 +1164,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | Medium
     config.hplmnEccList_[0].plmn = "test";
     config.ProcessHplmnEccList(0, "", isHplmnEccList, callListWithCard, callListNoCard);
     callListNoCard.push_back("element1");
-    config.ProcessHplmnEccList(0, "", isHplmnEccList, callListWithCard, callListNoCard);
+    config.ProcessHplmnEccList(0, "test", isHplmnEccList, callListWithCard, callListNoCard);
 }
 
 /**

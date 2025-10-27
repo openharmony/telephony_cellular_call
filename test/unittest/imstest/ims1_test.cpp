@@ -438,13 +438,12 @@ HWTEST_F(Ims1Test, cellular_call_DialCall_0015, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto hangUpCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(hangUpCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(hangUpCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -454,6 +453,7 @@ HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -472,13 +472,12 @@ HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_AnswerCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto answerCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(answerCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(answerCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -486,6 +485,7 @@ HWTEST_F(Ims1Test, cellular_call_AnswerCall_0001, Function | MediumTest | Level2
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -502,13 +502,12 @@ HWTEST_F(Ims1Test, cellular_call_AnswerCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_RejectCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto rejectCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(rejectCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(rejectCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -516,6 +515,7 @@ HWTEST_F(Ims1Test, cellular_call_RejectCall_0001, Function | MediumTest | Level2
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -532,13 +532,12 @@ HWTEST_F(Ims1Test, cellular_call_RejectCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_HoldCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto holdCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(holdCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(holdCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -546,6 +545,7 @@ HWTEST_F(Ims1Test, cellular_call_HoldCall_0001, Function | MediumTest | Level2)
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -562,13 +562,12 @@ HWTEST_F(Ims1Test, cellular_call_HoldCall_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto unHoldCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(unHoldCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(unHoldCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -576,6 +575,7 @@ HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2
         EXPECT_NE(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -592,13 +592,12 @@ HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto switchCallRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(switchCallRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(switchCallRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -606,6 +605,7 @@ HWTEST_F(Ims1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -622,13 +622,12 @@ HWTEST_F(Ims1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto combineRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(combineRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(combineRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -636,6 +635,7 @@ HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest |
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -652,13 +652,12 @@ HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest |
 HWTEST_F(Ims1Test, cellular_call_SeparateConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto separateRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(separateRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(separateRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -666,6 +665,7 @@ HWTEST_F(Ims1Test, cellular_call_SeparateConference_0001, Function | MediumTest 
         EXPECT_EQ(ret, TELEPHONY_ERR_ARGUMENT_INVALID);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -682,13 +682,12 @@ HWTEST_F(Ims1Test, cellular_call_SeparateConference_0001, Function | MediumTest 
 HWTEST_F(Ims1Test, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto kickOutRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(kickOutRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(kickOutRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -696,6 +695,7 @@ HWTEST_F(Ims1Test, cellular_call_KickOutFromConference_0001, Function | MediumTe
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -712,13 +712,12 @@ HWTEST_F(Ims1Test, cellular_call_KickOutFromConference_0001, Function | MediumTe
 HWTEST_F(Ims1Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto startDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(startDtmfRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(startDtmfRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -727,6 +726,7 @@ HWTEST_F(Ims1Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -744,13 +744,12 @@ HWTEST_F(Ims1Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto stopDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(stopDtmfRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(stopDtmfRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -758,6 +757,7 @@ HWTEST_F(Ims1Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -774,13 +774,12 @@ HWTEST_F(Ims1Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto sendDtmfRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(sendDtmfRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(sendDtmfRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -789,6 +788,7 @@ HWTEST_F(Ims1Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
         EXPECT_EQ(ret, CALL_ERR_CALL_CONNECTION_NOT_EXIST);
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         CellularCallInfo callInfo;
         int32_t ret = InitCellularCallInfo(SIM2_SLOTID, PHONE_NUMBER, callInfo);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -806,18 +806,18 @@ HWTEST_F(Ims1Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_CanSetCallTransferTime_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto transferRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(transferRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(transferRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM1_SLOTID, ImsServiceType::TYPE_UT)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         bool result;
         int32_t ret = telephonyService->CanSetCallTransferTime(SIM1_SLOTID, result);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
     }
     if (HasSimCard(SIM2_SLOTID)) {
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
         bool result;
         int32_t ret = telephonyService->CanSetCallTransferTime(SIM2_SLOTID, result);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
@@ -833,13 +833,12 @@ HWTEST_F(Ims1Test, cellular_call_CanSetCallTransferTime_0001, Function | MediumT
 HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto setVoNRRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(setVoNRRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(setVoNRRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
+    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID)) {
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 1);
         EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
