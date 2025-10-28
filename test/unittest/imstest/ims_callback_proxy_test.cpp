@@ -79,8 +79,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
+        auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -113,6 +113,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         EXPECT_EQ(callCallbackProxy->CombineConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
         EXPECT_EQ(callCallbackProxy->InviteToConferenceResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
     }
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
+    DelayedSingleton<ImsCallClient>::DestroyInstance();
 }
 
 /**
@@ -134,8 +136,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
+        auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
         EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
@@ -167,6 +169,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         colpResult.result.index = INVALID_INDEX;
         EXPECT_EQ(callCallbackProxy->GetColpResponse(slotId, colpResult), TELEPHONY_SUCCESS);
     }
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
+    DelayedSingleton<ImsCallClient>::DestroyInstance();
 }
 
 /**
@@ -188,8 +192,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-        handler->SetSlotId(slotId);
-        handler->RegisterImsCallCallbackHandler();
+        auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         ImsCallModeReceiveInfo callModeReceiveInfo;
         callModeReceiveInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(
@@ -209,6 +213,8 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         cameraCapabilitiesInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(callCallbackProxy->CameraCapabilitiesChanged(slotId, cameraCapabilitiesInfo), TELEPHONY_SUCCESS);
     }
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
+    DelayedSingleton<ImsCallClient>::DestroyInstance();
 }
 } // namespace Telephony
 } // namespace OHOS
