@@ -80,7 +80,7 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0001, Function
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
-        ASSERT_NE(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         RadioResponseInfo rilRadioResponse;
         rilRadioResponse.error = ErrType::ERR_GENERIC_FAILURE;
         EXPECT_EQ(callCallbackProxy->DialResponse(slotId, rilRadioResponse), TELEPHONY_SUCCESS);
@@ -137,7 +137,7 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0002, Function
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
-        ASSERT_NE(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         GetClipResult clipResult;
         clipResult.result.index = INVALID_INDEX;
         EXPECT_EQ(callCallbackProxy->GetClipResponse(slotId, clipResult), TELEPHONY_SUCCESS);
@@ -193,7 +193,7 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
         auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
         auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
-        ASSERT_NE(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
+        ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
         ImsCallModeReceiveInfo callModeReceiveInfo;
         callModeReceiveInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(
