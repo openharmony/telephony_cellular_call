@@ -68,7 +68,7 @@ public:
     bool CanUseImsService(int32_t slotId, ImsServiceType type)
     {
         ImsRegInfo info;
-        CoreServiceClient::GetInstance().GetImsRegStatus(slotId, type, info);
+        CoreManagerInner::GetInstance().GetImsRegStatus(slotId, type, info);
         bool imsReg = info.imsRegState == ImsRegState::IMS_REGISTERED;
         return imsReg;
     }
@@ -438,7 +438,7 @@ HWTEST_F(Ims1Test, cellular_call_DialCall_0015, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -472,7 +472,7 @@ HWTEST_F(Ims1Test, cellular_call_HangUpCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_AnswerCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -502,7 +502,7 @@ HWTEST_F(Ims1Test, cellular_call_AnswerCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_RejectCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -532,7 +532,7 @@ HWTEST_F(Ims1Test, cellular_call_RejectCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_HoldCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -562,7 +562,7 @@ HWTEST_F(Ims1Test, cellular_call_HoldCall_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -592,7 +592,7 @@ HWTEST_F(Ims1Test, cellular_call_UnHoldCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -622,7 +622,7 @@ HWTEST_F(Ims1Test, cellular_call_SwitchCall_0001, Function | MediumTest | Level2
 HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -652,7 +652,7 @@ HWTEST_F(Ims1Test, cellular_call_CombineConference_0001, Function | MediumTest |
 HWTEST_F(Ims1Test, cellular_call_SeparateConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -682,7 +682,7 @@ HWTEST_F(Ims1Test, cellular_call_SeparateConference_0001, Function | MediumTest 
 HWTEST_F(Ims1Test, cellular_call_KickOutFromConference_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -712,7 +712,7 @@ HWTEST_F(Ims1Test, cellular_call_KickOutFromConference_0001, Function | MediumTe
 HWTEST_F(Ims1Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -744,7 +744,7 @@ HWTEST_F(Ims1Test, cellular_call_StartDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -774,7 +774,7 @@ HWTEST_F(Ims1Test, cellular_call_StopDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -806,7 +806,7 @@ HWTEST_F(Ims1Test, cellular_call_SendDtmf_0001, Function | MediumTest | Level2)
 HWTEST_F(Ims1Test, cellular_call_CanSetCallTransferTime_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
@@ -833,7 +833,7 @@ HWTEST_F(Ims1Test, cellular_call_CanSetCallTransferTime_0001, Function | MediumT
 HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto telephonyService = DeleayedSingleton<CellularCallService>::GetInstance();
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
     telephonyService->Init();
     std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
     ASSERT_NE(imsControl, nullptr);
