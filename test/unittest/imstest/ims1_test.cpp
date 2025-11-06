@@ -840,11 +840,11 @@ HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Leve
     if (HasSimCard(SIM1_SLOTID)) {
         telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
         int32_t ret = telephonyService->SetVoNRState(SIM1_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
+        EXPECT_EQ(ret, TELEPHONY_ERR_NO_SIM_CARD);
     }
     if (HasSimCard(SIM2_SLOTID)) {
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 1);
-        EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
+        EXPECT_EQ(ret, TELEPHONY_ERR_NO_SIM_CARD);
     }
 }
 } // namespace Telephony
