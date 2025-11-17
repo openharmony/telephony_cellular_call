@@ -23,7 +23,8 @@
         ],
         "features": [
             "cellular_call_dynamic_start",
-            "cellular_call_tel_power_mode"
+            "cellular_call_tel_power_mode",
+            "cellular_call_support_UT"
         ],
         "adapted_system_type": [
             "standard"
