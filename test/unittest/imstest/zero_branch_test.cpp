@@ -39,7 +39,9 @@
 #include "cellular_call_rdb_helper.h"
 #include "cellular_call_dump_helper.h"
 #include "emergency_utils.h"
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
 #include "satellite_call_client.h"
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 #include "ims_video_call_control.h"
 #include "ims_call_proxy.h"
 namespace OHOS {
@@ -507,9 +509,11 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_006, Function | Medium
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
     auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
     ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     callSup.HandleClip(SIM1_SLOTID, mmiDataAct);
     callSup.HandleClip(SIM1_SLOTID, mmiDataDeact);
     callSup.HandleClip(SIM1_SLOTID, mmiDataInterrogate);
@@ -533,6 +537,14 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_006, Function | Medium
     callSup.HandleCallWaiting(SIM1_SLOTID, mmiDataInterrogate);
 }
 
+static void CheckRegisterSatelliteCallback(const std::shared_ptr<CellularCallHandler> &handler)
+{
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+}
+
 /**
  * @tc.number   Telephony_CellularCallSupplement_007
  * @tc.name     Test error branch
@@ -550,8 +562,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_007, Function | Medium
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
-    ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
+    CheckRegisterSatelliteCallback(handler);
     std::string serviceInfoB("10");
     ASSERT_EQ(callSup.ObtainServiceCode(serviceInfoB), 13);
     serviceInfoB = "11";
@@ -589,6 +600,14 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_007, Function | Medium
     ASSERT_EQ(callSup.ObtainCause("99"), TELEPHONY_ERROR);
 }
 
+static void CheckStatelliteClient(const std::shared_ptr<CellularCallHandler> &handler)
+{
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
+    ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+}
+
 /**
  * @tc.number   Telephony_CellularCallSupplement_008
  * @tc.name     Test error branch
@@ -602,8 +621,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_008, Function | Medium
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
-    auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
-    ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
+    CheckStatelliteClient(handler);
     ASSERT_EQ(callSup.ObtainBarringInstallation("33"), "AO");
     ASSERT_EQ(callSup.ObtainBarringInstallation("331"), "OI");
     ASSERT_EQ(callSup.ObtainBarringInstallation("332"), "OX");

@@ -16,7 +16,7 @@ import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
-
+import("$CELLULAR_CALL_PATH/cellularcall.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("SatelliteCallRequestFuzzTest") {
   module_output_path = "cellular_call/cellular_call"
@@ -95,9 +95,11 @@ ohos_fuzztest("SatelliteCallRequestFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":SatelliteCallRequestFuzzTest",
-  ]
+  if (cellular_call_feature_support_satellite) {
+    deps += [
+      # deps file
+      ":SatelliteCallRequestFuzzTest",
+    ]
+  }
 }
 ###############################################################################

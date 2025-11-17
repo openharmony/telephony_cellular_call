@@ -16,7 +16,7 @@ import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
 CELLULAR_CALL_PATH = "../../.."
-
+import("$CELLULAR_CALL_PATH/cellularcall.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("ReportHangUpInfoFuzzTest") {
   module_output_path = "cellular_call/cellular_call"
@@ -67,6 +67,7 @@ ohos_fuzztest("ReportHangUpInfoFuzzTest") {
     "TELEPHONY_LOG_TAG = \"CellularCallFuzzTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 
   cflags = [
     "-g",

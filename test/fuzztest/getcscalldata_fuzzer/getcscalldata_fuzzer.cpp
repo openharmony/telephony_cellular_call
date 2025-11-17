@@ -61,15 +61,23 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
 
     handle->GetCsCallData(event);
     handle->GetImsCallData(event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->GetSatelliteCallData(event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->ImsCallStatusInfoReport(event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->SatelliteCallStatusInfoReport(event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->CellularCallIncomingStartTrace(state);
     handle->GetCsCallsDataResponse(event);
     handle->GetImsCallsDataResponse(event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->GetSatelliteCallsDataResponse(event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->DialResponse(event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->DialSatelliteResponse(event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->SendDtmfResponse(event);
     handle->StartDtmfResponse(event);
     handle->SimStateChangeReport(event);
@@ -80,7 +88,9 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
     handle->CurrentTimeMillis();
     handle->GetCsCallsDataRequest(event);
     handle->GetImsCallsDataRequest(event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->GetSatelliteCallsDataRequest(event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->ReportCsCallsData(infoList);
 }
 
@@ -98,10 +108,12 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     info.name = number;
     infoList.calls.push_back(info);
 
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     SatelliteCurrentCall satelliteInfo;
     SatelliteCurrentCallList satelliteInfoList;
     satelliteInfo.number = number;
     satelliteInfoList.calls.push_back(satelliteInfo);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 
     handle->RegisterHandler(event);
     handle->SetDomainPreferenceModeResponse(event);
@@ -122,7 +134,9 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->GetCallWaitingResponse(event);
     handle->GetClirResponse(event);
     handle->ReportImsCallsData(infoList);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     handle->ReportSatelliteCallsData(satelliteInfoList);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     handle->SetClirResponse(event);
     handle->GetClipResponse(event);
     handle->SetCallTransferInfoResponse(event);

@@ -67,6 +67,7 @@ ohos_unittest("cellular_call_ims_callback_proxy_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_callback_stub_test") {
@@ -121,6 +122,7 @@ ohos_unittest("cellular_call_ims_callback_stub_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims1_test") {
@@ -178,6 +180,7 @@ ohos_unittest("cellular_call_ims1_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims2_test") {
@@ -235,6 +238,7 @@ ohos_unittest("cellular_call_ims2_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_zero_branch_test") {
@@ -290,6 +294,7 @@ ohos_unittest("cellular_call_ims_zero_branch_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 
   if (device_name == "rk3568") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
@@ -410,6 +415,7 @@ ohos_unittest("cellular_call_ims_cellular_call_stub_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
@@ -464,6 +470,7 @@ ohos_unittest("cellular_call_ims_cellular_call_supplement_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_call_callback_stub_test") {
@@ -518,6 +525,7 @@ ohos_unittest("cellular_call_ims_call_callback_stub_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_hisysevent_test") {
@@ -573,6 +581,7 @@ ohos_unittest("cellular_call_ims_hisysevent_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_emergency_utils_test") {
@@ -627,6 +636,7 @@ ohos_unittest("cellular_call_ims_emergency_utils_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_connection_test") {
@@ -681,6 +691,7 @@ ohos_unittest("cellular_call_ims_connection_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallImsTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_ims_mmi_code_message_test") {

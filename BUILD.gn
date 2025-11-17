@@ -31,12 +31,10 @@ ohos_shared_library("tel_cellular_call") {
     "services/connection/src/base_connection.cpp",
     "services/connection/src/cellular_call_connection_cs.cpp",
     "services/connection/src/cellular_call_connection_ims.cpp",
-    "services/connection/src/cellular_call_connection_satellite.cpp",
     "services/control/src/control_base.cpp",
     "services/control/src/cs_control.cpp",
     "services/control/src/ims_control.cpp",
     "services/control/src/ims_video_call_control.cpp",
-    "services/control/src/satellite_control.cpp",
     "services/ims_service_interaction/src/ims_call_callback_stub.cpp",
     "services/ims_service_interaction/src/ims_call_client.cpp",
     "services/ims_service_interaction/src/ims_call_proxy.cpp",
@@ -45,9 +43,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/manager/src/cellular_call_register.cpp",
     "services/manager/src/cellular_call_service.cpp",
     "services/manager/src/cellular_call_stub.cpp",
-    "services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
-    "services/satellite_service_interaction/src/satellite_call_client.cpp",
-    "services/satellite_service_interaction/src/satellite_call_proxy.cpp",
+
     "services/telephony_ext_wrapper/src/telephony_ext_wrapper.cpp",
     "services/utils/src/cellular_call_config.cpp",
     "services/utils/src/cellular_call_dump_helper.cpp",
@@ -58,6 +54,16 @@ ohos_shared_library("tel_cellular_call") {
     "services/utils/src/module_service_utils.cpp",
     "services/utils/src/standardize_utils.cpp",
   ]
+
+  if (cellular_call_feature_support_satellite) {
+    sources += [
+      "services/connection/src/cellular_call_connection_satellite.cpp",
+      "services/control/src/satellite_control.cpp",
+      "services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
+      "services/satellite_service_interaction/src/satellite_call_client.cpp",
+      "services/satellite_service_interaction/src/satellite_call_proxy.cpp",
+    ]
+  }
 
   include_dirs = [
     "interfaces/innerkits/ims",
