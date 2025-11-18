@@ -117,7 +117,8 @@ ohos_shared_library("tel_cellular_call") {
     defines += [ "CALL_MANAGER_AUTO_START_OPTIMIZE" ]
   }
   if (defined(global_parts_info) &&
-      defined(global_parts_info.security_security_guard)) {
+      defined(global_parts_info.security_security_guard) &&
+      cellular_call_support_UT) {
     external_deps += [ "security_guard:libsg_collect_sdk" ]
     defines += [ "SECURITY_GUARDE_ENABLE" ]
   }
