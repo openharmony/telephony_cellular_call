@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("//base/telephony/cellular_call/cellularcall.gni")
 CELLULAR_CALL_PATH = ".."
 
 cellular_call_base_src = [
@@ -38,9 +39,6 @@ cellular_call_base_src = [
     "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_register.cpp",
     "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_service.cpp",
     "${CELLULAR_CALL_PATH}/services/manager/src/cellular_call_stub.cpp",
-    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
-    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_client.cpp",
-    "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_proxy.cpp",
     "${CELLULAR_CALL_PATH}/services/telephony_ext_wrapper/src/telephony_ext_wrapper.cpp",
     "${CELLULAR_CALL_PATH}/services/utils/src/cellular_call_config.cpp",
     "${CELLULAR_CALL_PATH}/services/utils/src/cellular_call_dump_helper.cpp",
@@ -54,6 +52,14 @@ cellular_call_base_src = [
     "${CELLULAR_CALL_PATH}/services/ims_service_interaction/src/ims_call_callback_proxy.cpp",
     "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_proxy.cpp",
   ]
+
+  if (cellular_call_feature_support_satellite) {
+    cellular_call_base_src += [
+      "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
+      "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_client.cpp",
+      "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_proxy.cpp",
+    ]
+  }
 
     cellular_call_incluedirs = [
     "${CELLULAR_CALL_PATH}/interfaces/innerkits/ims",

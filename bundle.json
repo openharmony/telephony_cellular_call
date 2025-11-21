@@ -24,7 +24,8 @@
         "features": [
             "cellular_call_dynamic_start",
             "cellular_call_tel_power_mode",
-            "cellular_call_support_UT"
+            "cellular_call_support_UT",
+            "cellular_call_feature_support_satellite"
         ],
         "adapted_system_type": [
             "standard"

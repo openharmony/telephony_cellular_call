@@ -317,10 +317,12 @@ bool MMICodeUtils::HasCellularCallExist()
         if (csControl != nullptr && !csControl->GetConnectionMap().empty()) {
             return true;
         }
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
         auto satelliteControl = serviceInstance->GetSatelliteControl(i);
         if (satelliteControl != nullptr && !satelliteControl->GetConnectionMap().empty()) {
             return true;
         }
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     }
     return false;
 }

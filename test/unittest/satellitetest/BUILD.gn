@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("//base/telephony/cellular_call/cellularcall.gni")
 CELLULAR_CALL_PATH = "../../.."
 
 ohos_unittest("cellular_call_satellite_callback_test") {
@@ -62,6 +63,7 @@ ohos_unittest("cellular_call_satellite_callback_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallSatelliteTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_satellite_test") {
@@ -112,6 +114,7 @@ ohos_unittest("cellular_call_satellite_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallSatelliteTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 ohos_unittest("cellular_call_satellite_zero_branch_test") {
@@ -162,6 +165,7 @@ ohos_unittest("cellular_call_satellite_zero_branch_test") {
     "TELEPHONY_LOG_TAG = \"CellularCallSatelliteTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
+  defines += global_defines
 }
 
 group("unittest") {

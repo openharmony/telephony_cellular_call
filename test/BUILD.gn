@@ -13,6 +13,7 @@
 
 import("//build/test.gni")
 import("cellular_call_test.gni")
+import("//base/telephony/cellular_call/cellularcall.gni")
 
 config("cellular_call_test_config") {
   include_dirs = cellular_call_incluedirs
@@ -29,7 +30,7 @@ ohos_static_library("cellular_call_test_base") {
   public_configs = [ ":cellular_call_test_config" ]
   external_deps = cellular_call_external_deps
   external_deps +=[ "core_service:ffrt_mocked" ]
-  defines = cellular_call_defines
+  defines = cellular_call_defines + global_defines
   cflags = cellular_call_cflags_cc
   part_name = "cellular_call"
   subsystem_name = "telephony"
@@ -58,10 +59,14 @@ group("unittest") {
     "unittest/imstest:cellular_call_ims_standardize_utils_test",
     "unittest/imstest:cellular_call_ims_zero_branch1_test",
     "unittest/imstest:cellular_call_ims_zero_branch_test",
-    "unittest/satellitetest:cellular_call_satellite_callback_test",
-    "unittest/satellitetest:cellular_call_satellite_test",
-    "unittest/satellitetest:cellular_call_satellite_zero_branch_test",
   ]
+  if (cellular_call_feature_support_satellite) {
+    deps += [
+      "unittest/satellitetest:cellular_call_satellite_callback_test",
+      "unittest/satellitetest:cellular_call_satellite_test",
+      "unittest/satellitetest:cellular_call_satellite_zero_branch_test",
+    ]
+  }
 }
 
 group("test") {

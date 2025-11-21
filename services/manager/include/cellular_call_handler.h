@@ -29,7 +29,9 @@
 #include "cs_control.h"
 #include "ims_call_types.h"
 #include "ims_control.h"
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
 #include "satellite_control.h"
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 #include "tel_event_handler.h"
 #include "telephony_log_wrapper.h"
 
@@ -81,8 +83,9 @@ public:
     int32_t GetSlotId();
 
     void RegisterImsCallCallbackHandler();
-
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void RegisterSatelliteCallCallbackHandler();
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 
     void SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event);
 
@@ -98,7 +101,9 @@ public:
 
     void DialResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void DialSatelliteResponse(const AppExecFwk::InnerEvent::Pointer &event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 
     void CommonResultEventHandling(const AppExecFwk::InnerEvent::Pointer &event, CellularCallEventInfo &eventInfo);
 
@@ -122,7 +127,9 @@ public:
 
     void ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void SatelliteCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 
     void ReportEccChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
@@ -168,7 +175,9 @@ public:
 
     void HandleCameraCapabilitiesChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void GetSatelliteCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
 
     /**
      * request the ut command index which will be used to report the result
@@ -202,10 +211,14 @@ private:
     int64_t CurrentTimeMillis();
     void GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event);
     void GetImsCallData(const AppExecFwk::InnerEvent::Pointer &event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void GetSatelliteCallData(const AppExecFwk::InnerEvent::Pointer &event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     void GetCsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
     void GetImsCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void GetSatelliteCallsDataRequest(const AppExecFwk::InnerEvent::Pointer &event);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     void RegisterHandler(const AppExecFwk::InnerEvent::Pointer &event);
     void GetMMIResponse(const AppExecFwk::InnerEvent::Pointer &event);
     void GetCallWaitingResponse(const AppExecFwk::InnerEvent::Pointer &event);
@@ -234,7 +247,9 @@ private:
     void InitConfigFuncMap();
     void InitSupplementFuncMap();
     void InitActiveReportFuncMap();
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void InitSatelliteCallFuncMap();
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     void InitAdditionalFuncMap();
 
     void ReportCsCallsData(const CallInfoList &callInfoList);
@@ -243,7 +258,9 @@ private:
     void ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList);
     void ReportNoImsCallsData(const ImsCurrentCallList &imsCallInfoList, const int32_t state,
         const std::shared_ptr<IMSControl> &imsControl);
+#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void ReportSatelliteCallsData(const SatelliteCurrentCallList &callInfoList);
+#endif // CELLULAR_CALL_SUPPORT_SATELLITE
     void HandleOperatorConfigChanged(const AppExecFwk::InnerEvent::Pointer &event);
     void UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::Pointer &event);
     void ProcessRedundantCode(CallInfoList &callInfoList);
