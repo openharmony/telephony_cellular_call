@@ -330,7 +330,17 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        if (IsCellularCallExist() || !isNvCfgFinish_) {
+        std::string hasEsimProfileSettingValue = "";
+        int32_t queryHasEsimProfileRet = CellularCallRdbHelper::GetInstance()->Query(
+            ESIM_SEARCH_SETTING_URI, SETTINGS_HAS_ESIM_PROFILE, hasEsimProfileSettingValue);
+        if (queryHasEsimProfileRet != TELEPHONY_ERR_SUCCESS) {
+            TELEPHONY_LOGE(
+                "UpdateEsimHasProfileValue::Query  has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
+        }
+        bool hasEsimProfile = !(hasEsimProfileSettingValue.empty() ||
+            (hasEsimProfileSettingValue.compare("0") == 0));
+        TELEPHONY_LOGI("hasEsimProfile=%{public}d", hasEsimProfile);
+        if (hasEsimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
             strEnterEventResult_ = GoAsyncCommonEvent();
             DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();

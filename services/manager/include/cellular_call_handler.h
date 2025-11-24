@@ -40,6 +40,11 @@ namespace Telephony {
 
 constexpr const char *KEY_CONST_TELEPHONY_IS_USE_CLOUD_IMS_NV = "const.telephony.is_use_cloud_ims_nv";
 constexpr const char *KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP = "persist.telephony.volte_cap_in_chip";
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+constexpr const char *SETTINGS_HAS_ESIM_PROFILE = "has_esim_profile";
+constexpr const char *ESIM_SEARCH_SETTING_URI =
+    "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true&key=has_esim_profile";
+#endif
 class CellularCallHandler : public TelEventHandler, public EventFwk::CommonEventSubscriber {
 public:
     /**
