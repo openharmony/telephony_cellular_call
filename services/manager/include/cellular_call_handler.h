@@ -299,6 +299,7 @@ private:
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     bool IsCellularCallExist();
     void ProcessFinishCommonEvent();
+    bool HasSimOrEsimProfile(int32_t slotId);
 #endif
 
 private:
