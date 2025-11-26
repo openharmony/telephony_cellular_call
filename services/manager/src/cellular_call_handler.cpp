@@ -375,7 +375,7 @@ bool CellularCallHandler::HasSimOrEsimProfile(int32_t slotId)
 {
     bool hasSimOrEsimProfile = false;
     SimLabel simLabel;
-    CoreManagerInner::GetInstance().GetSimLabel(slotId_, simLabel);
+    CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
     TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
     if (simLabel.simType == SimType::ESIM) {
         std::string hasEsimProfileSettingValue = "";
@@ -388,7 +388,7 @@ bool CellularCallHandler::HasSimOrEsimProfile(int32_t slotId)
         hasSimOrEsimProfile = !(hasEsimProfileSettingValue.empty() ||
             (hasEsimProfileSettingValue.compare("0") == 0));
     } else if (simLabel.simType == SimType::PSIM) {
-        CoreManagerInner::GetInstance().HasSimCard(slotId_, hasSimOrEsimProfile);
+        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimOrEsimProfile);
     }
     return hasSimOrEsimProfile;
 }
