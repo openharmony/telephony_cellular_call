@@ -100,7 +100,7 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
 
 int32_t CellularCallRdbHelper::Query(const std::string &uriString, const std::string &key, std::string &value)
 {
-    std::shared_ptr<DataShare::DataShareHelper> settingHelper = CreateDataShareHelper(SETTINGS_DATASHARE_URI,
+    std::shared_ptr<DataShare::DataShareHelper> settingHelper = CreateDataAbilityHelper(SETTINGS_DATASHARE_URI,
         SETTINGS_DATASHARE_EXT_URI);
     if (settingHelper == nullptr) {
         TELEPHONY_LOGE("settingHelper is null");
