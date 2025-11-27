@@ -51,22 +51,6 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbi
     }
 }
 
-std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataShareHelper()
-{
-    sptr<ISystemAbilityManager> saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (saManager == nullptr) {
-        TELEPHONY_LOGE("GetSystemAbilityManager failed.");
-        return nullptr;
-    }
-    sptr<IRemoteObject> remote = saManager->GetSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    if (remote == nullptr) {
-        TELEPHONY_LOGE("GetSystemAbility Service Failed.");
-        return nullptr;
-    }
-    TELEPHONY_LOGI("systemAbilityId = %{public}d", TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    return DataShare::DataShareHelper::Creator(remote, SETTINGS_DATASHARE_URI, SETTINGS_DATASHARE_EXT_URI);
-}
-
 int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec)
 {
     std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper(GLOBAL_PARAMS_URI);
