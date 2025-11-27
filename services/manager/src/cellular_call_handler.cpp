@@ -330,9 +330,9 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        bool hasSimOrEsimProfile = HasSimOrEsimProfile(slotId_);
-        TELEPHONY_LOGI("hasSimOrEsimProfile=%{public}d", hasSimOrEsimProfile);
-        if (hasSimOrEsimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
+        bool hasSimProfile = HasSimProfile(slotId_);
+        TELEPHONY_LOGI("hasSimProfile=%{public}d", hasSimProfile);
+        if (hasSimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
             strEnterEventResult_ = GoAsyncCommonEvent();
             DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();
@@ -371,9 +371,9 @@ void CellularCallHandler::ProcessFinishCommonEvent()
     }
 }
 
-bool CellularCallHandler::HasSimOrEsimProfile(int32_t slotId)
+bool CellularCallHandler::HasSimProfile(int32_t slotId)
 {
-    bool hasSimOrEsimProfile = false;
+    bool hasSimProfile = false;
     SimLabel simLabel;
     CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
     TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
@@ -385,12 +385,12 @@ bool CellularCallHandler::HasSimOrEsimProfile(int32_t slotId)
             TELEPHONY_LOGE(
                 "UpdateEsimHasProfileValue::Query  has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
         }
-        hasSimOrEsimProfile = !(hasEsimProfileSettingValue.empty() ||
+        hasSimProfile = !(hasEsimProfileSettingValue.empty() ||
             (hasEsimProfileSettingValue.compare("0") == 0));
     } else if (simLabel.simType == SimType::PSIM) {
-        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimOrEsimProfile);
+        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimProfile);
     }
-    return hasSimOrEsimProfile;
+    return hasSimProfile;
 }
 #endif
 

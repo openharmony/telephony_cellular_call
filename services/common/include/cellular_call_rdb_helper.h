@@ -42,8 +42,8 @@ public:
     int32_t Query(const std::string &uriString, const std::string &key, std::string &value);
 
 private:
-    std::shared_ptr<DataShare::DataShareHelper> CreateDataAbilityHelper();
-    std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper();
+    std::shared_ptr<DataShare::DataShareHelper> CreateDataAbilityHelper(const std::string &uri,
+        const std::string &extUri = "");
 
 private:
     Uri globalEccUri_;

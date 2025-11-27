@@ -29,7 +29,8 @@ CellularCallRdbHelper::CellularCallRdbHelper() : globalEccUri_(GLOBAL_ECC_URI_SE
 
 CellularCallRdbHelper::~CellularCallRdbHelper() = default;
 
-std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbilityHelper()
+std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbilityHelper(
+    const std::string &uri, const std::string &extUri)
 {
     TELEPHONY_LOGD("Create data ability helper");
     sptr<ISystemAbilityManager> saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -42,7 +43,12 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbi
         TELEPHONY_LOGE("CellularCallRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
-    return DataShare::DataShareHelper::Creator(remoteObj, GLOBAL_PARAMS_URI);
+
+    if (!extUri.empty()) {
+        return DataShare::DataShareHelper::Creator(remoteObj, uri, extUri);
+    } else {
+        return DataShare::DataShareHelper::Creator(remoteObj, uri);
+    }
 }
 
 std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataShareHelper()
@@ -63,7 +69,7 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataSha
 
 int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec)
 {
-    std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper();
+    std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper(GLOBAL_PARAMS_URI);
     if (dataShareHelper == nullptr) {
         TELEPHONY_LOGE("dataShareHelper is null");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -110,7 +116,8 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
 
 int32_t CellularCallRdbHelper::Query(const std::string &uriString, const std::string &key, std::string &value)
 {
-    std::shared_ptr<DataShare::DataShareHelper> settingHelper = CreateDataShareHelper();
+    std::shared_ptr<DataShare::DataShareHelper> settingHelper = CreateDataShareHelper(SETTINGS_DATASHARE_URI,
+        SETTINGS_DATASHARE_EXT_URI);
     if (settingHelper == nullptr) {
         TELEPHONY_LOGE("settingHelper is null");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -148,7 +155,7 @@ void CellularCallRdbHelper::RegisterListenState(sptr<AAFwk::IDataAbilityObserver
     if (settingsCallback == nullptr) {
         return;
     }
-    auto dataShareHelper = CreateDataAbilityHelper();
+    auto dataShareHelper = CreateDataAbilityHelper(GLOBAL_PARAMS_URI);
     if (dataShareHelper == nullptr) {
         TELEPHONY_LOGE("dataShareHelper is nullptr");
         return;
