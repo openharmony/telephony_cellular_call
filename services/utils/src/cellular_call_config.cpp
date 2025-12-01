@@ -377,20 +377,30 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 bool CellularCallConfig::ProcessHplmnEccList(int32_t slotId, std::string hplmn, bool &isHplmnEccList,
     std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
 {
-    if (hplmnEccList_[slotId].plmn == hplmn) {
-        SetEmergencyCallList(slotId, hplmnEccList_[slotId].eccInfoList);
-        return true;
-    }
-    std::vector<EccNum> eccVec;
     OperatorConfig operatorConfig;
     CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
     callListWithCard = operatorConfig.stringArrayValue[KEY_EMERGENCY_CALL_STRING_ARRAY];
     if (callListWithCard.empty()) {
-        DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
-        GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
+        std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+        if (hplmnEccList_[slotId].plmn == hplmn) {
+            SetEmergencyCallList(slotId, hplmnEccList_[slotId].eccInfoList);
+            return true;
+        }
+        lock.unlock();
+        std::vector<EccNum> eccVec;
+        if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec) == TELEPHONY_SUCCESS) {
+            GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
+            isHplmnEccList = true;
+            return false;
+        }
+        return true;
     }
-    isHplmnEccList = true;
-    return false;
+    std::vector<EmergencyCall> eccInfoList;
+    for (auto it : callListWithCard) {
+        eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD));
+    }
+    SetEmergencyCallList(slotId, eccInfoList);
+    return true;
 }
 
 bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
@@ -406,11 +416,16 @@ bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string h
         curPlmn_[slotId] = rplmn;
     }
     std::vector<EccNum> eccVec;
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     if (currentPlmnEccList_[slotId].plmn == curPlmn_[slotId]) {
         SetEmergencyCallList(slotId, currentPlmnEccList_[slotId].eccInfoList);
         return true;
     }
-    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec);
+    lock.unlock();
+    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec) !=
+        TELEPHONY_SUCCESS) {
+        return true;
+    }
     GetEccListFromResult(eccVec, callListWithCard, callListNoCard);
     return false;
 }
