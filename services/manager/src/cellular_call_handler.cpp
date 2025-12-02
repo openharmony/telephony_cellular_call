@@ -14,7 +14,6 @@
  */
 
 #include "cellular_call_handler.h"
-
 #include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
