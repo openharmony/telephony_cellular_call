@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_handler.h"
+
 #include "cellular_call_config.h"
 #include "cellular_call_hisysevent.h"
 #include "cellular_call_service.h"
@@ -1984,7 +1985,6 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("serviceInstance get failed!");
         return;
     }
-    
     TELEPHONY_LOGI("[slot%{public}d] Radio changed with state: %{public}d", slotId_, object->data);
     if (object->data == CORE_SERVICE_POWER_ON) {
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -2084,10 +2084,9 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
     auto imsCap = event->GetSharedObject<ImsCapFromChip>();
     if (imsCap == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] imsCap is null", slotId_);
-        CoreManagerInner::GetInstance().SetMatchSimStateTrcker(IMS_CLOUD_FAIL, slotId_);
+        CoreManagerInner::GetInstance().SetMatchSimStateTracker(IMS_CLOUD_FAIL, slotId_);
         return;
     }
-
     std::string volteCapKey = KEY_PERSIST_TELEPHONY_VOLTE_CAP_IN_CHIP + std::string("_slot") + std::to_string(slotId_);
     int32_t volteCapInProp = GetIntParameter(volteCapKey.c_str(), -1);
     TELEPHONY_LOGI("[slot%{public}d] volteCapInProp = %{public}d, volteCap = %{public}d",
