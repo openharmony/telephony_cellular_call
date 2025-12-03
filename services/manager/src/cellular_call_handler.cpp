@@ -57,7 +57,6 @@ constexpr int32_t STATE_NV_REFRESH_ALREADY_FINISHED = 4;
 std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallHandler::strEnterEventResult_ = nullptr;
 bool CellularCallHandler::isNvCfgFinish_ = false;
 #endif
-constexpr int8_t IMS_CLOUD_FAIL = 23;
 
 CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
     : TelEventHandler("CellularCallHandler"), CommonEventSubscriber(subscriberInfo)
@@ -2084,7 +2083,7 @@ void CellularCallHandler::GetImsCapResponse(const AppExecFwk::InnerEvent::Pointe
 {
     auto imsCap = event->GetSharedObject<ImsCapFromChip>();
     if (imsCap == nullptr) {
-        CoreManagerInner::GetInstance().SetMatchSimStateTracker(IMS_CLOUD_FAIL, slotId_);
+        TELEPHONY_LOGE("[slot%{public}d] imsCap is null", slotId_);
         return;
     }
 
