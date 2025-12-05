@@ -41,9 +41,12 @@
 #include "emergency_utils.h"
 #include "satellite_call_client.h"
 #include "telephony_ext_wrapper.h"
+#include "mock_sim_manager.h"
+#include "gmock/gmock.h"
 
 namespace OHOS {
 namespace Telephony {
+using namespace testing;
 using namespace testing::ext;
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -77,6 +80,7 @@ public:
     void InitImsCallInfoList(ImsCurrentCallList &callInfoList, int32_t num);
     void InitCsCallInfoList(CallInfoList &callInfoList, int32_t num);
     void MakeCallInfoParcelData(bool isError, MessageParcel &data);
+    MockSimManager *mockSimManager = new MockSimManager();
 };
 
 void ZeroBranch1Test::SetUpTestCase()
@@ -88,7 +92,11 @@ void ZeroBranch1Test::SetUpTestCase()
 
 void ZeroBranch1Test::TearDownTestCase() {}
 
-void ZeroBranch1Test::SetUp() {}
+void ZeroBranch1Test::SetUp()
+{
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
+}
 
 void ZeroBranch1Test::TearDown()
 {
@@ -851,6 +859,10 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTest | Level3)
 {
+    SimLabel expectedSimLabel;
+    expectedSimLabel.simType = SimType::ESIM;
+    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
+
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
