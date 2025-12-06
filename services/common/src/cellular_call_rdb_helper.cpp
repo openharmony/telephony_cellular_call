@@ -22,12 +22,15 @@ namespace OHOS {
 namespace Telephony {
 static constexpr const char *GLOBAL_ECC_URI_SELECTION =
     "datashare:///com.ohos.globalparamsability/globalparams/ecc_data";
-
+static constexpr const char *SETTINGS_DATASHARE_URI =
+    "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
+static constexpr const char *SETTINGS_DATASHARE_EXT_URI = "datashare:///com.ohos.settingsdata.DataAbility";
 CellularCallRdbHelper::CellularCallRdbHelper() : globalEccUri_(GLOBAL_ECC_URI_SELECTION) {}
 
 CellularCallRdbHelper::~CellularCallRdbHelper() = default;
 
-std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbilityHelper()
+std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbilityHelper(
+    const std::string &uri, const std::string &extUri)
 {
     TELEPHONY_LOGD("Create data ability helper");
     sptr<ISystemAbilityManager> saManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -40,12 +43,17 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbi
         TELEPHONY_LOGE("CellularCallRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
-    return DataShare::DataShareHelper::Creator(remoteObj, GLOBAL_PARAMS_URI);
+
+    if (!extUri.empty()) {
+        return DataShare::DataShareHelper::Creator(remoteObj, uri, extUri);
+    } else {
+        return DataShare::DataShareHelper::Creator(remoteObj, uri);
+    }
 }
 
 int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec)
 {
-    std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper();
+    std::shared_ptr<DataShare::DataShareHelper> dataShareHelper = CreateDataAbilityHelper(GLOBAL_PARAMS_URI);
     if (dataShareHelper == nullptr) {
         TELEPHONY_LOGE("dataShareHelper is null");
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
@@ -90,12 +98,48 @@ int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vec
     return TELEPHONY_SUCCESS;
 }
 
+int32_t CellularCallRdbHelper::Query(const std::string &uriString, const std::string &key, std::string &value)
+{
+    std::shared_ptr<DataShare::DataShareHelper> settingHelper = CreateDataAbilityHelper(SETTINGS_DATASHARE_URI,
+        SETTINGS_DATASHARE_EXT_URI);
+    if (settingHelper == nullptr) {
+        TELEPHONY_LOGE("settingHelper is null");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+ 
+    std::vector<std::string> columns;
+    DataShare::DataSharePredicates predicates;
+    predicates.EqualTo("KEYWORD", key);
+    Uri uri(uriString);
+    auto result = settingHelper->Query(uri, predicates, columns);
+    if (result == nullptr) {
+        TELEPHONY_LOGE("CellularCallRdbHelper: query error, result is null");
+        settingHelper->Release();
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+ 
+    if (result->GoToFirstRow() != DataShare::E_OK) {
+        TELEPHONY_LOGE("CellularCallRdbHelper: query error, go to first row error");
+        result->Close();
+        settingHelper->Release();
+        return TELEPHONY_ERR_DATABASE_READ_FAIL;
+    }
+ 
+    int columnIndex = 0;
+    result->GetColumnIndex("VALUE", columnIndex);
+    result->GetString(columnIndex, value);
+    result->Close();
+    settingHelper->Release();
+    TELEPHONY_LOGI("CellularCallRdbHelper: query success. value:%{public}s.", value.c_str());
+    return TELEPHONY_SUCCESS;
+}
+
 void CellularCallRdbHelper::RegisterListenState(sptr<AAFwk::IDataAbilityObserver> &settingsCallback)
 {
     if (settingsCallback == nullptr) {
         return;
     }
-    auto dataShareHelper = CreateDataAbilityHelper();
+    auto dataShareHelper = CreateDataAbilityHelper(GLOBAL_PARAMS_URI);
     if (dataShareHelper == nullptr) {
         TELEPHONY_LOGE("dataShareHelper is nullptr");
         return;

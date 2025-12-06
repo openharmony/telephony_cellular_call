@@ -331,7 +331,9 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        if (IsCellularCallExist() || !isNvCfgFinish_) {
+        bool hasSimProfile = HasSimProfile(slotId_);
+        TELEPHONY_LOGI("hasSimProfile=%{public}d", hasSimProfile);
+        if (hasSimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
             strEnterEventResult_ = GoAsyncCommonEvent();
             DelayedSingleton<CellularCallService>::GetInstance()->HangUpAllConnection();
@@ -368,6 +370,28 @@ void CellularCallHandler::ProcessFinishCommonEvent()
         TELEPHONY_LOGI("send FinishCommonEvent");
         strEnterEventResult_ = nullptr;
     }
+}
+
+bool CellularCallHandler::HasSimProfile(int32_t slotId)
+{
+    bool hasSimProfile = false;
+    SimLabel simLabel;
+    CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
+    TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
+    if (simLabel.simType == SimType::ESIM) {
+        std::string hasEsimProfileSettingValue = "";
+        int32_t queryHasEsimProfileRet = CellularCallRdbHelper::GetInstance()->Query(
+            ESIM_SEARCH_SETTING_URI, SETTINGS_HAS_ESIM_PROFILE, hasEsimProfileSettingValue);
+        if (queryHasEsimProfileRet != TELEPHONY_ERR_SUCCESS) {
+            TELEPHONY_LOGE(
+                "UpdateEsimHasProfileValue::Query  has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
+        }
+        hasSimProfile = !(hasEsimProfileSettingValue.empty() ||
+            (hasEsimProfileSettingValue.compare("0") == 0));
+    } else if (simLabel.simType == SimType::PSIM) {
+        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimProfile);
+    }
+    return hasSimProfile;
 }
 #endif
 
