@@ -26,7 +26,8 @@
 namespace OHOS {
 namespace Telephony {
 using ImsConnectionMap = std::map<int32_t, CellularCallConnectionIMS>;
-class IMSControl : public ControlBase {
+class IMSControl : public ControlBase,
+    public std::enable_shared_from_this<IMSControl> {
 public:
     /**
      * constructor
@@ -207,6 +208,7 @@ public:
     CellularCallInfo GetPendingEmcCallInfo();
     bool isPendingEmcFlag();
     void setPendingEmcFlag(bool flag);
+    void SkipWaitForRadioOn();
 #endif
 private:
     /**
@@ -282,6 +284,7 @@ private:
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     CellularCallInfo pendingEmcDialCallInfo_;
     bool isPendingEmc_ = false;
+    ffrt::task_handle waitForRadioOn_ = nullptr;
 #endif
 };
 } // namespace Telephony
