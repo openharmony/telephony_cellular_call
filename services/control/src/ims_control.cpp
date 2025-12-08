@@ -818,7 +818,7 @@ void IMSControl::setPendingEmcFlag(bool flag)
 
 void IMSControl::SkipWaitForRadioOn()
 {
-    if(waitForRadioOn_ != nullptr) {
+    if (waitForRadioOn_ != nullptr) {
         ffrt::skip(waitForRadioOn_);
         TELEPHONY_LOGI("skip wait for radio on");
         waitForRadioOn_ = nullptr;
