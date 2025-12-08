@@ -1947,7 +1947,7 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         TELEPHONY_LOGE("[slot%{public}d] object is null", slotId_);
         return;
     }
-    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();    
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     TELEPHONY_LOGI("[slot%{public}d] Radio changed with state: %{public}d", slotId_, object->data);
     if (object->data == CORE_SERVICE_POWER_ON) {
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
