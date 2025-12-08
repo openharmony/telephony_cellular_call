@@ -331,7 +331,8 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        bool hasSimProfile = HasSimProfile(slotId_);
+        ModuleServiceUtils moduleServiceUtils;
+        bool hasSimProfile = moduleServiceUtils.HasSimProfile(slotId_);
         TELEPHONY_LOGI("hasSimProfile=%{public}d", hasSimProfile);
         if (hasSimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
@@ -371,28 +372,6 @@ void CellularCallHandler::ProcessFinishCommonEvent()
         strEnterEventResult_ = nullptr;
     }
 }
-
-bool CellularCallHandler::HasSimProfile(int32_t slotId)
-{
-    bool hasSimProfile = false;
-    SimLabel simLabel;
-    CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
-    TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
-    if (simLabel.simType == SimType::ESIM) {
-        std::string hasEsimProfileSettingValue = "";
-        int32_t queryHasEsimProfileRet = CellularCallRdbHelper::GetInstance()->Query(
-            ESIM_SEARCH_SETTING_URI, SETTINGS_HAS_ESIM_PROFILE, hasEsimProfileSettingValue);
-        if (queryHasEsimProfileRet != TELEPHONY_ERR_SUCCESS) {
-            TELEPHONY_LOGE(
-                "UpdateEsimHasProfileValue::Query  has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
-        }
-        hasSimProfile = !(hasEsimProfileSettingValue.empty() ||
-            (hasEsimProfileSettingValue.compare("0") == 0));
-    } else if (simLabel.simType == SimType::PSIM) {
-        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimProfile);
-    }
-    return hasSimProfile;
-}
 #endif
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -422,10 +401,6 @@ void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     CallInfo callInfo;
     std::vector<CallInfo>::const_iterator it = callInfoList.calls.begin();
     for (; it != callInfoList.calls.end(); ++it) {
@@ -487,9 +462,6 @@ void CellularCallHandler::ReportNoCsCallsData(const CallInfoList &callInfoList, 
 void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        return;
-    }
     ImsCurrentCall imsCallInfo;
     std::vector<ImsCurrentCall>::const_iterator it = imsCallInfoList.calls.begin();
     for (; it != imsCallInfoList.calls.end(); ++it) {
@@ -698,10 +670,6 @@ void CellularCallHandler::GetSatelliteCallsDataResponse(const AppExecFwk::InnerE
 void CellularCallHandler::ReportSatelliteCallsData(const SatelliteCurrentCallList &callInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     auto satelliteControl = serviceInstance->GetSatelliteControl(slotId_);
     SatelliteCurrentCall callInfo;
     std::vector<SatelliteCurrentCall>::const_iterator it = callInfoList.calls.begin();
@@ -829,10 +797,6 @@ void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer 
         return;
     }
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     int64_t callId = postDialData->callId;
     if (postDialData->isIms) {
         auto imsControl = serviceInstance->GetImsControl(slotId_);
@@ -854,10 +818,6 @@ void CellularCallHandler::ExecutePostDial(const AppExecFwk::InnerEvent::Pointer 
 void CellularCallHandler::SwapCallResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
     auto serviceInstence = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstence == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
-        return;
-    }
     auto callType = event->GetParam();
     std::shared_ptr<IMSControl> imsControl = nullptr;
     if (callType == static_cast<int32_t>(CallType::TYPE_IMS)) {
@@ -1433,10 +1393,6 @@ void CellularCallHandler::SrvccStateCompleted()
     }
     isDuringRSRVCC_ = false;
     auto serviceInstance_ = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance_ == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
-        return;
-    }
     auto csControl = serviceInstance_->GetCsControl(slotId_);
     if (csControl != nullptr) {
         TELEPHONY_LOGI("[slot%{public}d] CsControl ReleaseAllConnection", slotId_);
@@ -1848,10 +1804,6 @@ void CellularCallHandler::UpdateRsrvccStateReport(const AppExecFwk::InnerEvent::
 {
     isDuringRSRVCC_ = true;
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     serviceInstance->SetCsControl(slotId_, nullptr);
 }
 
@@ -1952,10 +1904,6 @@ void CellularCallHandler::CloseUnFinishedUssdResponse(const AppExecFwk::InnerEve
 void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Pointer &event)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     auto csControl = serviceInstance->GetCsControl(slotId_);
     if (csControl == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] cs_control is null", slotId_);
@@ -1988,10 +1936,6 @@ void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Poi
 void CellularCallHandler::StartCallManagerService()
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     serviceInstance->StartCallManagerService();
 }
 #endif
@@ -2004,11 +1948,6 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         return;
     }
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("serviceInstance get failed!");
-        return;
-    }
-    
     TELEPHONY_LOGI("[slot%{public}d] Radio changed with state: %{public}d", slotId_, object->data);
     if (object->data == CORE_SERVICE_POWER_ON) {
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
@@ -2155,10 +2094,6 @@ void CellularCallHandler::GetImsSwitchStatusRequest()
 void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reason, const std::string &message)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("serviceInstance get failed!");
-        return;
-    }
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     auto csControl = serviceInstance->GetCsControl(slotId_);
     if (imsControl != nullptr) {
