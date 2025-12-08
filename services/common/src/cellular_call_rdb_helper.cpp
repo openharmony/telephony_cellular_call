@@ -43,12 +43,7 @@ std::shared_ptr<DataShare::DataShareHelper> CellularCallRdbHelper::CreateDataAbi
         TELEPHONY_LOGE("CellularCallRdbHelper GetSystemAbility Service Failed.");
         return nullptr;
     }
-
-    if (!extUri.empty()) {
-        return DataShare::DataShareHelper::Creator(remoteObj, uri, extUri);
-    } else {
-        return DataShare::DataShareHelper::Creator(remoteObj, uri);
-    }
+    return DataShare::DataShareHelper::Creator(remoteObj, uri, extUri);
 }
 
 int32_t CellularCallRdbHelper::QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec)
