@@ -24,6 +24,11 @@
 
 namespace OHOS {
 namespace Telephony {
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+constexpr const char *SETTINGS_HAS_ESIM_PROFILE = "has_esim_profile";
+constexpr const char *ESIM_SEARCH_SETTING_URI =
+    "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true&key=has_esim_profile";
+#endif
 class ModuleServiceUtils : public std::enable_shared_from_this<ModuleServiceUtils> {
 public:
     /**
@@ -101,6 +106,10 @@ public:
     RegServiceState GetCsRegState(int32_t slotId);
 
     RegServiceState GetPsRegState(int32_t slotId);
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+    bool HasSimProfile(int32_t slotId);
+#endif
 };
 } // namespace Telephony
 } // namespace OHOS

@@ -22,6 +22,7 @@
 #include "string_ex.h"
 #include "telephony_log_wrapper.h"
 #include "telephony_types.h"
+#include "cellular_call_rdb_helper.h"
 
 namespace OHOS {
 namespace Telephony {
@@ -134,5 +135,29 @@ RegServiceState ModuleServiceUtils::GetPsRegState(int32_t slotId)
 {
     return static_cast<RegServiceState>(CoreManagerInner::GetInstance().GetPsRegState(slotId));
 }
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+bool ModuleServiceUtils::HasSimProfile(int32_t slotId)
+{
+    bool hasSimProfile = false;
+    SimLabel simLabel;
+    CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
+    TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
+    if (simLabel.simType == SimType::ESIM) {
+        std::string hasEsimProfileSettingValue = "";
+        int32_t queryHasEsimProfileRet = CellularCallRdbHelper::GetInstance()->Query(
+            ESIM_SEARCH_SETTING_URI, SETTINGS_HAS_ESIM_PROFILE, hasEsimProfileSettingValue);
+        if (queryHasEsimProfileRet != TELEPHONY_ERR_SUCCESS) {
+            TELEPHONY_LOGE(
+                "UpdateEsimHasProfileValue::Query has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
+        }
+        hasSimProfile = !(hasEsimProfileSettingValue.empty() ||
+            (hasEsimProfileSettingValue.compare("0") == 0));
+    } else if (simLabel.simType == SimType::PSIM) {
+        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimProfile);
+    }
+    return hasSimProfile;
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

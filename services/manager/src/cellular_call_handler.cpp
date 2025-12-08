@@ -331,7 +331,8 @@ void CellularCallHandler::OnReceiveEvent(const EventFwk::CommonEventData &data)
     }
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (action == ENTER_STR_TELEPHONY_NOTIFY) {
-        bool hasSimProfile = HasSimProfile(slotId_);
+        ModuleServiceUtils moduleServiceUtils;
+        bool hasSimProfile = moduleServiceUtils.HasSimProfile(slotId_);
         TELEPHONY_LOGI("hasSimProfile=%{public}d", hasSimProfile);
         if (hasSimProfile && (IsCellularCallExist() || !isNvCfgFinish_)) {
             TELEPHONY_LOGI("OnReceiveEvent ENTER_STR_TELEPHONY_NOTIFY, isNvCfgFinish_=%{public}d", isNvCfgFinish_);
@@ -371,28 +372,6 @@ void CellularCallHandler::ProcessFinishCommonEvent()
         strEnterEventResult_ = nullptr;
     }
 }
-
-bool CellularCallHandler::HasSimProfile(int32_t slotId)
-{
-    bool hasSimProfile = false;
-    SimLabel simLabel;
-    CoreManagerInner::GetInstance().GetSimLabel(slotId, simLabel);
-    TELEPHONY_LOGI("simType=%{public}d", simLabel.simType);
-    if (simLabel.simType == SimType::ESIM) {
-        std::string hasEsimProfileSettingValue = "";
-        int32_t queryHasEsimProfileRet = CellularCallRdbHelper::GetInstance()->Query(
-            ESIM_SEARCH_SETTING_URI, SETTINGS_HAS_ESIM_PROFILE, hasEsimProfileSettingValue);
-        if (queryHasEsimProfileRet != TELEPHONY_ERR_SUCCESS) {
-            TELEPHONY_LOGE(
-                "UpdateEsimHasProfileValue::Query  has_esim_profile failed, ret = %{public}d", queryHasEsimProfileRet);
-        }
-        hasSimProfile = !(hasEsimProfileSettingValue.empty() ||
-            (hasEsimProfileSettingValue.compare("0") == 0));
-    } else if (simLabel.simType == SimType::PSIM) {
-        CoreManagerInner::GetInstance().HasSimCard(slotId, hasSimProfile);
-    }
-    return hasSimProfile;
-}
 #endif
 
 void CellularCallHandler::GetCsCallData(const AppExecFwk::InnerEvent::Pointer &event)
@@ -422,10 +401,6 @@ void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
-    if (serviceInstance == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] serviceInstance is null", slotId_);
-        return;
-    }
     CallInfo callInfo;
     std::vector<CallInfo>::const_iterator it = callInfoList.calls.begin();
     for (; it != callInfoList.calls.end(); ++it) {
