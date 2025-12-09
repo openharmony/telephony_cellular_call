@@ -47,6 +47,11 @@ const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
+const int32_t IMS_CAUSE_BASE = 18432;
+constexpr const char *DISCONNECT_CODE = "persist.radio.disconnectCode";
+constexpr const char *TEST_CLEARCODE_ENABLE = "persist.enable.test.clearcode";
+constexpr const char *TEST_CLEARCODE = "persist.radio.test.clearcode";
+constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
 const std::string VONR_STATE = "persist.telephony.vonrswitch";
@@ -68,6 +73,7 @@ std::map<int32_t, std::vector<std::string>> CellularCallConfig::imsCallDisconnec
 std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
+std::map<int32_t, bool> CellularCallConfig::imsSipCauseEnable_;
 std::shared_mutex CellularCallConfig::mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
 std::shared_mutex CellularCallConfig::simStateLock_;
@@ -110,6 +116,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
             cellularState));
         CellularCallConfig::videoCallWaiting_.insert(std::pair<int, bool>(i, false));
+        CellularCallConfig::imsSipCauseEnable_.insert(std::pair<int, bool>(i, false));
     }
 }
 
@@ -487,6 +494,7 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
     ParseBoolOperatorConfigs(slotId, imsPreferForEmergency_, poc, KEY_IMS_PREFER_FOR_EMERGENCY_BOOL);
     ParseBoolOperatorConfigs(slotId, forceVolteSwitchOn_, poc, KEY_FORCE_VOLTE_SWITCH_ON_BOOL);
     ParseBoolOperatorConfigs(slotId, videoCallWaiting_, poc, KEY_VIDEO_CALL_WAITING_ON_BOOL);
+    ParseBoolOperatorConfigs(slotId, imsSipCauseEnable_, poc, KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL);
 
     if (poc.intArrayValue.count(KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY) > 0) {
         nrModeSupportedList_[slotId] = poc.intArrayValue[KEY_NR_MODE_SUPPORTED_LIST_INT_ARRAY];
@@ -1222,6 +1230,31 @@ void CellularCallConfig::HandleEccListChange()
     lock.unlock();
     UpdateEccNumberList(0);
     UpdateEccNumberList(1);
+}
+
+void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
+{
+    if (!IsValidSlotId(slotId) || cause <= 0) {
+        return;
+    }
+    int32_t code = 0;
+    if (cause < IMS_CAUSE_BASE) {
+        code = cause;
+    } else {
+        if (!imsSipCauseEnable_[slotId]) {
+            return;
+        }
+        code = cause - IMS_CAUSE_BASE;
+    }
+    if (GetIntParameter(TEST_CLEARCODE_ENABLE, 0) > 0) {
+        code = GetIntParameter(TEST_CLEARCODE, 0);
+    }
+    if (code == 0) {
+        return;
+    }
+    TELEPHONY_LOGI("SetClearCode slotId:%{public}d, code:%{public}d", slotId, code);
+    std::string codeStr = std::to_string(code);
+    SetParameter(DISCONNECT_CODE, codeStr.c_str());
 }
 } // namespace Telephony
 } // namespace OHOS

@@ -478,6 +478,7 @@ public:
      */
     bool IsVolteSupport(int32_t slotId);
     void HandleEccListChange();
+    void SetClearCode(int32_t slotId, int32_t cause);
 
 private:
     static void InitDefaultOperatorConfig();
@@ -550,6 +551,7 @@ private:
     static std::map<int32_t, bool> videoCallWaiting_;
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
+    static std::map<int32_t, bool> imsSipCauseEnable_;
     static bool isOperatorConfigInit_;
     struct cellularNetworkState {
         bool isInService_ = false;
