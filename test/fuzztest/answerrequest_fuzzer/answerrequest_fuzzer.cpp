@@ -33,7 +33,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
         return;
     }
 
-    auto cellularCallConnectionIMS = std::shared_ptr<CellularCallConnectionIMS>();
+    auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     std::string phoneNum(reinterpret_cast<const char *>(data), size);
     std::string msg(reinterpret_cast<const char *>(data), size);
     int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);

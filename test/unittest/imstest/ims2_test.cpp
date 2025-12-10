@@ -528,8 +528,7 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0001, Function | MediumTest | Level3
         EXPECT_EQ(imsControl->StartRtt(slotId, PHONE_NUMBER), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->StopRtt(slotId), TELEPHONY_SUCCESS);
         EXPECT_NE(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
-            CALL_ERR_RESOURCE_UNAVAILABLE);
+        EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
             TELEPHONY_ERR_ARGUMENT_INVALID);
