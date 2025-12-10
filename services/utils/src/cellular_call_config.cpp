@@ -49,8 +49,6 @@ const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
 constexpr const char *DISCONNECT_CODE = "persist.radio.disconnectCode";
-constexpr const char *TEST_CLEARCODE_ENABLE = "persist.enable.test.clearcode";
-constexpr const char *TEST_CLEARCODE = "persist.radio.test.clearcode";
 constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
@@ -1237,17 +1235,12 @@ void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
     if (!IsValidSlotId(slotId) || cause <= 0) {
         return;
     }
-    int32_t code = 0;
-    if (cause < IMS_CAUSE_BASE) {
-        code = cause;
-    } else {
-        if (!imsSipCauseEnable_[slotId]) {
-            return;
-        }
-        code = cause - IMS_CAUSE_BASE;
+    if (cause >= IMS_CAUSE_BASE && !imsSipCauseEnable_[slotId]) {
+        return;
     }
-    if (GetIntParameter(TEST_CLEARCODE_ENABLE, 0) > 0) {
-        code = GetIntParameter(TEST_CLEARCODE, 0);
+    int32_t code = cause;
+    if (cause >= IMS_CAUSE_BASE) {
+        code = cause - IMS_CAUSE_BASE;
     }
     if (code == 0) {
         return;

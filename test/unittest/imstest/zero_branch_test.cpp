@@ -245,17 +245,13 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.ResetImsSwitch(SIM1_SLOTID);
     config.HandleSimAccountLoaded(SIM1_SLOTID);
     ASSERT_FALSE(config.utProvisioningSupported_[SIM1_SLOTID]);
-    config.SetClearCode(INVALID_SLOTID, 0);
+    config.SetClearCode(SIM1_SLOTID, 0);
     config.SetClearCode(SIM1_SLOTID, 1);
-    config.SetClearCode(SIM1_SLOTID, 18918);
+    config.SetClearCode(SIM1_SLOTID, 18432);
     config.imsSipCauseEnable_[SIM1_SLOTID] = true;
-    constexpr const char *TEST_CLEARCODE_ENABLE = "persist.enable.test.clearcode";
-    SetParameter(TEST_CLEARCODE_ENABLE, "1");
+    config.SetClearCode(SIM1_SLOTID, 18432);
     config.SetClearCode(SIM1_SLOTID, 18918);
-    SetParameter(TEST_CLEARCODE_ENABLE, "0");
-    config.SetClearCode(SIM1_SLOTID, 18918);
-    constexpr const char *DISCONNECT_CODE = "persist.radio.disconnectCode";
-    int32_t code = GetIntParameter(DISCONNECT_CODE, 0);
+    int32_t code = GetIntParameter("persist.radio.disconnectCode", 0);
     ASSERT_EQ(code, 486);
 }
 
