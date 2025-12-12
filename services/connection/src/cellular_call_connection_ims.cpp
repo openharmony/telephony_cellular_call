@@ -50,6 +50,7 @@ int32_t CellularCallConnectionIMS::DialRequest(int32_t slotId, const ImsDialInfo
     phoneNumber_.clear();
     callInfo.videoState = dialRequest.videoState;
     callInfo.slotId = slotId;
+    callInfo.isRTT = dialRequest.isRTT;
     if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
         TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
         CellularCallHiSysEvent::WriteDialCallFaultEvent(slotId, INVALID_PARAMETER, dialRequest.videoState,
@@ -91,7 +92,7 @@ int32_t CellularCallConnectionIMS::HangUpRequest(int32_t slotId, const std::stri
 }
 
 int32_t CellularCallConnectionIMS::AnswerRequest(
-    int32_t slotId, const std::string &phoneNum, int32_t videoState, int32_t index)
+    int32_t slotId, const std::string &phoneNum, int32_t videoState, int32_t index, bool isRTT)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -110,6 +111,7 @@ int32_t CellularCallConnectionIMS::AnswerRequest(
         answerCallInfo.videoState = videoState;
         answerCallInfo.slotId = slotId;
         answerCallInfo.index = index;
+        answerCallInfo.isRTT = isRTT;
         if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
@@ -153,7 +155,7 @@ int32_t CellularCallConnectionIMS::RejectRequest(int32_t slotId, const std::stri
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId, bool isRTT)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -162,13 +164,13 @@ int32_t CellularCallConnectionIMS::HoldCallRequest(int32_t slotId)
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
         int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
-        return DelayedSingleton<ImsCallClient>::GetInstance()->HoldCall(slotId, callType);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->HoldCall(slotId, callType, isRTT);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId, bool isRTT)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -177,13 +179,13 @@ int32_t CellularCallConnectionIMS::UnHoldCallRequest(int32_t slotId)
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
         int32_t callType = static_cast<int32_t>(GetCallReportInfo().callMode);
-        return DelayedSingleton<ImsCallClient>::GetInstance()->UnHoldCall(slotId, callType);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->UnHoldCall(slotId, callType, isRTT);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId, int32_t videoState)
+int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId, int32_t videoState, bool isRTT)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -191,7 +193,8 @@ int32_t CellularCallConnectionIMS::SwitchCallRequest(int32_t slotId, int32_t vid
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        int32_t ret = DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(slotId, videoState);
+        int32_t ret = DelayedSingleton<ImsCallClient>::GetInstance()->SwitchCall(
+            slotId, videoState, isRTT);
         if (ret == TELEPHONY_SUCCESS) {
             UpdatePendingHoldFlag(true);
         }
@@ -316,7 +319,8 @@ int32_t CellularCallConnectionIMS::StopDtmfRequest(int32_t slotId, int32_t index
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::StartRttRequest(int32_t slotId, const std::string &msg)
+#ifdef SUPPORT_RTT_CALL
+int32_t CellularCallConnectionIMS::StartRttRequest(int32_t slotId, int32_t callId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -324,13 +328,13 @@ int32_t CellularCallConnectionIMS::StartRttRequest(int32_t slotId, const std::st
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->StartRtt(slotId, msg);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StartRtt(slotId, callId);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
 }
 
-int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId)
+int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId, int32_t callId)
 {
     if (moduleUtils_.NeedCallImsService()) {
         TELEPHONY_LOGI("call ims service");
@@ -338,11 +342,27 @@ int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId)
             TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
             return CALL_ERR_RESOURCE_UNAVAILABLE;
         }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->StopRtt(slotId);
+        return DelayedSingleton<ImsCallClient>::GetInstance()->StopRtt(slotId, callId);
     }
     TELEPHONY_LOGE("ims vendor service does not exist.");
     return TELEPHONY_ERROR;
 }
+
+int32_t CellularCallConnectionIMS::UpdateImsRttCallModeRequest(
+    int32_t slotId, int32_t callId, ImsRTTCallMode mode)
+{
+    if (moduleUtils_.NeedCallImsService()) {
+        TELEPHONY_LOGI("call ims service");
+        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
+            TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
+            return CALL_ERR_RESOURCE_UNAVAILABLE;
+        }
+        return DelayedSingleton<ImsCallClient>::GetInstance()->UpdateImsRttCallMode(slotId, callId, mode);
+    }
+    TELEPHONY_LOGE("ims vendor service does not exist.");
+    return TELEPHONY_ERROR;
+}
+#endif
 
 int32_t CellularCallConnectionIMS::GetCallFailReasonRequest(int32_t slotId) const
 {

@@ -232,11 +232,13 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0013, Function | Mediu
  */
 HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0014, Function | MediumTest | Level1)
 {
+#ifdef SUPPORT_RTT_CALL
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     int32_t slotId = 0;
-    std::string msg;
-    int32_t ret = cellularCallConnectionIMS->StartRttRequest(slotId, msg);
+    int32_t callId = 0;
+    int32_t ret = cellularCallConnectionIMS->StartRttRequest(slotId, callId);
     EXPECT_EQ(ret, TELEPHONY_ERROR);
+#endif
 }
 
 /**
@@ -246,10 +248,13 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0014, Function | Mediu
  */
 HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0015, Function | MediumTest | Level1)
 {
+#ifdef SUPPORT_RTT_CALL
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     int32_t slotId = 0;
-    int32_t ret = cellularCallConnectionIMS->StopRttRequest(slotId);
+    int32_t callId = 0;
+    int32_t ret = cellularCallConnectionIMS->StopRttRequest(slotId, callId);
     EXPECT_EQ(ret, TELEPHONY_ERROR);
+#endif
 }
 
 /**
@@ -312,6 +317,14 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0021, Function | Mediu
 {
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     EXPECT_FALSE(cellularCallConnectionIMS->IsPendingHold());
+
+#ifdef SUPPORT_RTT_CALL
+    int32_t slotId = 0;
+    int32_t callId = 0;
+    int32_t ret = -100;
+    ImsRTTCallMode mode = ImsRTTCallMode::LOCAL_REQUEST_DOWNGRADE;
+    EXPECT_NE(cellularCallConnectionIMS->UpdateImsRttCallModeRequest(slotId, callId, mode), ret);
+#endif
 }
 
 /**

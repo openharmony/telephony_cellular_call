@@ -34,7 +34,7 @@ int32_t CSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
 {
     TELEPHONY_LOGI("Dial start");
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
-        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState, callInfo.isRTT);
     int32_t ret = DialPreJudgment(callInfo, isEcc);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
@@ -328,7 +328,7 @@ int32_t CSControl::Reject(const CellularCallInfo &callInfo)
     return pConnection->RejectRequest(callInfo.slotId);
 }
 
-int32_t CSControl::HoldCall(int32_t slotId)
+int32_t CSControl::HoldCall(int32_t slotId, bool isRTT)
 {
     /**
      * When the call hold service is invoked, communication is interrupted on the traffic channel and the traffic
@@ -345,7 +345,7 @@ int32_t CSControl::HoldCall(int32_t slotId)
     return connection.HoldRequest(slotId);
 }
 
-int32_t CSControl::UnHoldCall(int32_t slotId)
+int32_t CSControl::UnHoldCall(int32_t slotId, bool isRTT)
 {
     // A notification shall be send towards the previously held party that the call has been retrieved.
     TELEPHONY_LOGI("UnHoldCall start");
@@ -358,7 +358,7 @@ int32_t CSControl::UnHoldCall(int32_t slotId)
     return connection.UnHoldCallRequest(slotId);
 }
 
-int32_t CSControl::SwitchCall(int32_t slotId)
+int32_t CSControl::SwitchCall(int32_t slotId, bool isRTT)
 {
     /**
      * If the served mobile subscriber is connected to an active call and has another call on hold, she can:

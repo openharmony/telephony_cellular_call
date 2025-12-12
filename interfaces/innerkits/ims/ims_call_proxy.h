@@ -32,9 +32,9 @@ public:
     int32_t HangUp(const ImsCallInfo &callInfo) override;
     int32_t RejectWithReason(const ImsCallInfo &callInfo, const ImsRejectReason &reason) override;
     int32_t Answer(const ImsCallInfo &callInfo) override;
-    int32_t HoldCall(int32_t slotId, int32_t callType) override;
-    int32_t UnHoldCall(int32_t slotId, int32_t callType) override;
-    int32_t SwitchCall(int32_t slotId, int32_t callType) override;
+    int32_t HoldCall(int32_t slotId, int32_t callType, bool isRTT = false) override;
+    int32_t UnHoldCall(int32_t slotId, int32_t callType, bool isRTT = false) override;
+    int32_t SwitchCall(int32_t slotId, int32_t callType, bool isRTT = false) override;
     int32_t CombineConference(int32_t slotId) override;
     int32_t InviteToConference(int32_t slotId, const std::vector<std::string> &numberList) override;
     int32_t KickOutFromConference(int32_t slotId, int32_t index) override;
@@ -48,8 +48,11 @@ public:
     int32_t StartDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t SendDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
-    int32_t StartRtt(int32_t slotId, const std::string &msg) override;
-    int32_t StopRtt(int32_t slotId) override;
+#ifdef SUPPORT_RTT_CALL
+    int32_t StartRtt(int32_t slotId, int32_t callId) override;
+    int32_t StopRtt(int32_t slotId, int32_t callId) override;
+    int32_t UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode) override;
+#endif
 
     int32_t SetDomainPreferenceMode(int32_t slotId, int32_t mode) override;
     int32_t GetDomainPreferenceMode(int32_t slotId) override;

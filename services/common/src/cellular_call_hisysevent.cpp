@@ -364,11 +364,12 @@ int32_t CellularCallHiSysEvent::CallInterfaceErrorCodeConversion(const int32_t e
 }
 
 void CellularCallHiSysEvent::SetCallParameterInfo(
-    const int32_t slotId, const int32_t callType, const int32_t videoState)
+    const int32_t slotId, const int32_t callType, const int32_t videoState, bool isRTT)
 {
     dfxSlotId_ = slotId;
     dfxCallType_ = callType;
     dfxVideoState_ = videoState;
+    dfxIsRTT_ = isRTT;
 }
 
 void CellularCallHiSysEvent::SetIncomingCallParameterInfo(

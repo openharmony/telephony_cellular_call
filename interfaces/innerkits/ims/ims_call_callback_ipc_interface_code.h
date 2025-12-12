@@ -54,8 +54,12 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_START_DTMF,
     IMS_SEND_DTMF,
     IMS_STOP_DTMF,
+#ifdef SUPPORT_RTT_CALL
     IMS_START_RTT,
     IMS_STOP_RTT,
+    IMS_UPGRADE_OR_DOWNGRADE_RTT_EVT,
+    IMS_UPGRADE_OR_DOWNGRADE_RTT_ERR,
+#endif
 
     /****************** ims config ******************/
     IMS_SET_PRE_MODE,

@@ -494,15 +494,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_006, Function | MediumTest 
     registerData.WriteInt32(size);
     inviteData.WriteInt32(errorSize);
     callStub.OnInviteToConferenceInner(inviteData, reply);
-    MessageParcel startRttData;
-    startRttData.WriteInt32(size);
-    startRttData.WriteInt32(errorSize);
-    startRttData.WriteString("1");
-    callStub.OnStartRttInner(startRttData, reply);
-    MessageParcel stopRttData;
-    stopRttData.WriteInt32(size);
-    stopRttData.WriteInt32(errorSize);
-    ASSERT_EQ(callStub.OnStopRttInner(stopRttData, reply), TELEPHONY_SUCCESS);
 }
 
 /**
@@ -552,7 +543,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_008, Function | MediumTest 
     CellularCallService callStub;
     int32_t size = 1;
     MessageParcel reply;
-    
+
     MessageParcel mmiCodeData;
     mmiCodeData.WriteInt32(size);
     mmiCodeData.WriteInt32(SIM1_SLOTID);
@@ -577,7 +568,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_008, Function | MediumTest 
     mmiCodeData1.WriteInt32(SIM1_SLOTID);
     mmiCodeData1.WriteString("*100#");
     ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData1, reply), TELEPHONY_SUCCESS);
-    
+
     TELEPHONY_EXT_WRAPPER.isMmiCode_ = IsMmiCodeMockFalse;
     MessageParcel mmiCodeData2;
     mmiCodeData2.WriteInt32(size);
@@ -613,7 +604,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_009, Function | MediumTest 
     mmiCodeData1.WriteInt32(SIM1_SLOTID);
     mmiCodeData1.WriteString("*31#1234567");
     ASSERT_EQ(callStub.OnIsMmiCodeInner(mmiCodeData1, reply), TELEPHONY_SUCCESS);
-    
+
     MessageParcel mmiCodeData2;
     mmiCodeData2.WriteInt32(size);
     mmiCodeData2.WriteInt32(SIM1_SLOTID);
@@ -634,6 +625,30 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_009, Function | MediumTest 
 
     TELEPHONY_EXT_WRAPPER.InitTelephonyExtWrapper();
 }
+
+#ifdef SUPPORT_RTT_CALL
+/**
+ * @tc.number   Telephony_CellularCallStub_010
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_010, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallService callStub;
+    int32_t errorSize = -1;
+    int32_t size = 1;
+    MessageParcel startRttData;
+    startRttData.WriteInt32(size);
+    startRttData.WriteInt32(errorSize);
+    startRttData.WriteString("1");
+    callStub.OnStartRttInner(startRttData, reply);
+    MessageParcel stopRttData;
+    stopRttData.WriteInt32(size);
+    stopRttData.WriteInt32(errorSize);
+    ASSERT_EQ(callStub.OnStopRttInner(stopRttData, reply), TELEPHONY_SUCCESS);
+}
+#endif
 
 /**
  * @tc.number   Telephony_CellularCallService_001
@@ -737,9 +752,11 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_002, Function | MediumTe
     cellularCall.SendDtmf('*', csCallInfo);
     cellularCall.SendDtmf('*', imsCallInfo);
     cellularCall.SendDtmf('*', errCallInfo);
-    std::string msg = "";
-    cellularCall.StartRtt(SIM1_SLOTID, msg);
-    ASSERT_NE(cellularCall.StopRtt(SIM1_SLOTID), TELEPHONY_SUCCESS);
+#ifdef SUPPORT_RTT_CALL
+    int32_t callId = 0;
+    cellularCall.StartRtt(SIM1_SLOTID, callId);
+    ASSERT_NE(cellularCall.StopRtt(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+#endif
 }
 
 /**

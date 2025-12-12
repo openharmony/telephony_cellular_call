@@ -16,6 +16,7 @@ declare_args() {
   cellular_call_tel_power_mode = false
   cellular_call_support_UT = true
   cellular_call_feature_support_satellite = true
+  cellular_call_support_rtt = false
 }
 
 global_defines = []
@@ -26,4 +27,8 @@ if (cellular_call_tel_power_mode) {
 
 if (cellular_call_feature_support_satellite) {
   global_defines += [ "CELLULAR_CALL_SUPPORT_SATELLITE" ]
+}
+
+if (cellular_call_support_rtt) {
+  global_defines += [ "SUPPORT_RTT_CALL" ]
 }

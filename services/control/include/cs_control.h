@@ -98,9 +98,10 @@ public:
      * The call hold service allows a served mobile subscriber
      *
      * @param slotId
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t HoldCall(int32_t slotId) override;
+    int32_t HoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * CSControl UnHoldCall
@@ -111,9 +112,10 @@ public:
      * Retrieve the held call.
      *
      * @param slotId
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t UnHoldCall(int32_t slotId) override;
+    int32_t UnHoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * CSControl SwitchCall
@@ -126,7 +128,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t SwitchCall(int32_t slotId) override;
+    int32_t SwitchCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * CSControl CombineConference

@@ -224,6 +224,10 @@ struct ImsCallInfo {
      * Indicates the call index and its initial value is 0.
      */
     int32_t index = 0;
+    /**
+     * Indicates the call RTT and its initial value is 0.
+     */
+    bool isRTT = false;
 };
 
 /**
@@ -318,6 +322,18 @@ struct ImsCurrentCall {
      * - 1: Yes
      */
     int32_t newCallUseBox = 0;
+    /**
+     * Whether to use the RTT call.
+     * - 0: Not RTT
+     * - 1: RTT Call
+     * - 2: remote is TTY
+     * - 3: remote not support RTT
+     */
+    int32_t rttState = 0;
+    /**
+     * RTT Call Channel Id
+     */
+    int32_t rttChannelId;
 };
 
 /**
@@ -426,6 +442,19 @@ struct CameraCapabilitiesInfo {
      * the height of video window
      */
     int32_t height = 0;
+};
+
+struct ImsCallRttEventInfo {
+    int32_t callId;
+    int32_t eventType;
+    int32_t reason;
+};
+
+struct ImsCallRttErrorInfo {
+    int32_t callId;         /* Call ID, value can be 1~7 */
+    int32_t operationType;  /* 0:Add Text; 1:Close Text */
+    int32_t causeCode;      /* 错误码 */
+    std::string reasonText;       /* 错误码字符串信息 */
 };
 } // namespace Telephony
 } // namespace OHOS

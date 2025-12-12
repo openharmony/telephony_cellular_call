@@ -116,6 +116,12 @@ public:
 
     ImsCallMode ConverToImsCallMode(ImsCallType callType);
 
+#ifdef SUPPORT_RTT_CALL
+    void ReceiveUpdateCallRttEvtResponse(int32_t slotId, ImsCallRttEventInfo &rttEvtInfo);
+
+    void ReceiveUpdateCallRttErrResponse(int32_t slotId, ImsCallRttErrorInfo &rttErrInfo);
+#endif
+
 private:
     sptr<ICallStatusCallback> callManagerCallBack_;
     std::mutex mutex_;

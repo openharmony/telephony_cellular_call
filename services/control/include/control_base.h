@@ -105,7 +105,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HoldCall(int32_t slotId) = 0;
+    virtual int32_t HoldCall(int32_t slotId, bool isRTT = false) = 0;
 
     /**
      * UnHoldCall
@@ -118,7 +118,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UnHoldCall(int32_t slotId) = 0;
+    virtual int32_t UnHoldCall(int32_t slotId, bool isRTT = false) = 0;
 
     /**
      * SwitchCall
@@ -131,7 +131,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SwitchCall(int32_t slotId) = 0;
+    virtual int32_t SwitchCall(int32_t slotId, bool isRTT = false) = 0;
 
     /**
      * CombineConference

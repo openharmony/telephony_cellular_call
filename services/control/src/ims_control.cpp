@@ -34,7 +34,7 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
 {
     TELEPHONY_LOGI("Dial start");
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
-        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState, callInfo.isRTT);
     int32_t ret = DialPreJudgment(callInfo, isEcc);
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     if (ret == CALL_ERR_GET_RADIO_STATE_FAILED) {
@@ -62,10 +62,11 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
         TELEPHONY_LOGI("Dial return, mmi code type.");
         return RETURN_TYPE_MMI;
     }
-    return DialJudgment(callInfo.slotId, newPhoneNum, clirMode, callInfo.videoState);
+    return DialJudgment(callInfo.slotId, newPhoneNum, clirMode, callInfo.videoState, callInfo.isRTT);
 }
 
-int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState)
+int32_t IMSControl::DialJudgment(
+    int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState, bool isRTT)
 {
     TELEPHONY_LOGI("DialJudgment entry.");
     std::lock_guard<ffrt::recursive_mutex> lock(connectionMapMutex_);
@@ -91,17 +92,18 @@ int32_t IMSControl::DialJudgment(int32_t slotId, const std::string &phoneNum, CL
             return connection.second.SwitchCallRequest(slotId, videoState);
         }
     }
-    return EncapsulateDial(slotId, phoneNum, clirMode, videoState);
+    return EncapsulateDial(slotId, phoneNum, clirMode, videoState, isRTT);
 }
 
 int32_t IMSControl::EncapsulateDial(
-    int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const
+    int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState, bool isRTT) const
 {
     TELEPHONY_LOGI("EncapsulateDial start");
 
     ImsDialInfoStruct dialInfo;
     dialInfo.videoState = videoState;
     dialInfo.bEmergencyCall = false;
+    dialInfo.isRTT = isRTT;
     EmergencyUtils emergencyUtils;
     emergencyUtils.IsEmergencyCall(slotId, phoneNum, dialInfo.bEmergencyCall);
 
@@ -231,7 +233,8 @@ int32_t IMSControl::Answer(const CellularCallInfo &callInfo)
     if (pConnection->GetStatus() == TelCallState::CALL_STATUS_ALERTING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_INCOMING ||
         pConnection->GetStatus() == TelCallState::CALL_STATUS_WAITING) {
-        return pConnection->AnswerRequest(callInfo.slotId, callInfo.phoneNum, callInfo.videoState, callInfo.index);
+        return pConnection->AnswerRequest(
+            callInfo.slotId, callInfo.phoneNum, callInfo.videoState, callInfo.index, callInfo.isRTT);
     }
     TELEPHONY_LOGE("IMSControl::Answer return, error type: call state error, phone not ringing.");
     return CALL_ERR_CALL_STATE;
@@ -275,7 +278,7 @@ int32_t IMSControl::Reject(const CellularCallInfo &callInfo)
     return pConnection->RejectRequest(callInfo.slotId, callInfo.phoneNum, callInfo.index);
 }
 
-int32_t IMSControl::HoldCall(int32_t slotId)
+int32_t IMSControl::HoldCall(int32_t slotId, bool isRTT)
 {
     TELEPHONY_LOGI("HoldCall start");
     std::lock_guard<ffrt::recursive_mutex> lock(connectionMapMutex_);
@@ -284,24 +287,24 @@ int32_t IMSControl::HoldCall(int32_t slotId)
         return CALL_ERR_CALL_STATE;
     }
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.HoldCallRequest(slotId);
+    return cellularCallConnectionIms.HoldCallRequest(slotId, isRTT);
 }
 
-int32_t IMSControl::UnHoldCall(int32_t slotId)
+int32_t IMSControl::UnHoldCall(int32_t slotId, bool isRTT)
 {
     TELEPHONY_LOGI("UnHoldCall start");
     std::lock_guard<ffrt::recursive_mutex> lock(connectionMapMutex_);
     for (auto &it : connectionMap_) {
         CallReportInfo reportInfo = it.second.GetCallReportInfo();
         if (slotId == reportInfo.accountId && reportInfo.state == TelCallState::CALL_STATUS_HOLDING) {
-            return it.second.UnHoldCallRequest(slotId);
+            return it.second.UnHoldCallRequest(slotId, isRTT);
         }
     }
     TELEPHONY_LOGE("UnHoldCall return, not exist hold call.");
     return TELEPHONY_ERROR;
 }
 
-int32_t IMSControl::SwitchCall(int32_t slotId)
+int32_t IMSControl::SwitchCall(int32_t slotId, bool isRTT)
 {
     TELEPHONY_LOGI("SwitchCall start");
     std::lock_guard<ffrt::recursive_mutex> lock(connectionMapMutex_);
@@ -314,7 +317,7 @@ int32_t IMSControl::SwitchCall(int32_t slotId)
         }
     }
     CellularCallConnectionIMS cellularCallConnectionIms;
-    return cellularCallConnectionIms.SwitchCallRequest(slotId, static_cast<int32_t>(callMode));
+    return cellularCallConnectionIms.SwitchCallRequest(slotId, static_cast<int32_t>(callMode), isRTT);
 }
 
 /**
@@ -374,19 +377,28 @@ int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &Kic
     return connection.KickOutFromConferenceRequest(slotId, index);
 }
 
-int32_t IMSControl::StartRtt(int32_t slotId, const std::string &msg)
+#ifdef SUPPORT_RTT_CALL
+int32_t IMSControl::StartRtt(int32_t slotId, int32_t callId)
 {
     TELEPHONY_LOGI("StartRtt entry");
     CellularCallConnectionIMS connection;
-    return connection.StartRttRequest(slotId, msg);
+    return connection.StartRttRequest(slotId, callId);
 }
 
-int32_t IMSControl::StopRtt(int32_t slotId)
+int32_t IMSControl::StopRtt(int32_t slotId, int32_t callId)
 {
     TELEPHONY_LOGI("StopRtt entry");
     CellularCallConnectionIMS connection;
-    return connection.StopRttRequest(slotId);
+    return connection.StopRttRequest(slotId, callId);
 }
+
+int32_t IMSControl::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
+{
+    TELEPHONY_LOGI("UpdateImsRttCallMode entry");
+    CellularCallConnectionIMS connection;
+    return connection.UpdateImsRttCallModeRequest(slotId, callId, mode);
+}
+#endif
 
 void IMSControl::ReleaseAllConnection()
 {
@@ -566,29 +578,31 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.state = static_cast<TelCallState>(callInfo.state);
     callReportInfo.voiceDomain = callInfo.voiceDomain;
     callReportInfo.callType = CallType::TYPE_IMS;
-    switch (callInfo.callType) {
-        case ImsCallType::TEL_IMS_CALL_TYPE_VOICE:
-            callReportInfo.callMode = VideoStateType::TYPE_VOICE;
-            break;
-        case ImsCallType::TEL_IMS_CALL_TYPE_VT_TX:
-            callReportInfo.callMode = VideoStateType::TYPE_SEND_ONLY;
-            break;
-        case ImsCallType::TEL_IMS_CALL_TYPE_VT_RX:
-            callReportInfo.callMode = VideoStateType::TYPE_RECEIVE_ONLY;
-            break;
-        case ImsCallType::TEL_IMS_CALL_TYPE_VT:
-            callReportInfo.callMode = VideoStateType::TYPE_VIDEO;
-            break;
-        default:
-            callReportInfo.callMode = VideoStateType::TYPE_VOICE;
-            break;
-    }
+    callReportInfo.callMode = GetCallMode(callInfo.callType);
     callReportInfo.mpty = callInfo.mpty;
     callReportInfo.crsType = callInfo.toneType;
     callReportInfo.originalCallType = callInfo.callInitialType;
     callReportInfo.namePresentation = callInfo.namePresentation;
     callReportInfo.newCallUseBox = callInfo.newCallUseBox;
+    callReportInfo.rttState = static_cast<RttCallState>(callInfo.rttState);
+    callReportInfo.rttChannelId = callInfo.rttChannelId;
     return callReportInfo;
+}
+
+VideoStateType IMSControl::GetCallMode(ImsCallType callType)
+{
+    switch (callType) {
+        case ImsCallType::TEL_IMS_CALL_TYPE_VOICE:
+            return VideoStateType::TYPE_VOICE;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_TX:
+            return VideoStateType::TYPE_SEND_ONLY;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT_RX:
+            return VideoStateType::TYPE_RECEIVE_ONLY;
+        case ImsCallType::TEL_IMS_CALL_TYPE_VT:
+            return VideoStateType::TYPE_VIDEO;
+        default:
+            return VideoStateType::TYPE_VOICE;
+    }
 }
 
 void IMSControl::DeleteConnection(CallsReportInfo &callsReportInfo, const ImsCurrentCallList &callInfoList)

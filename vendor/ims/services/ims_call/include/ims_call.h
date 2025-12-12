@@ -171,6 +171,7 @@ public:
      */
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * IMS StartRtt interface
      *
@@ -187,6 +188,7 @@ public:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t StopRtt(int32_t slotId) override;
+#endif
 
     /**
      * IMS SetDomainPreferenceMode interface

@@ -47,8 +47,11 @@ private:
     int32_t OnStartDtmf(MessageParcel &data, MessageParcel &reply);
     int32_t OnSendDtmf(MessageParcel &data, MessageParcel &reply);
     int32_t OnStopDtmf(MessageParcel &data, MessageParcel &reply);
+#ifdef SUPPORT_RTT_CALL
     int32_t OnStartRtt(MessageParcel &data, MessageParcel &reply);
     int32_t OnStopRtt(MessageParcel &data, MessageParcel &reply);
+    int32_t OnRttCallModify(MessageParcel &data, MessageParcel &reply);
+#endif
     int32_t OnSetDomainPreferenceMode(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetDomainPreferenceMode(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetImsSwitchStatus(MessageParcel &data, MessageParcel &reply);

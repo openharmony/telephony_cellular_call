@@ -276,6 +276,7 @@ int32_t ImsCall::StopDtmf(int32_t slotId, int32_t index)
     return TELEPHONY_SUCCESS;
 }
 
+#ifdef SUPPORT_RTT_CALL
 int32_t ImsCall::StartRtt(int32_t slotId, const std::string &msg)
 {
     // IMS demo send request info
@@ -303,6 +304,7 @@ int32_t ImsCall::StopRtt(int32_t slotId)
     imsCallCallback_->StopRttResponse(slotId, info);
     return TELEPHONY_SUCCESS;
 }
+#endif
 
 int32_t ImsCall::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {

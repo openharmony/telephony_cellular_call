@@ -846,6 +846,13 @@ HWTEST_F(Ims1Test, cellular_call_SetVoNRState_0001, Function | MediumTest | Leve
         int32_t ret = telephonyService->SetVoNRState(SIM2_SLOTID, 1);
         EXPECT_EQ(ret, TELEPHONY_ERR_FAIL);
     }
+
+#ifdef SUPPORT_RTT_CALL
+    int32_t callId = 0;
+    int32_t ret = -100;
+    ImsRTTCallMode mode = ImsRTTCallMode::LOCAL_REQUEST_DOWNGRADE;
+    EXPECT_NE(imsControl->UpdateImsRttCallMode(SIM1_SLOTID, callId, mode), ret);
+#endif
 }
 } // namespace Telephony
 } // namespace OHOS

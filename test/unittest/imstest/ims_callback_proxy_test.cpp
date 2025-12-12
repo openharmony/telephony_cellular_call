@@ -212,9 +212,21 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
         CameraCapabilitiesInfo cameraCapabilitiesInfo;
         cameraCapabilitiesInfo.callIndex = DEFAULT_INDEX;
         EXPECT_EQ(callCallbackProxy->CameraCapabilitiesChanged(slotId, cameraCapabilitiesInfo), TELEPHONY_SUCCESS);
+#ifdef SUPPORT_RTT_CALL
+        RadioResponseInfo info;
+        EXPECT_NE(callCallbackProxy->StartRttResponse(slotId, info), -100);
+        EXPECT_NE(callCallbackProxy->StopRttResponse(slotId, info), -100);
+#endif
     }
     DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
     DelayedSingleton<ImsCallClient>::DestroyInstance();
+#ifdef SUPPORT_RTT_CALL
+    int32_t slotId = 0;
+    ImsCallRttEventInfo rttEvtInfo;
+    ImsCallRttErrorInfo rttErrInfo;
+    EXPECT_NE(callCallbackProxy->ReceiveUpdateImsCallRttEvtResponse(slotId, rttEvtInfo), -100);
+    EXPECT_NE(callCallbackProxy->ReceiveUpdateImsCallRttErrResponse(slotId, rttErrInfo), -100);
+#endif
 }
 } // namespace Telephony
 } // namespace OHOS
