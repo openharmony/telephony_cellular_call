@@ -119,6 +119,12 @@ public:
 
     void StopDtmfResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef SUPPORT_RTT_CALL
+    void StartRttResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void StopRttResponse(const AppExecFwk::InnerEvent::Pointer &event);
+#endif
+
     void GetCsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
     void GetImsCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
@@ -202,6 +208,12 @@ public:
 
     void GetImsCapResponse(const AppExecFwk::InnerEvent::Pointer &event);
 
+#ifdef SUPPORT_RTT_CALL
+    void ReceiveUpdateCallRttEvtResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
+    void ReceiveUpdateCallRttErrResponse(const AppExecFwk::InnerEvent::Pointer &event);
+#endif
+
 public:
     const uint32_t REGISTER_HANDLER_ID = 10003;
     const int32_t INTERNATION_CODE = 145;
@@ -251,6 +263,9 @@ private:
     void InitSatelliteCallFuncMap();
 #endif // CELLULAR_CALL_SUPPORT_SATELLITE
     void InitAdditionalFuncMap();
+#ifdef SUPPORT_RTT_CALL
+    void InitImsRttFuncMap();
+#endif
 
     void ReportCsCallsData(const CallInfoList &callInfoList);
     void ReportNoCsCallsData(const CallInfoList &callInfoList,  const int32_t state,

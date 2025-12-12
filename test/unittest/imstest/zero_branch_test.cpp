@@ -875,20 +875,26 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallImsControl_002, Function | Medium
     imsControl.DeleteConnection(callsReportInfo, ImsCallList);
     imsControl.ReleaseAllConnection();
     imsControl.DialAfterHold(SIM1_SLOTID);
-    std::string msg = "";
-    imsControl.StartRtt(SIM1_SLOTID, msg);
+#ifdef SUPPORT_RTT_CALL
+    int32_t callId = 0;
+    imsControl.StartRtt(SIM1_SLOTID, callId);
+#endif
     imsControl.GetConnectionMap();
     imsControl.ReleaseAllConnection();
     CLIRMode clirMode = CLIRMode::DEFAULT;
     int32_t videoState = 0;
-    imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState);
+    imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, 0);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID), INVALID_VALUE);
-    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState),
+#ifdef SUPPORT_RTT_CALL
+    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID, callId), INVALID_VALUE);
+#endif
+    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, false),
         TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
 #else
-    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID), TELEPHONY_SUCCESS);
-    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState), TELEPHONY_SUCCESS);
+#ifdef SUPPORT_RTT_CALL
+    ASSERT_NE(imsControl.StopRtt(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+#endif
+    ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, false), TELEPHONY_SUCCESS);
 #endif
 }
 
@@ -992,7 +998,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     CellularCallConnectionIMS callConn;
     ImsDialInfoStruct dialRequest;
     std::vector<std::string> numberList = {};
-    std::string msg = "";
     int32_t videoState = 0;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
     ASSERT_EQ(callConn.DialRequest(SIM1_SLOTID, dialRequest), TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
@@ -1006,8 +1011,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), INVALID_VALUE);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), INVALID_VALUE);
     ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
-    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), INVALID_VALUE);
-    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), INVALID_VALUE);
     ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), INVALID_VALUE);
     ASSERT_EQ(callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0), INVALID_VALUE);
     ASSERT_EQ(callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0), INVALID_VALUE);
@@ -1025,8 +1028,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ASSERT_EQ(callConn.InviteToConferenceRequest(SIM1_SLOTID, numberList), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.KickOutFromConferenceRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.CallSupplementRequest(SIM1_SLOTID, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
-    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, msg), TELEPHONY_SUCCESS);
-    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.GetImsCallsDataRequest(SIM1_SLOTID, 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.SendDtmfRequest(SIM1_SLOTID, '*', 0), TELEPHONY_SUCCESS);
     ASSERT_EQ(callConn.StartDtmfRequest(SIM1_SLOTID, '*', 0), TELEPHONY_SUCCESS);
@@ -1034,6 +1035,26 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_001, Function | Med
     ASSERT_EQ(callConn.GetCallFailReasonRequest(SIM1_SLOTID), TELEPHONY_SUCCESS);
 #endif
 }
+
+#ifdef SUPPORT_RTT_CALL
+/**
+ * @tc.number   Telephony_CellularCallConnectionIms_002
+ * @tc.name     Test error branch
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_002, Function | MediumTest | Level3)
+{
+    CellularCallConnectionIMS callConn;
+    int32_t callId = 0;
+#ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
+    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, callId), INVALID_VALUE);
+    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID, callId), INVALID_VALUE);
+#else
+    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+#endif
+}
+#endif
 
 /**
  * @tc.number   Telephony_CellularCallConfigRequest_001

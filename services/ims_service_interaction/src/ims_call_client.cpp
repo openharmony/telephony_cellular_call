@@ -219,34 +219,34 @@ int32_t ImsCallClient::Answer(const ImsCallInfo &callInfo)
     return imsCallProxy_->Answer(callInfo);
 }
 
-int32_t ImsCallClient::HoldCall(int32_t slotId, int32_t callType)
+int32_t ImsCallClient::HoldCall(int32_t slotId, int32_t callType, bool isRTT)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->HoldCall(slotId, callType);
+    return imsCallProxy_->HoldCall(slotId, callType, isRTT);
 }
 
-int32_t ImsCallClient::UnHoldCall(int32_t slotId, int32_t callType)
+int32_t ImsCallClient::UnHoldCall(int32_t slotId, int32_t callType, bool isRTT)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->UnHoldCall(slotId, callType);
+    return imsCallProxy_->UnHoldCall(slotId, callType, isRTT);
 }
 
-int32_t ImsCallClient::SwitchCall(int32_t slotId, int32_t callType)
+int32_t ImsCallClient::SwitchCall(int32_t slotId, int32_t callType, bool isRTT)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->SwitchCall(slotId, callType);
+    return imsCallProxy_->SwitchCall(slotId, callType, isRTT);
 }
 
 int32_t ImsCallClient::CombineConference(int32_t slotId)
@@ -369,25 +369,37 @@ int32_t ImsCallClient::StopDtmf(int32_t slotId, int32_t index)
     return imsCallProxy_->StopDtmf(slotId, index);
 }
 
-int32_t ImsCallClient::StartRtt(int32_t slotId, const std::string &msg)
+#ifdef SUPPORT_RTT_CALL
+int32_t ImsCallClient::StartRtt(int32_t slotId, int32_t callId)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->StartRtt(slotId, msg);
+    return imsCallProxy_->StartRtt(slotId, callId);
 }
 
-int32_t ImsCallClient::StopRtt(int32_t slotId)
+int32_t ImsCallClient::StopRtt(int32_t slotId, int32_t callId)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {
         TELEPHONY_LOGE("ipc reconnect failed!");
         return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
     }
     std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->StopRtt(slotId);
+    return imsCallProxy_->StopRtt(slotId, callId);
 }
+
+int32_t ImsCallClient::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
+{
+    if (ReConnectService() != TELEPHONY_SUCCESS) {
+        TELEPHONY_LOGE("ipc reconnect failed!");
+        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
+    }
+    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
+    return imsCallProxy_->UpdateImsRttCallMode(slotId, callId, mode);
+}
+#endif
 
 int32_t ImsCallClient::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {

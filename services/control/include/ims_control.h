@@ -72,9 +72,10 @@ public:
      * HoldCall
      *
      * @param slotId
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HoldCall(int32_t slotId) override;
+    int32_t HoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * UnHoldCall
@@ -82,7 +83,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t UnHoldCall(int32_t slotId) override;
+    int32_t UnHoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * SwitchCall
@@ -90,7 +91,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwitchCall(int32_t slotId) override;
+    int32_t SwitchCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * CombineConference
@@ -129,22 +130,36 @@ public:
      */
     int32_t HangUpAllConnection(int32_t slotId) override;
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * Start Rtt
      *
      * @param msg
      * @param slotId
+     * @param callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StartRtt(int32_t slotId, const std::string &msg);
+    int32_t StartRtt(int32_t slotId, int32_t callId);
 
     /**
      * Stop Rtt
      *
      * @param slotId
+     * @param callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StopRtt(int32_t slotId);
+    int32_t StopRtt(int32_t slotId, int32_t callId);
+
+    /**
+     * UpdateImsRttCallMode
+     *
+     * @param slotId[in], slot id
+     * @param callId[in], call id
+     * @param mode[in], rtt modify mode
+     * @return Returns 0 on success, others on failure.
+     */
+    int32_t UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode);
+#endif
 
     /**
      * Release all Connection
@@ -218,7 +233,8 @@ private:
      * @param videoState  0: audio 1:video
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t DialJudgment(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState);
+    int32_t DialJudgment(
+        int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState, bool isRTT);
 
     /**
      * Encapsulate Dial Common
@@ -228,7 +244,8 @@ private:
      * @param videoState  0: audio 1:video
      * @returns Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t EncapsulateDial(int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState) const;
+    int32_t EncapsulateDial(
+        int32_t slotId, const std::string &phoneNum, CLIRMode &clirMode, int32_t videoState, bool isRTT) const;
 
     /**
      * Report Incoming info
@@ -253,6 +270,14 @@ private:
      * @return CallReportInfo
      */
     CallReportInfo EncapsulationCallReportInfo(int32_t slotId, const ImsCurrentCall &callInfo);
+
+    /**
+     * GetCallMode
+     *
+     * @param ImsCallType
+     * @return VideoStateType
+     */
+    VideoStateType GetCallMode(ImsCallType callType);
 
     /**
      * DeleteConnection Connection send

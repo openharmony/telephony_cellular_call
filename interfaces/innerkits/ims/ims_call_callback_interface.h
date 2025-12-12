@@ -107,6 +107,29 @@ public:
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     virtual int32_t StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
+
+#ifdef SUPPORT_RTT_CALL
+    /**
+     * @brief StartRttResponse the result of start rtt.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates start action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t StartRttResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
+
+    /**
+     * @brief StopRttResponse the result of stop rtt.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param info Indicates start action was success or failure.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t StopRttResponse(int32_t slotId, const RadioResponseInfo &info) = 0;
+#endif
+
     /**
      * @brief SendDtmfResponse the result of send dtmf by ims.
      *
@@ -446,6 +469,28 @@ public:
      * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
      */
     virtual int32_t GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap) = 0;
+
+#ifdef SUPPORT_RTT_CALL
+    /**
+     * @brief ReceiveUpdateImsCallRttEvtResponse the result of send update call media mode by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param rttEvtInfo Indicates event info of received.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo) = 0;
+    
+    /**
+     * @brief ReceiveUpdateImsCallRttErrResponse the result of send update call media mode by ims.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param rttErrInfo Indicates error info of received.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo) = 0;
+#endif
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };

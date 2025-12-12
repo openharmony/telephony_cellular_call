@@ -43,8 +43,11 @@ enum class ImsCallInterfaceCode {
     IMS_START_DTMF = 5100,
     IMS_SEND_DTMF,
     IMS_STOP_DTMF,
+#ifdef SUPPORT_RTT_CALL
     IMS_START_RTT,
     IMS_STOP_RTT,
+    IMS_UPDATE_RTT_CALL_MODE,
+#endif
 
     /****************** ims config ******************/
     IMS_SET_DOMAIN_PREFERENCE_MODE = 5200,

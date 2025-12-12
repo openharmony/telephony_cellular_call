@@ -1266,5 +1266,53 @@ HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0024, Function |
             cameraCapabilitiesInfoData, cameraCapabilitiesInfoReply), TELEPHONY_SUCCESS);
     }
 }
+
+#ifdef SUPPORT_RTT_CALL
+/**
+ * @tc.number   cellular_call_ImsCallCallbackStub_0025
+ * @tc.name     Test for ImsCallCallbackStub
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsCallbackStubTest, cellular_call_ImsCallCallbackStub_0025, Function | MediumTest | Level3)
+{
+    sptr<ImsCallCallbackStub> stubTest = (std::make_unique<ImsCallCallbackStub>()).release();
+    ASSERT_TRUE(stubTest != nullptr);
+    int32_t ret = -100;
+    int32_t slotId = 0;
+    MessageParcel reply;
+    RadioResponseInfo respInfo;
+    ImsCallRttEventInfo rttEventInfo;
+    ImsCallRttErrorInfo rttErrorInfo;
+
+    MessageParcel data1;
+    data1.WriteInt32(slotId);
+    data1.WriteRawData(static_cast<const void *>(&respInfo), sizeof(RadioResponseInfo));
+    EXPECT_EQ(stubTest->OnStartRttResponseInner(data1, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel data2;
+    data2.WriteInt32(slotId);
+    data2.WriteRawData(static_cast<const void *>(&respInfo), sizeof(RadioResponseInfo));
+    EXPECT_EQ(stubTest->OnStopRttResponseInner(data2, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel data3;
+    data3.WriteInt32(slotId);
+    data3.WriteRawData(static_cast<const void *>(&rttEventInfo), sizeof(ImsCallRttEventInfo));
+    EXPECT_EQ(stubTest->OnReceiveUpdateCallRttEvtResponseInner(data3, reply), TELEPHONY_SUCCESS);
+
+    MessageParcel data4;
+    data4.WriteInt32(slotId);
+    data4.WriteRawData(static_cast<const void *>(&rttErrorInfo), sizeof(ImsCallRttErrorInfo));
+    EXPECT_EQ(stubTest->OnReceiveUpdateCallRttErrResponseInner(data4, reply), TELEPHONY_SUCCESS);
+
+    EXPECT_NE(stubTest->StopRttResponse(slotId, respInfo), ret);
+    EXPECT_NE(stubTest->StartRttResponse(slotId, respInfo), ret);
+
+    EXPECT_EQ(stubTest->ReceiveUpdateImsCallRttEvtResponse(-1, rttEventInfo), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    EXPECT_NE(stubTest->ReceiveUpdateImsCallRttEvtResponse(slotId, rttEventInfo), ret);
+
+    EXPECT_EQ(stubTest->ReceiveUpdateImsCallRttErrResponse(-1, rttErrorInfo), TELEPHONY_ERR_LOCAL_PTR_NULL);
+    EXPECT_NE(stubTest->ReceiveUpdateImsCallRttErrResponse(slotId, rttErrorInfo), ret);
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

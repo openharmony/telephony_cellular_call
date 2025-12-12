@@ -103,6 +103,28 @@ int32_t ImsCallCallbackProxy::StartDtmfResponse(int32_t slotId, const RadioRespo
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_START_DTMF), in);
 }
 
+#ifdef SUPPORT_RTT_CALL
+int32_t ImsCallCallbackProxy::StartRttResponse(int32_t slotId, const RadioResponseInfo &info)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_START_RTT), in);
+}
+
+int32_t ImsCallCallbackProxy::StopRttResponse(int32_t slotId, const RadioResponseInfo &info)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in, info);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_STOP_RTT), in);
+}
+#endif
+
 int32_t ImsCallCallbackProxy::SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex)
 {
     MessageParcel in;
@@ -174,7 +196,8 @@ bool ImsCallCallbackProxy::WriteCallInfo(MessageParcel &in, const ImsCurrentCall
             !in.WriteInt32(call.callType) || !in.WriteString(call.number) || !in.WriteString(call.name) ||
             !in.WriteInt32(call.type) || !in.WriteString(call.alpha) || !in.WriteInt32(call.toa) ||
             !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType) ||
-            !in.WriteInt32(call.namePresentation) || !in.WriteInt32(call.newCallUseBox));
+            !in.WriteInt32(call.namePresentation) || !in.WriteInt32(call.newCallUseBox) ||
+            !in.WriteInt32(call.rttState) || !in.WriteInt32(call.rttChannelId));
 }
 
 int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)
@@ -654,5 +677,58 @@ int32_t ImsCallCallbackProxy::GetImsCapResponse(int32_t slotId, const ImsCapFrom
 
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_IMS_CAPABILITY), in);
 }
+
+#ifdef SUPPORT_RTT_CALL
+int32_t ImsCallCallbackProxy::ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+
+    if (!in.WriteInt32(rttEvtInfo.callId)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callId fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(rttEvtInfo.eventType)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write eventType fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(rttEvtInfo.reason)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write reason fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(
+        static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_UPGRADE_OR_DOWNGRADE_RTT_EVT), in);
+}
+
+int32_t ImsCallCallbackProxy::ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+    if (!in.WriteInt32(rttErrInfo.callId)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write callId fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(rttErrInfo.causeCode)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write causeCode fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteInt32(rttErrInfo.operationType)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write operationType fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    if (!in.WriteString(rttErrInfo.reasonText)) {
+        TELEPHONY_LOGE("[slot%{public}d]Write reasonText fail!", slotId);
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+    return SendResponseInfo(
+        static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_UPGRADE_OR_DOWNGRADE_RTT_ERR), in);
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

@@ -46,6 +46,10 @@ public:
     int32_t StartDtmfResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex) override;
     int32_t StopDtmfResponse(int32_t slotId, const RadioResponseInfo &info) override;
+#ifdef SUPPORT_RTT_CALL
+    int32_t StartRttResponse(int32_t slotId, const RadioResponseInfo &info) override;
+    int32_t StopRttResponse(int32_t slotId, const RadioResponseInfo &info) override;
+#endif
 
     /****************** ims config ******************/
     int32_t SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info) override;
@@ -80,6 +84,10 @@ public:
     int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) override;
     int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) override;
     int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) override;
+#ifdef SUPPORT_RTT_CALL
+    int32_t ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo) override;
+    int32_t ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo) override;
+#endif
 
 private:
     int32_t SendResponseInfo(int32_t eventId, MessageParcel &in);

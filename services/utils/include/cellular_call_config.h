@@ -196,6 +196,17 @@ public:
      */
     int32_t SetMute(int32_t slotId, int32_t mute);
 
+#ifdef SUPPORT_RTT_CALL
+    /**
+     * SetMute
+     *
+     * @param slotId
+     * @param mute
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t SetRttCapability(int32_t slotId, bool isEnable);
+#endif
+
     /**
      * GetMute
      *

@@ -129,6 +129,7 @@ void SetReadyToCall(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetReadyToCallInner(dataMessageParcel, reply);
 }
 
+#ifdef SUPPORT_RTT_CALL
 void StartRtt(const uint8_t *data, size_t size)
 {
     if (!IsServiceInited()) {
@@ -155,6 +156,7 @@ void StopRtt(const uint8_t *data, size_t size)
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnStopRttInner(dataMessageParcel, reply);
 }
+#endif
 
 void GetCallTransferInfo(const uint8_t *data, size_t size)
 {
@@ -427,8 +429,10 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     IsEmergencyPhoneNumber(data, size);
     HangUpAllConnection(data, size);
     SetReadyToCall(data, size);
+#ifdef SUPPORT_RTT_CALL
     StartRtt(data, size);
     StopRtt(data, size);
+#endif
     GetCallTransferInfo(data, size);
     GetCallWaiting(data, size);
     SetCallWaiting(data, size);

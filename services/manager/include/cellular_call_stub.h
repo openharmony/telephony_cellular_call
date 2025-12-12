@@ -253,6 +253,7 @@ private:
      */
     int32_t OnSendDtmfInner(MessageParcel &data, MessageParcel &reply);
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * On start Rtt Inner
      *
@@ -270,6 +271,25 @@ private:
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
     int32_t OnStopRttInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On RTT Call Moidfy
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnUpdateImsRttCallModeInner(MessageParcel &data, MessageParcel &reply);
+
+    /**
+     * On Set VT Capability When RTT Setting Changed
+     *
+     * @param data send data
+     * @param reply Received data
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t OnSetRttCapabilityInner(MessageParcel &data, MessageParcel &reply);
+#endif
 
     /**
      * On Set Call Transfer Inner

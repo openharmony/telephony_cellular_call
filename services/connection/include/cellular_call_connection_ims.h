@@ -61,9 +61,11 @@ public:
      * @param phoneNum
      * @param videoState
      * @param index
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t AnswerRequest(int32_t slotId, const std::string &phoneNum, int32_t videoState, int32_t index);
+    int32_t AnswerRequest(
+        int32_t slotId, const std::string &phoneNum, int32_t videoState, int32_t index, bool isRTT = false);
 
     /**
      * Reject Request
@@ -79,9 +81,10 @@ public:
      * HoldCall Request
      *
      * @param slotId
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HoldCallRequest(int32_t slotId);
+    int32_t HoldCallRequest(int32_t slotId, bool isRTT = false);
 
     /**
      * UnHoldCall Request
@@ -89,16 +92,17 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t UnHoldCallRequest(int32_t slotId);
+    int32_t UnHoldCallRequest(int32_t slotId, bool isRTT = false);
 
     /**
      * SwitchCall Request
      *
      * @param slotId
      * @param videoState
+     * @param isRTT
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwitchCallRequest(int32_t slotId, int32_t videoState);
+    int32_t SwitchCallRequest(int32_t slotId, int32_t videoState, bool isRTT = false);
 
     /**
      * CombineConference Request
@@ -136,22 +140,35 @@ public:
      */
     int32_t CallSupplementRequest(int32_t slotId, CallSupplementType type);
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * StartRtt Request
      *
      * @param slotId
-     * @param msg
+     * @param callId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t StartRttRequest(int32_t slotId, const std::string &msg);
+    int32_t StartRttRequest(int32_t slotId, int32_t callId);
 
     /**
      * StopRtt Request
      *
      * @param slotId
+     * @param callId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t StopRttRequest(int32_t slotId);
+    int32_t StopRttRequest(int32_t slotId, int32_t callId);
+
+    /**
+     * UpdateImsRttCallModeRequest
+     *
+     * @param slotId
+     * @param callId
+     * @param mode
+     * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
+     */
+    int32_t UpdateImsRttCallModeRequest(int32_t slotId, int32_t callId, ImsRTTCallMode mode);
+#endif
 
     /**
      * GetImsCallsData Request

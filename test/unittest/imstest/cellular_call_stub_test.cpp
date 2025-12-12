@@ -88,8 +88,10 @@ HWTEST_F(CellularCallStubTest, CellularCallStubTest_0002, Function | MediumTest 
     EXPECT_NE(cellularCallStub.OnStopDtmfInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnPostDialProceedInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnSendDtmfInner(data, reply), TELEPHONY_SUCCESS);
+#ifdef SUPPORT_RTT_CALL
     EXPECT_NE(cellularCallStub.OnStartRttInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnStopRttInner(data, reply), TELEPHONY_SUCCESS);
+#endif
     EXPECT_NE(cellularCallStub.OnSetCallTransferInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnCanSetCallTransferTimeInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnGetCallTransferInner(data, reply), TELEPHONY_SUCCESS);
@@ -132,6 +134,10 @@ HWTEST_F(CellularCallStubTest, CellularCallStubTest_0003, Function | MediumTest 
     EXPECT_NE(cellularCallStub.OnGetMuteInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnCloseUnFinishedUssdInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnClearAllCallsInner(data, reply), TELEPHONY_SUCCESS);
+#ifdef SUPPORT_RTT_CALL
+    EXPECT_NE(cellularCallStub.SetRttCapability(-1, false), TELEPHONY_SUCCESS);
+    EXPECT_NE(cellularCallStub.UpdateImsRttCallMode(-1, -1, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE), TELEPHONY_SUCCESS);
+#endif
 }
 } // namespace Telephony
 } // namespace OHOS

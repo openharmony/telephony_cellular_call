@@ -72,7 +72,7 @@ public:
      * @param callType Indicates the call type,
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t HoldCall(int32_t slotId, int32_t callType) = 0;
+    virtual int32_t HoldCall(int32_t slotId, int32_t callType, bool isRTT = false) = 0;
 
     /**
      * @brief UnHold the Call
@@ -81,7 +81,7 @@ public:
      * @param callType Indicates the type of video state, 0: voice, 1: video
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t UnHoldCall(int32_t slotId, int32_t callType) = 0;
+    virtual int32_t UnHoldCall(int32_t slotId, int32_t callType, bool isRTT = false) = 0;
 
     /**
      * @brief Switch the phone call between hold and unhold
@@ -90,7 +90,7 @@ public:
      * @param callType Indicates the type of video state, 0: voice, 1: video
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t SwitchCall(int32_t slotId, int32_t callType) = 0;
+    virtual int32_t SwitchCall(int32_t slotId, int32_t callType, bool isRTT = false) = 0;
 
     /**
      * @brief Merge calls to form a conference
@@ -204,22 +204,35 @@ public:
      */
     virtual int32_t StopDtmf(int32_t slotId, int32_t index) = 0;
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * @brief Start a RTT session
      *
      * @param slotId Indicates the card slot index number,
-     * @param msg the specific RTT msg
+     * @param callId callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StartRtt(int32_t slotId, const std::string &msg) = 0;
+    virtual int32_t StartRtt(int32_t slotId, int32_t callId) = 0;
 
     /**
      * @brief Terminate the current RTT session
      *
      * @param slotId Indicates the card slot index number,
+     * @param callId callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    virtual int32_t StopRtt(int32_t slotId) = 0;
+    virtual int32_t StopRtt(int32_t slotId, int32_t callId) = 0;
+
+    /**
+     * @brief rtt call modify
+     *
+     * @param slotId Indicates the card slot index number,
+     * @param callId the call id,
+     * @param type rtt modify mode
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    virtual int32_t UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode) = 0;
+#endif
 
     /**
      * @brief Set Domain Preference Mode

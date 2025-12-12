@@ -70,6 +70,9 @@ CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInf
     InitSatelliteCallFuncMap();
 #endif // CELLULAR_CALL_SUPPORT_SATELLITE
     InitAdditionalFuncMap();
+#ifdef SUPPORT_RTT_CALL
+    InitImsRttFuncMap();
+#endif
 }
 
 void CellularCallHandler::InitBasicFuncMap()
@@ -265,6 +268,20 @@ void CellularCallHandler::InitAdditionalFuncMap()
     requestFuncMap_[DtmfHandlerId::EVENT_EXECUTE_POST_DIAL] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { ExecutePostDial(event); };
 }
+
+#ifdef SUPPORT_RTT_CALL
+void CellularCallHandler::InitImsRttFuncMap()
+{
+    requestFuncMap_[RadioEvent::RADIO_START_RTT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { StartRttResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_STOP_RTT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { StopRttResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_RTT_UPGRADE_OR_DOWNGRADE_EVT] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ReceiveUpdateCallRttEvtResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_RTT_UPGRADE_OR_DOWNGRADE_ERR] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { ReceiveUpdateCallRttErrResponse(event); };
+}
+#endif
 
 void CellularCallHandler::RegisterImsCallCallbackHandler()
 {
@@ -889,6 +906,36 @@ void CellularCallHandler::StartDtmfResponse(const AppExecFwk::InnerEvent::Pointe
     }
     registerInstance_->ReportStartDtmfResult(static_cast<int32_t>(result->error));
 }
+
+#ifdef SUPPORT_RTT_CALL
+void CellularCallHandler::StartRttResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<RadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReportStartRttResult(static_cast<int32_t>(result->error));
+}
+
+void CellularCallHandler::StopRttResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<RadioResponseInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReportStopRttResult(static_cast<int32_t>(result->error));
+}
+#endif
 
 void CellularCallHandler::SimStateChangeReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -2115,5 +2162,35 @@ void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reaso
         serviceInstance->SetCsControl(slotId_, nullptr);
     }
 }
+
+#ifdef SUPPORT_RTT_CALL
+void CellularCallHandler::ReceiveUpdateCallRttEvtResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallRttEventInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReceiveUpdateCallRttEvtResponse(slotId_, *result);
+}
+
+void CellularCallHandler::ReceiveUpdateCallRttErrResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    auto result = event->GetSharedObject<ImsCallRttErrorInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->ReceiveUpdateCallRttErrResponse(slotId_, *result);
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

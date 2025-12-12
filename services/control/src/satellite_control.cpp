@@ -33,7 +33,7 @@ int32_t SatelliteControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
 {
     TELEPHONY_LOGI("DialSatellite start");
     DelayedSingleton<CellularCallHiSysEvent>::GetInstance()->SetCallParameterInfo(
-        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState);
+        callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState, callInfo.isRTT);
     int32_t ret = DialPreJudgment(callInfo, false);
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
@@ -383,17 +383,17 @@ int32_t SatelliteControl::ReportHangUp(const std::vector<CellularCallInfo> &info
     return TELEPHONY_SUCCESS;
 }
 
-int32_t SatelliteControl::HoldCall(int32_t slotId)
+int32_t SatelliteControl::HoldCall(int32_t slotId, bool isRTT)
 {
     return TELEPHONY_ERROR;
 }
 
-int32_t SatelliteControl::UnHoldCall(int32_t slotId)
+int32_t SatelliteControl::UnHoldCall(int32_t slotId, bool isRTT)
 {
     return TELEPHONY_ERROR;
 }
 
-int32_t SatelliteControl::SwitchCall(int32_t slotId)
+int32_t SatelliteControl::SwitchCall(int32_t slotId, bool isRTT)
 {
     return TELEPHONY_ERROR;
 }

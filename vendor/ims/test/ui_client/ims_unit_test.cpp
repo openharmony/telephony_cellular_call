@@ -71,8 +71,10 @@ void ImsUnitTest::InitBasicFuncMap(void)
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_START_DTMF] = &ImsUnitTest::StartDtmf;
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_SEND_DTMF] = &ImsUnitTest::SendDtmf;
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_STOP_DTMF] = &ImsUnitTest::StopDtmf;
+#ifdef SUPPORT_RTT_CALL
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_START_RTT] = &ImsUnitTest::StartRtt;
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_STOP_RTT] = &ImsUnitTest::StopRtt;
+#endif
 }
 
 void ImsUnitTest::InitConfigFuncMap(void)
@@ -366,6 +368,7 @@ int32_t ImsUnitTest::StopDtmf(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
     return IMS_TEST_SUCCESS;
 }
 
+#ifdef SUPPORT_RTT_CALL
 int32_t ImsUnitTest::StartRtt(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
     std::cout << "test StartRtt entry." << std::endl;
@@ -388,6 +391,7 @@ int32_t ImsUnitTest::StopRtt(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
     imsCallPtr->StopRtt(slotId);
     return IMS_TEST_SUCCESS;
 }
+#endif
 
 int32_t ImsUnitTest::SetDomainPreferenceMode(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {

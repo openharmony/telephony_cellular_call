@@ -91,7 +91,8 @@ public:
 #ifdef SECURITY_GUARDE_ENABLE
     static void WriteCallTansferEvent(uint8_t state);
 #endif
-    void SetCallParameterInfo(const int32_t slotId, const int32_t callType, const int32_t videoState);
+    void SetCallParameterInfo(
+        const int32_t slotId, const int32_t callType, const int32_t videoState, bool isRTT);
     void SetIncomingCallParameterInfo(const int32_t incomingCallType, const int32_t incomingVideoState);
     void GetCallParameterInfo(CallBehaviorParameterInfo &info);
     void SetIncomingStartTime();
@@ -113,6 +114,7 @@ private:
     int32_t dfxSlotId_;
     int32_t dfxCallId_;
     int32_t dfxCallType_;
+    bool dfxIsRTT_;
     int32_t dfxVideoState_;
     int32_t dfxIncomingCallType_;
     int32_t dfxIncomingVideoState_;

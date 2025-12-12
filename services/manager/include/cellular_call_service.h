@@ -297,22 +297,35 @@ public:
      */
     int32_t SendDtmf(char cDtmfCode, const CellularCallInfo &callInfo) override;
 
+#ifdef SUPPORT_RTT_CALL
     /**
      * Start Rtt
      *
      * @param slotId
-     * @param msg
+     * @param callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StartRtt(int32_t slotId, const std::string &msg) override;
+    int32_t StartRtt(int32_t slotId, int32_t callId) override;
 
     /**
      * Stop Rtt
      *
      * @param slotId
+     * @param callId
      * @return Returns TELEPHONY_SUCCESS on success, others on failure.
      */
-    int32_t StopRtt(int32_t slotId) override;
+    int32_t StopRtt(int32_t slotId, int32_t callId) override;
+
+    /**
+     * @brief Rtt Upgrade or Downgrade
+     *
+     * @param slotId[in] the slot id
+     * @param callId[in] call id
+     * @param mode[in] rtt modify mode
+     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
+     */
+    int32_t UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode) override;
+#endif
 
     /**
      * Set Call Transfer
@@ -696,6 +709,17 @@ public:
      * @return Returns true on number is mmi code,else return false.
      */
     bool IsMmiCode(int32_t slotId, std::string &number) override;
+
+#ifdef SUPPORT_RTT_CALL
+    /**
+     * @brief RTT Call Switch Settings
+     *
+     * @param slotId[in], The slot id
+     * @param isEnabled[out], The result of enable or not
+     * @return Returns 0 on success, others on failure.
+     */
+    int32_t SetRttCapability(int32_t slotId, bool isEnable) override;
+#endif
 
 private:
     /**

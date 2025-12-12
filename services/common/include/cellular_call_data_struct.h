@@ -44,6 +44,7 @@ struct ImsDialInfoStruct : public DialRequestStruct {
     bool bEmergencyCall = false;
     bool bImsCallFirst = false;
     bool bRoaming = false;
+    bool isRTT = false;
 };
 
 enum MMIHandlerId {

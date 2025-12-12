@@ -40,6 +40,8 @@ void CellularCallRegister::ReportCallsInfo(const CallsReportInfo &callsReportInf
         detailInfo.accountId = (*it).accountId;
         detailInfo.state = (*it).state;
         detailInfo.callMode = (*it).callMode;
+        detailInfo.rttState = (*it).rttState;
+        detailInfo.rttChannelId = (*it).rttChannelId;
     }
 
     std::lock_guard<std::mutex> lock(mutex_);
@@ -503,6 +505,37 @@ void CellularCallRegister::HandleCameraCapabilitiesChanged(CameraCapabilitiesInf
     response.height = cameraCapabilitiesInfo.height;
     callManagerCallBack_->HandleCameraCapabilitiesChanged(response);
 }
+
+#ifdef SUPPORT_RTT_CALL
+void CellularCallRegister::ReceiveUpdateCallRttEvtResponse(int32_t slotId, ImsCallRttEventInfo &rttEvtInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReceiveUpdateCallRttEvtResponse return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    RttEventInfo info;
+    info.callId = rttEvtInfo.callId;
+    info.eventType = rttEvtInfo.eventType;
+    info.reason = rttEvtInfo.reason;
+    callManagerCallBack_->HandleRttEvtChanged(info);
+}
+
+void CellularCallRegister::ReceiveUpdateCallRttErrResponse(int32_t slotId, ImsCallRttErrorInfo &rttErrInfo)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("ReceiveUpdateCallRttErrResponse return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    RttErrorInfo info;
+    info.callId = rttErrInfo.callId;
+    info.operationType = rttErrInfo.operationType;
+    info.causeCode = rttErrInfo.causeCode;
+    info.reasonText = rttErrInfo.reasonText;
+    callManagerCallBack_->HandleRttErrReport(info);
+}
+#endif
 
 ImsCallMode CellularCallRegister::ConverToImsCallMode(ImsCallType callType)
 {

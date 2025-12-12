@@ -32,10 +32,8 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (data == nullptr || size == 0) {
         return;
     }
-
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     std::string phoneNum(reinterpret_cast<const char *>(data), size);
-    std::string msg(reinterpret_cast<const char *>(data), size);
     int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
     int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
     int32_t index = static_cast<int32_t>(size);
@@ -48,8 +46,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     cellularCallConnectionIMS->UnHoldCallRequest(slotId);
     cellularCallConnectionIMS->InviteToConferenceRequest(slotId, numberList);
     cellularCallConnectionIMS->KickOutFromConferenceRequest(slotId, index);
-    cellularCallConnectionIMS->StartRttRequest(slotId, msg);
-    cellularCallConnectionIMS->StopRttRequest(slotId);
+#ifdef SUPPORT_RTT_CALL
+    int32_t callId = 0;
+    cellularCallConnectionIMS->StartRttRequest(slotId, callId);
+    cellularCallConnectionIMS->StopRttRequest(slotId, callId);
+#endif
     return;
 }
 } // namespace OHOS

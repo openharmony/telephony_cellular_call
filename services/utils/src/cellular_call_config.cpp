@@ -956,6 +956,13 @@ std::string CellularCallConfig::GetMcc(int32_t slotId)
     return mcc;
 }
 
+#ifdef SUPPORT_RTT_CALL
+int32_t CellularCallConfig::SetRttCapability(int32_t slotId, bool isEnable)
+{
+    return configRequest_.SetCarrierVtConfigRequest(slotId, !isEnable);
+}
+#endif
+
 int32_t CellularCallConfig::SetMute(int32_t slotId, int32_t mute)
 {
     return configRequest_.SetMuteRequest(slotId, mute);

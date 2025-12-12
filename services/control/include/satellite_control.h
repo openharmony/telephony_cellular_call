@@ -114,7 +114,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t HoldCall(int32_t slotId) override;
+    int32_t HoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * UnHoldCall
@@ -122,7 +122,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t UnHoldCall(int32_t slotId) override;
+    int32_t UnHoldCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * SwitchCall
@@ -130,7 +130,7 @@ public:
      * @param slotId
      * @return Error Code: Returns TELEPHONY_NO_ERROR on success, others on failure.
      */
-    int32_t SwitchCall(int32_t slotId) override;
+    int32_t SwitchCall(int32_t slotId, bool isRTT = false) override;
 
     /**
      * CombineConference
