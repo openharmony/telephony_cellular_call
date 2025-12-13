@@ -250,9 +250,9 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.SetClearCode(SIM1_SLOTID, 18432);
     config.imsSipCauseEnable_[SIM1_SLOTID] = true;
     config.SetClearCode(SIM1_SLOTID, 18432);
-    SetParameter("persist.radio.disconnectCode", "0");
+    SetParameter("telephony.call.disconnectCode", "0");
     config.SetClearCode(SIM1_SLOTID, 18918);
-    int32_t code = GetIntParameter("persist.radio.disconnectCode", 0);
+    int32_t code = GetIntParameter("telephony.call.disconnectCode", 0);
     ASSERT_EQ(code, 486);
 }
 

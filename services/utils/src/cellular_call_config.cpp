@@ -48,7 +48,7 @@ const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
-constexpr const char *DISCONNECT_CODE = "persist.radio.disconnectCode";
+constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
 constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
@@ -72,6 +72,7 @@ std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::map<int32_t, bool> CellularCallConfig::imsSipCauseEnable_;
+int32_t CellularCallConfig::lastDisconnectCode = 0;
 std::shared_mutex CellularCallConfig::mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
 std::shared_mutex CellularCallConfig::simStateLock_;
@@ -1232,6 +1233,10 @@ void CellularCallConfig::HandleEccListChange()
 
 void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
 {
+    if (lastDisconnectCode != 0) {
+        lastDisconnectCode = 0;
+        SetParameter(DISCONNECT_CODE, "0");
+    }
     if (!IsValidSlotId(slotId) || cause <= 0) {
         return;
     }
@@ -1246,6 +1251,7 @@ void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
         return;
     }
     TELEPHONY_LOGI("SetClearCode slotId:%{public}d, code:%{public}d", slotId, code);
+    lastDisconnectCode = code;
     std::string codeStr = std::to_string(code);
     SetParameter(DISCONNECT_CODE, codeStr.c_str());
 }
