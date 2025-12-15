@@ -1368,6 +1368,8 @@ void CellularCallHandler::GetCallFailReasonResponse(const AppExecFwk::InnerEvent
         details.message = "";
     }
 
+    CellularCallConfig config;
+    config.SetClearCode(slotId_, static_cast<int32_t>(details.reason));
     if (details.message.empty()) {
         std::string callFailedMessageName = "";
         bool ret =

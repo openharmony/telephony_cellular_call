@@ -245,6 +245,15 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.ResetImsSwitch(SIM1_SLOTID);
     config.HandleSimAccountLoaded(SIM1_SLOTID);
     ASSERT_FALSE(config.utProvisioningSupported_[SIM1_SLOTID]);
+    config.SetClearCode(SIM1_SLOTID, 0);
+    config.SetClearCode(SIM1_SLOTID, 1);
+    config.SetClearCode(SIM1_SLOTID, 18432);
+    config.imsSipCauseEnable_[SIM1_SLOTID] = true;
+    config.SetClearCode(SIM1_SLOTID, 18432);
+    SetParameter("telephony.call.disconnectCode", "0");
+    config.SetClearCode(SIM1_SLOTID, 18918);
+    int32_t code = GetIntParameter("telephony.call.disconnectCode", 0);
+    ASSERT_EQ(code, 486);
 }
 
 /**
