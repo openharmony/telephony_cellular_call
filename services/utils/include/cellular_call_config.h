@@ -552,7 +552,7 @@ private:
     static std::map<int32_t, bool> readyToCall_;
     static std::map<int32_t, int32_t> vonrSwithStatus_;
     static std::map<int32_t, bool> imsSipCauseEnable_;
-    static int32_t lastDisconnectCode;
+    static int32_t lastDisconnectCode_;
     static bool isOperatorConfigInit_;
     struct cellularNetworkState {
         bool isInService_ = false;
