@@ -506,6 +506,20 @@ void CellularCallRegister::HandleCameraCapabilitiesChanged(CameraCapabilitiesInf
     callManagerCallBack_->HandleCameraCapabilitiesChanged(response);
 }
 
+void CellularCallRegister::HandleImsSuppSvcNotification(ImsSuppSvcNotificationInfo &imsSuppSvcNotificationInfo)
+{
+    TELEPHONY_LOGI("entry CellularCallRegister::HandleImsSuppSvcNotification");
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (callManagerCallBack_ == nullptr) {
+        TELEPHONY_LOGE("HandleImsSuppSvcNotification return, callManagerCallBack_ is nullptr, report fail!");
+        return;
+    }
+    ImsSuppSvcNotificationReportInfo response;
+    response.code = imsSuppSvcNotificationInfo.code;
+    response.callId = imsSuppSvcNotificationInfo.callId;
+    callManagerCallBack_->HandleImsSuppSvcNotification(response);
+}
+
 #ifdef SUPPORT_RTT_CALL
 void CellularCallRegister::ReceiveUpdateCallRttEvtResponse(int32_t slotId, ImsCallRttEventInfo &rttEvtInfo)
 {
