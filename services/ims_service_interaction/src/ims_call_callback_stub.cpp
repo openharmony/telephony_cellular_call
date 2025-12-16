@@ -123,6 +123,8 @@ void ImsCallCallbackStub::InitConfigFuncMap()
         [this](MessageParcel &data, MessageParcel &reply) { return OnSetMuteResponseInner(data, reply); };
     requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_GET_IMS_CAPABILITY)] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnGetImsCapResponseInner(data, reply); };
+    requestFuncMap_[static_cast<uint32_t>(ImsCallCallbackInterfaceCode::IMS_SUPP_SVC_NOTIFICATION)] =
+        [this](MessageParcel &data, MessageParcel &reply) { return OnImsSuppSvcNotificationInner(data, reply); };
 }
 
 void ImsCallCallbackStub::InitSupplementFuncMap()
@@ -1626,5 +1628,34 @@ int32_t ImsCallCallbackStub::OnGetImsCapResponseInner(MessageParcel &data, Messa
     reply.WriteInt32(GetImsCapResponse(slotId, imsCap));
     return TELEPHONY_SUCCESS;
 }
+
+int32_t ImsCallCallbackStub::OnImsSuppSvcNotificationInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    int32_t code = data.ReadInt32();
+    int32_t callId = data.ReadInt32();
+    reply.WriteInt32(ImsSuppSvcNotification(slotId, code, callId));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::ImsSuppSvcNotification(int32_t slotId, int32_t code, int32_t callId)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry: ImsCallCallbackStub::ImsSuppSvcNotification", slotId);
+    TELEPHONY_LOGI("code = %{public}d, callId = %{public}d", code, callId);
+
+    auto handler = DelayedSingleton<ImsCallClient>::GetInstance()->GetHandler(slotId);
+    if (handler == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] handler is null", slotId);
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+
+    bool ret = TelEventHandler::SendTelEvent(handler, RadioEvent::RADIO_IMS_SUPP_SVC_NOTIFICATION, code, callId);
+    if (!ret) {
+        TELEPHONY_LOGE("[slot%{public}d] SendEvent failed!", slotId);
+        return TELEPHONY_ERR_FAIL;
+    }
+    return TELEPHONY_SUCCESS;
+}
+
 } // namespace Telephony
 } // namespace OHOS
