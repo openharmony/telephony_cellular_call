@@ -114,6 +114,8 @@ public:
 
     void HandleCameraCapabilitiesChanged(CameraCapabilitiesInfo &cameraCapabilitiesInfo);
 
+    void HandleImsSuppSvcNotification(ImsSuppSvcNotificationInfo &imsSuppSvcNotificationInfo);
+
     ImsCallMode ConverToImsCallMode(ImsCallType callType);
 
 #ifdef SUPPORT_RTT_CALL
