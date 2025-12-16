@@ -470,6 +470,16 @@ public:
      */
     virtual int32_t GetImsCapResponse(int32_t slotId, const ImsCapFromChip &imsCap) = 0;
 
+    /**
+     * @brief report whether current call is hold by remote.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param code Indicates the call supplementary service notification.
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t ImsSuppSvcNotification(int32_t slotId, int32_t code, int32_t callId) = 0;
+
 #ifdef SUPPORT_RTT_CALL
     /**
      * @brief ReceiveUpdateImsCallRttEvtResponse the result of send update call media mode by ims.
@@ -491,6 +501,7 @@ public:
      */
     virtual int32_t ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo) = 0;
 #endif
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };
