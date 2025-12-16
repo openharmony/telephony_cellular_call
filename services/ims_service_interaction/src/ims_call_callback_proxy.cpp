@@ -678,6 +678,25 @@ int32_t ImsCallCallbackProxy::GetImsCapResponse(int32_t slotId, const ImsCapFrom
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_GET_IMS_CAPABILITY), in);
 }
 
+int32_t ImsCallCallbackProxy::ImsSuppSvcNotification(int32_t slotId, int32_t code, int32_t callId)
+{
+    MessageParcel in;
+    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
+    if (ret != TELEPHONY_SUCCESS) {
+        return ret;
+    }
+ 
+    if (!in.WriteInt32(code)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+ 
+    if (!in.WriteInt32(callId)) {
+        return TELEPHONY_ERR_WRITE_DATA_FAIL;
+    }
+ 
+    return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SUPP_SVC_NOTIFICATION), in);
+}
+
 #ifdef SUPPORT_RTT_CALL
 int32_t ImsCallCallbackProxy::ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo)
 {
