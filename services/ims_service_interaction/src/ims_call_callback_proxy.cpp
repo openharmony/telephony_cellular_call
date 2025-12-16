@@ -685,15 +685,15 @@ int32_t ImsCallCallbackProxy::ImsSuppSvcNotification(int32_t slotId, int32_t cod
     if (ret != TELEPHONY_SUCCESS) {
         return ret;
     }
- 
+
     if (!in.WriteInt32(code)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
- 
+
     if (!in.WriteInt32(callId)) {
         return TELEPHONY_ERR_WRITE_DATA_FAIL;
     }
- 
+
     return SendResponseInfo(static_cast<int32_t>(ImsCallCallbackInterfaceCode::IMS_SUPP_SVC_NOTIFICATION), in);
 }
 
