@@ -74,6 +74,7 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_GET_MUTE,
     IMS_GET_EMERGENCY_CALL_LIST,
     IMS_GET_IMS_CAPABILITY,
+    IMS_SUPP_SVC_NOTIFICATION,
 
     /****************** video settings ******************/
     IMS_CONTROL_CAMERA,
