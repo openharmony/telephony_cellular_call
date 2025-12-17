@@ -21,6 +21,9 @@
 #include "module_service_utils.h"
 #include "securec.h"
 #include "standardize_utils.h"
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+#include "cpp/task_ext.h"
+#endif
 
 namespace OHOS {
 namespace Telephony {
@@ -37,7 +40,7 @@ int32_t IMSControl::Dial(const CellularCallInfo &callInfo, bool isEcc)
         callInfo.slotId, static_cast<int32_t>(callInfo.callType), callInfo.videoState, callInfo.isRTT);
     int32_t ret = DialPreJudgment(callInfo, isEcc);
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
-    if (ret == CALL_ERR_GET_RADIO_STATE_FAILED) {
+    if (ret == CALL_ERR_GET_RADIO_STATE_FAILED && isEcc) {
         return SavePendingEmcCallInfo(callInfo);
     }
 #endif
@@ -149,6 +152,16 @@ int32_t IMSControl::SavePendingEmcCallInfo(const CellularCallInfo &callInfo)
             return TELEPHONY_ERR_MEMCPY_FAIL;
         }
         isPendingEmc_ = true;
+        auto weak = weak_from_this();
+        constexpr uint64_t WAIT_FOR_RADIO_ON = 10000000;
+        waitForRadioOn_ = ffrt::submit_h([weak, this]() {
+            auto strong = weak.lock();
+            if (strong != nullptr) {
+                TELEPHONY_LOGI("wait for radio on timeout");
+                strong->ReportHangUpInfo(pendingEmcDialCallInfo_.slotId);
+                isPendingEmc_ = false;
+            }
+        }, {}, {}, ffrt::task_attr().delay(WAIT_FOR_RADIO_ON));
         return TELEPHONY_SUCCESS;
 }
 #endif
@@ -817,6 +830,15 @@ bool IMSControl::isPendingEmcFlag()
 void IMSControl::setPendingEmcFlag(bool flag)
 {
     isPendingEmc_ = flag;
+}
+
+void IMSControl::SkipWaitForRadioOn()
+{
+    if (waitForRadioOn_ != nullptr) {
+        ffrt::skip(waitForRadioOn_);
+        TELEPHONY_LOGI("skip wait for radio on");
+        waitForRadioOn_ = nullptr;
+    }
 }
 #endif
 } // namespace Telephony

@@ -599,7 +599,29 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0002, Function | MediumTest | Level3
         EXPECT_EQ(imsControl->ReportImsCallsData(slotId, callList), TELEPHONY_SUCCESS);
     }
 }
-
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+/**
+ * @tc.number   cellular_call_ImsControl_0003
+ * @tc.name     Test for ImsControl
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_ImsControl_0003, Function | MediumTest | Level3)
+{
+    auto imsControl = std::make_shared<IMSControl>();
+    CellularCallInfo callInfo;
+    EXPECT_EQ(InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo), TELEPHONY_SUCCESS);
+    bool isEcc = true;
+    imsControl->Dial(callInfo, isEcc);
+    ASSERT_TRUE(imsControl->isPendingEmcFlag());
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    imsControl->SkipWaitForRadioOn();
+    CellularCallInfo callInfo1;
+    EXPECT_EQ(InitCellularCallInfo(SIM1_SLOTID, PHONE_NUMBER, callInfo1), TELEPHONY_SUCCESS);
+    imsControl->Dial(callInfo1, isEcc);
+    ASSERT_TRUE(imsControl->isPendingEmcFlag());
+    imsControl->SkipWaitForRadioOn();
+}
+#endif
 /**
  * @tc.number   cellular_call_CellularCallConnectionIMS_0001
  * @tc.name     Test for CellularCallConnectionIMS

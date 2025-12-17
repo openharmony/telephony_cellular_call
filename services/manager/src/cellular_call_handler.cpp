@@ -2010,7 +2010,7 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
             TELEPHONY_LOGE("imsControl get failed!");
             return;
         }
-        
+        imsControl->SkipWaitForRadioOn();
         if (imsControl->isPendingEmcFlag()) {
             CellularCallInfo callInfo = imsControl->GetPendingEmcCallInfo();
             int32_t ret = imsControl->Dial(callInfo, true);
