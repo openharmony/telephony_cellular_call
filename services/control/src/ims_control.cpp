@@ -21,7 +21,9 @@
 #include "module_service_utils.h"
 #include "securec.h"
 #include "standardize_utils.h"
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
 #include "cpp/task_ext.h"
+#endif
 
 namespace OHOS {
 namespace Telephony {
