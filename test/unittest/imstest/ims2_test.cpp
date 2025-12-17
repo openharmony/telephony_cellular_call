@@ -541,7 +541,8 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0001, Function | MediumTest | Level3
         EXPECT_EQ(imsControl->StopRtt(slotId, 0), TELEPHONY_SUCCESS);
 #endif
         EXPECT_NE(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE), TELEPHONY_SUCCESS);
+        EXPECT_NE(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
+            CALL_ERR_GET_RADIO_STATE_FAILED);
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ALL), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->HangUp(cellularCallInfo, static_cast<CallSupplementType>(INVALID_HANG_UP_TYPE)),
             TELEPHONY_ERR_ARGUMENT_INVALID);

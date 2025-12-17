@@ -92,11 +92,7 @@ void ZeroBranch1Test::SetUpTestCase()
 
 void ZeroBranch1Test::TearDownTestCase() {}
 
-void ZeroBranch1Test::SetUp()
-{
-    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
-    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
-}
+void ZeroBranch1Test::SetUp() {}
 
 void ZeroBranch1Test::TearDown()
 {
@@ -876,6 +872,9 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_004, Function | MediumTe
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTest | Level3)
 {
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
+
     SimLabel expectedSimLabel;
     expectedSimLabel.simType = SimType::ESIM;
     EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
