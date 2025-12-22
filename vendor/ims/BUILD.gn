@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("../../cellularcall.gni")
 
 TELEPHONY_CELLULAR_CALL_ROOT = "../.."
 
@@ -42,6 +43,8 @@ ohos_shared_library("tel_ims") {
     "TELEPHONY_LOG_TAG = \"ImsService\"",
     "LOG_DOMAIN = 0xD001F09",
   ]
+
+  defines += global_defines
 
   deps = [
     "${TELEPHONY_CELLULAR_CALL_ROOT}:tel_cellular_call",
