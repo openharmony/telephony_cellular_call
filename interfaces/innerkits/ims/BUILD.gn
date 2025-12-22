@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import("//build/ohos.gni")
+import("../../../cellularcall.gni")
 
 SUBSYSTEM_DIR = "../../.."
 
@@ -50,6 +51,8 @@ ohos_shared_library("tel_ims_call_api") {
     "LOG_DOMAIN = 0xD001F09",
   ]
 
+  defines += global_defines
+  
   innerapi_tags = [ "platformsdk" ]
 
   part_name = "cellular_call"
