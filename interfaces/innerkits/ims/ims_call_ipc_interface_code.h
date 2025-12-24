@@ -67,7 +67,6 @@ enum class ImsCallInterfaceCode {
     IMS_GET_IMPU_FROM_NETWORK,
     IMS_OPERATOR_CONFIG_CHANGED,
     IMS_GET_IMS_CAPABILITY,
-    IMS_SUPP_SVC_NOTIFICATION,
 
     /****************** video settings ******************/
     IMS_CTRL_CAMERA = 5300,
