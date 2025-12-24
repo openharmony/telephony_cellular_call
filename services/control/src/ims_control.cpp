@@ -599,6 +599,7 @@ CallReportInfo IMSControl::EncapsulationCallReportInfo(int32_t slotId, const Ims
     callReportInfo.newCallUseBox = callInfo.newCallUseBox;
     callReportInfo.rttState = static_cast<RttCallState>(callInfo.rttState);
     callReportInfo.rttChannelId = callInfo.rttChannelId;
+    callReportInfo.imsDomain = callInfo.imsDomain;
     return callReportInfo;
 }
 
