@@ -114,7 +114,7 @@ public:
 
     void HandleCameraCapabilitiesChanged(CameraCapabilitiesInfo &cameraCapabilitiesInfo);
 
-    void HandleImsSuppSvcNotification(ImsSuppSvcNotificationInfo &imsSuppSvcNotificationInfo);
+    void HandleImsSuppExtResponse(ImsSuppExtInfo &imsSuppExtInfo);
 
     ImsCallMode ConverToImsCallMode(ImsCallType callType);
 
