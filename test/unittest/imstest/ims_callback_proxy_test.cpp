@@ -228,5 +228,29 @@ HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0003, Function
     EXPECT_NE(callCallbackProxy->ReceiveUpdateImsCallRttErrResponse(slotId, rttErrInfo), -100);
 #endif
 }
+
+/**
+ * @tc.number   cellular_call_ImsCallCallbackProxy_0004
+ * @tc.name     Test for ImsCallCallbackProxy
+ * @tc.desc     Function test
+ */
+HWTEST_F(ImsCallbackProxyTest, cellular_call_ImsCallCallbackProxy_0004, Function | MediumTest | Level3)
+{
+    const sptr<ImsCallCallbackInterface> imsCallCallback_ = (std::make_unique<ImsCallCallbackStub>()).release();
+    auto callCallbackProxy =
+        (std::make_unique<ImsCallCallbackProxy>(imsCallCallback_->AsObject().GetRefPtr())).release();
+    ASSERT_TRUE(callCallbackProxy != nullptr);
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+    auto callClient = DelayedSingleton<ImsCallClient>::GetInstance();
+    int32_t slotId = 0;
+    ASSERT_EQ(callClient->RegisterImsCallCallbackHandler(slotId, handler), TELEPHONY_SUCCESS);
+    EXPECT_EQ(callCallbackProxy->GetImsSuppExtResponse(slotId, 2, INVALID_INDEX), TELEPHONY_SUCCESS);
+    EXPECT_EQ(callCallbackProxy->GetImsSuppExtResponse(slotId, 3, INVALID_INDEX), TELEPHONY_SUCCESS);
+    DelayedSingleton<ImsCallClient>::GetInstance()->UnInit();
+    DelayedSingleton<ImsCallClient>::DestroyInstance();
+}
 } // namespace Telephony
 } // namespace OHOS
