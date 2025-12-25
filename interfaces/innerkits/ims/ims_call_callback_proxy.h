@@ -73,6 +73,7 @@ public:
     int32_t GetColrResponse(int32_t slotId, const GetColrResult &result) override;
     int32_t SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
     int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
+    int32_t GetImsSuppExtResponse(int32_t slotId, int32_t code, int32_t callId) override;
     /****************** conference ******************/
     int32_t CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info) override;
     int32_t InviteToConferenceResponse(int32_t slotId, const RadioResponseInfo &info) override;
@@ -84,7 +85,6 @@ public:
     int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) override;
     int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) override;
     int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) override;
-    int32_t ImsSuppSvcNotification(int32_t slotId, int32_t code, int32_t callId) override;
 
 #ifdef SUPPORT_RTT_CALL
     int32_t ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo) override;
