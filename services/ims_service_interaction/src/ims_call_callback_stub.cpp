@@ -1629,15 +1629,6 @@ int32_t ImsCallCallbackStub::OnGetImsCapResponseInner(MessageParcel &data, Messa
     return TELEPHONY_SUCCESS;
 }
 
-int32_t ImsCallCallbackStub::OnImsSuppSvcNotificationInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    int32_t code = data.ReadInt32();
-    int32_t callId = data.ReadInt32();
-    reply.WriteInt32(ImsSuppSvcNotification(slotId, code, callId));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallCallbackStub::GetImsSuppExtResponse(int32_t slotId, int32_t code, int32_t callId)
 {
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
