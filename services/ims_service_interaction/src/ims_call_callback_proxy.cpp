@@ -197,7 +197,8 @@ bool ImsCallCallbackProxy::WriteCallInfo(MessageParcel &in, const ImsCurrentCall
             !in.WriteInt32(call.type) || !in.WriteString(call.alpha) || !in.WriteInt32(call.toa) ||
             !in.WriteInt32(call.toneType) || !in.WriteInt32(call.callInitialType) ||
             !in.WriteInt32(call.namePresentation) || !in.WriteInt32(call.newCallUseBox) ||
-            !in.WriteInt32(call.rttState) || !in.WriteInt32(call.rttChannelId));
+            !in.WriteInt32(call.rttState) || !in.WriteInt32(call.rttChannelId) ||
+            !in.WriteInt32(call.imsDomain));
 }
 
 int32_t ImsCallCallbackProxy::SetImsSwitchResponse(int32_t slotId, const RadioResponseInfo &info)

@@ -397,6 +397,7 @@ int32_t ImsCallCallbackStub::OnGetImsCallsDataResponseInner(MessageParcel &data,
             call.newCallUseBox = data.ReadInt32();
             call.rttState = data.ReadInt32();
             call.rttChannelId = data.ReadInt32();
+            call.imsDomain = data.ReadInt32();
             callList->calls.push_back(call);
         }
         reply.WriteInt32(GetImsCallsDataResponse(slotId, *callList));

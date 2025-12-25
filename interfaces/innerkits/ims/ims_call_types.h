@@ -334,6 +334,13 @@ struct ImsCurrentCall {
      * RTT Call Channel Id
      */
     int32_t rttChannelId;
+    /**
+     * Indicates the ims domain
+     * - 0: volte
+     * - 1: vowifi
+     * - 2: vonr
+     */
+    int32_t imsDomain = 0;
 };
 
 /**
