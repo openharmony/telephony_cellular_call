@@ -74,7 +74,6 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_GET_MUTE,
     IMS_GET_EMERGENCY_CALL_LIST,
     IMS_GET_IMS_CAPABILITY,
-    IMS_SUPP_SVC_NOTIFICATION,
 
     /****************** video settings ******************/
     IMS_CONTROL_CAMERA,
@@ -99,6 +98,7 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_SET_CALL_COLR,
     IMS_SET_CALL_COLP,
     IMS_GET_CALL_COLP,
+    IMS_SUPP_EXT_CHANGED,
 };
 } // namespace Telephony
 } // namespace OHOS
