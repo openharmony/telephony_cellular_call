@@ -687,6 +687,8 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0001, Function | MediumTes
     callRegister->HandleCallDataUsageChanged(callDataUsageInfo);
     CameraCapabilitiesInfo cameraCapabilitiesInfo;
     callRegister->HandleCameraCapabilitiesChanged(cameraCapabilitiesInfo);
+    ImsSuppExtInfo imsSuppExtInfo;
+    callRegister->HandleImsSuppExtResponse(imsSuppExtInfo);
 }
 
 /**
@@ -719,6 +721,8 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallRegister_0002, TestSize.Level0)
     callRegister->HandleCallDataUsageChanged(callDataUsageInfo);
     CameraCapabilitiesInfo cameraCapabilitiesInfo;
     callRegister->HandleCameraCapabilitiesChanged(cameraCapabilitiesInfo);
+    ImsSuppExtInfo imsSuppExtInfo;
+    callRegister->HandleImsSuppExtResponse(imsSuppExtInfo);
 
 #ifdef SUPPORT_RTT_CALL
     int32_t slotId = -1;
@@ -871,6 +875,7 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0002, Function | MediumTest
         handler.HandlePeerDimensionsChanged(event);
         handler.HandleCallDataUsageChanged(event);
         handler.HandleCameraCapabilitiesChanged(event);
+        handler.HandleImsSuppExtResponse(event);
         EXPECT_TRUE(event != nullptr);
     }
 }
@@ -933,6 +938,7 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallHandler_0004, Function | MediumTest
         handler.HandlePeerDimensionsChanged(event);
         handler.HandleCallDataUsageChanged(event);
         handler.HandleCameraCapabilitiesChanged(event);
+        handler.HandleImsSuppExtResponse(event);
         ASSERT_EQ(handler.GetSlotId(), slotId);
     }
 }

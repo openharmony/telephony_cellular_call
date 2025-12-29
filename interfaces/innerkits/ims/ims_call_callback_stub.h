@@ -76,6 +76,7 @@ public:
     int32_t GetColrResponse(int32_t slotId, const GetColrResult &result) override;
     int32_t SetColpResponse(int32_t slotId, const SsBaseResult &resultInfo) override;
     int32_t GetColpResponse(int32_t slotId, const GetColpResult &result) override;
+    int32_t GetImsSuppExtResponse(int32_t slotId, int32_t code, int32_t callId) override;
 
     /****************** conference ******************/
     int32_t CombineConferenceResponse(int32_t slotId, const RadioResponseInfo &info) override;
@@ -88,6 +89,7 @@ public:
     int32_t PeerDimensionsChanged(int32_t slotId, const ImsCallPeerDimensionsInfo &callPeerDimensionsInfo) override;
     int32_t CallDataUsageChanged(int32_t slotId, const ImsCallDataUsageInfo &callDataUsageInfo) override;
     int32_t CameraCapabilitiesChanged(int32_t slotId, const CameraCapabilitiesInfo &cameraCapabilitiesInfo) override;
+
 #ifdef SUPPORT_RTT_CALL
     int32_t ReceiveUpdateImsCallRttEvtResponse(int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo) override;
     int32_t ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo) override;
@@ -142,6 +144,7 @@ private:
     int32_t OnGetColrResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnSetColpResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t OnGetColpResponseInner(MessageParcel &data, MessageParcel &reply);
+    int32_t OnImsSuppExtResponseInner(MessageParcel &data, MessageParcel &reply);
     int32_t GetSsRequestCommand(int32_t slotId, int32_t index, SsRequestCommand &ss);
     void BuildCallForwardInfo(const CallForwardQueryInfoList &cFQueryList, CallForwardQueryInfoList &cFQueryResultList);
 

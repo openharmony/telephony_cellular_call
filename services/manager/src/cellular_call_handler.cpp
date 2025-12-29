@@ -189,6 +189,8 @@ void CellularCallHandler::InitSupplementFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { SendUnlockPinPukResponse(event); };
     requestFuncMap_[RadioEvent::RADIO_CLOSE_UNFINISHED_USSD] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { CloseUnFinishedUssdResponse(event); };
+    requestFuncMap_[RadioEvent::RADIO_SUPP_EXT_CHANGED] =
+        [this](const AppExecFwk::InnerEvent::Pointer &event) { HandleImsSuppExtResponse(event); };
 }
 
 void CellularCallHandler::InitActiveReportFuncMap()
@@ -1103,6 +1105,24 @@ void CellularCallHandler::HandleCameraCapabilitiesChanged(const AppExecFwk::Inne
         return;
     }
     registerInstance_->HandleCameraCapabilitiesChanged(*result);
+}
+
+void CellularCallHandler::HandleImsSuppExtResponse(const AppExecFwk::InnerEvent::Pointer &event)
+{
+    if (event == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] event is null", slotId_);
+        return;
+    }
+    auto result = event->GetSharedObject<ImsSuppExtInfo>();
+    if (result == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] result is null", slotId_);
+        return;
+    }
+    if (registerInstance_ == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] registerInstance_ is null", slotId_);
+        return;
+    }
+    registerInstance_->HandleImsSuppExtResponse(*result);
 }
 
 void CellularCallHandler::SetSlotId(int32_t id)

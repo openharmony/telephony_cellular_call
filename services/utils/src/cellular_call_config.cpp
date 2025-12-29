@@ -114,7 +114,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
         CellularCallConfig::cellularNetworkState cellularState;
         CellularCallConfig::networkServiceState_.insert(std::pair<int, CellularCallConfig::cellularNetworkState>(i,
             cellularState));
-        CellularCallConfig::videoCallWaiting_.insert(std::pair<int, bool>(i, false));
+        CellularCallConfig::videoCallWaiting_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::imsSipCauseEnable_.insert(std::pair<int, bool>(i, false));
     }
 }

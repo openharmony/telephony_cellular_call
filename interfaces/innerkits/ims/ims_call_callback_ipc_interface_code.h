@@ -98,6 +98,7 @@ enum class ImsCallCallbackInterfaceCode {
     IMS_SET_CALL_COLR,
     IMS_SET_CALL_COLP,
     IMS_GET_CALL_COLP,
+    IMS_SUPP_EXT_CHANGED,
 };
 } // namespace Telephony
 } // namespace OHOS

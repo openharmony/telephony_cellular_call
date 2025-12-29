@@ -282,6 +282,17 @@ public:
      */
     virtual int32_t SetClirResponse(int32_t slotId, const SsBaseResult &resultInfo) = 0;
 
+     /**
+     * @brief report the supplementary service information for the call.
+     *
+     * @param slotId Indicates the card slot index number,
+     * ranging from {@code 0} to the maximum card slot index number supported by the device.
+     * @param code Indicates the supplementary service extension code for the call.
+     * @param callId Indicates the call id (call index in call manager component).
+     * @return Returns {@code TELEPHONY_SUCCESS} on success, others on failure.
+     */
+    virtual int32_t GetImsSuppExtResponse(int32_t slotId, int32_t code, int32_t callId) = 0;
+
     /**
      * @brief GetCallTransferResponse the result of get the call transfer by IMS.
      *
@@ -491,6 +502,7 @@ public:
      */
     virtual int32_t ReceiveUpdateImsCallRttErrResponse(int32_t slotId, const ImsCallRttErrorInfo &rttErrInfo) = 0;
 #endif
+
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.Telephony.ImsCallCallback");
 };

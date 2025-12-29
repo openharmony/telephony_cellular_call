@@ -181,6 +181,8 @@ public:
 
     void HandleCameraCapabilitiesChanged(const AppExecFwk::InnerEvent::Pointer &event);
 
+    void HandleImsSuppExtResponse(const AppExecFwk::InnerEvent::Pointer &event);
+
 #ifdef CELLULAR_CALL_SUPPORT_SATELLITE
     void GetSatelliteCallsDataResponse(const AppExecFwk::InnerEvent::Pointer &event);
 #endif // CELLULAR_CALL_SUPPORT_SATELLITE
