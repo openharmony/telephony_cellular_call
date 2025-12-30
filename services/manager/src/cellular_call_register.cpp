@@ -532,6 +532,7 @@ void CellularCallRegister::ReceiveUpdateCallRttEvtResponse(int32_t slotId, ImsCa
     info.callId = rttEvtInfo.callId;
     info.eventType = rttEvtInfo.eventType;
     info.reason = rttEvtInfo.reason;
+    info.slotId = slotId;
     callManagerCallBack_->HandleRttEvtChanged(info);
 }
 
@@ -547,6 +548,7 @@ void CellularCallRegister::ReceiveUpdateCallRttErrResponse(int32_t slotId, ImsCa
     info.operationType = rttErrInfo.operationType;
     info.causeCode = rttErrInfo.causeCode;
     info.reasonText = rttErrInfo.reasonText;
+    info.slotId = slotId;
     callManagerCallBack_->HandleRttErrReport(info);
 }
 #endif
