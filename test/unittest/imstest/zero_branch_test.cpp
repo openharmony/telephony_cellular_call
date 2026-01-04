@@ -39,9 +39,9 @@
 #include "cellular_call_rdb_helper.h"
 #include "cellular_call_dump_helper.h"
 #include "emergency_utils.h"
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 #include "satellite_call_client.h"
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 #include "ims_video_call_control.h"
 #include "ims_call_proxy.h"
 namespace OHOS {
@@ -518,11 +518,11 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_006, Function | Medium
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
     auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
     ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     callSup.HandleClip(SIM1_SLOTID, mmiDataAct);
     callSup.HandleClip(SIM1_SLOTID, mmiDataDeact);
     callSup.HandleClip(SIM1_SLOTID, mmiDataInterrogate);
@@ -548,10 +548,10 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_006, Function | Medium
 
 static void CheckRegisterSatelliteCallback(const std::shared_ptr<CellularCallHandler> &handler)
 {
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
     ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 }
 
 /**
@@ -611,10 +611,10 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallSupplement_007, Function | Medium
 
 static void CheckStatelliteClient(const std::shared_ptr<CellularCallHandler> &handler)
 {
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     auto callClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
     ASSERT_EQ(callClient->RegisterSatelliteCallCallbackHandler(SIM1_SLOTID, handler), TELEPHONY_SUCCESS);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 }
 
 /**

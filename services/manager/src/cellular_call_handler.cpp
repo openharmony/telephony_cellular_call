@@ -26,10 +26,10 @@
 #include "parameters.h"
 #include "radio_event.h"
 #include "resource_utils.h"
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 #include "satellite_call_client.h"
 #include "satellite_radio_event.h"
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 #include "securec.h"
 #include "call_manager_info.h"
 #include "telephony_types.h"
@@ -42,9 +42,9 @@ const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^\\+8686(
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 const uint32_t GET_SATELLITE_CALL_DATA_ID = 10005;
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 const uint32_t NETWORK_STATE_CHANGED = 10006;
 const int64_t DELAY_TIME = 100;
 const int32_t MAX_REQUEST_COUNT = 50;
@@ -66,9 +66,9 @@ CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInf
     InitConfigFuncMap();
     InitSupplementFuncMap();
     InitActiveReportFuncMap();
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     InitSatelliteCallFuncMap();
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     InitAdditionalFuncMap();
 #ifdef SUPPORT_RTT_CALL
     InitImsRttFuncMap();
@@ -237,7 +237,7 @@ void CellularCallHandler::InitActiveReportFuncMap()
         [this](const AppExecFwk::InnerEvent::Pointer &event) { RadioStateChangeProcess(event); };
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 void CellularCallHandler::InitSatelliteCallFuncMap()
 {
     requestFuncMap_[SatelliteRadioEvent::SATELLITE_RADIO_CALL_STATE_CHANGED] =
@@ -255,7 +255,7 @@ void CellularCallHandler::InitSatelliteCallFuncMap()
     requestFuncMap_[GET_SATELLITE_CALL_DATA_ID] =
         [this](const AppExecFwk::InnerEvent::Pointer &event) { GetSatelliteCallsDataRequest(event); };
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 void CellularCallHandler::InitAdditionalFuncMap()
 {
@@ -294,7 +294,7 @@ void CellularCallHandler::RegisterImsCallCallbackHandler()
     }
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 void CellularCallHandler::RegisterSatelliteCallCallbackHandler()
 {
     // Register Satellite
@@ -303,7 +303,7 @@ void CellularCallHandler::RegisterSatelliteCallCallbackHandler()
         satelliteCallClient->RegisterSatelliteCallCallbackHandler(slotId_, shared_from_this());
     }
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 void CellularCallHandler::ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -634,7 +634,7 @@ void CellularCallHandler::DialResponse(const AppExecFwk::InnerEvent::Pointer &ev
     }
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 void CellularCallHandler::GetSatelliteCallData(const AppExecFwk::InnerEvent::Pointer &event)
 {
     this->SendEvent(GET_SATELLITE_CALL_DATA_ID, 0, Priority::HIGH);
@@ -724,7 +724,7 @@ void CellularCallHandler::ReportSatelliteCallsData(const SatelliteCurrentCallLis
         CellularCallIncomingFinishTrace(callInfo.state);
     }
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 void CellularCallHandler::CommonResultEventHandling(
     const AppExecFwk::InnerEvent::Pointer &event, CellularCallEventInfo &eventInfo)
@@ -1261,7 +1261,7 @@ void CellularCallHandler::ImsCallStatusInfoReport(const AppExecFwk::InnerEvent::
     GetImsCallData(event);
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 void CellularCallHandler::SatelliteCallStatusInfoReport(const AppExecFwk::InnerEvent::Pointer &event)
 {
     if (srvccState_ == SrvccState::STARTED) {
@@ -1277,7 +1277,7 @@ void CellularCallHandler::GetSatelliteCallsDataRequest(const AppExecFwk::InnerEv
     CellularCallConnectionSatellite connectionSatellite;
     connectionSatellite.GetSatelliteCallsDataRequest(slotId_, lastCallsDataFlag_);
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 void CellularCallHandler::UssdNotifyResponse(const AppExecFwk::InnerEvent::Pointer &event)
 {
@@ -1989,7 +1989,7 @@ void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Poi
     } else {
         serviceInstance->SetImsControl(slotId_, nullptr);
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     auto satelliteControl = serviceInstance->GetSatelliteControl(slotId_);
     if (satelliteControl == nullptr) {
         TELEPHONY_LOGE("[slot%{public}d] satelliteControl is null", slotId_);
@@ -1998,7 +1998,7 @@ void CellularCallHandler::OnRilAdapterHostDied(const AppExecFwk::InnerEvent::Poi
     } else {
         serviceInstance->SetSatelliteControl(slotId_, nullptr);
     }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 }
 
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE

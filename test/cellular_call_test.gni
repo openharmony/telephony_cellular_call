@@ -53,7 +53,7 @@ cellular_call_base_src = [
     "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_proxy.cpp",
   ]
 
-  if (cellular_call_feature_support_satellite) {
+  if (cellular_call_satellite) {
     cellular_call_base_src += [
       "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_callback_stub.cpp",
       "${CELLULAR_CALL_PATH}/services/satellite_service_interaction/src/satellite_call_client.cpp",

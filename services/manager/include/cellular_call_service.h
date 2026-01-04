@@ -633,7 +633,7 @@ public:
      */
     std::shared_ptr<IMSControl> GetImsControl(int32_t slotId);
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     /**
      * Get SatelliteControl
      *
@@ -641,7 +641,7 @@ public:
      * @return shared_ptr SatelliteControl
      */
     std::shared_ptr<SatelliteControl> GetSatelliteControl(int32_t slotId);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
     /**
      * Set SetCsControl
@@ -659,7 +659,7 @@ public:
      */
     void SetImsControl(int32_t slotId, const std::shared_ptr<IMSControl> &imsControl);
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     /**
      * Set SatelliteControl
      *
@@ -667,7 +667,7 @@ public:
      * @param  shared_ptr SatelliteControl
      */
     void SetSatelliteControl(int32_t slotId, const std::shared_ptr<SatelliteControl> &satelliteControl);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
     /**
      * Get Handler
@@ -783,11 +783,11 @@ private:
     void SubscribeToEvents(const std::vector<std::string>& events, int priority = 0,
         const std::string& permission = "");
         void RegisterEccListener();
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     int32_t HangUpSatelliteCall(const CellularCallInfo &callInfo, CallSupplementType type);
     int32_t AnswerSatelliteCall(const CellularCallInfo &callInfo);
     int32_t RejectSatelliteCall(const CellularCallInfo &callInfo);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 private:
     enum class SatelliteState {
@@ -804,9 +804,9 @@ private:
     int32_t srvccState_ = SrvccState::SRVCC_NONE;
     std::map<int32_t, std::shared_ptr<CSControl>> csControlMap_;
     std::map<int32_t, std::shared_ptr<IMSControl>> imsControlMap_;
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     std::map<int32_t, std::shared_ptr<SatelliteControl>> satelliteControlMap_;
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     std::map<int32_t, bool> isRadioOn_;
     sptr<NetworkSearchCallBackBase> networkSearchCallBack_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_ = nullptr;

@@ -95,7 +95,7 @@ ohos_fuzztest("SatelliteCallRequestFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  if (cellular_call_feature_support_satellite) {
+  if (cellular_call_satellite) {
     deps += [
       # deps file
       ":SatelliteCallRequestFuzzTest",
