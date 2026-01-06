@@ -55,7 +55,7 @@ ohos_shared_library("tel_cellular_call") {
     "services/utils/src/standardize_utils.cpp",
   ]
 
-  if (cellular_call_feature_support_satellite) {
+  if (cellular_call_satellite) {
     sources += [
       "services/connection/src/cellular_call_connection_satellite.cpp",
       "services/control/src/satellite_control.cpp",

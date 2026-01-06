@@ -26,9 +26,9 @@
 #include "ims_video_call_control.h"
 #include "module_service_utils.h"
 #include "radio_event.h"
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 #include "satellite_call_client.h"
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 #include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
@@ -363,7 +363,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
     bool isEcc = false;
     IsEmergencyPhoneNumber(callInfo.slotId, callInfo.phoneNum, isEcc);
     ModuleServiceUtils moduleServiceUtils;
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     bool satelliteStatusOn = moduleServiceUtils.GetSatelliteStatus();
     if (satelliteStatusOn) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
@@ -378,7 +378,7 @@ int32_t CellularCallService::Dial(const CellularCallInfo &callInfo)
         }
         return satelliteControl->Dial(callInfo, isEcc);
     }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     return DialNormalCall(callInfo, isEcc);
 }
 
@@ -444,7 +444,7 @@ bool CellularCallService::IsMmiCode(int32_t slotId, std::string &number)
     return true;
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 int32_t CellularCallService::HangUpSatelliteCall(const CellularCallInfo &callInfo, CallSupplementType type)
 {
     auto satelliteControl = GetSatelliteControl(callInfo.slotId);
@@ -457,7 +457,7 @@ int32_t CellularCallService::HangUpSatelliteCall(const CellularCallInfo &callInf
     }
     return satelliteControl->HangUp(callInfo, type);
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupplementType type)
 {
@@ -474,13 +474,13 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
             static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "HangUp srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         return HangUpSatelliteCall(callInfo, type);
     } else if (CallType::TYPE_CS == callInfo.callType) {
 #else
     if (CallType::TYPE_CS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HangUp return, csControl is nullptr");
@@ -507,7 +507,7 @@ int32_t CellularCallService::HangUp(const CellularCallInfo &callInfo, CallSupple
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 int32_t CellularCallService::RejectSatelliteCall(const CellularCallInfo &callInfo) {
     auto satelliteControl = GetSatelliteControl(callInfo.slotId);
     if (satelliteControl == nullptr) {
@@ -519,7 +519,7 @@ int32_t CellularCallService::RejectSatelliteCall(const CellularCallInfo &callInf
     }
     return satelliteControl->Reject(callInfo);
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
 {
@@ -536,13 +536,13 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
             static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "Reject srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         return RejectSatelliteCall(callInfo);
     } else if (CallType::TYPE_CS == callInfo.callType) {
 #else
     if (CallType::TYPE_CS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Reject return, csControl is nullptr");
@@ -569,7 +569,7 @@ int32_t CellularCallService::Reject(const CellularCallInfo &callInfo)
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 int32_t CellularCallService::AnswerSatelliteCall(const CellularCallInfo &callInfo)
 {
     auto satelliteControl = GetSatelliteControl(callInfo.slotId);
@@ -582,7 +582,7 @@ int32_t CellularCallService::AnswerSatelliteCall(const CellularCallInfo &callInf
     }
     return satelliteControl->Answer(callInfo);
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
 {
@@ -600,13 +600,13 @@ int32_t CellularCallService::Answer(const CellularCallInfo &callInfo)
             static_cast<int32_t>(CallErrorCode::CALL_ERROR_UNEXPECTED_SRVCC_STATE), "srvccState_ is STARTED");
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         return AnswerSatelliteCall(callInfo);
     } else if (CallType::TYPE_CS == callInfo.callType) {
 #else
     if (CallType::TYPE_CS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto csControl = GetCsControl(callInfo.slotId);
         if (csControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::Answer return, csControl is nullptr");
@@ -662,7 +662,7 @@ int32_t CellularCallService::HoldCall(const CellularCallInfo &callInfo)
     if (srvccState_ == SrvccState::STARTED) {
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -673,7 +673,7 @@ int32_t CellularCallService::HoldCall(const CellularCallInfo &callInfo)
     } else if (CallType::TYPE_IMS == callInfo.callType) {
 #else
     if (CallType::TYPE_IMS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::HoldCall return, imsControl is nullptr");
@@ -701,7 +701,7 @@ int32_t CellularCallService::UnHoldCall(const CellularCallInfo &callInfo)
     if (srvccState_ == SrvccState::STARTED) {
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -712,7 +712,7 @@ int32_t CellularCallService::UnHoldCall(const CellularCallInfo &callInfo)
     } else if (CallType::TYPE_IMS == callInfo.callType) {
 #else
     if (CallType::TYPE_IMS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::UnHoldCall return, imsControl is nullptr");
@@ -740,7 +740,7 @@ int32_t CellularCallService::SwitchCall(const CellularCallInfo &callInfo)
     if (srvccState_ == SrvccState::STARTED) {
         return TELEPHONY_ERR_FAIL;
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -751,7 +751,7 @@ int32_t CellularCallService::SwitchCall(const CellularCallInfo &callInfo)
     } else if (CallType::TYPE_IMS == callInfo.callType) {
 #else
     if (CallType::TYPE_IMS == callInfo.callType) {
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         auto imsControl = GetImsControl(callInfo.slotId);
         if (imsControl == nullptr) {
             TELEPHONY_LOGE("CellularCallService::SwitchCall return, imsControl is nullptr");
@@ -885,11 +885,11 @@ int32_t CellularCallService::SetReadyToCall(int32_t slotId, int32_t callType, bo
     if (GetImsControl(slotId) != nullptr) {
         GetImsControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (GetSatelliteControl(slotId) != nullptr) {
         GetSatelliteControl(slotId)->SetReadyToCall(slotId, isReadyToCall);
     }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     return TELEPHONY_SUCCESS;
 }
 
@@ -901,11 +901,11 @@ int32_t CellularCallService::HangUpAllConnection(int32_t slotId)
     if (GetImsControl(slotId)) {
         GetImsControl(slotId)->HangUpAllConnection(slotId);
     }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     if (GetSatelliteControl(slotId)) {
         GetSatelliteControl(slotId)->HangUpAllConnection(slotId);
     }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     return TELEPHONY_SUCCESS;
 }
 
@@ -972,7 +972,7 @@ int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->StartDtmf(csControl->GetConnectionMap(), cDtmfCode, callInfo);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -980,7 +980,7 @@ int32_t CellularCallService::StartDtmf(char cDtmfCode, const CellularCallInfo &c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->StartDtmf(satelliteControl->GetConnectionMap(), cDtmfCode, callInfo);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     }
     TELEPHONY_LOGE("CellularCallService::StartDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -1009,7 +1009,7 @@ int32_t CellularCallService::StopDtmf(const CellularCallInfo &callInfo)
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->StopDtmf(csControl->GetConnectionMap(), callInfo);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -1017,7 +1017,7 @@ int32_t CellularCallService::StopDtmf(const CellularCallInfo &callInfo)
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->StopDtmf(satelliteControl->GetConnectionMap(), callInfo);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     }
     TELEPHONY_LOGE("CellularCallService::StopDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -1047,7 +1047,7 @@ int32_t CellularCallService::PostDialProceed(const CellularCallInfo &callInfo, c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->PostDialProceed(callInfo, proceed);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -1055,7 +1055,7 @@ int32_t CellularCallService::PostDialProceed(const CellularCallInfo &callInfo, c
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->PostDialProceed(callInfo, proceed);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     }
     TELEPHONY_LOGE("CellularCallService::PostDialProceed return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -1084,7 +1084,7 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return csControl->SendDtmf(csControl->GetConnectionMap(), cDtmfCode, callInfo);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     } else if (CallType::TYPE_SATELLITE == callInfo.callType) {
         auto satelliteControl = GetSatelliteControl(callInfo.slotId);
         if (satelliteControl == nullptr) {
@@ -1092,7 +1092,7 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
             return TELEPHONY_ERR_LOCAL_PTR_NULL;
         }
         return satelliteControl->SendDtmf(satelliteControl->GetConnectionMap(), cDtmfCode, callInfo);
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     }
     TELEPHONY_LOGE("CellularCallService::SendDtmf return, call type error.");
     return TELEPHONY_ERR_ARGUMENT_INVALID;
@@ -1188,13 +1188,13 @@ std::shared_ptr<IMSControl> CellularCallService::GetImsControl(int32_t slotId)
     return imsControlMap_[slotId];
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 std::shared_ptr<SatelliteControl> CellularCallService::GetSatelliteControl(int32_t slotId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return satelliteControlMap_[slotId];
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 void CellularCallService::SetCsControl(int32_t slotId, const std::shared_ptr<CSControl> &csControl)
 {
@@ -1216,7 +1216,7 @@ void CellularCallService::SetImsControl(int32_t slotId, const std::shared_ptr<IM
     imsControlMap_[slotId] = imsControl;
 }
 
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
 void CellularCallService::SetSatelliteControl(int32_t slotId, const std::shared_ptr<SatelliteControl> &satelliteControl)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -1226,7 +1226,7 @@ void CellularCallService::SetSatelliteControl(int32_t slotId, const std::shared_
     }
     satelliteControlMap_[slotId] = satelliteControl;
 }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
 
 int32_t CellularCallService::SetCallWaiting(int32_t slotId, bool activate)
 {
@@ -1717,11 +1717,11 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnAddSystemAbility(
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
         bool subscribeResult = EventFwk::CommonEventManager::SubscribeCommonEvent(cellularCallHandler_);
         TELEPHONY_LOGI("subscribeResult = %{public}d", subscribeResult);
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
     } else if (systemAbilityId == TELEPHONY_SATELLITE_SYS_ABILITY_ID) {
         DelayedSingleton<SatelliteCallClient>::GetInstance()->Init();
         cellularCallHandler_->RegisterSatelliteCallCallbackHandler();
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
     }
 }
 
@@ -1749,12 +1749,12 @@ void CellularCallService::SystemAbilityStatusChangeListener::OnRemoveSystemAbili
             TELEPHONY_LOGI("unSubscribeResult = %{public}d", unSubscribeResult);
             break;
         }
-#ifdef CELLULAR_CALL_SUPPORT_SATELLITE
+#ifdef CELLULAR_CALL_SATELLITE
         case TELEPHONY_SATELLITE_SYS_ABILITY_ID: {
             DelayedSingleton<SatelliteCallClient>::GetInstance()->UnInit();
             break;
         }
-#endif // CELLULAR_CALL_SUPPORT_SATELLITE
+#endif // CELLULAR_CALL_SATELLITE
         default:
             TELEPHONY_LOGE("systemAbilityId is invalid");
             break;

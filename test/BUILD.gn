@@ -60,7 +60,7 @@ group("unittest") {
     "unittest/imstest:cellular_call_ims_zero_branch1_test",
     "unittest/imstest:cellular_call_ims_zero_branch_test",
   ]
-  if (cellular_call_feature_support_satellite) {
+  if (cellular_call_satellite) {
     deps += [
       "unittest/satellitetest:cellular_call_satellite_callback_test",
       "unittest/satellitetest:cellular_call_satellite_test",
