@@ -47,9 +47,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     cellularCallConnectionIMS->InviteToConferenceRequest(slotId, numberList);
     cellularCallConnectionIMS->KickOutFromConferenceRequest(slotId, index);
 #ifdef SUPPORT_RTT_CALL
-    int32_t callId = 0;
-    cellularCallConnectionIMS->StartRttRequest(slotId, callId);
-    cellularCallConnectionIMS->StopRttRequest(slotId, callId);
+    cellularCallConnectionIMS->UpdateImsRttCallModeRequest(slotId, index, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
 #endif
     return;
 }

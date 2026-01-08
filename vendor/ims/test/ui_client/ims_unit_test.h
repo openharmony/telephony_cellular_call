@@ -52,10 +52,6 @@ public:
     int32_t StartDtmf(const sptr<ImsCallInterface> &imsCallSerivce) const;
     int32_t SendDtmf(const sptr<ImsCallInterface> &imsCallSerivce) const;
     int32_t StopDtmf(const sptr<ImsCallInterface> &imsCallSerivce) const;
-#ifdef SUPPORT_RTT_CALL
-    int32_t StartRtt(const sptr<ImsCallInterface> &imsCallSerivce) const;
-    int32_t StopRtt(const sptr<ImsCallInterface> &imsCallSerivce) const;
-#endif
 
     /****************** ims config ******************/
     int32_t SetDomainPreferenceMode(const sptr<ImsCallInterface> &imsCallSerivce) const;

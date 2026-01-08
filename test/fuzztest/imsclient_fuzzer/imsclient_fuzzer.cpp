@@ -61,7 +61,6 @@ void TestImsCallClientWithCallInfo(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
     ImsCallInfo callInfo;
-    int32_t callId = 0;
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
@@ -91,8 +90,7 @@ void TestImsCallClientWithCallInfo(
     imsCallClient->SendDtmf(slotId, *cDtmfCode, index);
     imsCallClient->StopDtmf(slotId, index);
 #ifdef SUPPORT_RTT_CALL
-    imsCallClient->StartRtt(slotId, callId);
-    imsCallClient->StopRtt(slotId, callId);
+    imsCallClient->UpdateImsRttCallMode(slotId, index, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
 #endif
     imsCallClient->SetDomainPreferenceMode(slotId, mode);
     imsCallClient->GetDomainPreferenceMode(slotId);
@@ -270,8 +268,7 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
     proxy->SendDtmf(slotId, *cDtmfCode, index);
     proxy->StopDtmf(slotId, index);
 #ifdef SUPPORT_RTT_CALL
-    proxy->StartRtt(slotId, index);
-    proxy->StopRtt(slotId, index);
+    proxy->UpdateImsRttCallMode(slotId, index, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
 #endif
     proxy->SetDomainPreferenceMode(slotId, mode);
     proxy->GetDomainPreferenceMode(slotId);

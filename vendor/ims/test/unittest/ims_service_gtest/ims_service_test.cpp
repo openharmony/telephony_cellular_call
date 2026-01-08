@@ -39,7 +39,6 @@ const int32_t DEFAULT_TRANSFER_TYPE = 0;
 const bool DEFAULT_ACTIVE = true;
 const ImsConfigItem DEFAULT_ITEM = ITEM_VIDEO_QUALITY;
 const FeatureType DEFAULT_FEATURE_TYPE = TYPE_VOICE_OVER_LTE;
-const std::string RTT_MSG = "000";
 
 sptr<ImsCallInterface> ImsServiceTest::imsCallPtr_ = nullptr;
 sptr<ImsSmsInterface> ImsServiceTest::imsSmsPtr_ = nullptr;
@@ -526,64 +525,33 @@ HWTEST_F(ImsServiceTest, Telephony_ImsService_StopDtmf_002, Function | MediumTes
 }
 
 /**
- * @tc.number   Telephony_ImsService_StartRtt_001
+ * @tc.number   Telephony_ImsService_UpdateImsRttCallMode_001
  * @tc.name     Start Rtt by Ims Service for slot 0
  * @tc.desc     Function test
  */
-HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_001, Function | MediumTest | Level1)
+#ifdef SUPPORT_RTT_CALL
+HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsRttCallMode_001, Function | MediumTest | Level1)
 {
     ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
-#ifdef SUPPORT_RTT_CALL
+
     int32_t ret = TELEPHONY_ERROR;
-    ret = imsCallPtr_->StartRtt(DEFAULT_SLOTID, RTT_MSG);
+    ret = imsCallPtr_->UpdateImsRttCallMode(DEFAULT_SLOTID, DEFAULT_INDEX, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
-#endif
 }
 
 /**
- * @tc.number   Telephony_ImsService_StartRtt_002
+ * @tc.number   Telephony_ImsService_UpdateImsRttCallMode_002
  * @tc.name     Start Rtt by Ims Service for slot 1
  * @tc.desc     Function test
  */
-HWTEST_F(ImsServiceTest, Telephony_ImsService_StartRtt_002, Function | MediumTest | Level1)
+HWTEST_F(ImsServiceTest, Telephony_ImsService_UpdateImsRttCallMode_002, Function | MediumTest | Level1)
 {
     ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
-#ifdef SUPPORT_RTT_CALL
     int32_t ret = TELEPHONY_ERROR;
-    ret = imsCallPtr_->StartRtt(SIM_SLOT_ID_1, RTT_MSG);
+    ret = imsCallPtr_->UpdateImsRttCallMode(SIM_SLOT_ID_1, DEFAULT_INDEX, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
     EXPECT_EQ(TELEPHONY_SUCCESS, ret);
-#endif
 }
-
-/**
- * @tc.number   Telephony_ImsService_StopRtt_001
- * @tc.name     Stop Rtt by Ims Service for slot 0
- * @tc.desc     Function test
- */
-HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_001, Function | MediumTest | Level1)
-{
-    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(DEFAULT_SLOTID));
-#ifdef SUPPORT_RTT_CALL
-    int32_t ret = TELEPHONY_ERROR;
-    ret = imsCallPtr_->StopRtt(DEFAULT_SLOTID);
-    EXPECT_EQ(TELEPHONY_SUCCESS, ret);
 #endif
-}
-
-/**
- * @tc.number   Telephony_ImsService_StopRtt_002
- * @tc.name     Stop Rtt by Ims Service for slot 1
- * @tc.desc     Function test
- */
-HWTEST_F(ImsServiceTest, Telephony_ImsService_StopRtt_002, Function | MediumTest | Level1)
-{
-    ASSERT_TRUE((ImsServiceTest::InitConditionCheck() == TELEPHONY_SUCCESS) && HasSimCard(SIM_SLOT_ID_1));
-#ifdef SUPPORT_RTT_CALL
-    int32_t ret = TELEPHONY_ERROR;
-    ret = imsCallPtr_->StopRtt(SIM_SLOT_ID_1);
-    EXPECT_EQ(TELEPHONY_SUCCESS, ret);
-#endif
-}
 
 /**
  * @tc.number   Telephony_ImsService_SetDomainPreferenceMode_001

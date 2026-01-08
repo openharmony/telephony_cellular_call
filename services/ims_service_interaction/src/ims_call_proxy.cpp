@@ -395,34 +395,6 @@ int32_t ImsCallProxy::StopDtmf(int32_t slotId, int32_t index)
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t ImsCallProxy::StartRtt(int32_t slotId, int32_t callId)
-{
-    MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
-    if (ret != TELEPHONY_SUCCESS) {
-        return ret;
-    }
-    if (!in.WriteInt32(callId)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write callId fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_START_RTT));
-}
-
-int32_t ImsCallProxy::StopRtt(int32_t slotId, int32_t callId)
-{
-    MessageParcel in;
-    int32_t ret = WriteCommonInfo(slotId, __FUNCTION__, in);
-    if (ret != TELEPHONY_SUCCESS) {
-        return ret;
-    }
-    if (!in.WriteInt32(callId)) {
-        TELEPHONY_LOGE("[slot%{public}d]Write callId fail!", slotId);
-        return TELEPHONY_ERR_WRITE_DATA_FAIL;
-    }
-    return SendRequest(slotId, in, static_cast<int32_t>(ImsCallInterfaceCode::IMS_STOP_RTT));
-}
-
 int32_t ImsCallProxy::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
 {
     MessageParcel in;

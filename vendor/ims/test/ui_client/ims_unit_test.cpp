@@ -71,10 +71,6 @@ void ImsUnitTest::InitBasicFuncMap(void)
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_START_DTMF] = &ImsUnitTest::StartDtmf;
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_SEND_DTMF] = &ImsUnitTest::SendDtmf;
     requestCallFuncMap_[ImsCallInterfaceCode::IMS_STOP_DTMF] = &ImsUnitTest::StopDtmf;
-#ifdef SUPPORT_RTT_CALL
-    requestCallFuncMap_[ImsCallInterfaceCode::IMS_START_RTT] = &ImsUnitTest::StartRtt;
-    requestCallFuncMap_[ImsCallInterfaceCode::IMS_STOP_RTT] = &ImsUnitTest::StopRtt;
-#endif
 }
 
 void ImsUnitTest::InitConfigFuncMap(void)
@@ -367,31 +363,6 @@ int32_t ImsUnitTest::StopDtmf(const sptr<ImsCallInterfaceCode> &imsCallPtr) cons
     imsCallPtr->StopDtmf(slotId, stopDtmfIndex);
     return IMS_TEST_SUCCESS;
 }
-
-#ifdef SUPPORT_RTT_CALL
-int32_t ImsUnitTest::StartRtt(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
-{
-    std::cout << "test StartRtt entry." << std::endl;
-    std::cout << "please enter the send msg:";
-    std::string startRttMsg;
-    std::cin >> startRttMsg;
-    std::cout << "please enter the slot id:";
-    int32_t slotId = 0;
-    std::cin >> slotId;
-    imsCallPtr->StartRtt(slotId, startRttMsg);
-    return IMS_TEST_SUCCESS;
-}
-
-int32_t ImsUnitTest::StopRtt(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
-{
-    std::cout << "test StopRtt entry." << std::endl;
-    std::cout << "please enter the slot id:";
-    int32_t slotId = 0;
-    std::cin >> slotId;
-    imsCallPtr->StopRtt(slotId);
-    return IMS_TEST_SUCCESS;
-}
-#endif
 
 int32_t ImsUnitTest::SetDomainPreferenceMode(const sptr<ImsCallInterfaceCode> &imsCallPtr) const
 {
@@ -723,7 +694,7 @@ int32_t ImsUnitTest::ImsCallTest() const
                      "1:Dial\n2:HangUp\n3:RejectWithReason\n4:Answer\n5:HoldCall\n6:UnHoldCall\n7:SwitchCall\n"
                      "8:CombineConference\n9:InviteToConference\n10:KickOutFromConference\n11:UpdateImsCallMode\n"
                      "13:GetImsCallsDataRequest\n14:GetLastCallFailReason\n100:StartDtmf\n101:SendDtmf\n102:StopDtmf\n"
-                     "103:StartRtt\n104:StopRtt\n200:SetCallPreferenceMode\n201:GetCallPreferenceMode\n202:"
+                     "200:SetCallPreferenceMode\n201:GetCallPreferenceMode\n202:"
                      "SetImsSwitchStatus\n203:GetImsSwitchStatus\n204:SetImsConfigString\n205:SetImsConfigInt\n"
                      "206:GetImsConfig\n207:SetImsFeatureValue\n208:GetImsFeatureValue\n"
                      "209:SetMute\n210:GetMute\n300:CtrlCamera\n301:SetPreviewWindow\n"

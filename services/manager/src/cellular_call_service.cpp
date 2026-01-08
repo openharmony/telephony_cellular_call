@@ -145,7 +145,7 @@ void CellularCallService::SubscribeToEvents(const std::vector<std::string>& even
     for (const auto& event : events) {
         matchingSkills.AddEvent(event);
     }
- 
+
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
     subscriberInfo.SetThreadMode(EventFwk::CommonEventSubscribeInfo::COMMON);
     if (priority != 0) {
@@ -194,7 +194,7 @@ void CellularCallService::StartDisorderEventSubscriber()
         EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED,
         EventFwk::CommonEventSupport::COMMON_EVENT_NETWORK_STATE_CHANGED
     };
- 
+
     SubscribeToEvents(events);
 }
 
@@ -1098,38 +1098,6 @@ int32_t CellularCallService::SendDtmf(char cDtmfCode, const CellularCallInfo &ca
     return TELEPHONY_ERR_ARGUMENT_INVALID;
 }
 
-#ifdef SUPPORT_RTT_CALL
-int32_t CellularCallService::StartRtt(int32_t slotId, int32_t callId)
-{
-    auto imsControl = GetImsControl(slotId);
-    if (imsControl == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::StartRtt return, control is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    return imsControl->StartRtt(slotId, callId);
-}
-
-int32_t CellularCallService::StopRtt(int32_t slotId, int32_t callId)
-{
-    auto imsControl = GetImsControl(slotId);
-    if (imsControl == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::StopRtt return, control is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    return imsControl->StopRtt(slotId, callId);
-}
-
-int32_t CellularCallService::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
-{
-    auto imsControl = GetImsControl(slotId);
-    if (imsControl == nullptr) {
-        TELEPHONY_LOGE("CellularCallService::UpdateImsRttCallMode return, control is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    return imsControl->UpdateImsRttCallMode(slotId, callId, mode);
-}
-#endif
-
 int32_t CellularCallService::SetCallTransferInfo(int32_t slotId, const CallTransferInfo &cTInfo)
 {
     if (!IsValidSlotId(slotId)) {
@@ -1806,6 +1774,16 @@ int32_t CellularCallService::SetRttCapability(int32_t slotId, bool isEnable)
     }
     CellularCallConfig config;
     return config.SetRttCapability(slotId, isEnable);
+}
+
+int32_t CellularCallService::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
+{
+    auto imsControl = GetImsControl(slotId);
+    if (imsControl == nullptr) {
+        TELEPHONY_LOGE("CellularCallService::UpdateImsRttCallMode return, control is nullptr");
+        return TELEPHONY_ERR_LOCAL_PTR_NULL;
+    }
+    return imsControl->UpdateImsRttCallMode(slotId, callId, mode);
 }
 #endif
 

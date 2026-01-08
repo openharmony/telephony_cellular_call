@@ -276,36 +276,6 @@ int32_t ImsCall::StopDtmf(int32_t slotId, int32_t index)
     return TELEPHONY_SUCCESS;
 }
 
-#ifdef SUPPORT_RTT_CALL
-int32_t ImsCall::StartRtt(int32_t slotId, const std::string &msg)
-{
-    // IMS demo send request info
-
-    // IMS demo callback response info
-    RadioResponseInfo info;
-    if (imsCallCallback_ == nullptr) {
-        TELEPHONY_LOGE("imsCallCallback is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    imsCallCallback_->StartRttResponse(slotId, info);
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCall::StopRtt(int32_t slotId)
-{
-    // IMS demo send request info
-
-    // IMS demo callback response info
-    RadioResponseInfo info;
-    if (imsCallCallback_ == nullptr) {
-        TELEPHONY_LOGE("imsCallCallback is nullptr");
-        return TELEPHONY_ERR_LOCAL_PTR_NULL;
-    }
-    imsCallCallback_->StopRttResponse(slotId, info);
-    return TELEPHONY_SUCCESS;
-}
-#endif
-
 int32_t ImsCall::SetDomainPreferenceMode(int32_t slotId, int32_t mode)
 {
     // IMS demo send request info
