@@ -225,22 +225,7 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0013, Function | Mediu
     EXPECT_EQ(ret, TELEPHONY_ERROR);
 }
 
-/**
- * @tc.number   Telephony_CellularCallConnectionIMSTest_0014
- * @tc.name     Test CellularCallConnectionIMS
- * @tc.desc     Function test
- */
-HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0014, Function | MediumTest | Level1)
-{
 #ifdef SUPPORT_RTT_CALL
-    auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
-    int32_t slotId = 0;
-    int32_t callId = 0;
-    int32_t ret = cellularCallConnectionIMS->StartRttRequest(slotId, callId);
-    EXPECT_EQ(ret, TELEPHONY_ERROR);
-#endif
-}
-
 /**
  * @tc.number   Telephony_CellularCallConnectionIMSTest_0015
  * @tc.name     Test CellularCallConnectionIMS
@@ -248,14 +233,14 @@ HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0014, Function | Mediu
  */
 HWTEST_F(ImsConnectionTest, CellularCallConnectionIMSTest_0015, Function | MediumTest | Level1)
 {
-#ifdef SUPPORT_RTT_CALL
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
     int32_t slotId = 0;
     int32_t callId = 0;
-    int32_t ret = cellularCallConnectionIMS->StopRttRequest(slotId, callId);
+    int32_t ret = cellularCallConnectionIMS->UpdateImsRttCallModeRequest(slotId, callId,
+        ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
     EXPECT_EQ(ret, TELEPHONY_ERROR);
-#endif
 }
+#endif
 
 /**
  * @tc.number   Telephony_CellularCallConnectionIMSTest_0016

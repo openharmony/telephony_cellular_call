@@ -183,58 +183,28 @@ HWTEST_F(Ims2Test, cellular_call_GetVoNRState_0001, Function | MediumTest | Leve
 }
 
 /**
- * @tc.number   cellular_call_StartRtt_0001
- * @tc.name     Test for StartRtt function
+ * @tc.number   cellular_call_UpdateImsRttCallMode_0001
+ * @tc.name     Test for UpdateImsRttCallMode function
  * @tc.desc     Function test
  */
-HWTEST_F(Ims2Test, cellular_call_StartRtt_0001, Function | MediumTest | Level2)
+HWTEST_F(Ims2Test, cellular_call_UpdateImsRttCallMode_0001, Function | MediumTest | Level2)
 {
     AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto startRttRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(startRttRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(startRttRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
+    auto telephonyService = DelayedSingleton<CellularCallService>::GetInstance();
+    telephonyService->Init();
+    std::shared_ptr<IMSControl> imsControl = std::make_shared<IMSControl>();
+    ASSERT_NE(imsControl, nullptr);
     if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
 #ifdef SUPPORT_RTT_CALL
-        int32_t ret = telephonyService->StartRtt(SIM1_SLOTID, 0);
+        telephonyService->SetImsControl(SIM1_SLOTID, imsControl);
+        int32_t ret = telephonyService->UpdateImsRttCallMode(SIM1_SLOTID, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
 #endif
     }
     if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
 #ifdef SUPPORT_RTT_CALL
-        int32_t ret = telephonyService->StartRtt(SIM2_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-#endif
-    }
-}
-
-/**
- * @tc.number   cellular_call_StopRtt_0001
- * @tc.name     Test for StopRtt function
- * @tc.desc     Function test
- */
-HWTEST_F(Ims2Test, cellular_call_StopRtt_0001, Function | MediumTest | Level2)
-{
-    AccessToken token;
-    auto systemAbilityMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    ASSERT_TRUE(systemAbilityMgr != nullptr);
-    auto stopRttRemote = systemAbilityMgr->CheckSystemAbility(TELEPHONY_CELLULAR_CALL_SYS_ABILITY_ID);
-    ASSERT_TRUE(stopRttRemote != nullptr);
-    auto telephonyService = iface_cast<CellularCallInterface>(stopRttRemote);
-    ASSERT_TRUE(telephonyService != nullptr);
-    ASSERT_FALSE(!HasSimCard(SIM1_SLOTID) && !HasSimCard(SIM2_SLOTID));
-    if (HasSimCard(SIM1_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
-#ifdef SUPPORT_RTT_CALL
-        int32_t ret = telephonyService->StopRtt(SIM1_SLOTID, 0);
-        EXPECT_EQ(ret, TELEPHONY_SUCCESS);
-#endif
-    }
-    if (HasSimCard(SIM2_SLOTID) && CanUseImsService(SIM2_SLOTID, ImsServiceType::TYPE_VOICE)) {
-#ifdef SUPPORT_RTT_CALL
-        int32_t ret = telephonyService->StopRtt(SIM2_SLOTID, 0);
+        telephonyService->SetImsControl(SIM2_SLOTID, imsControl);
+        int32_t ret = telephonyService->UpdateImsRttCallMode(SIM2_SLOTID, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE);
         EXPECT_EQ(ret, TELEPHONY_SUCCESS);
 #endif
     }
@@ -537,8 +507,8 @@ HWTEST_F(Ims2Test, cellular_call_ImsControl_0001, Function | MediumTest | Level3
         EXPECT_EQ(imsControl->KickOutFromConference(slotId, PHONE_NUMBER, cellularCallInfo.index), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsControl->InviteToConference(slotId, numberList), TELEPHONY_SUCCESS);
 #ifdef SUPPORT_RTT_CALL
-        EXPECT_EQ(imsControl->StartRtt(slotId, 0), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsControl->StopRtt(slotId, 0), TELEPHONY_SUCCESS);
+        EXPECT_EQ(imsControl->UpdateImsRttCallMode(slotId, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+            TELEPHONY_SUCCESS);
 #endif
         EXPECT_NE(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_DEFAULT), TELEPHONY_SUCCESS);
         EXPECT_NE(imsControl->HangUp(cellularCallInfo, CallSupplementType::TYPE_HANG_UP_ACTIVE),
@@ -651,8 +621,8 @@ HWTEST_F(Ims2Test, cellular_call_CellularCallConnectionIMS_0001, Function | Medi
         EXPECT_EQ(imsConnection.DialRequest(slotId, imsDialInfo), TELEPHONY_SUCCESS);
         EXPECT_EQ(imsConnection.HangUpRequest(slotId, PHONE_NUMBER_SECOND, slotId), TELEPHONY_SUCCESS);
 #ifdef SUPPORT_RTT_CALL
-        EXPECT_EQ(imsConnection.StartRttRequest(slotId, 0), TELEPHONY_SUCCESS);
-        EXPECT_EQ(imsConnection.StopRttRequest(slotId, 0), TELEPHONY_SUCCESS);
+        EXPECT_EQ(imsConnection.UpdateImsRttCallModeRequest(slotId, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+            TELEPHONY_SUCCESS);
 #endif
     }
 }

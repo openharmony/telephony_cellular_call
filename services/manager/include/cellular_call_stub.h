@@ -255,24 +255,6 @@ private:
 
 #ifdef SUPPORT_RTT_CALL
     /**
-     * On start Rtt Inner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnStartRttInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
-     * On stop Rtt Inner
-     *
-     * @param data send data
-     * @param reply Received data
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t OnStopRttInner(MessageParcel &data, MessageParcel &reply);
-
-    /**
      * On RTT Call Moidfy
      *
      * @param data send data

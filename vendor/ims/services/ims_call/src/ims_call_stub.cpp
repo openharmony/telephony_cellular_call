@@ -71,10 +71,6 @@ void ImsCallStub::InitDtmfFuncMap()
     memberFuncMap_[IMS_STOP_DTMF] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnStopDtmf(data, reply); };
 #ifdef SUPPORT_RTT_CALL
-    memberFuncMap_[IMS_START_RTT] =
-        [this](MessageParcel &data, MessageParcel &reply) { return OnStartRtt(data, reply); };
-    memberFuncMap_[IMS_STOP_RTT] =
-        [this](MessageParcel &data, MessageParcel &reply) { return OnStopRtt(data, reply); };
     memberFuncMap_[IMS_UPDATE_RTT_CALL_MODE] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnUpdateImsRttCallMode(data, reply); };
 #endif
@@ -344,24 +340,6 @@ int32_t ImsCallStub::OnStopDtmf(MessageParcel &data, MessageParcel &reply)
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t ImsCallStub::OnStartRtt(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    int32_t callId = data.ReadInt32();
-
-    reply.WriteInt32(StartRtt(slotId, callId));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallStub::OnStopRtt(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    int32_t callId = data.ReadInt32();
-
-    reply.WriteInt32(StopRtt(slotId, callId));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t ImsCallStub::OnUpdateImsRttCallMode(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();

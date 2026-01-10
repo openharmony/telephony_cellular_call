@@ -281,32 +281,6 @@ int32_t ImsCallCallbackStub::OnStartDtmfResponseInner(MessageParcel &data, Messa
     return TELEPHONY_SUCCESS;
 }
 
-#ifdef SUPPORT_RTT_CALL
-int32_t ImsCallCallbackStub::OnStartRttResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(StartRttResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t ImsCallCallbackStub::OnStopRttResponseInner(MessageParcel &data, MessageParcel &reply)
-{
-    int32_t slotId = data.ReadInt32();
-    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
-    if (info == nullptr) {
-        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
-        return TELEPHONY_ERR_ARGUMENT_INVALID;
-    }
-    reply.WriteInt32(StopRttResponse(slotId, *info));
-    return TELEPHONY_SUCCESS;
-}
-#endif
-
 int32_t ImsCallCallbackStub::OnSendDtmfResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
@@ -799,6 +773,30 @@ int32_t ImsCallCallbackStub::OnCameraCapabilitiesChangedInner(MessageParcel &dat
 }
 
 #ifdef SUPPORT_RTT_CALL
+int32_t ImsCallCallbackStub::OnStartRttResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(StartRttResponse(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
+int32_t ImsCallCallbackStub::OnStopRttResponseInner(MessageParcel &data, MessageParcel &reply)
+{
+    int32_t slotId = data.ReadInt32();
+    auto info = static_cast<const RadioResponseInfo *>(data.ReadRawData(sizeof(RadioResponseInfo)));
+    if (info == nullptr) {
+        TELEPHONY_LOGE("[slot%{public}d] info is null.", slotId);
+        return TELEPHONY_ERR_ARGUMENT_INVALID;
+    }
+    reply.WriteInt32(StopRttResponse(slotId, *info));
+    return TELEPHONY_SUCCESS;
+}
+
 int32_t ImsCallCallbackStub::OnReceiveUpdateCallRttEvtResponseInner(MessageParcel &data, MessageParcel &reply)
 {
     int32_t slotId = data.ReadInt32();
@@ -883,20 +881,6 @@ int32_t ImsCallCallbackStub::StartDtmfResponse(int32_t slotId, const RadioRespon
     TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
     return SendEvent(slotId, RadioEvent::RADIO_START_DTMF, info);
 }
-
-#ifdef SUPPORT_RTT_CALL
-int32_t ImsCallCallbackStub::StartRttResponse(int32_t slotId, const RadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
-    return SendEvent(slotId, RadioEvent::RADIO_START_RTT, info);
-}
-
-int32_t ImsCallCallbackStub::StopRttResponse(int32_t slotId, const RadioResponseInfo &info)
-{
-    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
-    return SendEvent(slotId, RadioEvent::RADIO_STOP_RTT, info);
-}
-#endif
 
 int32_t ImsCallCallbackStub::SendDtmfResponse(int32_t slotId, const RadioResponseInfo &info, int32_t callIndex)
 {
@@ -1389,6 +1373,18 @@ int32_t ImsCallCallbackStub::ReceiveUpdateCallMediaModeResponse(
 }
 
 #ifdef SUPPORT_RTT_CALL
+int32_t ImsCallCallbackStub::StartRttResponse(int32_t slotId, const RadioResponseInfo &info)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_START_RTT, info);
+}
+
+int32_t ImsCallCallbackStub::StopRttResponse(int32_t slotId, const RadioResponseInfo &info)
+{
+    TELEPHONY_LOGI("[slot%{public}d] entry", slotId);
+    return SendEvent(slotId, RadioEvent::RADIO_STOP_RTT, info);
+}
+
 int32_t ImsCallCallbackStub::ReceiveUpdateImsCallRttEvtResponse(
     int32_t slotId, const ImsCallRttEventInfo &rttEvtInfo)
 {

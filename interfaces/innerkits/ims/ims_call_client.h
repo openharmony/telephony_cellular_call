@@ -255,24 +255,6 @@ public:
 
 #ifdef SUPPORT_RTT_CALL
     /**
-     * @brief Start a RTT session
-     *
-     * @param slotId Indicates the card slot index number,
-     * @param callId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StartRtt(int32_t slotId, int32_t callId);
-
-    /**
-     * @brief Terminate the current RTT session
-     *
-     * @param slotId Indicates the card slot index number,
-     * @param callId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StopRtt(int32_t slotId, int32_t callId);
-
-    /**
      * @brief rtt call upgrade or downgrade
      *
      * @param slotId Indicates the card slot index number,

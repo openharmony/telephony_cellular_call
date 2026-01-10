@@ -49,8 +49,6 @@ public:
     int32_t SendDtmf(int32_t slotId, char cDtmfCode, int32_t index) override;
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
 #ifdef SUPPORT_RTT_CALL
-    int32_t StartRtt(int32_t slotId, int32_t callId) override;
-    int32_t StopRtt(int32_t slotId, int32_t callId) override;
     int32_t UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode) override;
 #endif
 

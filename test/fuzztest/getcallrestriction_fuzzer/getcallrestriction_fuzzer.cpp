@@ -130,31 +130,19 @@ void SetReadyToCall(const uint8_t *data, size_t size)
 }
 
 #ifdef SUPPORT_RTT_CALL
-void StartRtt(const uint8_t *data, size_t size)
+void UpdateImsRttCallMode(const uint8_t *data, size_t size)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    std::string msg(reinterpret_cast<const char *>(data), size);
+    int32_t maxSize = static_cast<int32_t>(size);
     MessageParcel dataMessageParcel;
-    dataMessageParcel.WriteString(msg);
-    dataMessageParcel.RewindRead(0);
-    MessageParcel reply;
-    DelayedSingleton<CellularCallService>::GetInstance()->OnStartRttInner(dataMessageParcel, reply);
-}
-
-void StopRtt(const uint8_t *data, size_t size)
-{
-    if (!IsServiceInited()) {
-        return;
-    }
-
-    MessageParcel dataMessageParcel;
+    dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteBuffer(data, size);
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
-    DelayedSingleton<CellularCallService>::GetInstance()->OnStopRttInner(dataMessageParcel, reply);
+    DelayedSingleton<CellularCallService>::GetInstance()->OnUpdateImsRttCallModeInner(dataMessageParcel, reply);
 }
 #endif
 
@@ -430,8 +418,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     HangUpAllConnection(data, size);
     SetReadyToCall(data, size);
 #ifdef SUPPORT_RTT_CALL
-    StartRtt(data, size);
-    StopRtt(data, size);
+    UpdateImsRttCallMode(data, size);
 #endif
     GetCallTransferInfo(data, size);
     GetCallWaiting(data, size);

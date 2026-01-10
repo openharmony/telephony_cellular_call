@@ -89,8 +89,7 @@ HWTEST_F(CellularCallStubTest, CellularCallStubTest_0002, Function | MediumTest 
     EXPECT_NE(cellularCallStub.OnPostDialProceedInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnSendDtmfInner(data, reply), TELEPHONY_SUCCESS);
 #ifdef SUPPORT_RTT_CALL
-    EXPECT_NE(cellularCallStub.OnStartRttInner(data, reply), TELEPHONY_SUCCESS);
-    EXPECT_NE(cellularCallStub.OnStopRttInner(data, reply), TELEPHONY_SUCCESS);
+    EXPECT_NE(cellularCallStub.OnUpdateImsRttCallModeInner(data, reply), TELEPHONY_SUCCESS);
 #endif
     EXPECT_NE(cellularCallStub.OnSetCallTransferInner(data, reply), TELEPHONY_SUCCESS);
     EXPECT_NE(cellularCallStub.OnCanSetCallTransferTimeInner(data, reply), TELEPHONY_SUCCESS);

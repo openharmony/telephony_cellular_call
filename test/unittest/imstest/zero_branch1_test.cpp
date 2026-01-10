@@ -632,17 +632,15 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallStub_010, Function | MediumTest 
 {
     AccessToken token;
     CellularCallService callStub;
-    int32_t errorSize = -1;
     int32_t size = 1;
+    int32_t callId = 0;
+    MessageParcel reply;
     MessageParcel startRttData;
     startRttData.WriteInt32(size);
-    startRttData.WriteInt32(errorSize);
-    startRttData.WriteString("1");
-    callStub.OnStartRttInner(startRttData, reply);
-    MessageParcel stopRttData;
-    stopRttData.WriteInt32(size);
-    stopRttData.WriteInt32(errorSize);
-    ASSERT_EQ(callStub.OnStopRttInner(stopRttData, reply), TELEPHONY_SUCCESS);
+    startRttData.WriteInt32(SIM1_SLOTID);
+    startRttData.WriteInt32(callId);
+    startRttData.WriteInt32(0);
+    ASSERT_EQ(callStub.OnUpdateImsRttCallModeInner(startRttData, reply), TELEPHONY_SUCCESS);
 }
 #endif
 
@@ -750,8 +748,8 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_002, Function | MediumTe
     cellularCall.SendDtmf('*', errCallInfo);
 #ifdef SUPPORT_RTT_CALL
     int32_t callId = 0;
-    cellularCall.StartRtt(SIM1_SLOTID, callId);
-    ASSERT_NE(cellularCall.StopRtt(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+    ASSERT_NE(cellularCall.UpdateImsRttCallMode(SIM1_SLOTID, callId, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+        TELEPHONY_SUCCESS);
 #endif
 }
 

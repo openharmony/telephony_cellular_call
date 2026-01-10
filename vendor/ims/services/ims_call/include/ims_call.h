@@ -171,25 +171,6 @@ public:
      */
     int32_t StopDtmf(int32_t slotId, int32_t index) override;
 
-#ifdef SUPPORT_RTT_CALL
-    /**
-     * IMS StartRtt interface
-     *
-     * @param slotId
-     * @param msg
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StartRtt(int32_t slotId, const std::string &msg) override;
-
-    /**
-     * IMS StopRtt interface
-     *
-     * @param slotId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StopRtt(int32_t slotId) override;
-#endif
-
     /**
      * IMS SetDomainPreferenceMode interface
      *

@@ -320,34 +320,6 @@ int32_t CellularCallConnectionIMS::StopDtmfRequest(int32_t slotId, int32_t index
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t CellularCallConnectionIMS::StartRttRequest(int32_t slotId, int32_t callId)
-{
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->StartRtt(slotId, callId);
-    }
-    TELEPHONY_LOGE("ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
-}
-
-int32_t CellularCallConnectionIMS::StopRttRequest(int32_t slotId, int32_t callId)
-{
-    if (moduleUtils_.NeedCallImsService()) {
-        TELEPHONY_LOGI("call ims service");
-        if (DelayedSingleton<ImsCallClient>::GetInstance() == nullptr) {
-            TELEPHONY_LOGE("return, ImsCallClient is nullptr.");
-            return CALL_ERR_RESOURCE_UNAVAILABLE;
-        }
-        return DelayedSingleton<ImsCallClient>::GetInstance()->StopRtt(slotId, callId);
-    }
-    TELEPHONY_LOGE("ims vendor service does not exist.");
-    return TELEPHONY_ERROR;
-}
-
 int32_t CellularCallConnectionIMS::UpdateImsRttCallModeRequest(
     int32_t slotId, int32_t callId, ImsRTTCallMode mode)
 {

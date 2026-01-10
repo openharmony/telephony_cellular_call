@@ -370,26 +370,6 @@ int32_t ImsCallClient::StopDtmf(int32_t slotId, int32_t index)
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t ImsCallClient::StartRtt(int32_t slotId, int32_t callId)
-{
-    if (ReConnectService() != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("ipc reconnect failed!");
-        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
-    }
-    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->StartRtt(slotId, callId);
-}
-
-int32_t ImsCallClient::StopRtt(int32_t slotId, int32_t callId)
-{
-    if (ReConnectService() != TELEPHONY_SUCCESS) {
-        TELEPHONY_LOGE("ipc reconnect failed!");
-        return TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL;
-    }
-    std::shared_lock<ffrt::shared_mutex> lock(clientLock_);
-    return imsCallProxy_->StopRtt(slotId, callId);
-}
-
 int32_t ImsCallClient::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
 {
     if (ReConnectService() != TELEPHONY_SUCCESS) {

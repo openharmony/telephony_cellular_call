@@ -884,10 +884,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallImsControl_002, Function | Medium
     imsControl.DeleteConnection(callsReportInfo, ImsCallList);
     imsControl.ReleaseAllConnection();
     imsControl.DialAfterHold(SIM1_SLOTID);
-#ifdef SUPPORT_RTT_CALL
-    int32_t callId = 0;
-    imsControl.StartRtt(SIM1_SLOTID, callId);
-#endif
     imsControl.GetConnectionMap();
     imsControl.ReleaseAllConnection();
     CLIRMode clirMode = CLIRMode::DEFAULT;
@@ -895,13 +891,15 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallImsControl_002, Function | Medium
     imsControl.DialJudgment(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, 0);
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
 #ifdef SUPPORT_RTT_CALL
-    ASSERT_EQ(imsControl.StopRtt(SIM1_SLOTID, callId), INVALID_VALUE);
+    ASSERT_EQ(imsControl.UpdateImsRttCallMode(SIM1_SLOTID, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+        INVALID_VALUE);
 #endif
     ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, false),
         TELEPHONY_ERR_IPC_CONNECT_STUB_FAIL);
 #else
 #ifdef SUPPORT_RTT_CALL
-    ASSERT_NE(imsControl.StopRtt(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+    ASSERT_NE(imsControl.UpdateImsRttCallMode(SIM1_SLOTID, 0, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+        TELEPHONY_SUCCESS);
 #endif
     ASSERT_EQ(imsControl.EncapsulateDial(SIM1_SLOTID, PHONE_NUMBER, clirMode, videoState, false), TELEPHONY_SUCCESS);
 #endif
@@ -1056,11 +1054,11 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConnectionIms_002, Function | Med
     CellularCallConnectionIMS callConn;
     int32_t callId = 0;
 #ifdef CALL_MANAGER_AUTO_START_OPTIMIZE
-    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, callId), INVALID_VALUE);
-    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID, callId), INVALID_VALUE);
+    ASSERT_EQ(callConn.UpdateImsRttCallModeRequest(SIM1_SLOTID, callId, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+        INVALID_VALUE);
 #else
-    ASSERT_EQ(callConn.StartRttRequest(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
-    ASSERT_EQ(callConn.StopRttRequest(SIM1_SLOTID, callId), TELEPHONY_SUCCESS);
+    ASSERT_EQ(callConn.UpdateImsRttCallModeRequest(SIM1_SLOTID, callId, ImsRTTCallMode::LOCAL_REQUEST_UPGRADE),
+        TELEPHONY_SUCCESS);
 #endif
 }
 #endif

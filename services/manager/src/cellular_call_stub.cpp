@@ -125,10 +125,6 @@ void CellularCallStub::InitDtmfFuncMap()
     requestFuncMap_[CellularCallInterfaceCode::SEND_DTMF] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnSendDtmfInner(data, reply); };
 #ifdef SUPPORT_RTT_CALL
-    requestFuncMap_[CellularCallInterfaceCode::START_RTT] =
-        [this](MessageParcel &data, MessageParcel &reply) { return OnStartRttInner(data, reply); };
-    requestFuncMap_[CellularCallInterfaceCode::STOP_RTT] =
-        [this](MessageParcel &data, MessageParcel &reply) { return OnStopRttInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::UPDATE_RTT_CALL_MODE] =
         [this](MessageParcel &data, MessageParcel &reply) { return OnUpdateImsRttCallModeInner(data, reply); };
     requestFuncMap_[CellularCallInterfaceCode::RTT_CAPABILITY_SETTING] =
@@ -738,38 +734,6 @@ int32_t CellularCallStub::OnSendDtmfInner(MessageParcel &data, MessageParcel &re
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t CellularCallStub::OnStartRttInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("CellularCallStub::OnStartRttInner entry");
-    int32_t size = data.ReadInt32();
-    size = ((size > MAX_SIZE) ? 0 : size);
-    if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnStartRttInner data size error");
-        return TELEPHONY_ERR_FAIL;
-    }
-    int32_t slotId = data.ReadInt32();
-    int32_t callId = data.ReadInt32();
-
-    reply.WriteInt32(StartRtt(slotId, callId));
-    return TELEPHONY_SUCCESS;
-}
-
-int32_t CellularCallStub::OnStopRttInner(MessageParcel &data, MessageParcel &reply)
-{
-    TELEPHONY_LOGI("CellularCallStub::OnStopRttInner entry");
-    int32_t size = data.ReadInt32();
-    size = ((size > MAX_SIZE) ? 0 : size);
-    if (size <= 0) {
-        TELEPHONY_LOGE("CellularCallStub::OnStopRttInner data size error");
-        return TELEPHONY_ERR_FAIL;
-    }
-    int32_t slotId = data.ReadInt32();
-    int32_t callId = data.ReadInt32();
-
-    reply.WriteInt32(StopRtt(slotId, callId));
-    return TELEPHONY_SUCCESS;
-}
-
 int32_t CellularCallStub::OnUpdateImsRttCallModeInner(MessageParcel &data, MessageParcel &reply)
 {
     TELEPHONY_LOGI("CellularCallStub::OnRttCallModifyInner entry");

@@ -133,25 +133,6 @@ public:
 
 #ifdef SUPPORT_RTT_CALL
     /**
-     * Start Rtt
-     *
-     * @param msg
-     * @param slotId
-     * @param callId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StartRtt(int32_t slotId, int32_t callId);
-
-    /**
-     * Stop Rtt
-     *
-     * @param slotId
-     * @param callId
-     * @return Returns TELEPHONY_SUCCESS on success, others on failure.
-     */
-    int32_t StopRtt(int32_t slotId, int32_t callId);
-
-    /**
      * UpdateImsRttCallMode
      *
      * @param slotId[in], slot id

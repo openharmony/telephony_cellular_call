@@ -391,20 +391,6 @@ int32_t IMSControl::KickOutFromConference(int32_t slotId, const std::string &Kic
 }
 
 #ifdef SUPPORT_RTT_CALL
-int32_t IMSControl::StartRtt(int32_t slotId, int32_t callId)
-{
-    TELEPHONY_LOGI("StartRtt entry");
-    CellularCallConnectionIMS connection;
-    return connection.StartRttRequest(slotId, callId);
-}
-
-int32_t IMSControl::StopRtt(int32_t slotId, int32_t callId)
-{
-    TELEPHONY_LOGI("StopRtt entry");
-    CellularCallConnectionIMS connection;
-    return connection.StopRttRequest(slotId, callId);
-}
-
 int32_t IMSControl::UpdateImsRttCallMode(int32_t slotId, int32_t callId, ImsRTTCallMode mode)
 {
     TELEPHONY_LOGI("UpdateImsRttCallMode entry");
