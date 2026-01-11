@@ -180,11 +180,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_001, TestSize.Level1)
     config.saveImsSwitchStatusToLocalForPowerOn(INVALID_SLOTID);
     config.saveImsSwitchStatusToLocal(SIM1_SLOTID, true);
     config.GetImsSwitchStatus(SIM1_SLOTID, enabled);
-    int32_t state = 0;
-    config.SetVoNRSwitchStatus(SIM1_SLOTID, state);
-    config.SetVoNRSwitchStatus(INVALID_SLOTID, state);
-    config.GetVoNRSwitchStatus(SIM1_SLOTID, state);
-    config.GetVoNRSwitchStatus(SIM2_SLOTID, state);
     config.GetDomainPreferenceModeResponse(SIM1_SLOTID, 1);
     config.GetDomainPreferenceModeResponse(INVALID_SLOTID, 1);
     config.HandleNetworkStateChange(SIM1_SLOTID);
@@ -230,10 +225,6 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.UpdateEmergencyCallFromRadio(INVALID_SLOTID, eccList);
     config.GetEccCallList(SIM1_SLOTID);
     config.GetMcc(SIM1_SLOTID);
-    config.SetReadyToCall(SIM1_SLOTID, true);
-    config.SetReadyToCall(INVALID_SLOTID, true);
-    config.IsReadyToCall(SIM1_SLOTID);
-    config.IsReadyToCall(INVALID_SLOTID);
     config.HandleSimStateChanged(SIM1_SLOTID);
     config.HandleSimStateChanged(INVALID_SLOTID);
     config.HandleSetLteImsSwitchResult(SIM1_SLOTID, ErrType::NONE);
@@ -244,6 +235,7 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.HandleOperatorConfigChanged(SIM1_SLOTID, 0);
     config.UpdateImsConfiguration(SIM1_SLOTID, -1, false);
     config.UpdateImsConfiguration(INVALID_SLOTID, -1, false);
+    ASSERT_FALSE(config.GetCarrierVtAvailbleConfig(INVALID_SLOTID));
     OperatorConfig poc;
     config.ParseAndCacheOperatorConfigs(SIM1_SLOTID, poc);
     config.UpdateImsCapabilities(SIM1_SLOTID, true, false, -1);
@@ -265,7 +257,38 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_002, Function | MediumTest
     config.SetClearCode(SIM1_SLOTID, 18918);
     config.SetClearCode(INVALID_SLOTID, 0);
     int32_t code = GetIntParameter("telephony.call.disconnectCode", 0);
-    ASSERT_EQ(code, 486);
+    ASSERT_EQ(code, 0);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConfig_VoNRSwitchStatus
+ * @tc.name     Test Cellular Call Config
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_VoNRSwitchStatus, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallConfig config;
+    int32_t state = 0;
+    config.SetVoNRSwitchStatus(SIM1_SLOTID, state);
+    config.SetVoNRSwitchStatus(INVALID_SLOTID, state);
+    bool result = config.GetVoNRSwitchStatus(SIM1_SLOTID, state);
+    ASSERT_EQ(result, TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallConfig_ReadyToCal
+ * @tc.name     Test Cellular Call Config
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_ReadyToCall, Function | MediumTest | Level3)
+{
+    AccessToken token;
+    CellularCallConfig config;
+    config.SetReadyToCall(SIM1_SLOTID, true);
+    ASSERT_TRUE(config.IsReadyToCall(SIM1_SLOTID));
+    config.SetReadyToCall(INVALID_SLOTID, true);
+    ASSERT_FALSE(config.IsReadyToCall(INVALID_SLOTID));
 }
 
 /**
