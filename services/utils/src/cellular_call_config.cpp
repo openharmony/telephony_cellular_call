@@ -203,7 +203,6 @@ int32_t CellularCallConfig::GetCarrierVtConfig(int32_t slotId, bool &enabled)
 bool CellularCallConfig::GetCarrierVtAvailbleConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return false;
     }
     return carrierVtAvailable_[slotId];
@@ -240,6 +239,9 @@ int32_t CellularCallConfig::GetVoNRSwitchStatus(int32_t slotId, int32_t &state)
 
 void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGI("CellularCallConfig::HandleSimStateChanged entry, slotId: %{public}d", slotId);
     if (CheckAndUpdateSimState(slotId)) {
         UpdateEccNumberList(slotId);
@@ -249,7 +251,6 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
 void CellularCallConfig::HandleFactoryReset(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return;
     }
     bool hasSimCard = false;
@@ -266,6 +267,9 @@ void CellularCallConfig::HandleFactoryReset(int32_t slotId)
 
 void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry, slotId: %{public}d", slotId);
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
@@ -273,6 +277,9 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
 
 void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string plmn)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGI("CellularCallConfig::HandleResidentNetworkChange entry, slotId: %{public}d", slotId);
     curPlmn_[slotId] = plmn;
     CheckAndUpdateSimState(slotId);
@@ -281,6 +288,9 @@ void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string
 
 void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     {
         std::lock_guard<std::mutex> lock(operatorMutex_);
         TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
@@ -343,6 +353,9 @@ int32_t CellularCallConfig::CheckHomeAndPresentState(int32_t slotId, bool &isHom
 
 void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     std::lock_guard<ffrt::mutex> lock(plmnMutex_);
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
@@ -438,6 +451,9 @@ bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string h
 
 void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
@@ -450,6 +466,9 @@ void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t sta
 
 void CellularCallConfig::UpdateImsConfiguration(int32_t slotId, int32_t configState, bool isOpcChanged)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     OperatorConfig operatorConfig;
     int32_t ret = CoreManagerInner::GetInstance().GetOperatorConfigs(slotId, operatorConfig);
     if (ret != TELEPHONY_SUCCESS) {
@@ -478,7 +497,6 @@ int32_t CellularCallConfig::ParseAndCacheOperatorConfigs(int32_t slotId, Operato
     TELEPHONY_LOGI("CellularCallConfig::ParseAndCacheOperatorConfigs start. slotId %{public}d", slotId);
     std::lock_guard<std::mutex> lock(operatorMutex_);
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE(" invalid slot id %{public}d", slotId);
         return TELEPHONY_ERROR;
     }
 
@@ -709,6 +727,9 @@ int32_t CellularCallConfig::SaveImsSwitch(int32_t slotId, int32_t imsSwitchValue
 
 void CellularCallConfig::saveImsSwitchStatusToLocalForPowerOn(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     int32_t imsSwitchStatus = IMS_SWITCH_STATUS_UNKNOWN;
     int32_t ret = CoreManagerInner::GetInstance().QueryImsSwitch(slotId, imsSwitchStatus);
     if (ret != TELEPHONY_SUCCESS || imsSwitchStatus == IMS_SWITCH_STATUS_UNKNOWN) {
@@ -750,6 +771,9 @@ int32_t CellularCallConfig::ObtainVoNRState(int32_t slotId)
 
 void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, ErrType result)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGI("CellularCallConfig::HandleSetLteImsSwitchResult entry, slotId: %{public}d", slotId);
     if (result != ErrType::NONE) {
         TELEPHONY_LOGE("HandleSetLteImsSwitchResult set ims switch to modem failed!");
@@ -772,6 +796,9 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, ErrType resul
 
 void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     modeMap_[slotId] = mode;
 }
 
@@ -831,6 +858,9 @@ int32_t CellularCallConfig::GetImsFeatureValue(FeatureType type)
 
 void CellularCallConfig::SetTempMode(int32_t slotId)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     modeMap_[slotId] = modeTempMap_[slotId];
 }
 
@@ -1015,6 +1045,9 @@ bool CellularCallConfig::CheckAndUpdateSimState(int32_t slotId)
 
 void CellularCallConfig::UpdateEmergencyCallFromRadio(int32_t slotId, const EmergencyInfoList &eccList)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     TELEPHONY_LOGD("UpdateEmergencyCallFromRadio %{public}d size %{public}d", slotId, eccList.callSize);
     std::unique_lock<std::shared_mutex> lock(mutex_);
     eccListRadioMap_[slotId].clear();
@@ -1045,7 +1078,6 @@ int32_t CellularCallConfig::BooleanToImsSwitchValue(bool value)
 bool CellularCallConfig::GetImsSwitchOnByDefaultConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return true;
     }
     return imsSwitchOnByDefault_[slotId];
@@ -1054,7 +1086,6 @@ bool CellularCallConfig::GetImsSwitchOnByDefaultConfig(int32_t slotId)
 bool CellularCallConfig::GethideImsSwitchConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return hideImsSwitch_[slotId];
@@ -1063,7 +1094,6 @@ bool CellularCallConfig::GethideImsSwitchConfig(int32_t slotId)
 bool CellularCallConfig::GetvolteSupportedConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return volteSupported_[slotId];
@@ -1072,7 +1102,6 @@ bool CellularCallConfig::GetvolteSupportedConfig(int32_t slotId)
 std::vector<int32_t> CellularCallConfig::GetNrModeSupportedListConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return std::vector<int32_t> { CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA };
     }
     return nrModeSupportedList_[slotId];
@@ -1081,7 +1110,6 @@ std::vector<int32_t> CellularCallConfig::GetNrModeSupportedListConfig(int32_t sl
 bool CellularCallConfig::GetVolteProvisioningSupportedConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return volteProvisioningSupported_[slotId];
@@ -1090,7 +1118,6 @@ bool CellularCallConfig::GetVolteProvisioningSupportedConfig(int32_t slotId)
 bool CellularCallConfig::GetSsOverUtSupportedConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return ssOverUtSupported_[slotId];
@@ -1099,7 +1126,6 @@ bool CellularCallConfig::GetSsOverUtSupportedConfig(int32_t slotId)
 bool CellularCallConfig::GetImsGbaRequiredConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return imsGbaRequired_[slotId];
@@ -1108,7 +1134,6 @@ bool CellularCallConfig::GetImsGbaRequiredConfig(int32_t slotId)
 bool CellularCallConfig::GetUtProvisioningSupportedConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return utProvisioningSupported_[slotId];
@@ -1117,7 +1142,6 @@ bool CellularCallConfig::GetUtProvisioningSupportedConfig(int32_t slotId)
 bool CellularCallConfig::GetImsPreferForEmergencyConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return true;
     }
     return imsPreferForEmergency_[slotId];
@@ -1126,7 +1150,6 @@ bool CellularCallConfig::GetImsPreferForEmergencyConfig(int32_t slotId)
 std::int32_t CellularCallConfig::GetCallWaitingServiceClassConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return 1;
     }
     return callWaitingServiceClass_[slotId];
@@ -1136,7 +1159,6 @@ std::vector<std::string> CellularCallConfig::GetImsCallDisconnectResoninfoMappin
 {
     std::lock_guard<std::mutex> lock(operatorMutex_);
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return std::vector<std::string> {};
     }
     return imsCallDisconnectResoninfoMapping_[slotId];
@@ -1145,7 +1167,6 @@ std::vector<std::string> CellularCallConfig::GetImsCallDisconnectResoninfoMappin
 bool CellularCallConfig::GetForceVolteSwitchOnConfig(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return forceVolteSwitchOn_[slotId];
@@ -1165,7 +1186,6 @@ bool CellularCallConfig::IsValidSlotId(int32_t slotId)
 void CellularCallConfig::SetReadyToCall(int32_t slotId, bool isReadyToCall)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return;
     }
     readyToCall_[slotId] = isReadyToCall;
@@ -1174,7 +1194,6 @@ void CellularCallConfig::SetReadyToCall(int32_t slotId, bool isReadyToCall)
 bool CellularCallConfig::IsReadyToCall(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("invalid slot id");
         return false;
     }
     return readyToCall_[slotId];
@@ -1210,7 +1229,6 @@ void CellularCallConfig::GetImsSwitchStatusRequest(int32_t slotId)
 bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 {
     if (!IsValidSlotId(slotId)) {
-        TELEPHONY_LOGE("inValid slot id %{public}d", slotId);
         return false;
     }
     bool imsSwitch = false;
@@ -1240,6 +1258,9 @@ void CellularCallConfig::HandleEccListChange()
 
 void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
 {
+    if (!IsValidSlotId(slotId)) {
+        return;
+    }
     if (lastDisconnectCode_ != 0) {
         lastDisconnectCode_ = 0;
         SetParameter(DISCONNECT_CODE, "0");

@@ -66,6 +66,9 @@ int32_t ImsCoreServiceStub::OnGetImsRegistrationStatus(MessageParcel &data, Mess
 {
     TELEPHONY_LOGI("ImsCoreServiceStub::OnGetImsRegistrationStatus enter");
     int32_t slotId = data.ReadInt32();
+    if (!IsValidSlotId(slotId)) {
+        return TELEPHONY_ERR_SLOTID_INVALID;
+    }
     reply.WriteInt32(GetImsRegistrationStatus(slotId));
     return TELEPHONY_SUCCESS;
 }
