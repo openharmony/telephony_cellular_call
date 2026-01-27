@@ -32,10 +32,6 @@ constexpr size_t MAX_NUMBER_LEN = 99;
 
 void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
-    if (data == nullptr || size == 0) {
-        return;
-    }
-
     auto cSControl = std::make_shared<CSControl>();
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     int32_t callId = provider.ConsumeIntegral<int32_t>();
