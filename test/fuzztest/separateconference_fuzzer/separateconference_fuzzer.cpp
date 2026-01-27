@@ -23,6 +23,7 @@
 #include "cs_control.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -30,22 +31,18 @@ constexpr int32_t SLOT_NUM = 2;
 constexpr int32_t VEDIO_STATE_NUM = 2;
 constexpr size_t MAX_NUMBER_LEN = 99;
 
-void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
+void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
-    if (data == nullptr || size == 0) {
-        return;
-    }
-
     auto cSControl = std::make_shared<CSControl>();
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    int32_t callId = static_cast<int32_t>(size);
-    int32_t accountId = static_cast<int32_t>(size);
-    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
-    int32_t index = static_cast<int32_t>(size);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
+    int32_t callId = provider.ConsumeIntegral<int32_t>();
+    int32_t accountId = provider.ConsumeIntegral<int32_t>();
+    int32_t videoState = provider.ConsumeIntegralInRange<int32_t>(0, VEDIO_STATE_NUM);
+    int32_t index = provider.ConsumeIntegral<int32_t>();
     CallSupplementType type = CallSupplementType::TYPE_DEFAULT;
-    std::string splitString(reinterpret_cast<const char *>(data), size);
+    std::string splitString = provider.ConsumeRandomLengthString();
     std::string telNum = "000000000";
-    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -80,6 +77,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    FuzzedDataProvider provider(data, size);
+    OHOS::DoSomethingInterestingWithMyAPI(provider);
     return 0;
 }
