@@ -23,6 +23,7 @@
 #include "cs_control.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
