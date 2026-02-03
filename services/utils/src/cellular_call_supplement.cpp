@@ -1534,6 +1534,7 @@ void CellularCallSupplement::GetMessage(MmiCodeInfo &mmiCodeInfo, const SsNotice
     }
 }
 
+__attribute__((no_sanitize("cfi")))
 void CellularCallSupplement::EventUssdNotify(UssdNoticeInfo &ussdNoticeInfo, int32_t slotId)
 {
     if (TELEPHONY_EXT_WRAPPER.isEmptyMmiResultFiltered_ != nullptr) {
