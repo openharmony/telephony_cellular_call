@@ -169,7 +169,7 @@ void CellularCallService::SubscribeToEvents(const std::vector<std::string>& even
             TELEPHONY_LOGE("samgrProxy or statusChangeListener_ is nullptr");
             return;
         }
-        statusChangeListener_ = new SystemAbilityStatusChangeListener(handler);
+        statusChangeListener_ = sptr<SystemAbilityStatusChangeListener>::MakeSptr(handler);
         int32_t retSubCommnetEvent =
             samgrProxy->SubscribeSystemAbility(COMMON_EVENT_SERVICE_ID, statusChangeListener_);
         TELEPHONY_LOGI("SubscribeSystemAbility COMMON_EVENT_SERVICE_ID result:%{public}d", retSubCommnetEvent);
