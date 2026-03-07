@@ -88,6 +88,7 @@ bool CellularCallConfig::isOperatorConfigInit_ = false;
 CellularCallConfig::EccList CellularCallConfig::hplmnEccList_[SLOT_NUM];
 CellularCallConfig::EccList CellularCallConfig::currentPlmnEccList_[SLOT_NUM];
 ffrt::mutex CellularCallConfig::plmnMutex_;
+ffrt::mutex CellularCallConfig::modeMutex_;
 
 void CellularCallConfig::InitDefaultOperatorConfig()
 {
@@ -281,7 +282,9 @@ void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string
         return;
     }
     TELEPHONY_LOGI("CellularCallConfig::HandleResidentNetworkChange entry, slotId: %{public}d", slotId);
+    std::unique_lock<ffrt::mutex> lock(modeMutex_);
     curPlmn_[slotId] = plmn;
+    lock.unlock();
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
 }
@@ -425,6 +428,7 @@ bool CellularCallConfig::ProcessHplmnEccList(int32_t slotId, std::string hplmn, 
 bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
     std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
 {
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     if (curPlmn_[slotId].empty()) {
         std::u16string u16Rplmn = CoreManagerInner::GetInstance().GetOperatorNumeric(slotId);
         std::string rplmn = Str16ToStr8(u16Rplmn);
@@ -435,13 +439,13 @@ bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string h
         curPlmn_[slotId] = rplmn;
     }
     std::vector<EccNum> eccVec;
-    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     if (currentPlmnEccList_[slotId].plmn == curPlmn_[slotId]) {
         SetEmergencyCallList(slotId, currentPlmnEccList_[slotId].eccInfoList);
         return true;
     }
+    std::string curPlmn = curPlmn_[slotId];
     lock.unlock();
-    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn_[slotId], eccVec) !=
+    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(curPlmn, eccVec) !=
         TELEPHONY_SUCCESS) {
         return true;
     }
@@ -796,6 +800,7 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, ErrType resul
 
 void CellularCallConfig::GetDomainPreferenceModeResponse(int32_t slotId, int32_t mode)
 {
+    std::lock_guard<ffrt::mutex> lock(modeMutex_);
     if (!IsValidSlotId(slotId)) {
         return;
     }
@@ -806,6 +811,7 @@ void CellularCallConfig::GetImsSwitchStatusResponse(int32_t slotId, int32_t acti
 
 int32_t CellularCallConfig::GetPreferenceMode(int32_t slotId) const
 {
+    std::lock_guard<ffrt::mutex> lock(modeMutex_);
     return modeMap_[slotId];
 }
 
@@ -858,6 +864,7 @@ int32_t CellularCallConfig::GetImsFeatureValue(FeatureType type)
 
 void CellularCallConfig::SetTempMode(int32_t slotId)
 {
+    std::lock_guard<ffrt::mutex> lock(modeMutex_);
     if (!IsValidSlotId(slotId)) {
         return;
     }
