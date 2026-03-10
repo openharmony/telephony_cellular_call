@@ -573,6 +573,7 @@ private:
     static EccList hplmnEccList_[2];
     static EccList currentPlmnEccList_[2];
     static ffrt::mutex plmnMutex_;
+    static ffrt::mutex modeMutex_;
 };
 } // namespace Telephony
 } // namespace OHOS

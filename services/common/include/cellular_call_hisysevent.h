@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "ffrt.h"
 #include "telephony_hisysevent.h"
 
 namespace OHOS {
@@ -120,6 +121,7 @@ private:
     int32_t dfxIncomingVideoState_;
     int64_t incomingStartTime_ = 0L;
     std::string callForwardingNumber_ = "";
+    ffrt::mutex mutex_;
 };
 } // namespace Telephony
 } // namespace OHOS
