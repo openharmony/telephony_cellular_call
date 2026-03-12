@@ -793,7 +793,9 @@ void CellularCallConfig::HandleSetVoNRSwitchResult(int32_t slotId, ErrType resul
         TELEPHONY_LOGE("HandleSetVoNRSwitchResult set vonr switch to modem failed!");
         return;
     }
+    std::unique_lock<std::mutex> lock(operatorMutex_);
     SaveVoNRState(slotId, vonrSwithStatus_[slotId]);
+    lock.unlock();
     ImsCapabilityList imsCapabilityList;
     UpdateImsVoiceCapabilities(slotId, imsCapabilityList);
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
