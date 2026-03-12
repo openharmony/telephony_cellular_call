@@ -221,6 +221,7 @@ int32_t CellularCallConfig::SetVoNRSwitchStatus(int32_t slotId, int32_t state)
     CoreManagerInner::GetInstance().GetSimState(slotId, simState);
     if (simState == SimState::SIM_STATE_LOADED || simState == SimState::SIM_STATE_READY) {
         configRequest_.SetVoNRSwitchStatusRequest(slotId, state);
+        std::lock_guard<std::mutex> lock(operatorMutex_);
         vonrSwithStatus_[slotId] = state;
         return TELEPHONY_SUCCESS;
     }
