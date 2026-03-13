@@ -469,24 +469,16 @@ void CellularCallSupplement::HandleCallRestriction(int32_t slotId, const MMIData
         }
     } else if (mmiData.actionString == activate || mmiData.actionString == deactivate) {
         utCommand->enable = mmiData.actionString == activate;
-        if (mmiData.actionString == activate) {
-            utCommand->action = 1;
-        } else {
-            utCommand->action = 2;
-        }
+        utCommand->action = (mmiData.actionString == activate) ? SUB_TYPE_ACTIVE : SUB_TYPE_DEACTIVE;
         size_t cpyLen = strlen(infoA.c_str()) + 1;
         size_t maxCpyLen = sizeof(utCommand->password);
         if (strcpy_s(utCommand->password, cpyLen > maxCpyLen ? maxCpyLen : cpyLen, infoA.c_str()) != EOK) {
             TELEPHONY_LOGE("[slot%{public}d] strcpy_s fail.", slotId);
             return;
         }
-        if (NeedUseImsToHandle(slotId)) {
-            result = supplementRequestIms_.SetCallRestrictionRequest(
-                slotId, facType, mmiData.actionString == activate, infoA, index);
-        } else {
-            result = supplementRequestCs_.SetCallRestrictionRequest(
-                slotId, facType, mmiData.actionString == activate, infoA, index);
-        }
+        result = (NeedUseImsToHandle(slotId))
+            ? supplementRequestIms_.SetCallRestrictionRequest(slotId, facType, utCommand->enable, infoA, index)
+            : supplementRequestCs_.SetCallRestrictionRequest(slotId, facType, utCommand->enable, infoA, index);
     }
     if (result != TELEPHONY_SUCCESS) {
         ReportMmiCodeMessage(MMI_CODE_FAILED, "", GENERIC_FAILURE);
