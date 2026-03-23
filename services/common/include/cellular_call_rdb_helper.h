@@ -38,7 +38,7 @@ class CellularCallRdbHelper : public DelayedSingleton<CellularCallRdbHelper> {
 
 public:
     int32_t QueryEccList(const std::string &numeric, std::vector<EccNum> &eccVec);
-    void RegisterListenState(sptr<AAFwk::IDataAbilityObserver> &settingsCallback);
+    void RegisterEccDataObserver(sptr<AAFwk::IDataAbilityObserver> &settingsCallback);
     int32_t Query(const std::string &uriString, const std::string &key, std::string &value);
 
 private:
