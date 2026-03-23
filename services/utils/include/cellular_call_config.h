@@ -17,7 +17,6 @@
 #define CELLULAR_CALL_CONFIG_H
 
 #include <map>
-#include <mutex>
 #include <shared_mutex>
 
 #include "config_request.h"
@@ -522,8 +521,6 @@ private:
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
     int32_t CheckHomeAndPresentState(int32_t slotId, bool &isHoamAndPresent);
     bool GetRoamingState(int32_t slotId);
-    bool RegisterListenState();
-    bool UnRegisterListenState();
     bool ProcessHplmnEccList(int32_t slotId, std::string hplmn, bool &isHplmnEccList,
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
     bool ProcessCurrentPlmnEccList(int32_t slotId, std::vector<std::string> &callListWithCard,

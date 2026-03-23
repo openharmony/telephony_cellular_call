@@ -1254,14 +1254,12 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 void CellularCallConfig::HandleEccListChange()
 {
     std::unique_lock<ffrt::mutex> lock(plmnMutex_);
-    hplmnEccList_[0].plmn = "";
-    hplmnEccList_[0].eccInfoList.clear();
-    hplmnEccList_[1].plmn = "";
-    hplmnEccList_[1].eccInfoList.clear();
-    currentPlmnEccList_[0].plmn = "";
-    currentPlmnEccList_[0].eccInfoList.clear();
-    currentPlmnEccList_[1].plmn = "";
-    currentPlmnEccList_[1].eccInfoList.clear();
+    for (int i = 0; i < SLOT_NUM; ++i) {
+        hplmnEccList_[i].plmn = "";
+        hplmnEccList_[i].eccInfoList.clear();
+        currentPlmnEccList_[i].plmn = "";
+        currentPlmnEccList_[i].eccInfoList.clear();
+    }
     lock.unlock();
     UpdateEccNumberList(0);
     UpdateEccNumberList(1);

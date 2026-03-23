@@ -1178,9 +1178,9 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | Medium
     auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
     EXPECT_NE(rdbHelper->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
     sptr<AAFwk::IDataAbilityObserver> callback = sptr<CellularCallService::EmergencyInfoObserver>::MakeSptr();
-    rdbHelper->RegisterListenState(callback);
+    rdbHelper->RegisterEccDataObserver(callback);
     callback = nullptr;
-    rdbHelper->RegisterListenState(callback);
+    rdbHelper->RegisterEccDataObserver(callback);
     CellularCallConfig config;
     std::vector<std::string> callListWithCard;
     std::vector<std::string> callListNoCard;
