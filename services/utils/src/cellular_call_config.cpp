@@ -394,6 +394,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
         currentPlmnEccList_[slotId].eccInfoList = eccInfoList;
         currentPlmnEccList_[slotId].plmn = curPlmn_[slotId];
     }
+    lock.unlock();
     SetEmergencyCallList(slotId, eccInfoList);
 }
 
