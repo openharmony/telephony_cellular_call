@@ -360,7 +360,6 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     if (!IsValidSlotId(slotId)) {
         return;
     }
-    std::lock_guard<ffrt::mutex> lock(plmnMutex_);
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
@@ -387,6 +386,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     for (auto it : callListNoCard) {
         eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_NO_CARD));
     }
+    std::lock_guard<ffrt::mutex> lock(plmnMutex_);
     if (isHplmnEccList) {
         hplmnEccList_[slotId].eccInfoList = eccInfoList;
         hplmnEccList_[slotId].plmn = hplmn;
