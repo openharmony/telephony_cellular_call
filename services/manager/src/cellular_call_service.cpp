@@ -1792,7 +1792,7 @@ void CellularCallService::RegisterEccListener()
     if (settingsCallback_ == nullptr) {
         settingsCallback_ = sptr<EmergencyInfoObserver>::MakeSptr();
     }
-    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->RegisterListenState(settingsCallback_);
+    DelayedSingleton<CellularCallRdbHelper>::GetInstance()->RegisterEccDataObserver(settingsCallback_);
 }
 
 void CellularCallService::EmergencyInfoObserver::OnChange()
