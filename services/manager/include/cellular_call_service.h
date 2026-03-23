@@ -762,7 +762,7 @@ private:
 #endif
     void SubscribeToEvents(const std::vector<std::string>& events, int priority = 0,
         const std::string& permission = "");
-        void RegisterEccListener();
+    void RegisterEccListener();
 #ifdef CELLULAR_CALL_SATELLITE
     int32_t HangUpSatelliteCall(const CellularCallInfo &callInfo, CallSupplementType type);
     int32_t AnswerSatelliteCall(const CellularCallInfo &callInfo);

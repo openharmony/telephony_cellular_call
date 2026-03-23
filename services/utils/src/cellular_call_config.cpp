@@ -360,23 +360,22 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     if (!IsValidSlotId(slotId)) {
         return;
     }
-    std::lock_guard<ffrt::mutex> lock(plmnMutex_);
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     std::vector<std::string> callListWithCard;
     std::vector<std::string> callListNoCard;
     bool isHomeAndPresent = false;
-    bool isHplmnEccList = false;
     if (CheckHomeAndPresentState(slotId, isHomeAndPresent) != TELEPHONY_SUCCESS) {
         return;
     }
+    bool isHplmnEccList = false;
     if (!hplmn.empty() && isHomeAndPresent) {
         if (ProcessHplmnEccList(slotId, hplmn, isHplmnEccList, callListWithCard, callListNoCard)) {
             return;
         }
     } else {
-        if (ProcessCurrentPlmnEccList(slotId, hplmn, callListWithCard, callListNoCard)) {
+        if (ProcessCurrentPlmnEccList(slotId, callListWithCard, callListNoCard)) {
             return;
         }
     }
@@ -387,6 +386,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
     for (auto it : callListNoCard) {
         eccInfoList.push_back(BuildDefaultEmergencyCall(it, SimpresentType::TYPE_NO_CARD));
     }
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     if (isHplmnEccList) {
         hplmnEccList_[slotId].eccInfoList = eccInfoList;
         hplmnEccList_[slotId].plmn = hplmn;
@@ -394,6 +394,7 @@ void CellularCallConfig::UpdateEccNumberList(int32_t slotId)
         currentPlmnEccList_[slotId].eccInfoList = eccInfoList;
         currentPlmnEccList_[slotId].plmn = curPlmn_[slotId];
     }
+    lock.unlock();
     SetEmergencyCallList(slotId, eccInfoList);
 }
 
@@ -426,8 +427,8 @@ bool CellularCallConfig::ProcessHplmnEccList(int32_t slotId, std::string hplmn, 
     return true;
 }
 
-bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
-    std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard)
+bool CellularCallConfig::ProcessCurrentPlmnEccList(int32_t slotId, std::vector<std::string> &callListWithCard,
+    std::vector<std::string> &callListNoCard)
 {
     std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     if (curPlmn_[slotId].empty()) {
@@ -1253,14 +1254,12 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 void CellularCallConfig::HandleEccListChange()
 {
     std::unique_lock<ffrt::mutex> lock(plmnMutex_);
-    hplmnEccList_[0].plmn = "";
-    hplmnEccList_[0].eccInfoList.clear();
-    hplmnEccList_[1].plmn = "";
-    hplmnEccList_[1].eccInfoList.clear();
-    currentPlmnEccList_[0].plmn = "";
-    currentPlmnEccList_[0].eccInfoList.clear();
-    currentPlmnEccList_[1].plmn = "";
-    currentPlmnEccList_[1].eccInfoList.clear();
+    for (int i = 0; i < SLOT_NUM; ++i) {
+        hplmnEccList_[i].plmn = "";
+        hplmnEccList_[i].eccInfoList.clear();
+        currentPlmnEccList_[i].plmn = "";
+        currentPlmnEccList_[i].eccInfoList.clear();
+    }
     lock.unlock();
     UpdateEccNumberList(0);
     UpdateEccNumberList(1);
