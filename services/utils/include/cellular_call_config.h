@@ -526,8 +526,8 @@ private:
     bool UnRegisterListenState();
     bool ProcessHplmnEccList(int32_t slotId, std::string hplmn, bool &isHplmnEccList,
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
-    bool ProcessCurrentPlmnEccList(int32_t slotId, std::string hplmn,
-        std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
+    bool ProcessCurrentPlmnEccList(int32_t slotId, std::vector<std::string> &callListWithCard,
+        std::vector<std::string> &callListNoCard);
 
 private:
     struct EccList {
