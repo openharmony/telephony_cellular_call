@@ -58,6 +58,7 @@ std::shared_ptr<EventFwk::AsyncCommonEventResult> CellularCallHandler::strEnterE
 bool CellularCallHandler::isNvCfgFinish_ = false;
 #endif
 constexpr int8_t IMS_CLOUD_FAIL = 23;
+constexpr int32_t MAX_ACTIVE_CALL_NUM = 2;
 
 CellularCallHandler::CellularCallHandler(const EventFwk::CommonEventSubscribeInfo &subscriberInfo)
     : TelEventHandler("CellularCallHandler"), CommonEventSubscriber(subscriberInfo)
@@ -498,7 +499,7 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
         TELEPHONY_LOGI("[slot%{public}d] Ignore to report ims call state change during srvcc", slotId_);
         return;
     }
-    if (imsCallInfoList.callSize == 1) {
+    if (imsCallInfoList.callSize > 0 && imsCallInfoList.callSize <= MAX_ACTIVE_CALL_NUM) {
         if (imsControl == nullptr) {
             imsControl = std::make_shared<IMSControl>();
             serviceInstance->SetImsControl(slotId_, imsControl);

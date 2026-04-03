@@ -908,6 +908,101 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTe
     handler->ReportCsCallsData(callInfoList);
 }
 #endif
+
+/**
+ * @tc.number	Telephony_CellularCallService_With2Calls
+ * @tc.name 	Test ReportImsCallsData when imsCallInfoList.callsize == 2
+ * @tc.desc 	Function test: Verify IMSControl is created when callSize == 2 and imsControl is null
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls, Function | MediumTest | Level3)
+{
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
+
+    SimLabel expectedSimLabel;
+    expectedSimLabel.simType = SimType::ESIM;
+    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
+        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
+
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+
+    ImsCurrentCallList imsCallList;
+    InitImsCallInfoList(imsCallList, 2);
+    handler->ReportImsCallsData(imsCallList);
+
+    auto imsControl = serviceInstance->GetImsControl(SIM1_SLOTID);
+    EXPECT_NE(imsControl, nullptr);
+}
+
+/**
+ * @tc.number	Telephony_CellularCallService_With2Calls_NoCreate
+ * @tc.name 	Test ReportImsCallsData when imsCallInfoList.callsize == 2
+ * @tc.desc 	Function test: Verify IMSControl is created when callSize == 2 and imsControl is exist
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls_NoCreate, Function | MediumTest | Level3)
+{
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
+
+    SimLabel expectedSimLabel;
+    expectedSimLabel.simType = SimType::ESIM;
+    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
+        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
+
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+
+    ImsCurrentCallList imsCallList;
+    InitImsCallInfoList(imsCallList, 2);
+    handler->ReportImsCallsData(imsCallList);
+
+    auto imsControl2 = serviceInstance->GetImsControl(SIM1_SLOTID);
+    EXPECT_EQ(imsControl2, imsControl);
+}
+
+/**
+ * @tc.number	Telephony_CellularCallService_With3Calls
+ * @tc.name 	Test ReportImsCallsData when imsCallInfoList.callsize == 3
+ * @tc.desc 	Function test: Verify IMSControl is created when callSize == 3 and imsControl is null
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With3Calls, Function | MediumTest | Level3)
+{
+    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
+
+    SimLabel expectedSimLabel;
+    expectedSimLabel.simType = SimType::ESIM;
+    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
+        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
+
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    auto handler = std::make_shared<CellularCallHandler>(subscriberInfo);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+
+    ImsCurrentCallList imsCallList;
+    InitImsCallInfoList(imsCallList, 3);
+    handler->ReportImsCallsData(imsCallList);
+
+    auto imsControl = serviceInstance->GetImsControl(SIM1_SLOTID);
+    EXPECT_NE(imsControl, nullptr);
+}
+
 /**
  * @tc.number	Telephony_CellularCallSupplementRequestIms_001
  * @tc.name 	Test error branch
