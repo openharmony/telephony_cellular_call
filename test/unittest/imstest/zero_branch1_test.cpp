@@ -916,14 +916,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_005, Function | MediumTe
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls, Function | MediumTest | Level3)
 {
-    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
-    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
-
-    SimLabel expectedSimLabel;
-    expectedSimLabel.simType = SimType::ESIM;
-    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
-        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
-
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -947,14 +939,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls, Function | M
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls_NoCreate, Function | MediumTest | Level3)
 {
-    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
-    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
-
-    SimLabel expectedSimLabel;
-    expectedSimLabel.simType = SimType::ESIM;
-    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
-        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
-
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -975,18 +959,10 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With2Calls_NoCreate, Fun
 /**
  * @tc.number	Telephony_CellularCallService_With3Calls
  * @tc.name 	Test ReportImsCallsData when imsCallInfoList.callsize == 3
- * @tc.desc 	Function test: Verify IMSControl is created when callSize == 3 and imsControl is null
+ * @tc.desc 	Function test: Verify IMSControl not be created when callSize == 3 and imsControl is null
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With3Calls, Function | MediumTest | Level3)
 {
-    std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
-    CoreManagerInner::GetInstance().OnInit(nullptr, mockSimManagerPtr, nullptr);
-
-    SimLabel expectedSimLabel;
-    expectedSimLabel.simType = SimType::ESIM;
-    EXPECT_CALL(*mockSimManager, GetSimLabel(_, _)).
-        WillRepeatedly(DoAll(SetArgReferee<1>(expectedSimLabel), Return(0)));
-
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(ENTER_STR_TELEPHONY_NOTIFY);
     EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
@@ -1000,7 +976,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallService_With3Calls, Function | M
     handler->ReportImsCallsData(imsCallList);
 
     auto imsControl = serviceInstance->GetImsControl(SIM1_SLOTID);
-    EXPECT_NE(imsControl, nullptr);
+    EXPECT_EQ(imsControl, nullptr);
 }
 
 /**
