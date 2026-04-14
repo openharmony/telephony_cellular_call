@@ -43,7 +43,7 @@ enum {
 
 bool IsServiceInited()
 {
-    auto service = std::shared_ptr<cellularCallService>();
+    auto service = DelayedSingleton<CellularCallService>::GetInstance();
     if (service == nullptr) {
         return g_isInited;
     }
