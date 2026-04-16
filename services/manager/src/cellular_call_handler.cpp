@@ -37,6 +37,7 @@
 namespace OHOS {
 namespace Telephony {
 const std::string CN_INTERNATIONAL_NUMBER_PREFIX = "+86";
+const int32_t DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH = 16;
 const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
         "|18[0-9]|19[0-9])\\d{8}$";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
@@ -1518,10 +1519,18 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
 
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
+        if (callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH - 1 &&
+            callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH) {
+            break;
+        }
         std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
-        if (callInfo.type == INTERNATION_CODE && std::regex_match(callInfo.number, phoneContextPattern)) {
-            callInfoList.calls[i].number = callInfo.number.substr(0, 1) +
-                callInfo.number.substr(CN_INTERNATIONAL_NUMBER_PREFIX.length());
+        if ((callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, 5) == "+8686") ||
+            (callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, 4) == "8686")) {
+            std::smatch match;
+            if (std::regex_match(callInfo.number, match, phoneContextPattern)) {
+                callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX +
+                    match[2].str() + match[3].str();
+            }
         }
     }
 }
