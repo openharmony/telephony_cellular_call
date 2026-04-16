@@ -1525,7 +1525,7 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
         }
         std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
         if ((callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, 5) == "+8686") ||
-            (callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, 4) == "8686")) {
+            (callInfo.type != INTERNATION_CODE && callInfo.number.substr(0, 4) == "8686")) {
             std::smatch match;
             if (std::regex_match(callInfo.number, match, phoneContextPattern)) {
                 callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX +
