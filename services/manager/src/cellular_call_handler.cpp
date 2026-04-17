@@ -1518,8 +1518,6 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     int32_t  doublePhoneContextNumberLength = 16;
     std::string duplicativePhoneNumberPrefix0 = "+8686";
     std::string duplicativePhoneNumberPrefix1 = "8686";
-    int32_t phoneNumberPrefix = 2;
-    int32_t phoneNumberSuffix = 3;
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
         if (callInfo.number.length() != doublePhoneContextNumberLength - 1 &&
@@ -1527,14 +1525,12 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
             break;
         }
         std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
-        if (!((callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, duplicativePhoneNumberPrefix0.length()) == duplicativePhoneNumberPrefix0) ||
-            (callInfo.type != INTERNATION_CODE && callInfo.number.substr(0, duplicativePhoneNumberPrefix1.length()) == duplicativePhoneNumberPrefix1))) {
-            break;
-        }
-        std::smatch match;
-        if (std::regex_match(callInfo.number, match, phoneContextPattern)) {
-            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX +
-                match[phoneNumberPrefix].str() + match[phoneNumberSuffix].str();
+        if ((callInfo.type == INTERNATION_CODE && callInfo.number.substr(0, duplicativePhoneNumberPrefix0.length()) == duplicativePhoneNumberPrefix0)) {
+            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
+                callInfo.number.substr(duplicativePhoneNumberPrefix0.length());
+        }else if (callInfo.type != INTERNATION_CODE && callInfo.number.substr(0, duplicativePhoneNumberPrefix1.length()) == duplicativePhoneNumberPrefix1) {
+            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
+                callInfo.number.substr(duplicativePhoneNumberPrefix1.length());
         }
     }
 }
