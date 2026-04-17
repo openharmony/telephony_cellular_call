@@ -1224,6 +1224,12 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0005, Function | MediumTest 
     callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "+86861565910xxxx";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.clear();
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
     unexpectedPhoneNumber = "+561565910xxxx";
     callInfo.number = unexpectedPhoneNumber;
     callInfoList->calls.clear();
