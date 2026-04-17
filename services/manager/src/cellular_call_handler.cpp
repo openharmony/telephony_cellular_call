@@ -1524,14 +1524,15 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
             break;
         }
         std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
+        if (!std::regex_match(callInfo.number, phoneContextPattern)) {
+            break;
+        }
         if (callInfo.type == INTERNATION_CODE && 
-            callInfo.number.substr(0, doublePhoneNumberPrefix[0].length()) == doublePhoneNumberPrefix[0] && 
-            std::ragex_match(callInfo.number, phoneContextPattern)) {
+            callInfo.number.substr(0, doublePhoneNumberPrefix[0].length()) == doublePhoneNumberPrefix[0]) {
             callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
                 callInfo.number.substr(doublePhoneNumberPrefix[0].length());
         } else if (callInfo.type != INTERNATION_CODE && 
-                    callInfo.number.substr(0, doublePhoneNumberPrefix[1].length()) == doublePhoneNumberPrefix[1] &&
-                    std::ragex_match(callInfo.number, phoneContextPattern)) {
+                    callInfo.number.substr(0, doublePhoneNumberPrefix[1].length()) == doublePhoneNumberPrefix[1]) {
             callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
                 callInfo.number.substr(doublePhoneNumberPrefix[1].length());
         }
