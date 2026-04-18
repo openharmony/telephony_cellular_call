@@ -37,8 +37,8 @@
 namespace OHOS {
 namespace Telephony {
 const std::string CN_INTERNATIONAL_NUMBER_PREFIX = "+86";
-const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^(\\+?86)(?:86)?(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
-        "|18[0-9]|19[0-9])(\\d{8}$)";
+const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^(\\+?86)(?:86)?(13[0-9]|14[5-9]|15[0-9]"
+        "|166|17[0-9]|18[0-9]|19[0-9])(\\d{8}$)";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
@@ -1525,12 +1525,12 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
             break;
         }
         int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
-        if (callInfo.number.substr(0, doublePhoneNumberPrefix[index].length()) != doublePhoneNumberPrefix[index]) {
+        int8_t doublePhoneNumberPrefixLen = doublePhoneNumberPrefix[index].length();
+        if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != doublePhoneNumberPrefix[index]) {
             break;
         }
         if (std::regex_match(callInfo.number, phoneContextPattern)) {
-            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
-            callInfo.number.substr(doublePhoneNumberPrefix[index].length());
+            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + callInfo.number.substr(doublePhoneNumberPrefixLen);
         }
     }
 }
