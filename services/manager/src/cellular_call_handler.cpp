@@ -1531,7 +1531,7 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
         }
         if (std::regex_match(callInfo.number, phoneContextPattern)) {
             callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX + 
-            callInfo.number.substr(doublePhoneNumberPrefixLen);
+                callInfo.number.substr(doublePhoneNumberPrefixLen);
         }
     }
 }
