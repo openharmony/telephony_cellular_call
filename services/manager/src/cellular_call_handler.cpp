@@ -1525,7 +1525,7 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
             break;
         }
         int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
-        if (!(callInfo.number.substr(0, doublePhoneNumberPrefix[index].length()) == doublePhoneNumberPrefix[index])) {
+        if (callInfo.number.substr(0, doublePhoneNumberPrefix[index].length()) != doublePhoneNumberPrefix[index]) {
             break;
         }
         if (std::regex_match(callInfo.number, phoneContextPattern)) {
