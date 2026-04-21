@@ -1331,6 +1331,12 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0008, Function | MediumTest 
     callInfoList->calls.push_back(callInfo);
     fifthHandler.ProcessRedundantCode(*callInfoList);
     EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "8686156" + std::to_string(randomNumber);
+    callInfo.number = unexpectedPhoneNumber;
+    callInfo.type = 136;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[1].number, expectedPhoneNumber);
 }
 
 /**

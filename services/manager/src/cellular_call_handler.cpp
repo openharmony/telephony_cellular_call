@@ -1520,14 +1520,14 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
-        if (callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH - 1 &&
+        if (callInfo.number.length() != (DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH - 1) &&
             callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH) {
-            break;
+            continue;
         }
         int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
         int8_t doublePhoneNumberPrefixLen = DOUBLE_PHONE_NUMBER_PREFIX[index].length();
         if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != DOUBLE_PHONE_NUMBER_PREFIX[index]) {
-            break;
+            continue;
         }
         if (std::regex_match(callInfo.number, phoneContextPattern)) {
             callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX +
