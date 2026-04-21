@@ -1291,11 +1291,11 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
 }
 
 /**
- * @tc.number   cellular_call_CellularCallHandler_0008
+ * @tc.number   cellular_call_CellularCallHandler_ProcessRedundantCode_8686
  * @tc.name     Test for CellularCallHandler
  * @tc.desc     Function test
  */
-HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0008, Function | MediumTest | Level3)
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_ProcessRedundantCode_8686, Function | MediumTest | Level3)
 {
     EventFwk::MatchingSkills matchingSkills;
     matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
