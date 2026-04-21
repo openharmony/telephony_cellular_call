@@ -1515,18 +1515,18 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     if (callInfoList.callSize == 0 || callInfoList.calls.empty()) {
         return;
     }
-    int32_t  doublePhoneContextNumberLength = 16;
-    std::vector<std::string> doublePhoneNumberPrefix{"+8686", "8686"};
+    constexpr int32_t  DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH = 16;
+    const std::vector<std::string> DOUBLE_PHONE_NUMBER_PREFIX{"+8686", "8686"};
     std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
-        if (callInfo.number.length() != doublePhoneContextNumberLength - 1 &&
-            callInfo.number.length() != doublePhoneContextNumberLength) {
+        if (callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH - 1 &&
+            callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH) {
             break;
         }
         int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
-        int8_t doublePhoneNumberPrefixLen = doublePhoneNumberPrefix[index].length();
-        if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != doublePhoneNumberPrefix[index]) {
+        int8_t doublePhoneNumberPrefixLen = DOUBLE_PHONE_NUMBER_PREFIX[index].length();
+        if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != DOUBLE_PHONE_NUMBER_PREFIX[index]) {
             break;
         }
         if (std::regex_match(callInfo.number, phoneContextPattern)) {
