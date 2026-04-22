@@ -37,8 +37,8 @@
 namespace OHOS {
 namespace Telephony {
 const std::string CN_INTERNATIONAL_NUMBER_PREFIX = "+86";
-const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^\\+8686(13[0-9]|14[5-9]|15[0-9]|166|17[0-9]"
-        "|18[0-9]|19[0-9])\\d{8}$";
+const std::string DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT = "^(\\+?86)(?:86)?(13[0-9]|14[0-9]|15[0-9]|162|165"
+        "|166|167|17[0-9]|18[0-9]|19[0-9])(\\d{8}$)";
 const uint32_t GET_CS_CALL_DATA_ID = 10001;
 const uint32_t GET_IMS_CALL_DATA_ID = 10002;
 const uint32_t OPERATOR_CONFIG_CHANGED_ID = 10004;
@@ -1515,13 +1515,23 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
     if (callInfoList.callSize == 0 || callInfoList.calls.empty()) {
         return;
     }
-
+    constexpr int32_t  DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH = 16;
+    const std::vector<std::string> DOUBLE_PHONE_NUMBER_PREFIX{"+8686", "8686"};
+    std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
     for (uint64_t i = 0; i < callInfoList.calls.size(); i++) {
         CallInfo callInfo = callInfoList.calls[i];
-        std::regex phoneContextPattern(DUPLICATIVE_CN_INTERNATIONAL_NUMBER_PREFIX_FORMAT);
-        if (callInfo.type == INTERNATION_CODE && std::regex_match(callInfo.number, phoneContextPattern)) {
-            callInfoList.calls[i].number = callInfo.number.substr(0, 1) +
-                callInfo.number.substr(CN_INTERNATIONAL_NUMBER_PREFIX.length());
+        if (callInfo.number.length() != (DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH - 1) &&
+            callInfo.number.length() != DOUBLE_PHONE_CONTEXT_NUMBER_LENGTH) {
+            continue;
+        }
+        int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
+        int8_t doublePhoneNumberPrefixLen = DOUBLE_PHONE_NUMBER_PREFIX[index].length();
+        if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != DOUBLE_PHONE_NUMBER_PREFIX[index]) {
+            continue;
+        }
+        if (std::regex_match(callInfo.number, phoneContextPattern)) {
+            callInfoList.calls[i].number = CN_INTERNATIONAL_NUMBER_PREFIX +
+                callInfo.number.substr(doublePhoneNumberPrefixLen);
         }
     }
 }
