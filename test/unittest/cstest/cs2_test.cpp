@@ -1291,6 +1291,55 @@ HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_0007, Function | MediumTest 
 }
 
 /**
+ * @tc.number   cellular_call_CellularCallHandler_ProcessRedundantCode_8686
+ * @tc.name     Test for CellularCallHandler
+ * @tc.desc     Function test
+ */
+HWTEST_F(Cs2Test, cellular_call_CellularCallHandler_ProcessRedundantCode_8686, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler fifthHandler { subscriberInfo };
+    auto callInfoList = std::make_shared<CallInfoList>();
+    callInfoList->callSize = 1;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, 9);
+    int randomNumber = 0;
+    int phonenumberLength = 8;
+    for (int i = 0; i < phonenumberLength; i++) {
+        randomNumber = randomNumber * 10 + distrib(gen);
+    }
+    std::string expectedPhoneNumber = "+86156" + std::to_string(randomNumber);
+    std::string unexpectedPhoneNumber = "8686156" + std::to_string(randomNumber);
+    CallInfo callInfo;
+    callInfo.type = 136;
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.clear();
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, expectedPhoneNumber);
+    callInfo.type = 145;
+    callInfoList->calls.clear();
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "+86861565910xxxx";
+    callInfo.number = unexpectedPhoneNumber;
+    callInfoList->calls.clear();
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[0].number, unexpectedPhoneNumber);
+    unexpectedPhoneNumber = "8686156" + std::to_string(randomNumber);
+    callInfo.number = unexpectedPhoneNumber;
+    callInfo.type = 136;
+    callInfoList->calls.push_back(callInfo);
+    fifthHandler.ProcessRedundantCode(*callInfoList);
+    EXPECT_EQ(callInfoList->calls[1].number, expectedPhoneNumber);
+}
+
+/**
  * @tc.number   cellular_call_TestDump_0001
  * @tc.name     TestDump
  * @tc.desc     Function test
