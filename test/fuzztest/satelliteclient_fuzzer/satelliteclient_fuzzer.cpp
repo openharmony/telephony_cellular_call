@@ -20,6 +20,7 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "satellite_call_client.h"
 #include "satellite_call_proxy.h"
 #include "securec.h"
@@ -57,17 +58,17 @@ bool IsServiceInited()
 }
 
 void TestSatelliteCallClientWithCallInfo(
-    const uint8_t *data, size_t size, const std::shared_ptr<SatelliteCallClient> &satelliteCallClient)
+    FuzzedDataProvider& provider, const std::shared_ptr<SatelliteCallClient> &satelliteCallClient)
 {
     SatelliteCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(struct SatelliteCallInfo), 0x00, sizeof(struct SatelliteCallInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_THREE);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
+    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), provider.ConsumeIntegral<size_t>());
+    std::string number = provider.ConsumeRandomLengthString();
+    int32_t mode = provider.ConsumeIntegral<int32_t>() % NUM_THREE;
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % NUM_TWO;
+    int32_t index = provider.ConsumeIntegral<int32_t>() % NUM_THREE;
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
@@ -78,21 +79,21 @@ void TestSatelliteCallClientWithCallInfo(
     satelliteCallClient->Answer(slotId);
     satelliteCallClient->Reject(slotId);
 
-    int32_t callType = static_cast<int32_t>(size % NUM_TWO);
+    int32_t callType = provider.ConsumeIntegral<int32_t>() % NUM_TWO;
     satelliteCallClient->GetSatelliteCallsDataRequest(slotId, callType);
 }
 
-void TestSatelliteCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<SatelliteCallInterface> &proxy)
+void TestSatelliteCallProxyWithCallInfo(FuzzedDataProvider& provider, const sptr<SatelliteCallInterface> &proxy)
 {
     SatelliteCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(struct SatelliteCallInfo), 0x00, sizeof(struct SatelliteCallInfo)) != EOK) {
         return;
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_THREE);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
+    std::string number(ConsumeIntegral<cosnt char>(), length);
+    int32_t mode = provider.ConsumeIntegral<int32_t>() % NUM_THREE;
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % NUM_TWO;
+    int32_t index = provider.ConsumeIntegral<int32_t>() % NUM_THREE;
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
@@ -112,6 +113,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (data == nullptr || size == 0) {
         return;
     }
+    FuzzedDataProvider provider(data, size);
     auto satelliteCallClient = DelayedSingleton<SatelliteCallClient>::GetInstance();
     if (satelliteCallClient == nullptr) {
         return;
@@ -119,7 +121,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (!IsServiceInited()) {
         return;
     }
-    TestSatelliteCallClientWithCallInfo(data, size, satelliteCallClient);
+    TestSatelliteCallClientWithCallInfo(provider, satelliteCallClient);
 
     auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (managerPtr == nullptr) {
@@ -133,7 +135,7 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (proxy == nullptr) {
         return;
     }
-    TestSatelliteCallProxyWithCallInfo(data, size, proxy);
+    TestSatelliteCallProxyWithCallInfo(provider, proxy);
     proxy.clear();
     proxy = nullptr;
 }
