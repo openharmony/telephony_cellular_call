@@ -527,7 +527,7 @@ private:
         std::vector<std::string> &callListNoCard);
     void UpdateHplmnFakeEccList(const std::vector<std::string> &callList, const std::string &hplmn,
                                 int32_t slotId, std::vector<EmergencyCall> &eccList, const std::string &mcc);
-    void UpdateTempEccList(int32_t slotId, std::vector<EmergencyCall> &eccList);
+    void UpdateEccListByFakeEccList(int32_t slotId, std::vector<EmergencyCall> &eccList);
 
 private:
     struct EccList {
