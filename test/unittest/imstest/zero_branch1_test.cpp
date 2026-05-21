@@ -1251,7 +1251,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | Medium
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     config.UpdateHplmnFakeEccList(callList, hplmn, SIM1_SLOTID, tempEccList, mcc);
-    config.UpdateTempEccList(SIM1_SLOTID, tempEccList);
+    config.UpdateEccListByFakeEccList(SIM1_SLOTID, tempEccList);
     std::vector<EccNum> eccVec;
     auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
     EXPECT_NE(rdbHelper->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
