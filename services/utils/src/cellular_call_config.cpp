@@ -72,6 +72,7 @@ std::map<int32_t, bool> CellularCallConfig::forceVolteSwitchOn_;
 std::map<int32_t, bool> CellularCallConfig::videoCallWaiting_;
 std::map<int32_t, int32_t> CellularCallConfig::vonrSwithStatus_;
 std::map<int32_t, bool> CellularCallConfig::imsSipCauseEnable_;
+std::map<int32_t, bool> CellularCallConfig::shouldCheckImsAfterNvUpdate_;
 int32_t CellularCallConfig::lastDisconnectCode_ = 0;
 std::shared_mutex CellularCallConfig::mutex_;
 std::mutex CellularCallConfig::operatorMutex_;
@@ -117,6 +118,7 @@ void CellularCallConfig::InitDefaultOperatorConfig()
             cellularState));
         CellularCallConfig::videoCallWaiting_.insert(std::pair<int, bool>(i, true));
         CellularCallConfig::imsSipCauseEnable_.insert(std::pair<int, bool>(i, false));
+        CellularCallConfig::shouldCheckImsAfterNvUpdate_.insert(std::pair<int, bool>(i, true));
     }
 }
 
@@ -248,6 +250,8 @@ void CellularCallConfig::HandleSimStateChanged(int32_t slotId)
     if (CheckAndUpdateSimState(slotId)) {
         UpdateEccNumberList(slotId);
     }
+    std::lock_guard<std::mutex> lock(operatorMutex_);
+    shouldCheckImsAfterNvUpdate_[slotId] = true;
 }
 
 void CellularCallConfig::HandleFactoryReset(int32_t slotId)
@@ -275,6 +279,8 @@ void CellularCallConfig::HandleSimRecordsLoaded(int32_t slotId)
     TELEPHONY_LOGI("CellularCallConfig::HandleSimRecordsLoaded entry, slotId: %{public}d", slotId);
     CheckAndUpdateSimState(slotId);
     UpdateEccNumberList(slotId);
+    std::lock_guard<std::mutex> lock(operatorMutex_);
+    shouldCheckImsAfterNvUpdate_[slotId] = true;
 }
 
 void CellularCallConfig::HandleResidentNetworkChange(int32_t slotId, std::string plmn)
@@ -298,6 +304,10 @@ void CellularCallConfig::HandleNetworkStateChange(int32_t slotId)
     {
         std::lock_guard<std::mutex> lock(operatorMutex_);
         TELEPHONY_LOGI("CellularCallConfig::HandleNetworkStateChange entry, slotId: %{public}d", slotId);
+        if (shouldCheckImsAfterNvUpdate_[slotId]) {
+            GetImsSwitchStatusRequest(slotId);
+            shouldCheckImsAfterNvUpdate_[slotId] = false;
+        }
         auto itSlotId = networkServiceState_.find(slotId);
         if (itSlotId == networkServiceState_.end()) {
             TELEPHONY_LOGE("slotId is not in networkServiceState_");
