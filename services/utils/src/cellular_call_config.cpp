@@ -964,7 +964,7 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
         auto fakeEccListPlmn = hplmnFakeEccList_[slotId].plmn;
         lock.unlock();
         if (fakeEccListPlmn == hplmn) {
-            UpdateTempEccList(slotId, tempEccList[slotId]);
+            UpdateEccListByFakeEccList(slotId, tempEccList[slotId]);
         } else {
             std::vector<EccNum> eccVec;
             DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
@@ -986,21 +986,21 @@ void CellularCallConfig::UpdateHplmnFakeEccList(const std::vector<std::string> &
     if (callList.empty()) {
         return;
     }
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     hplmnFakeEccList_[slotId].plmn = hplmn;
     for (auto it : callList) {
         EmergencyCall call = BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD);
         call.mcc = mcc;
         eccList.push_back(call);
-        std::unique_lock<ffrt::mutex> lock(plmnMutex_);
-        auto ecc =
-        std::find(hplmnFakeEccList_[slotId].eccInfoList.begin(), hplmnFakeEccList_[slotId].eccInfoList.end(), call);
+        auto ecc = std::find(hplmnFakeEccList_[slotId].eccInfoList.begin(), hplmnFakeEccList_[slotId].eccInfoList.end(),
+            call);
         if (ecc == hplmnFakeEccList_[slotId].eccInfoList.end()) {
             hplmnFakeEccList_[slotId].eccInfoList.push_back(call);
         }
     }
 }
  
-void CellularCallConfig::UpdateTempEccList(int32_t slotId, std::vector<EmergencyCall> &eccList)
+void CellularCallConfig::UpdateEccListByFakeEccList(int32_t slotId, std::vector<EmergencyCall> &eccList)
 {
     std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     for (auto eccInfo : hplmnFakeEccList_[slotId].eccInfoList) {
