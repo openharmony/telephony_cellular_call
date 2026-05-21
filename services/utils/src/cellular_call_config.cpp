@@ -45,7 +45,6 @@ const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
 const int32_t INVALID_SIM_ID = 0;
 const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
-const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
 constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
