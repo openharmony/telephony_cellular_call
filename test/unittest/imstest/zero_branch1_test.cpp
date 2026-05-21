@@ -1242,9 +1242,16 @@ HWTEST_F(ZeroBranch1Test, Telephony_MmiCodeUtils_001, Function | MediumTest | Le
  */
 HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | MediumTest | Level3)
 {
+    CellularCallConfig config;
+    std::vector<EmergencyCall> tempEccList;
+    EmergencyCall call;
+    std::vector<std::string> callList;
+    std::string mcc;
     std::u16string u16Hplmn = u"";
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(SIM1_SLOTID, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
+    config.UpdateHplmnFakeEccList(callList, hplmn, SIM1_SLOTID, tempEccList, mcc);
+    config.UpdateTempEccList(SIM1_SLOTID, tempEccList);
     std::vector<EccNum> eccVec;
     auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
     EXPECT_NE(rdbHelper->QueryEccList(hplmn, eccVec), TELEPHONY_SUCCESS);
@@ -1252,7 +1259,6 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallRdbHelper_001, Function | Medium
     rdbHelper->RegisterEccDataObserver(callback);
     callback = nullptr;
     rdbHelper->RegisterEccDataObserver(callback);
-    CellularCallConfig config;
     std::vector<std::string> callListWithCard;
     std::vector<std::string> callListNoCard;
     config.hplmnEccList_[0].plmn = "";
