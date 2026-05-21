@@ -525,6 +525,9 @@ private:
         std::vector<std::string> &callListWithCard, std::vector<std::string> &callListNoCard);
     bool ProcessCurrentPlmnEccList(int32_t slotId, std::vector<std::string> &callListWithCard,
         std::vector<std::string> &callListNoCard);
+    void UpdateHplmnFakeEccList(const std::vector<std::string> &callList, const std::string &hplmn,
+                                int32_t slotId, std::vector<EmergencyCall> &eccList, const std::string &mcc);
+    void UpdateTempEccList(int32_t slotId, std::vector<EmergencyCall> &eccList);
 
 private:
     struct EccList {
@@ -567,8 +570,9 @@ private:
         bool isRoaming_ = false;
     };
     static std::map<int32_t, cellularNetworkState> networkServiceState_;
-    static EccList hplmnEccList_[2];
-    static EccList currentPlmnEccList_[2];
+    static std::vector<EccList> hplmnEccList_;
+    static std::vector<EccList> currentPlmnEccList_;
+    static std::vector<EccList> hplmnFakeEccList_;
     static ffrt::mutex plmnMutex_;
     static ffrt::mutex modeMutex_;
 };
