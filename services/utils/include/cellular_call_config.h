@@ -528,6 +528,7 @@ private:
     void UpdateHplmnFakeEccList(const std::vector<std::string> &callList, const std::string &hplmn,
                                 int32_t slotId, std::vector<EmergencyCall> &eccList, const std::string &mcc);
     void UpdateEccListByFakeEccList(int32_t slotId, std::vector<EmergencyCall> &eccList);
+    void ClearCachedEcclist(int32_t slotId);
 
 private:
     struct EccList {
