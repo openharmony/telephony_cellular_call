@@ -1289,18 +1289,22 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 
 void CellularCallConfig::HandleEccListChange()
 {
-    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
     for (int i = 0; i < SIM_SLOT_COUNT; ++i) {
-        hplmnEccList_[i].plmn = "";
-        hplmnEccList_[i].eccInfoList.clear();
-        currentPlmnEccList_[i].plmn = "";
-        currentPlmnEccList_[i].eccInfoList.clear();
-        hplmnFakeEccList_[i].plmn = "";
-        hplmnFakeEccList_[i].eccInfoList.clear();
+        ClearCachedEcclist(i);
+        UpdateEccNumberList(i);
     }
-    lock.unlock();
-    UpdateEccNumberList(0);
-    UpdateEccNumberList(1);
+}
+
+void CellularCallConfig::ClearCachedEcclist(int32_t slotId)
+{
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+    hplmnEccList_[slotId].plmn = "";
+    hplmnEccList_[slotId].eccInfoList.clear();
+    currentPlmnEccList_[slotId].plmn = "";
+    currentPlmnEccList_[slotId].eccInfoList.clear();
+    hplmnFakeEccList_[slotId].plmn = "";
+    hplmnFakeEccList_[slotId].eccInfoList.clear();
+    TELEPHONY_LOGI("Cached Ecclist is cleared.");
 }
 
 void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
