@@ -45,7 +45,6 @@ const int32_t SAVE_IMS_SWITCH_SUCCESS_NOT_CHANGED = 2;
 const int32_t INVALID_SIM_ID = 0;
 const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
-const int32_t SLOT_NUM = 2;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
 constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
@@ -86,8 +85,9 @@ std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
 std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
-CellularCallConfig::EccList CellularCallConfig::hplmnEccList_[SLOT_NUM];
-CellularCallConfig::EccList CellularCallConfig::currentPlmnEccList_[SLOT_NUM];
+std::vector<CellularCallConfig::EccList> CellularCallConfig::hplmnEccList_(SIM_SLOT_COUNT);
+std::vector<CellularCallConfig::EccList> CellularCallConfig::currentPlmnEccList_(SIM_SLOT_COUNT);
+std::vector<CellularCallConfig::EccList> CellularCallConfig::hplmnFakeEccList_(SIM_SLOT_COUNT);
 ffrt::mutex CellularCallConfig::plmnMutex_;
 ffrt::mutex CellularCallConfig::modeMutex_;
 
@@ -970,19 +970,55 @@ void CellularCallConfig::MergeEccCallList(int32_t slotId)
     CoreManagerInner::GetInstance().GetSimOperatorNumeric(slotId, u16Hplmn);
     std::string hplmn = Str16ToStr8(u16Hplmn);
     if (hasSim && !GetRoamingState(slotId) && !hplmn.empty()) {
-        std::vector<EccNum> eccVec;
-        DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
-        if (!eccVec.empty()) {
+        std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+        auto fakeEccListPlmn = hplmnFakeEccList_[slotId].plmn;
+        lock.unlock();
+        if (fakeEccListPlmn == hplmn) {
+            UpdateEccListByFakeEccList(slotId, tempEccList[slotId]);
+        } else {
+            std::vector<EccNum> eccVec;
+            DelayedSingleton<CellularCallRdbHelper>::GetInstance()->QueryEccList(hplmn, eccVec);
+            if (eccVec.empty()) {
+                UniqueEccCallList(slotId, tempEccList[slotId]);
+                return;
+            }
             std::string ecc = eccVec[0].ecc_fake;
             std::vector<std::string> callList = StandardizeUtils::Split(ecc, ",");
-            for (auto it : callList) {
-                EmergencyCall call = BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD);
-                call.mcc = mcc;
-                tempEccList[slotId].push_back(call);
-            }
+            UpdateHplmnFakeEccList(callList, hplmn, slotId, tempEccList[slotId], mcc);
         }
     }
     UniqueEccCallList(slotId, tempEccList[slotId]);
+}
+
+void CellularCallConfig::UpdateHplmnFakeEccList(const std::vector<std::string> &callList, const std::string &hplmn,
+    int32_t slotId, std::vector<EmergencyCall> &eccList, const std::string &mcc)
+{
+    if (callList.empty()) {
+        return;
+    }
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+    hplmnFakeEccList_[slotId].plmn = hplmn;
+    for (auto it : callList) {
+        EmergencyCall call = BuildDefaultEmergencyCall(it, SimpresentType::TYPE_HAS_CARD);
+        call.mcc = mcc;
+        eccList.push_back(call);
+        auto ecc = std::find(hplmnFakeEccList_[slotId].eccInfoList.begin(), hplmnFakeEccList_[slotId].eccInfoList.end(),
+            call);
+        if (ecc == hplmnFakeEccList_[slotId].eccInfoList.end()) {
+            hplmnFakeEccList_[slotId].eccInfoList.push_back(call);
+        }
+    }
+}
+ 
+void CellularCallConfig::UpdateEccListByFakeEccList(int32_t slotId, std::vector<EmergencyCall> &eccList)
+{
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+    for (auto eccInfo : hplmnFakeEccList_[slotId].eccInfoList) {
+        auto it = std::find(eccList.begin(), eccList.end(), eccInfo);
+        if (it == eccList.end()) {
+            eccList.push_back(eccInfo);
+        }
+    }
 }
 
 void CellularCallConfig::UniqueEccCallList(int32_t slotId, std::vector<EmergencyCall> &eccList)
@@ -1263,16 +1299,22 @@ bool CellularCallConfig::IsVolteSupport(int32_t slotId)
 
 void CellularCallConfig::HandleEccListChange()
 {
-    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
-    for (int i = 0; i < SLOT_NUM; ++i) {
-        hplmnEccList_[i].plmn = "";
-        hplmnEccList_[i].eccInfoList.clear();
-        currentPlmnEccList_[i].plmn = "";
-        currentPlmnEccList_[i].eccInfoList.clear();
+    for (int i = 0; i < SIM_SLOT_COUNT; ++i) {
+        ClearCachedEcclist(i);
+        UpdateEccNumberList(i);
     }
-    lock.unlock();
-    UpdateEccNumberList(0);
-    UpdateEccNumberList(1);
+}
+
+void CellularCallConfig::ClearCachedEcclist(int32_t slotId)
+{
+    std::unique_lock<ffrt::mutex> lock(plmnMutex_);
+    hplmnEccList_[slotId].plmn = "";
+    hplmnEccList_[slotId].eccInfoList.clear();
+    currentPlmnEccList_[slotId].plmn = "";
+    currentPlmnEccList_[slotId].eccInfoList.clear();
+    hplmnFakeEccList_[slotId].plmn = "";
+    hplmnFakeEccList_[slotId].eccInfoList.clear();
+    TELEPHONY_LOGI("Cached Ecclist is cleared.");
 }
 
 void CellularCallConfig::SetClearCode(int32_t slotId, int32_t cause)
