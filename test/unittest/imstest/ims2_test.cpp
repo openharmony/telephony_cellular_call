@@ -1084,7 +1084,7 @@ HWTEST_F(Ims2Test, cellular_call_HandleNetworkStateChange_0001, Function | Mediu
     sptr<NetworkState> networkState = new NetworkState();
     networkState->csRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
     networkState->psRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
-    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).willRepeatedly([&](int32_t, sptr<NetworkState> &status) {
+    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).WillRepeatedly([&](int32_t, sptr<NetworkState> &status) {
         status = networkState;
         return 0;
     });
@@ -1106,7 +1106,7 @@ HWTEST_F(Ims2Test, cellular_call_HandleNetworkStateChange_0002, Function | Mediu
     sptr<NetworkState> networkState = new NetworkState();
     networkState->csRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
     networkState->psRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
-    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).willRepeatedly([&](int32_t, sptr<NetworkState> &status) {
+    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).WillRepeatedly([&](int32_t, sptr<NetworkState> &status) {
         status = networkState;
         return 0;
     });
