@@ -1072,5 +1072,49 @@ HWTEST_F(Ims2Test, cellular_call_GetImsSwitchStatusResponse_0001, Function | Med
     handler.GetImsSwitchStatusResponse(responseEvent);
     ASSERT_EQ(handler.GetSlotId(), SIM1_SLOTID);
 }
+
+/**
+ * @tc.number   cellular_call_HandleNetworkStateChange_0001
+ * @tc.name     test for HandleNetworkStateChange
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_HandleNetworkStateChange_0001, Function | MediumTest | Level3)
+{
+    int32_t slotId = SIM1_SLOTID;
+    sptr<NetworkState> networkState = new NetworkState();
+    networkState->csRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
+    networkState->psRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
+    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).WillRepeatedly([&](int32_t, sptr<NetworkState> &status) {
+        status = networkState;
+        return 0;
+    });
+    CellularCallConfig::shouldCheckImsAfterNvUpdate_[slotId] = true;
+    CellularCallConfig::networkServiceState_[slotId] = CellularCallConfig::cellularNetworkState();
+    CellularCallConfig config;
+    config.HandleNetworkStateChange(slotId);
+    ASSERT_FALSE(CellularCallConfig::shouldCheckImsAfterNvUpdate_[slotId]);
+}
+
+/**
+ * @tc.number   cellular_call_HandleNetworkStateChange_0002
+ * @tc.name     test for HandleNetworkStateChange
+ * @tc.desc     Function test
+ */
+HWTEST_F(Ims2Test, cellular_call_HandleNetworkStateChange_0002, Function | MediumTest | Level3)
+{
+    int32_t slotId = SIM1_SLOTID;
+    sptr<NetworkState> networkState = new NetworkState();
+    networkState->csRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
+    networkState->psRegStatus_ = RegServiceState::REG_STATE_IN_SERVICE;
+    EXPECT_CALL(*mockNetworkSearch, GetNetworkStatus(_, _)).WillRepeatedly([&](int32_t, sptr<NetworkState> &status) {
+        status = networkState;
+        return 0;
+    });
+    CellularCallConfig::shouldCheckImsAfterNvUpdate_[slotId] = false;
+    CellularCallConfig::networkServiceState_[slotId] = CellularCallConfig::cellularNetworkState();
+    CellularCallConfig config;
+    config.HandleNetworkStateChange(slotId);
+    ASSERT_FALSE(CellularCallConfig::shouldCheckImsAfterNvUpdate_[slotId]);
+}
 } // namespace Telephony
 } // namespace OHOS
