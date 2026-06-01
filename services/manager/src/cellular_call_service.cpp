@@ -1748,13 +1748,13 @@ void CellularCallService::StartCallManagerService()
 
 void CellularCallService::setRadioOnFlag(bool flag, int32_t slotId)
 {
-    std::lock_guard<ffrt::shared_mutex> lock(mutex_);
+    std::lock_guard<ffrt::shared_mutex> lock(radioMutex_);
     isRadioOn_[slotId] = flag;
 }
 
 bool CellularCallService::isRadioOnFlag(int32_t slotId)
 {
-    std::shared_lock<ffrt::shared_mutex> lock(mutex_);
+    std::shared_lock<ffrt::shared_mutex> lock(radioMutex_);
     return isRadioOn_[slotId];
 }
 
