@@ -19,6 +19,7 @@
 #include <memory>
 #include <mutex>
 
+#include "ffrt.h"
 #include "cellular_call_config.h"
 #include "cellular_call_handler.h"
 #include "cellular_call_stub.h"
