@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_service.h"
+#include <shared_mutex>
 
 #include "cellular_call_callback.h"
 #include "cellular_call_dump_helper.h"
@@ -1747,11 +1748,13 @@ void CellularCallService::StartCallManagerService()
 
 void CellularCallService::setRadioOnFlag(bool flag, int32_t slotId)
 {
+    std::lock_guard<ffrt::shared_mutex> lock(radioMutex_);
     isRadioOn_[slotId] = flag;
 }
 
 bool CellularCallService::isRadioOnFlag(int32_t slotId)
 {
+    std::shared_lock<ffrt::shared_mutex> lock(radioMutex_);
     return isRadioOn_[slotId];
 }
 
