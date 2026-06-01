@@ -64,12 +64,13 @@ void TestImsCallClientWithCallInfo(
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t videoState = static_cast<int32_t>(size % NUM_THREE);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
+    size_t maxSize = sizeof(callInfo.phoneNum) - 1;
+    size_t length = provider.ConsumeIntegralInRange(0, maxSize);
+    std::string number = provider.ConsumeBytesAsString(length);
+    int32_t mode = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
     const char *cDtmfCode = number.c_str();
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
@@ -103,11 +104,11 @@ void TestImsCallClientWithCallInfo(
 void TestImsCallClientWithSlotAndType(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
-    int32_t callType = static_cast<int32_t>(size % NUM_TWO);
-    std::string info(reinterpret_cast<const char *>(data), size);
-    int32_t mode = static_cast<int32_t>(size % NUM_SIX);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
+    int32_t callType = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    std::string info = provider.ConsumeRadomLengthString();
+    int32_t mode = provider.ConsumeIntegralInRange<int32_t>(0, NUM_SIX);
     imsCallClient->HoldCall(slotId, callType);
     imsCallClient->UnHoldCall(slotId, callType);
     imsCallClient->SwitchCall(slotId, callType);
@@ -149,14 +150,15 @@ void TestImsCallClientWithSettingFunction(
     if (memset_s(&transferInfo, sizeof(struct CallTransferInfo), 0x00, sizeof(struct CallTransferInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
-    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
-    int32_t value = static_cast<int32_t>(size % NUM_FOUR);
-    int32_t type = static_cast<int32_t>(size % NUM_FOUR);
+    size_t maxSize = sizeof(transferInfo.transferNum) - 1;
+    size_t length = provider.ConsumeIntegralInRange(0, maxSize);
+    std::string number = provider.ConsumeRadomLengthString(length);
+    int32_t mode = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
+    int32_t item = provider.ConsumeIntegralInRange<int32_t>(0, IMS_CONFIG_ITEM_NUM);
+    int32_t value = provider.ConsumeIntegralInRange<int32_t>(0, NUM_FOUR);
+    int32_t type = provider.ConsumeIntegralInRange<int32_t>(0, NUM_FOUR);
     imsCallClient->SetImsConfig(static_cast<ImsConfigItem>(item), number);
     imsCallClient->SetImsConfig(static_cast<ImsConfigItem>(item), value);
     imsCallClient->GetImsConfig(static_cast<ImsConfigItem>(item));
@@ -190,15 +192,17 @@ void TestImsCallClientWithCallMediaModeRequest(
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    size_t maxSize = sizeof(callInfo.phoneNum) - 1;
+    size_t length = provider.ConsumeIntegralInRange(0, maxSize);
+    std::string number = provider.ConsumeRadomLengthString(length);
+    std::string number = provider.ConsumeRadomLengthString();
+    callInfo.slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
-    ImsCallType callMode = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    ImsCallType callMode = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, NUM_SIX));
     imsCallClient->SendUpdateCallMediaModeRequest(callInfo, callMode);
 }
 
@@ -210,10 +214,10 @@ void TestImsCallClientWithCallMediaModeResponse(
         return;
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    std::string number = provider.ConsumeRadomLengthString();
+    callInfo.slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
@@ -224,31 +228,32 @@ void TestImsCallClientWithCallMediaModeResponse(
 void TestImsCallClientWithCancelCallUpgrade(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
-    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     imsCallClient->CancelCallUpgrade(slotId, index);
 }
 
 void TestImsCallClientWithRequestCameraCapabilities(
     const uint8_t *data, size_t size, const std::shared_ptr<ImsCallClient> &imsCallClient)
 {
-    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
-    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     imsCallClient->RequestCameraCapabilities(slotId, index);
 }
 
-void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithCallInfo(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
     ImsCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t videoState = static_cast<int32_t>(size % NUM_THREE);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
+    size_t maxSize = sizeof(callInfo.phoneNum) - 1;
+    size_t length = provider.ConsumeIntegralInRange(0, maxSize);
+    std::string number = provider.ConsumeRadomLengthString(length);
+    int32_t mode = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
     const char *cDtmfCode = number.c_str();
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
@@ -278,12 +283,12 @@ void TestImsCallProxyWithCallInfo(const uint8_t *data, size_t size, const sptr<I
     proxy->GetMute(slotId);
 }
 
-void TestImsCallProxyWithSlotAndType(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithSlotAndType(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_EIGHT);
-    int32_t callType = static_cast<int32_t>(size % NUM_TWO);
-    std::string info(reinterpret_cast<const char *>(data), size);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
+    int32_t callType = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    std::string info = provider.ConsumeRadomLengthString();
     int32_t mode = static_cast<int32_t>(size % NUM_SIX);
     proxy->HoldCall(slotId, callType);
     proxy->UnHoldCall(slotId, callType);
@@ -319,20 +324,21 @@ void TestImsCallProxyWithSlotAndType(const uint8_t *data, size_t size, const spt
     proxy->UpdateImsCapabilities(slotId, imsCapabilityList);
 }
 
-void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithSettingFunction(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
     CallTransferInfo transferInfo;
     if (memset_s(&transferInfo, sizeof(struct CallTransferInfo), 0x00, sizeof(struct CallTransferInfo)) != EOK) {
         return;
     }
-    size_t length = std::min(static_cast<size_t>(sizeof(transferInfo.transferNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    int32_t mode = static_cast<int32_t>(size % NUM_TWO);
-    int32_t slotId = static_cast<int32_t>(size % NUM_TWO);
-    int32_t index = static_cast<int32_t>(size % NUM_THREE);
-    int32_t item = static_cast<int32_t>(size % IMS_CONFIG_ITEM_NUM);
-    int32_t value = static_cast<int32_t>(size % NUM_FOUR);
-    int32_t type = static_cast<int32_t>(size % NUM_FOUR);
+    size_t maxSize = sizeof(transferInfo.transferNum) - 1;
+    size_t length = provider.ConsumeIntegralInRange(0, maxSize);
+    std::string number = provider.ConsumeRadomLengthString(length);
+    int32_t mode = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_THREE);
+    int32_t item = provider.ConsumeIntegralInRange<int32_t>(0, IMS_CONFIG_ITEM_NUM);
+    int32_t value = provider.ConsumeIntegralInRange<int32_t>(0, NUM_FOUR);
+    int32_t type = provider.ConsumeIntegralInRange<int32_t>(0, NUM_FOUR);
     proxy->SetImsConfig(static_cast<ImsConfigItem>(item), number);
     proxy->SetImsConfig(static_cast<ImsConfigItem>(item), value);
     proxy->GetImsConfig(static_cast<ImsConfigItem>(item));
@@ -359,62 +365,59 @@ void TestImsCallProxyWithSettingFunction(const uint8_t *data, size_t size, const
     proxy->GetCallRestriction(slotId, number, index);
 }
 
-void TestImsCallProxyWithCallMediaModeRequest(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithCallMediaModeRequest(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
     ImsCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    std::string number = provider.ConsumeRadomLengthString();
+    callInfo.slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
-    ImsCallType callType = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    ImsCallType callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, NUM_SIX););
     proxy->SendUpdateCallMediaModeRequest(callInfo, callType);
 }
 
-void TestImsCallProxyWithCallMediaModeResponse(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithCallMediaModeResponse(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
     ImsCallInfo callInfo;
     if (memset_s(&callInfo, sizeof(struct ImsCallInfo), 0x00, sizeof(struct ImsCallInfo)) != EOK) {
         return;
     }
     size_t length = std::min(static_cast<size_t>(sizeof(callInfo.phoneNum) - 1), size);
-    std::string number(reinterpret_cast<const char *>(data), length);
-    callInfo.slotId = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.videoState = static_cast<int32_t>(size % NUM_TWO);
-    callInfo.index = static_cast<int32_t>(size % NUM_EIGHT);
+    std::string number = provider.ConsumeRadomLengthString();
+    callInfo.slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.videoState = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    callInfo.index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     if (strcpy_s(callInfo.phoneNum, sizeof(callInfo.phoneNum), number.c_str()) != EOK) {
         return;
     }
-    ImsCallType callType = static_cast<ImsCallType>(static_cast<int32_t>(size % NUM_SIX));
+    ImsCallType callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, NUM_SIX));
     proxy->SendUpdateCallMediaModeResponse(callInfo, callType);
 }
 
-void TestImsCallProxyWithCancelCallUpgrade(const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
+void TestImsCallProxyWithCancelCallUpgrade(FuzzedDataProvider& provider, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
-    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     proxy->CancelCallUpgrade(slotId, index);
 }
 
 void TestImsCallProxyWithRequestCameraCapabilities(
     const uint8_t *data, size_t size, const sptr<ImsCallInterface> &proxy)
 {
-    int32_t slotId = static_cast<int32_t>(*data % NUM_TWO);
-    int32_t index = static_cast<int32_t>(*data % NUM_EIGHT);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, NUM_TWO);
+    int32_t index = provider.ConsumeIntegralInRange<int32_t>(0, NUM_EIGHT);
     proxy->RequestCameraCapabilities(slotId, index);
 }
 
-void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
+void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
-    if (data == nullptr || size == 0) {
-        return;
-    }
     auto imsCallClient = DelayedSingleton<ImsCallClient>::GetInstance();
     if (imsCallClient == nullptr) {
         return;
@@ -422,13 +425,13 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (!IsServiceInited()) {
         return;
     }
-    TestImsCallClientWithCallInfo(data, size, imsCallClient);
-    TestImsCallClientWithSlotAndType(data, size, imsCallClient);
-    TestImsCallClientWithSettingFunction(data, size, imsCallClient);
-    TestImsCallClientWithCallMediaModeRequest(data, size, imsCallClient);
-    TestImsCallClientWithCallMediaModeResponse(data, size, imsCallClient);
-    TestImsCallClientWithCancelCallUpgrade(data, size, imsCallClient);
-    TestImsCallClientWithRequestCameraCapabilities(data, size, imsCallClient);
+    TestImsCallClientWithCallInfo(provider, imsCallClient);
+    TestImsCallClientWithSlotAndType(provider, imsCallClient);
+    TestImsCallClientWithSettingFunction(provider, imsCallClient);
+    TestImsCallClientWithCallMediaModeRequest(provider, imsCallClient);
+    TestImsCallClientWithCallMediaModeResponse(provider, imsCallClient);
+    TestImsCallClientWithCancelCallUpgrade(provider, imsCallClient);
+    TestImsCallClientWithRequestCameraCapabilities(provider, imsCallClient);
 
     auto managerPtr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (managerPtr == nullptr) {
@@ -442,13 +445,13 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (proxy == nullptr) {
         return;
     }
-    TestImsCallProxyWithCallInfo(data, size, proxy);
-    TestImsCallProxyWithSlotAndType(data, size, proxy);
-    TestImsCallProxyWithSettingFunction(data, size, proxy);
-    TestImsCallProxyWithCallMediaModeRequest(data, size, proxy);
-    TestImsCallProxyWithCallMediaModeResponse(data, size, proxy);
-    TestImsCallProxyWithCancelCallUpgrade(data, size, proxy);
-    TestImsCallProxyWithRequestCameraCapabilities(data, size, proxy);
+    TestImsCallProxyWithCallInfo(provider, proxy);
+    TestImsCallProxyWithSlotAndType(provider, proxy);
+    TestImsCallProxyWithSettingFunction(provider, proxy);
+    TestImsCallProxyWithCallMediaModeRequest(provider, proxy);
+    TestImsCallProxyWithCallMediaModeResponse(provider, proxy);
+    TestImsCallProxyWithCancelCallUpgrade(provider, proxy);
+    TestImsCallProxyWithRequestCameraCapabilities(provider, proxy);
     proxy.clear();
     proxy = nullptr;
 }
@@ -458,7 +461,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
+    if (data == nullptr || size == 0) {
+        return;
+    }
     /* Run your code on data */
+    FuzzedDataProvider provider(data, size);
     OHOS::DoSomethingInterestingWithMyAPI(data, size);
     return 0;
 }
