@@ -90,7 +90,7 @@ void IsEmergencyPhoneNumber(FuzzedDataProvider& provider)
     }
 
     int32_t errorCode = provider.ConsumeIntegral<int32_t>();
-    std::string phoneNum = provider.ConsumeRadomLengthString();
+    std::string phoneNum = provider.ConsumeRandomLengthString();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(errorCode);
     dataMessageParcel.WriteString(phoneNum);
@@ -241,7 +241,7 @@ void Dial(FuzzedDataProvider& provider)
     int32_t videoState = provider.ConsumeIntegral<int32_t>();
     int32_t index = provider.ConsumeIntegral<int32_t>();
     std::string telNum = "000000000";
-    std::string tempNum = provider.ConsumeRadomLengthString();
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -269,7 +269,7 @@ void InviteToConference(FuzzedDataProvider& provider)
         return;
     }
 
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     std::vector<std::string> numberList;
     numberList.push_back(number);
     MessageParcel dataMessageParcel;
@@ -292,7 +292,7 @@ void KickOutFromConference(FuzzedDataProvider& provider)
     int32_t videoState = provider.ConsumeIntegral<int32_t>();
     int32_t index = provider.ConsumeIntegral<int32_t>();
     std::string telNum = "000000000";
-    std::string tempNum = provider.ConsumeRadomLengthString();
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -346,7 +346,7 @@ void DoFuzzCellularCallService2(FuzzedDataProvider& provider)
     MessageParcel dataParcel;
     MessageParcel replyParcel;
     std::vector<uint8_t> subData =
-        fdp.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
+        provider.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -356,8 +356,8 @@ void DoFuzzCellularCallService3(FuzzedDataProvider& provider)
 {
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
-    uint32_t code = fdp.ConsumeIntegralInRange<uint32_t>(200, 210);
-    if (fdp.remaining_bytes() == 0) {
+    uint32_t code = provider.ConsumeIntegralInRange<uint32_t>(200, 210);
+    if (provider.remaining_bytes() == 0) {
         return;
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
@@ -365,7 +365,7 @@ void DoFuzzCellularCallService3(FuzzedDataProvider& provider)
     MessageParcel dataParcel;
     MessageParcel replyParcel;
     std::vector<uint8_t> subData =
-        fdp.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
+        provider.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -376,7 +376,7 @@ void DoFuzzCellularCallService4(FuzzedDataProvider& provider)
     auto cellularCallService = DelayedSingleton<CellularCallService>::GetInstance();
     cellularCallService->OnStart();
     uint32_t code = provider.ConsumeIntegralInRange<uint32_t>(300, 315);
-    if (fdp.remaining_bytes() == 0) {
+    if (provider.remaining_bytes() == 0) {
         return;
     }
     std::u16string service_token = u"OHOS.Telephony.CellularCallInterface";
@@ -384,7 +384,7 @@ void DoFuzzCellularCallService4(FuzzedDataProvider& provider)
     MessageParcel dataParcel;
     MessageParcel replyParcel;
     std::vector<uint8_t> subData =
-        fdp.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
+        provider.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -403,7 +403,7 @@ void DoFuzzCellularCallService5(FuzzedDataProvider& provider)
     MessageParcel dataParcel;
     MessageParcel replyParcel;
     std::vector<uint8_t> subData =
-        fdp.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
+        provider.ConsumeBytes<uint8_t>(provider.ConsumeIntegralInRange<size_t>(0, provider.remaining_bytes()));
     dataParcel.WriteInterfaceToken(service_token);
     dataParcel.WriteBuffer(subData.data(), subData.size());
     cellularCallService->OnRemoteRequest(code, dataParcel, replyParcel, option);
@@ -441,7 +441,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);

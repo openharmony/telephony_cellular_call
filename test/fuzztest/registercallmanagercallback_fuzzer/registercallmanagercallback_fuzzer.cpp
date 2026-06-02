@@ -25,6 +25,7 @@
 #include "radio_event.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -58,7 +59,7 @@ void ReportCallsInfo(FuzzedDataProvider& provider)
     CallsReportInfo callsReportInfo;
     callsReportInfo.slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     CallReportInfo callReportInfo;
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     int32_t length = number.length() > kMaxNumberLen ? kMaxNumberLen : number.length();
     if (memcpy_s(callReportInfo.accountNum, kMaxNumberLen, number.c_str(), length) != EOK) {
         return;
@@ -104,7 +105,7 @@ void ReportSetRestrictionResult(FuzzedDataProvider& provider)
     callTransferResponse.type = provider.ConsumeIntegral<int32_t>();
     callTransferResponse.time = provider.ConsumeIntegral<int32_t>();
     callTransferResponse.reason = provider.ConsumeIntegral<int32_t>();
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     int32_t length = number.length() > kMaxNumberLen ? kMaxNumberLen : number.length();
     if (memcpy_s(callTransferResponse.number, kMaxNumberLen, number.c_str(), length) != EOK) {
         return;
@@ -147,7 +148,7 @@ void ReportSetImsConfigResult(FuzzedDataProvider& provider)
     getLteEnhanceModeResponse.result = provider.ConsumeIntegral<int32_t>();
     getLteEnhanceModeResponse.value = provider.ConsumeIntegral<int32_t>();
     DisconnectedDetails details;
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     details.message = number;
     details.reason = static_cast<DisconnectedReason>(
         provider.ConsumeIntegralInRange<int32_t>(1, DISCONNECTEDREASON_UNKNOWN));
@@ -190,7 +191,7 @@ void ReportUpdateCallMediaMode(FuzzedDataProvider& provider)
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallModeReceiveInfo reportCallModeInfo;
     reportCallModeInfo.callIndex = provider.ConsumeIntegral<int32_t>();
-    callModeRequest.result = static_cast<ImsCallModeRequestResult>(
+    reportCallModeInfo.result = static_cast<ImsCallModeRequestResult>(
         provider.ConsumeIntegralInRange<int32_t>(0, REQUEST_NUM));
     reportCallModeInfo.callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM));
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
@@ -270,7 +271,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);

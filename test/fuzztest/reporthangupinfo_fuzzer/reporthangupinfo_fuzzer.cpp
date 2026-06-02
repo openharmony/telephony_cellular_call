@@ -27,6 +27,7 @@
 #endif // CELLULAR_CALL_SATELLITE
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -44,7 +45,7 @@ void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
     int32_t index = provider.ConsumeIntegral<int32_t>();
     CallSupplementType type = CallSupplementType::TYPE_DEFAULT;
     std::string telNum = "000000000";
-    std::string tempNum = provider.ConsumeRadomLengthString();
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -89,7 +90,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);

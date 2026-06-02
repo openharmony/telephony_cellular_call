@@ -21,6 +21,7 @@
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_connection_ims.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -30,7 +31,7 @@ constexpr int32_t VEDIO_STATE_NUM = 2;
 void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
     auto cellularCallConnectionIMS = std::make_shared<CellularCallConnectionIMS>();
-    std::string phoneNum = provider.ConsumeRadomLengthString();
+    std::string phoneNum = provider.ConsumeRandomLengthString();
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     int32_t videoState = provider.ConsumeIntegralInRange<int32_t>(0, VEDIO_STATE_NUM);
     int32_t index = provider.ConsumeIntegral<int32_t>();
@@ -55,7 +56,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);

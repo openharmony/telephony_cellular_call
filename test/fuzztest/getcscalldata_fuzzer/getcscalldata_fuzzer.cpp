@@ -25,6 +25,7 @@
 #include "radio_event.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -51,7 +52,7 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
         return;
     }
 
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     CallInfo info;
     CallInfoList infoList;
     info.number = number;
@@ -101,7 +102,7 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
         return;
     }
 
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     ImsCurrentCall info;
     ImsCurrentCallList infoList;
     info.number = number;
@@ -175,7 +176,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);

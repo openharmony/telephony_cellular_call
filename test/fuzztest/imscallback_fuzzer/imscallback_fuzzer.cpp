@@ -26,6 +26,7 @@
 #include "securec.h"
 #include "system_ability_definition.h"
 #include "telephony_types.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -126,7 +127,7 @@ void TestImsCallCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallb
 void TestImsCallCallbackExFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     MessageParcel muteData;
     MessageParcel muteReply;
     MuteControlResponse muteResponse;
@@ -199,7 +200,7 @@ void TestImsConfigCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCal
     stub->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply);
 }
 
-void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t action, const int32_t state, size_t size)
+void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t action, const int32_t state)
 {
     ssResult.index = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
     ssResult.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
@@ -215,7 +216,7 @@ void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t acti
 void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     SsBaseResult normalResult;
     normalResult.index = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
     normalResult.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
@@ -244,7 +245,7 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     crResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     crResult.classCw = provider.ConsumeIntegral<int32_t>();
     crData.WriteInt32(slotId);
-    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw, size);
+    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw);
     stub->OnGetCallRestrictionResponseInner(crData, crReply);
 
     MessageParcel cwData;
@@ -254,7 +255,7 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     cwResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     cwResult.classCw = provider.ConsumeIntegral<int32_t>();
     cwData.WriteInt32(slotId);
-    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw, size);
+    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw);
     stub->OnGetCallWaitingResponseInner(cwData, cwReply);
 
     MessageParcel clipData;
@@ -264,14 +265,14 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     clipResult.clipStat = provider.ConsumeIntegral<int32_t>();
     clipResult.action = provider.ConsumeIntegral<int32_t>();
     clipData.WriteInt32(slotId);
-    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat, size);
+    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat);
     stub->OnGetClipResponseInner(clipData, clipReply);
 }
 
 void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
 
     MessageParcel clirData;
     MessageParcel clirReply;
@@ -280,7 +281,7 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     clirResult.clirStat = provider.ConsumeIntegral<int32_t>();
     clirResult.action = provider.ConsumeIntegral<int32_t>();
     clirData.WriteInt32(slotId);
-    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat, size);
+    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat);
     stub->OnGetClirResponseInner(clirData, clirReply);
 
     MessageParcel colpData;
@@ -290,7 +291,7 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     colpResult.colpStat = provider.ConsumeIntegral<int32_t>();
     colpResult.action = provider.ConsumeIntegral<int32_t>();
     colpData.WriteInt32(slotId);
-    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat, size);
+    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat);
     stub->OnGetColpResponseInner(colpData, colpReply);
 
     MessageParcel colrData;
@@ -300,14 +301,14 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     colrResult.colrStat = provider.ConsumeIntegral<int32_t>();
     colrResult.action = provider.ConsumeIntegral<int32_t>();
     colrData.WriteInt32(slotId);
-    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat, size);
+    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat);
     stub->OnGetColrResponseInner(colrData, colrReply);
 }
 
 void TestCFCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
-    std::string number = provider.ConsumeRadomLengthString();
+    std::string number = provider.ConsumeRandomLengthString();
     MessageParcel cfData;
     MessageParcel cfReply;
     SsBaseResult normalResult;
@@ -324,7 +325,7 @@ void TestCFCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     cfCall.reason = provider.ConsumeIntegral<int32_t>();
 
     cfData.WriteInt32(slotId);
-    WriteSsResult(cfData, normalResult, callSize, flag, size);
+    WriteSsResult(cfData, normalResult, callSize, flag);
     cfData.WriteInt32(callSize);
 
     if (!cfData.WriteInt32(cfCall.serial) || !cfData.WriteInt32(cfCall.result) || !cfData.WriteInt32(cfCall.status) ||
@@ -454,7 +455,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
     if (data == nullptr || size == 0) {
-        return;
+        return 0;
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);
