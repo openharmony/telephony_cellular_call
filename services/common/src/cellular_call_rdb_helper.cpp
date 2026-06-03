@@ -129,7 +129,7 @@ int32_t CellularCallRdbHelper::Query(const std::string &uriString, const std::st
     return TELEPHONY_SUCCESS;
 }
 
-void CellularCallRdbHelper::RegisterListenState(sptr<AAFwk::IDataAbilityObserver> &settingsCallback)
+void CellularCallRdbHelper::RegisterEccDataObserver(sptr<AAFwk::IDataAbilityObserver> &settingsCallback)
 {
     if (settingsCallback == nullptr) {
         return;
