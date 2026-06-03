@@ -200,7 +200,8 @@ void TestImsConfigCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCal
     stub->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply);
 }
 
-void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t action, const int32_t state)
+void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult,
+    const int32_t action, const int32_t state, FuzzedDataProvider& provider)
 {
     ssResult.index = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
     ssResult.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
@@ -245,7 +246,7 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     crResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     crResult.classCw = provider.ConsumeIntegral<int32_t>();
     crData.WriteInt32(slotId);
-    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw);
+    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw, provider);
     stub->OnGetCallRestrictionResponseInner(crData, crReply);
 
     MessageParcel cwData;
@@ -255,7 +256,7 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     cwResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     cwResult.classCw = provider.ConsumeIntegral<int32_t>();
     cwData.WriteInt32(slotId);
-    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw);
+    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw, provider);
     stub->OnGetCallWaitingResponseInner(cwData, cwReply);
 
     MessageParcel clipData;
@@ -265,7 +266,7 @@ void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbac
     clipResult.clipStat = provider.ConsumeIntegral<int32_t>();
     clipResult.action = provider.ConsumeIntegral<int32_t>();
     clipData.WriteInt32(slotId);
-    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat);
+    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat, provider);
     stub->OnGetClipResponseInner(clipData, clipReply);
 }
 
@@ -281,7 +282,7 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     clirResult.clirStat = provider.ConsumeIntegral<int32_t>();
     clirResult.action = provider.ConsumeIntegral<int32_t>();
     clirData.WriteInt32(slotId);
-    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat);
+    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat, provider);
     stub->OnGetClirResponseInner(clirData, clirReply);
 
     MessageParcel colpData;
@@ -291,7 +292,7 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     colpResult.colpStat = provider.ConsumeIntegral<int32_t>();
     colpResult.action = provider.ConsumeIntegral<int32_t>();
     colpData.WriteInt32(slotId);
-    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat);
+    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat, provider);
     stub->OnGetColpResponseInner(colpData, colpReply);
 
     MessageParcel colrData;
@@ -301,7 +302,7 @@ void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     colrResult.colrStat = provider.ConsumeIntegral<int32_t>();
     colrResult.action = provider.ConsumeIntegral<int32_t>();
     colrData.WriteInt32(slotId);
-    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat);
+    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat, provider);
     stub->OnGetColrResponseInner(colrData, colrReply);
 }
 
@@ -325,7 +326,7 @@ void TestCFCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackSt
     cfCall.reason = provider.ConsumeIntegral<int32_t>();
 
     cfData.WriteInt32(slotId);
-    WriteSsResult(cfData, normalResult, callSize, flag);
+    WriteSsResult(cfData, normalResult, callSize, flag, provider);
     cfData.WriteInt32(callSize);
 
     if (!cfData.WriteInt32(cfCall.serial) || !cfData.WriteInt32(cfCall.result) || !cfData.WriteInt32(cfCall.status) ||
@@ -360,7 +361,8 @@ void TestICCbWithCallMediaModeResponseReport(FuzzedDataProvider& provider, sptr<
     MessageParcel callMediaModeResponseReply;
     ImsCallModeReceiveInfo callModeResponse;
     callModeResponse.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
-    callModeResponse.result = provider.ConsumeIntegralInRange<int32_t>(0, REQUEST_NUM);
+    callModeResponse.result = static_cast<ImsCallModeRequestResult>(
+        provider.ConsumeIntegralInRange<int32_t>(0, REQUEST_NUM));
     callModeResponse.callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, TYPE_NUM));
     callMediaModeResponseData.WriteInt32(slotId);
     callMediaModeResponseData.WriteRawData((const void *)&callModeResponse, sizeof(ImsCallModeReceiveInfo));
@@ -459,6 +461,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     }
     /* Run your code on data */
     FuzzedDataProvider provider(data, size);
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::DoSomethingInterestingWithMyAPI(provider);
     return 0;
 }
