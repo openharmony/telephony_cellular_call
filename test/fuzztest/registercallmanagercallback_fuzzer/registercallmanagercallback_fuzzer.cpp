@@ -208,7 +208,8 @@ void ReportCallSessionEventChanged(FuzzedDataProvider& provider)
     std::shared_ptr<CellularCallRegister> cellularCallRegister = DelayedSingleton<CellularCallRegister>::GetInstance();
     ImsCallSessionEventInfo reportCallSessionInfo;
     reportCallSessionInfo.callIndex = provider.ConsumeIntegral<int32_t>();
-    reportCallSessionInfo.eventType = static_cast<VideoCallEventType>(provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM));
+    reportCallSessionInfo.eventType = static_cast<VideoCallEventType>(
+        provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM));
     cellularCallRegister->HandleCallSessionEventChanged(reportCallSessionInfo);
 }
 
