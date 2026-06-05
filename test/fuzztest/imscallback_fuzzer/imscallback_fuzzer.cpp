@@ -26,6 +26,7 @@
 #include "securec.h"
 #include "system_ability_definition.h"
 #include "telephony_types.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -38,6 +39,7 @@ constexpr int32_t TYPE_NUM = 5;
 constexpr int32_t CALL_INDEX_NUM = 8;
 constexpr int32_t REQUEST_NUM = 6;
 constexpr int32_t VIDEO_CALL_EVENT_NUM = 4;
+constexpr int32_t DISCONNECTEDREASON_UNKNOWN = 1279;
 
 bool IsServiceInited()
 {
@@ -54,7 +56,7 @@ bool IsServiceInited()
     return g_isInited;
 }
 
-void OnRemoteRequest(const uint8_t *data, size_t size)
+void OnRemoteRequest(FuzzedDataProvider& provider)
 {
     MessageParcel dataMessageParcel;
     if (!dataMessageParcel.WriteInterfaceToken(ImsCallCallbackStub::GetDescriptor())) {
@@ -62,20 +64,20 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     }
     int32_t slotId = ERROR_NUM;
     dataMessageParcel.WriteInt32(slotId);
-    uint32_t code = static_cast<uint32_t>(*data);
+    uint32_t code = provider.ConsumeIntegral<uint32_t>();
     MessageParcel reply;
     MessageOption option;
     DelayedSingleton<ImsCallCallbackStub>::GetInstance()->OnRemoteRequest(code, dataMessageParcel, reply, option);
 }
 
-void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestImsCallCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
     RadioResponseInfo rilRadioResponse;
-    rilRadioResponse.flag = static_cast<int32_t>(*data % BOOL_NUM);
-    rilRadioResponse.serial = static_cast<int32_t>(*data % SERIAL_NUM);
-    rilRadioResponse.error = static_cast<ErrType>(*data % ERROR_NUM);
-    rilRadioResponse.type = static_cast<ResponseTypes>(*data % TYPE_NUM);
+    rilRadioResponse.flag = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    rilRadioResponse.serial = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
+    rilRadioResponse.error = static_cast<ErrType>(provider.ConsumeIntegralInRange<int32_t>(0, ERROR_NUM));
+    rilRadioResponse.type = static_cast<ResponseTypes>(provider.ConsumeIntegralInRange<int32_t>(0, TYPE_NUM));
     MessageParcel answerData;
     MessageParcel answerReply;
     answerData.WriteInt32(slotId);
@@ -122,15 +124,15 @@ void TestImsCallCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallC
     stub->OnGetImsCallsDataResponseInner(imsCallsData, imsCallsReply);
 }
 
-void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestImsCallCallbackExFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
-    std::string number(reinterpret_cast<const char *>(data), size);
+    std::string number = provider.ConsumeRandomLengthString();
     MessageParcel muteData;
     MessageParcel muteReply;
     MuteControlResponse muteResponse;
-    muteResponse.result = static_cast<int32_t>(size % BOOL_NUM);
-    muteResponse.value = static_cast<int32_t>(size % BOOL_NUM);
+    muteResponse.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    muteResponse.value = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     muteData.WriteInt32(slotId);
     muteData.WriteRawData((const void *)&muteResponse, sizeof(MuteControlResponse));
     stub->OnSetMuteResponseInner(muteData, muteReply);
@@ -138,7 +140,7 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
     MessageParcel ringData;
     MessageParcel ringReply;
     RingbackVoice ringback;
-    ringback.status = static_cast<int32_t>(size % BOOL_NUM);
+    ringback.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
     ringData.WriteInt32(slotId);
     ringData.WriteRawData((const void *)&ringback, sizeof(RingbackVoice));
     stub->OnCallRingBackReportInner(ringData, ringReply);
@@ -151,7 +153,8 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
     MessageParcel failData;
     MessageParcel failReply;
     DisconnectedDetails details;
-    details.reason = static_cast<DisconnectedReason>(size);
+    details.reason = static_cast<DisconnectedReason>(
+        provider.ConsumeIntegralInRange<int32_t>(1, DISCONNECTEDREASON_UNKNOWN));
     details.message = number;
     slotId = ERROR_NUM;
     failData.WriteInt32(slotId);
@@ -160,14 +163,14 @@ void TestImsCallCallbackExFunction(const uint8_t *data, size_t size, sptr<ImsCal
     stub->OnLastCallFailReasonResponseInner(failData, failReply);
 }
 
-void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestImsConfigCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
     int32_t slotId = ERROR_NUM;
     RadioResponseInfo rilRadioResponse;
-    rilRadioResponse.flag = static_cast<int32_t>(*data % BOOL_NUM);
-    rilRadioResponse.serial = static_cast<int32_t>(*data % SERIAL_NUM);
-    rilRadioResponse.error = static_cast<ErrType>(*data % ERROR_NUM);
-    rilRadioResponse.type = static_cast<ResponseTypes>(*data % TYPE_NUM);
+    rilRadioResponse.flag = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    rilRadioResponse.serial = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
+    rilRadioResponse.error = static_cast<ErrType>(provider.ConsumeIntegralInRange<int32_t>(0, ERROR_NUM));
+    rilRadioResponse.type = static_cast<ResponseTypes>(provider.ConsumeIntegralInRange<int32_t>(0, TYPE_NUM));
 
     MessageParcel setImsSwitchData;
     MessageParcel setImsSwitchReply;
@@ -197,11 +200,12 @@ void TestImsConfigCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCal
     stub->OnGetImsSwitchResponseInner(getImsSwitchData, getImsSwitchReply);
 }
 
-void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t action, const int32_t state, size_t size)
+void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult,
+    const int32_t action, const int32_t state, FuzzedDataProvider& provider)
 {
-    ssResult.index = static_cast<int32_t>(size % SERIAL_NUM);
-    ssResult.result = static_cast<int32_t>(size % BOOL_NUM);
-    ssResult.reason = static_cast<int32_t>(size);
+    ssResult.index = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
+    ssResult.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    ssResult.reason = provider.ConsumeIntegral<int32_t>();
     in.WriteInt32(ssResult.index);
     in.WriteInt32(ssResult.result);
     in.WriteInt32(ssResult.reason);
@@ -210,15 +214,14 @@ void WriteSsResult(MessageParcel &in, SsBaseResult &ssResult, const int32_t acti
     in.WriteInt32(state);
 }
 
-void TestImsUTCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestImsUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    std::string number(reinterpret_cast<const char *>(data), size);
-
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
+    std::string number = provider.ConsumeRandomLengthString();
     SsBaseResult normalResult;
-    normalResult.index = static_cast<int32_t>(size % SERIAL_NUM);
-    normalResult.result = static_cast<int32_t>(size % BOOL_NUM);
-    normalResult.reason = static_cast<int32_t>(size);
+    normalResult.index = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
+    normalResult.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    normalResult.reason = provider.ConsumeIntegral<int32_t>();
     normalResult.message = number;
 
     MessageParcel mData;
@@ -240,90 +243,90 @@ void TestImsUTCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCal
     MessageParcel crReply;
     CallRestrictionResult crResult;
     crResult.result.message = number;
-    crResult.status = static_cast<int32_t>(size % BOOL_NUM);
-    crResult.classCw = static_cast<int32_t>(size);
+    crResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    crResult.classCw = provider.ConsumeIntegral<int32_t>();
     crData.WriteInt32(slotId);
-    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw, size);
+    WriteSsResult(crData, crResult.result, crResult.status, crResult.classCw, provider);
     stub->OnGetCallRestrictionResponseInner(crData, crReply);
 
     MessageParcel cwData;
     MessageParcel cwReply;
     CallWaitResult cwResult;
     cwResult.result.message = number;
-    cwResult.status = static_cast<int32_t>(size % BOOL_NUM);
-    cwResult.classCw = static_cast<int32_t>(size);
+    cwResult.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    cwResult.classCw = provider.ConsumeIntegral<int32_t>();
     cwData.WriteInt32(slotId);
-    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw, size);
+    WriteSsResult(cwData, cwResult.result, cwResult.status, cwResult.classCw, provider);
     stub->OnGetCallWaitingResponseInner(cwData, cwReply);
 
     MessageParcel clipData;
     MessageParcel clipReply;
     GetClipResult clipResult;
     clipResult.result.message = number;
-    clipResult.clipStat = static_cast<int32_t>(size);
-    clipResult.action = static_cast<int32_t>(size);
+    clipResult.clipStat = provider.ConsumeIntegral<int32_t>();
+    clipResult.action = provider.ConsumeIntegral<int32_t>();
     clipData.WriteInt32(slotId);
-    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat, size);
+    WriteSsResult(clipData, clipResult.result, clipResult.action, clipResult.clipStat, provider);
     stub->OnGetClipResponseInner(clipData, clipReply);
 }
 
-void TestUTCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestUTCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    std::string number(reinterpret_cast<const char *>(data), size);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
+    std::string number = provider.ConsumeRandomLengthString();
 
     MessageParcel clirData;
     MessageParcel clirReply;
     GetClirResult clirResult;
     clirResult.result.message = number;
-    clirResult.clirStat = static_cast<int32_t>(size);
-    clirResult.action = static_cast<int32_t>(size);
+    clirResult.clirStat = provider.ConsumeIntegral<int32_t>();
+    clirResult.action = provider.ConsumeIntegral<int32_t>();
     clirData.WriteInt32(slotId);
-    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat, size);
+    WriteSsResult(clirData, clirResult.result, clirResult.action, clirResult.clirStat, provider);
     stub->OnGetClirResponseInner(clirData, clirReply);
 
     MessageParcel colpData;
     MessageParcel colpReply;
     GetColpResult colpResult;
     colpResult.result.message = number;
-    colpResult.colpStat = static_cast<int32_t>(size);
-    colpResult.action = static_cast<int32_t>(size);
+    colpResult.colpStat = provider.ConsumeIntegral<int32_t>();
+    colpResult.action = provider.ConsumeIntegral<int32_t>();
     colpData.WriteInt32(slotId);
-    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat, size);
+    WriteSsResult(colpData, colpResult.result, colpResult.action, colpResult.colpStat, provider);
     stub->OnGetColpResponseInner(colpData, colpReply);
 
     MessageParcel colrData;
     MessageParcel colrReply;
     GetColrResult colrResult;
     colrResult.result.message = number;
-    colrResult.colrStat = static_cast<int32_t>(size);
-    colrResult.action = static_cast<int32_t>(size);
+    colrResult.colrStat = provider.ConsumeIntegral<int32_t>();
+    colrResult.action = provider.ConsumeIntegral<int32_t>();
     colrData.WriteInt32(slotId);
-    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat, size);
+    WriteSsResult(colrData, colrResult.result, colrResult.action, colrResult.colrStat, provider);
     stub->OnGetColrResponseInner(colrData, colrReply);
 }
 
-void TestCFCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestCFCallbackFunction(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    std::string number(reinterpret_cast<const char *>(data), size);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
+    std::string number = provider.ConsumeRandomLengthString();
     MessageParcel cfData;
     MessageParcel cfReply;
     SsBaseResult normalResult;
     CallForwardQueryResult cfCall;
     normalResult.message = number;
     int32_t callSize = 1;
-    int32_t flag = static_cast<int32_t>(size % BOOL_NUM);
-    cfCall.serial = static_cast<int32_t>(size % SERIAL_NUM);
-    cfCall.result = static_cast<int32_t>(size % BOOL_NUM);
-    cfCall.status = static_cast<int32_t>(size % BOOL_NUM);
-    cfCall.classx = static_cast<int32_t>(size);
+    int32_t flag = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    cfCall.serial = provider.ConsumeIntegralInRange<int32_t>(0, SERIAL_NUM);
+    cfCall.result = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    cfCall.status = provider.ConsumeIntegralInRange<int32_t>(0, BOOL_NUM);
+    cfCall.classx = provider.ConsumeIntegral<int32_t>();
     cfCall.number = number;
-    cfCall.type = static_cast<int32_t>(size);
-    cfCall.reason = static_cast<int32_t>(size);
+    cfCall.type = provider.ConsumeIntegral<int32_t>();
+    cfCall.reason = provider.ConsumeIntegral<int32_t>();
 
     cfData.WriteInt32(slotId);
-    WriteSsResult(cfData, normalResult, callSize, flag, size);
+    WriteSsResult(cfData, normalResult, callSize, flag, provider);
     cfData.WriteInt32(callSize);
 
     if (!cfData.WriteInt32(cfCall.serial) || !cfData.WriteInt32(cfCall.result) || !cfData.WriteInt32(cfCall.status) ||
@@ -336,94 +339,93 @@ void TestCFCallbackFunction(const uint8_t *data, size_t size, sptr<ImsCallCallba
     stub->OnGetCallTransferResponseInner(cfData, cfReply);
 }
 
-void TestICCbWithCallMediaModeRequestReport(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithCallMediaModeRequestReport(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel callMediaModeRequestData;
     MessageParcel callMediaModeRequestReply;
     ImsCallModeReceiveInfo callModeRequest;
-    callModeRequest.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    callModeRequest.result = static_cast<ImsCallModeRequestResult>(*data % REQUEST_NUM);
-    callModeRequest.callType = static_cast<ImsCallType>(*data % TYPE_NUM);
+    callModeRequest.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    callModeRequest.result = static_cast<ImsCallModeRequestResult>(
+        provider.ConsumeIntegralInRange<int32_t>(0, REQUEST_NUM));
+    callModeRequest.callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, TYPE_NUM));
     callMediaModeRequestData.WriteInt32(slotId);
     callMediaModeRequestData.WriteRawData((const void *)&callModeRequest, sizeof(ImsCallModeReceiveInfo));
     stub->OnReceiveUpdateCallMediaModeRequestInner(callMediaModeRequestData, callMediaModeRequestReply);
 }
 
-void TestICCbWithCallMediaModeResponseReport(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithCallMediaModeResponseReport(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel callMediaModeResponseData;
     MessageParcel callMediaModeResponseReply;
     ImsCallModeReceiveInfo callModeResponse;
-    callModeResponse.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    callModeResponse.result = static_cast<ImsCallModeRequestResult>(*data % REQUEST_NUM);
-    callModeResponse.callType = static_cast<ImsCallType>(*data % TYPE_NUM);
+    callModeResponse.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    callModeResponse.result = static_cast<ImsCallModeRequestResult>(
+        provider.ConsumeIntegralInRange<int32_t>(0, REQUEST_NUM));
+    callModeResponse.callType = static_cast<ImsCallType>(provider.ConsumeIntegralInRange<int32_t>(0, TYPE_NUM));
     callMediaModeResponseData.WriteInt32(slotId);
     callMediaModeResponseData.WriteRawData((const void *)&callModeResponse, sizeof(ImsCallModeReceiveInfo));
     stub->OnReceiveUpdateCallMediaModeResponseInner(callMediaModeResponseData, callMediaModeResponseReply);
 }
 
-void TestICCbWithCallSessionEventChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithCallSessionEventChanged(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel callSessionData;
     MessageParcel callSessionReply;
     ImsCallSessionEventInfo callSessionEventInfo;
-    callSessionEventInfo.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    callSessionEventInfo.eventType = static_cast<VideoCallEventType>(*data % VIDEO_CALL_EVENT_NUM);
+    callSessionEventInfo.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    callSessionEventInfo.eventType = static_cast<VideoCallEventType>(
+        provider.ConsumeIntegralInRange<int32_t>(0, VIDEO_CALL_EVENT_NUM));
     callSessionData.WriteInt32(slotId);
     callSessionData.WriteRawData((const void *)&callSessionEventInfo, sizeof(ImsCallSessionEventInfo));
     stub->OnCallSessionEventChangedInner(callSessionData, callSessionReply);
 }
 
-void TestICCbWithPeerDimensionsChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithPeerDimensionsChanged(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel callPeerDimensionsData;
     MessageParcel callPeerDimensionsReply;
     ImsCallPeerDimensionsInfo callPeerDimensionsInfo;
-    callPeerDimensionsInfo.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    callPeerDimensionsInfo.width = static_cast<int32_t>(*data);
-    callPeerDimensionsInfo.height = static_cast<int32_t>(*data);
+    callPeerDimensionsInfo.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    callPeerDimensionsInfo.width = provider.ConsumeIntegral<int32_t>();
+    callPeerDimensionsInfo.height = provider.ConsumeIntegral<int32_t>();
     callPeerDimensionsData.WriteInt32(slotId);
     callPeerDimensionsData.WriteRawData((const void *)&callPeerDimensionsInfo, sizeof(ImsCallPeerDimensionsInfo));
     stub->OnPeerDimensionsChangedInner(callPeerDimensionsData, callPeerDimensionsReply);
 }
 
-void TestICCbWithCallDataUsageChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithCallDataUsageChanged(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel callDataUsageIData;
     MessageParcel callDataUsageIReply;
     ImsCallDataUsageInfo callDataUsageInfo;
-    callDataUsageInfo.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    callDataUsageInfo.dataUsage = static_cast<int64_t>(*data);
+    callDataUsageInfo.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    callDataUsageInfo.dataUsage = provider.ConsumeIntegral<int32_t>();
     callDataUsageIData.WriteInt32(slotId);
     callDataUsageIData.WriteRawData((const void *)&callDataUsageInfo, sizeof(ImsCallDataUsageInfo));
     stub->OnCallDataUsageChangedInner(callDataUsageIData, callDataUsageIReply);
 }
 
-void TestICCbWithCameraCapabilitiesChanged(const uint8_t *data, size_t size, sptr<ImsCallCallbackStub> &stub)
+void TestICCbWithCameraCapabilitiesChanged(FuzzedDataProvider& provider, sptr<ImsCallCallbackStub> &stub)
 {
-    int32_t slotId = static_cast<int32_t>(*data % SLOT_NUM);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
     MessageParcel cameraCapabilitiesData;
     MessageParcel cameraCapabilitiesReply;
     CameraCapabilitiesInfo cameraCapabilitiesInfo;
-    cameraCapabilitiesInfo.callIndex = static_cast<int32_t>(*data % CALL_INDEX_NUM);
-    cameraCapabilitiesInfo.width = static_cast<int32_t>(*data);
-    cameraCapabilitiesInfo.height = static_cast<int32_t>(*data);
+    cameraCapabilitiesInfo.callIndex = provider.ConsumeIntegralInRange<int32_t>(0, CALL_INDEX_NUM);
+    cameraCapabilitiesInfo.width = provider.ConsumeIntegral<int32_t>();
+    cameraCapabilitiesInfo.height = provider.ConsumeIntegral<int32_t>();
     cameraCapabilitiesData.WriteInt32(slotId);
     cameraCapabilitiesData.WriteRawData((const void *)&cameraCapabilitiesInfo, sizeof(CameraCapabilitiesInfo));
     stub->OnCameraCapabilitiesChangedInner(cameraCapabilitiesData, cameraCapabilitiesReply);
 }
 
-void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
+void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
-    if (data == nullptr || size == 0) {
-        return;
-    }
-
     if (!IsServiceInited()) {
         return;
     }
@@ -433,20 +435,20 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
         return;
     }
 
-    OnRemoteRequest(data, size);
-    TestImsCallCallbackFunction(data, size, stub);
-    TestImsCallCallbackExFunction(data, size, stub);
-    TestImsConfigCallbackFunction(data, size, stub);
-    TestImsUTCallbackFunction(data, size, stub);
-    TestUTCallbackFunction(data, size, stub);
-    TestCFCallbackFunction(data, size, stub);
+    OnRemoteRequest(provider);
+    TestImsCallCallbackFunction(provider, stub);
+    TestImsCallCallbackExFunction(provider, stub);
+    TestImsConfigCallbackFunction(provider, stub);
+    TestImsUTCallbackFunction(provider, stub);
+    TestUTCallbackFunction(provider, stub);
+    TestCFCallbackFunction(provider, stub);
     // IMS video call callback test(ICCb: ImsCallCallback)
-    TestICCbWithCallMediaModeRequestReport(data, size, stub);
-    TestICCbWithCallMediaModeResponseReport(data, size, stub);
-    TestICCbWithCallSessionEventChanged(data, size, stub);
-    TestICCbWithPeerDimensionsChanged(data, size, stub);
-    TestICCbWithCallDataUsageChanged(data, size, stub);
-    TestICCbWithCameraCapabilitiesChanged(data, size, stub);
+    TestICCbWithCallMediaModeRequestReport(provider, stub);
+    TestICCbWithCallMediaModeResponseReport(provider, stub);
+    TestICCbWithCallSessionEventChanged(provider, stub);
+    TestICCbWithPeerDimensionsChanged(provider, stub);
+    TestICCbWithCallDataUsageChanged(provider, stub);
+    TestICCbWithCameraCapabilitiesChanged(provider, stub);
 }
 } // namespace OHOS
 
@@ -454,7 +456,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
+    if (data == nullptr || size == 0) {
+        return 0;
+    }
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    FuzzedDataProvider provider(data, size);
+    OHOS::DoSomethingInterestingWithMyAPI(provider);
     return 0;
 }

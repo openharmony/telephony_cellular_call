@@ -25,6 +25,7 @@
 #include "radio_event.h"
 #include "securec.h"
 #include "system_ability_definition.h"
+#include "fuzzer/FuzzedDataProvider.h"
 
 using namespace OHOS::Telephony;
 namespace OHOS {
@@ -45,19 +46,19 @@ bool IsServiceInited()
 }
 
 void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::InnerEvent::Pointer event,
-    const uint8_t *data, size_t size)
+    FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    std::string number(reinterpret_cast<const char *>(data), size);
+    std::string number = provider.ConsumeRandomLengthString();
     CallInfo info;
     CallInfoList infoList;
     info.number = number;
     infoList.calls.push_back(info);
-    int32_t state = static_cast<int32_t>(size % STATE_NUM);
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
+    int32_t state = provider.ConsumeIntegralInRange<int32_t>(0, STATE_NUM + 1);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
 
     handle->GetCsCallData(event);
     handle->GetImsCallData(event);
@@ -95,13 +96,13 @@ void GetCsCallData(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::Inne
 }
 
 void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::InnerEvent::Pointer event,
-    const uint8_t *data, size_t size)
+    FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    std::string number(reinterpret_cast<const char *>(data), size);
+    std::string number = provider.ConsumeRandomLengthString();
     ImsCurrentCall info;
     ImsCurrentCallList infoList;
     info.number = number;
@@ -150,27 +151,23 @@ void RegisterHandler(std::shared_ptr<CellularCallHandler> handle, AppExecFwk::In
     handle->SetVoNRSwitchStatusResponse(event);
 }
 
-void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
+void DoSomethingInterestingWithMyAPI(FuzzedDataProvider& provider)
 {
-    if (data == nullptr || size == 0) {
-        return;
-    }
-
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    RadioEvent radioEvent = static_cast<RadioEvent>(size);
+    int32_t slotId = provider.ConsumeIntegralInRange<int32_t>(0, SLOT_NUM);
+    RadioEvent radioEvent = static_cast<RadioEvent>(provider.ConsumeIntegral<int32_t>());
     std::shared_ptr<CellularCallHandler> handle =
         DelayedSingleton<CellularCallService>::GetInstance()->GetHandler(slotId);
     if (handle == nullptr) {
         return;
     }
     AppExecFwk::InnerEvent::Pointer event = AppExecFwk::InnerEvent::Get(radioEvent);
-    GetCsCallData(handle, std::move(event), data, size);
+    GetCsCallData(handle, std::move(event), provider);
     event = AppExecFwk::InnerEvent::Get(radioEvent);
-    RegisterHandler(handle, std::move(event), data, size);
+    RegisterHandler(handle, std::move(event), provider);
 }
 } // namespace OHOS
 
@@ -178,7 +175,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::AddCellularCallTokenFuzzer token;
+    if (data == nullptr || size == 0) {
+        return 0;
+    }
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    FuzzedDataProvider provider(data, size);
+    OHOS::DoSomethingInterestingWithMyAPI(provider);
     return 0;
 }
