@@ -20,6 +20,7 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "satellite_call_callback_stub.h"
 #include "satellite_call_client.h"
 #include "satellite_call_proxy.h"
@@ -60,7 +61,7 @@ void OnRemoteRequest(const uint8_t *data, size_t size, sptr<SatelliteCallCallbac
     }
     int32_t slotId = ERROR_NUM;
     dataMessageParcel.WriteInt32(slotId);
-    uint32_t code = static_cast<uint32_t>(*data);
+    uint32_t code = provider.ConsumeIntegral<uint32_t>()
     MessageParcel reply;
     MessageOption option;
     stub->OnRemoteRequest(code, dataMessageParcel, reply, option);
@@ -70,10 +71,10 @@ void TestSatelliteCallCallbackFunction(const uint8_t *data, size_t size, sptr<Sa
 {
     int32_t slotId = ERROR_NUM;
     RadioResponseInfo rilRadioResponse;
-    rilRadioResponse.flag = static_cast<int32_t>(*data % BOOL_NUM);
-    rilRadioResponse.serial = static_cast<int32_t>(*data % SERIAL_NUM);
-    rilRadioResponse.error = static_cast<ErrType>(*data % ERROR_NUM);
-    rilRadioResponse.type = static_cast<ResponseTypes>(*data % TYPE_NUM);
+    rilRadioResponse.flag = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    rilRadioResponse.serial = provider.ConsumeIntegral<int32_t>() % SERIAL_NUM;
+    rilRadioResponse.error = static_cast<ErrType>(provider.ConsumeIntegral<int32_t>() % ERROR_NUM);
+    rilRadioResponse.type = static_cast<ResponseTypes>(provider.ConsumeIntegral<int32_t>() % TYPE_NUM);
     MessageParcel answerData;
     MessageParcel answerReply;
     answerData.WriteInt32(slotId);
@@ -121,9 +122,9 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (stub == nullptr) {
         return;
     }
-
-    OnRemoteRequest(data, size, stub);
-    TestSatelliteCallCallbackFunction(data, size, stub);
+    FuzzedDataProvider provider(data, size);
+    OnRemoteRequest(provider, stub);
+    TestSatelliteCallCallbackFunction(provider, stub);
 }
 } // namespace OHOS
 

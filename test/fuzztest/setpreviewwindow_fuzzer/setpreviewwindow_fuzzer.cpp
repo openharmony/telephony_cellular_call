@@ -22,6 +22,7 @@
 
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_service.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "securec.h"
 #include "surface_utils.h"
 #include "system_ability_definition.h"
@@ -46,7 +47,7 @@ bool IsServiceInited()
     return g_isInited;
 }
 
-void OnRemoteRequest(const uint8_t *data, size_t size)
+void OnRemoteRequest(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
@@ -56,26 +57,27 @@ void OnRemoteRequest(const uint8_t *data, size_t size)
     if (!dataMessageParcel.WriteInterfaceToken(CellularCallStub::GetDescriptor())) {
         return;
     }
-    int32_t maxSize = static_cast<int32_t>(size) + OFFSET_SIZE;
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>() + OFFSET_SIZE;
     dataMessageParcel.WriteInt32(maxSize);
-    dataMessageParcel.WriteBuffer(data, size);
+    std::vector<uint8_t> remaining_data = provider.ConsumeRemainingBytes<uint8_t>();
+    dataMessageParcel.WriteBuffer(static_cast<void*>(remaining_data.data()), remaining_data.size());
     dataMessageParcel.RewindRead(0);
-    uint32_t code = static_cast<uint32_t>(size);
+    uint32_t code = provider.ConsumeIntegral<uint32_t>();
     MessageParcel reply;
     MessageOption option;
     DelayedSingleton<CellularCallService>::GetInstance()->OnRemoteRequest(code, dataMessageParcel, reply, option);
 }
 
-void SetPreviewWindow(const uint8_t *data, size_t size)
+void SetPreviewWindow(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    std::string surfaceId(reinterpret_cast<const char *>(data), size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    std::string surfaceId = provider.ConsumeRandomLengthString();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -104,16 +106,16 @@ void SetPreviewWindow(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetPreviewWindowInner(dataMessageParcel, reply);
 }
 
-void SetDisplayWindow(const uint8_t *data, size_t size)
+void SetDisplayWindow(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    std::string surfaceId(reinterpret_cast<const char *>(data), size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    std::string surfaceId = provider.ConsumeRandomLengthString();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -142,14 +144,14 @@ void SetDisplayWindow(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetDisplayWindowInner(dataMessageParcel, reply);
 }
 
-void SetCameraZoom(const uint8_t *data, size_t size)
+void SetCameraZoom(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(*data);
-    float zoomRatio = static_cast<float>(*data);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    float zoomRatio = provider.ConsumeFloatingPoint<float>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteFloat(zoomRatio);
@@ -158,16 +160,16 @@ void SetCameraZoom(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetCameraZoomInner(dataMessageParcel, reply);
 }
 
-void ControlCamera(const uint8_t *data, size_t size)
+void ControlCamera(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    std::string cameraId(reinterpret_cast<const char *>(data), size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    std::string cameraId = provider.ConsumeRandomLengthString();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -178,16 +180,16 @@ void ControlCamera(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnControlCameraInner(dataMessageParcel, reply);
 }
 
-void SetPausePicture(const uint8_t *data, size_t size)
+void SetPausePicture(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    std::string path(reinterpret_cast<const char *>(data), size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    std::string path = provider.ConsumeRandomLengthString();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -198,16 +200,16 @@ void SetPausePicture(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetPausePictureInner(dataMessageParcel, reply);
 }
 
-void SetDeviceDirection(const uint8_t *data, size_t size)
+void SetDeviceDirection(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(*data);
-    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(*data);
-    int32_t rotation = static_cast<int32_t>(*data);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    int32_t rotation = provider.ConsumeIntegral<int32_t>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -218,22 +220,22 @@ void SetDeviceDirection(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetDeviceDirectionInner(dataMessageParcel, reply);
 }
 
-void SendUpdateCallMediaModeRequest(const uint8_t *data, size_t size)
+void SendUpdateCallMediaModeRequest(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
     CellularCallInfo callInfo;
-    callInfo.callId = static_cast<int32_t>(size);
-    callInfo.slotId = static_cast<int32_t>(size % BOOL_NUM);
-    callInfo.accountId = static_cast<int32_t>(size % BOOL_NUM);
-    callInfo.callType = static_cast<CallType>(static_cast<int32_t>(size));
-    callInfo.videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
-    callInfo.index = static_cast<int32_t>(size);
+    callInfo.callId = provider.ConsumeIntegral<int32_t>();
+    callInfo.slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    callInfo.accountId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    callInfo.callType = static_cast<CallType>(provider.ConsumeIntegral<int32_t>());
+    callInfo.videoState = provider.ConsumeIntegral<int32_t>() % VEDIO_STATE_NUM;
+    callInfo.index = provider.ConsumeIntegral<int32_t>();
     std::string telNum = "000000000";
-    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -241,7 +243,8 @@ void SendUpdateCallMediaModeRequest(const uint8_t *data, size_t size)
     if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
         return;
     }
-    int32_t mode = static_cast<int32_t>(size);
+    int32_t mode = provider.ConsumeIntegral<int32_t>();
+
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
@@ -252,22 +255,22 @@ void SendUpdateCallMediaModeRequest(const uint8_t *data, size_t size)
         dataMessageParcel, reply);
 }
 
-void SendUpdateCallMediaModeResponse(const uint8_t *data, size_t size)
+void SendUpdateCallMediaModeResponse(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
     CellularCallInfo callInfo;
-    callInfo.callId = static_cast<int32_t>(size);
-    callInfo.slotId = static_cast<int32_t>(size % BOOL_NUM);
-    callInfo.accountId = static_cast<int32_t>(size % BOOL_NUM);
-    callInfo.callType = static_cast<CallType>(static_cast<int32_t>(size));
-    callInfo.videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
-    callInfo.index = static_cast<int32_t>(size);
+    callInfo.callId = provider.ConsumeIntegral<int32_t>();
+    callInfo.slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    callInfo.accountId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    callInfo.callType = static_cast<CallType>(provider.ConsumeIntegral<int32_t>());
+    callInfo.videoState = provider.ConsumeIntegral<int32_t>() % VEDIO_STATE_NUM;
+    callInfo.index = provider.ConsumeIntegral<int32_t>();
     std::string telNum = "000000000";
-    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -275,7 +278,7 @@ void SendUpdateCallMediaModeResponse(const uint8_t *data, size_t size)
     if (strcpy_s(callInfo.phoneNum, length, telNum.c_str()) != EOK) {
         return;
     }
-    int32_t mode = static_cast<int32_t>(size);
+    int32_t mode = provider.ConsumeIntegral<int32_t>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteRawData(static_cast<const void *>(&callInfo), sizeof(CellularCallInfo));
@@ -286,49 +289,51 @@ void SendUpdateCallMediaModeResponse(const uint8_t *data, size_t size)
         dataMessageParcel, reply);
 }
 
-void SetMute(const uint8_t *data, size_t size)
+void SetMute(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t mute = static_cast<int32_t>(size);
+    int32_t mute = provider.ConsumeIntegral<int32_t>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(mute);
-    dataMessageParcel.WriteBuffer(data, size);
+    std::vector<uint8_t> remaining_data = provider.ConsumeRemainingBytes<uint8_t>();
+    dataMessageParcel.WriteBuffer(static_cast<void*>(remaining_data.data()), remaining_data.size());
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnSetMuteInner(dataMessageParcel, reply);
 }
 
-void GetMute(const uint8_t *data, size_t size)
+void GetMute(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
     MessageParcel dataMessageParcel;
-    dataMessageParcel.WriteBuffer(data, size);
+    std::vector<uint8_t> remaining_data = provider.ConsumeRemainingBytes<uint8_t>();
+    dataMessageParcel.WriteBuffer(static_cast<void*>(remaining_data.data()), remaining_data.size());
     dataMessageParcel.RewindRead(0);
     MessageParcel reply;
     DelayedSingleton<CellularCallService>::GetInstance()->OnGetMuteInner(dataMessageParcel, reply);
 }
 
-void StartDtmf(const uint8_t *data, size_t size)
+void StartDtmf(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(size);
-    int32_t slotId = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t callId = static_cast<int32_t>(size);
-    int32_t accountId = static_cast<int32_t>(size);
-    int32_t videoState = static_cast<int32_t>(size % VEDIO_STATE_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    char cDtmfCode = static_cast<char>(size);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t callId = provider.ConsumeIntegral<int32_t>();
+    int32_t accountId = provider.ConsumeIntegral<int32_t>();
+    int32_t videoState = provider.ConsumeIntegral<int32_t>() % VEDIO_STATE_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    char cDtmfCode = provider.ConsumeIntegral<char>();
     std::string telNum = "000000000";
-    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         telNum = tempNum;
     }
@@ -351,15 +356,15 @@ void StartDtmf(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnStartDtmfInner(dataMessageParcel, reply);
 }
 
-void CancelCallUpgrade(const uint8_t *data, size_t size)
+void CancelCallUpgrade(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(*data);
-    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(*data);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -369,15 +374,15 @@ void CancelCallUpgrade(const uint8_t *data, size_t size)
     DelayedSingleton<CellularCallService>::GetInstance()->OnCancelCallUpgradeInner(dataMessageParcel, reply);
 }
 
-void RequestCameraCapabilities(const uint8_t *data, size_t size)
+void RequestCameraCapabilities(FuzzedDataProvider& provider)
 {
     if (!IsServiceInited()) {
         return;
     }
 
-    int32_t maxSize = static_cast<int32_t>(*data);
-    int32_t slotId = static_cast<int32_t>(*data % BOOL_NUM);
-    int32_t index = static_cast<int32_t>(*data);
+    int32_t maxSize = provider.ConsumeIntegral<int32_t>();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
     MessageParcel dataMessageParcel;
     dataMessageParcel.WriteInt32(maxSize);
     dataMessageParcel.WriteInt32(slotId);
@@ -392,21 +397,21 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (data == nullptr || size == 0) {
         return;
     }
-
-    OnRemoteRequest(data, size);
-    SetPreviewWindow(data, size);
-    SetDisplayWindow(data, size);
-    SetCameraZoom(data, size);
-    ControlCamera(data, size);
-    SetPausePicture(data, size);
-    SetDeviceDirection(data, size);
-    SetMute(data, size);
-    GetMute(data, size);
-    StartDtmf(data, size);
-    SendUpdateCallMediaModeRequest(data, size);
-    SendUpdateCallMediaModeResponse(data, size);
-    CancelCallUpgrade(data, size);
-    RequestCameraCapabilities(data, size);
+    FuzzedDataProvider provider(data, size);
+    OnRemoteRequest(provider);
+    SetPreviewWindow(provider);
+    SetDisplayWindow(provider);
+    SetCameraZoom(provider);
+    ControlCamera(provider);
+    SetPausePicture(provider);
+    SetDeviceDirection(provider);
+    SetMute(provider);
+    GetMute(provider);
+    StartDtmf(provider);
+    SendUpdateCallMediaModeRequest(provider);
+    SendUpdateCallMediaModeResponse(provider);
+    CancelCallUpgrade(provider);
+    RequestCameraCapabilities(provider);
 }
 } // namespace OHOS
 

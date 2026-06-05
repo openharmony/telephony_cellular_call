@@ -20,6 +20,7 @@
 
 #include "addcellularcalltoken_fuzzer.h"
 #include "base_connection.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "securec.h"
 #include "system_ability_definition.h"
 
@@ -34,14 +35,14 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (data == nullptr || size == 0) {
         return;
     }
-
+    FuzzedDataProvider provider(data, size);
     auto baseConnection = std::make_shared<BaseConnection>();
-    int32_t accountId = static_cast<int32_t>(size % SLOT_NUM);
-    int32_t index = static_cast<int32_t>(size);
-    int32_t flag = static_cast<int32_t>(size % BOOL_NUM);
-    int32_t voiceDomain = static_cast<int32_t>(size % BOOL_NUM);
+    int32_t accountId = provider.ConsumeIntegral<int32_t>() % SLOT_NUM;
+    int32_t index = provider.ConsumeIntegral<int32_t>();
+    int32_t flag = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
+    int32_t voiceDomain = provider.ConsumeIntegral<int32_t>() % BOOL_NUM;
     std::string phoneNum = "000000000";
-    std::string tempNum(reinterpret_cast<const char *>(data), size);
+    std::string tempNum = provider.ConsumeRandomLengthString();
     if (strlen(tempNum.c_str()) <= MAX_NUMBER_LEN) {
         phoneNum = tempNum;
     }

@@ -21,6 +21,7 @@
 #define private public
 #include "addcellularcalltoken_fuzzer.h"
 #include "cs_control.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "securec.h"
 #include "system_ability_definition.h"
 #include "fuzzer/FuzzedDataProvider.h"

@@ -22,6 +22,7 @@
 #include "addcellularcalltoken_fuzzer.h"
 #include "cellular_call_connection_satellite.h"
 #include "cellular_call_data_struct.h"
+#include "fuzzer/FuzzedDataProvider.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::Telephony;
@@ -33,11 +34,11 @@ void DoSomethingInterestingWithMyAPI(const uint8_t *data, size_t size)
     if (data == nullptr || size == 0) {
         return;
     }
-
+    FuzzedDataProvider provider(data, size);
     auto cellularCallConnectionSatellite = std::make_unique<CellularCallConnectionSatellite>().release();
-    std::string phoneNum(reinterpret_cast<const char *>(data), size);
-    int32_t slotId = static_cast<int32_t>(size % SLOT_NUM);
-    int64_t lastCallsDataFlag = static_cast<int64_t>(size);
+    std::string phoneNum = provider.ConsumeRandomLengthString();
+    int32_t slotId = provider.ConsumeIntegral<int32_t>() % SLOT_NUM;
+    int64_t lastCallsDataFlag = provider.ConsumeIntegral<int64_t>()
     DialRequestStruct dialRequest;
     dialRequest.phoneNum = phoneNum;
     cellularCallConnectionSatellite->DialRequest(slotId, dialRequest);
