@@ -37,6 +37,7 @@
             "components": [
                 "ability_base",
                 "ability_runtime",
+                "abseil-cpp",
                 "access_token",
                 "cJSON",
                 "json",
