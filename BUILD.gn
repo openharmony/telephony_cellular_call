@@ -89,6 +89,7 @@ ohos_shared_library("tel_cellular_call") {
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:dataobs_manager",
+    "abseil-cpp:absl_strings",
     "cJSON:cjson",
     "c_utils:utils",
     "call_manager:tel_call_manager_api",
