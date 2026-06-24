@@ -1525,7 +1525,7 @@ void CellularCallHandler::ProcessRedundantCode(CallInfoList &callInfoList)
             continue;
         }
         int8_t index = (callInfo.type == INTERNATION_CODE) ? 0 : 1;
-        int8_t doublePhoneNumberPrefixLen = DOUBLE_PHONE_NUMBER_PREFIX[index].length();
+        uint8_t doublePhoneNumberPrefixLen = DOUBLE_PHONE_NUMBER_PREFIX[index].length();
         if (callInfo.number.substr(0, doublePhoneNumberPrefixLen) != DOUBLE_PHONE_NUMBER_PREFIX[index]) {
             continue;
         }
