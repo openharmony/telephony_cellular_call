@@ -32,15 +32,23 @@ public:
     typedef bool (*IsMmiCode)(int32_t slotId, std::string &number);
     typedef bool (*IsUssdReleaseMsgFiltered)(int32_t slotId);
     typedef void (*UnescapeHtmlCode)(int32_t slotId, std::string &content);
+    typedef void (*SetPreferredNetworkByConfig)(int32_t slotId);
+    typedef void (*HandleRedcapFactoryReset)(int32_t slotId);
 
     IsEmptyMmiResultFiltered isEmptyMmiResultFiltered_ = nullptr;
     IsMmiCode isMmiCode_ = nullptr;
     IsUssdReleaseMsgFiltered isUssdReleaseMsgFiltered_ = nullptr;
     UnescapeHtmlCode unescapeHtmlCode_ = nullptr;
+
+    void SetPreferredNetworkByConfigFunc(int32_t slotId);
+    void HandleRedcapFactoryResetFunc(int32_t slotId);
 private:
     void* handler_ = nullptr;
 
     void InitTelephonyExtWrapperForCellularCall();
+
+    SetPreferredNetworkByConfig setPreferredNetworkByConfig_ = nullptr;
+    HandleRedcapFactoryReset handleRedcapFactoryReset_ = nullptr;
 };
 
 #define TELEPHONY_EXT_WRAPPER ::OHOS::DelayedRefSingleton<TelephonyExtWrapper>::GetInstance()

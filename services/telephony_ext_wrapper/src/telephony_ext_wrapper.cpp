@@ -50,7 +50,23 @@ void TelephonyExtWrapper::InitTelephonyExtWrapperForCellularCall()
     isMmiCode_ =  (IsMmiCode)dlsym(handler_, "IsMmiCode");
     isUssdReleaseMsgFiltered_ = (IsUssdReleaseMsgFiltered)dlsym(handler_, "IsUssdReleaseMsgFiltered");
     unescapeHtmlCode_ = (UnescapeHtmlCode)dlsym(handler_, "UnescapeHtmlCode");
+    setPreferredNetworkByConfig_ = (SetPreferredNetworkByConfig)dlsym(handler_, "SetPreferredNetworkByConfig");
+    handleRedcapFactoryReset_ = (HandleRedcapFactoryReset)dlsym(handler_, "HandleRedcapFactoryReset");
     TELEPHONY_LOGI("init success");
+}
+
+void TelephonyExtWrapper::SetPreferredNetworkByConfigFunc(int32_t slotId)
+{
+    if (setPreferredNetworkByConfig_ != nullptr) {
+        setPreferredNetworkByConfig_(slotId);
+    }
+}
+
+void TelephonyExtWrapper::HandleRedcapFactoryResetFunc(int32_t slotId)
+{
+    if (handleRedcapFactoryReset_) {
+        handleRedcapFactoryReset_(slotId);
+    }
 }
 } // namespace Telephony
 } // namespace OHOS
