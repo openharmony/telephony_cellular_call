@@ -1230,7 +1230,11 @@ void CellularCallHandler::GetImsSwitchStatusResponse(const AppExecFwk::InnerEven
             slotId_, *active, isVolteSupport);
         if (static_cast<int>(*active) != static_cast<int>(isVolteSupport)) {
             UpdateImsConfiguration();
+            return;
         }
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
+        config.SetPreferredNetworkByConfig(slotId_);
+#endif
         return;
     }
     UpdateImsConfiguration();
@@ -2034,6 +2038,9 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
         StartCallManagerService();
 #endif
         serviceInstance->setRadioOnFlag(true, slotId_);
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
+        CellularCallConfig::SetRadioOn(true);
+#endif
         GetImsSwitchStatusRequest();
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
         auto imsControl = serviceInstance->GetImsControl(slotId_);

@@ -1297,5 +1297,269 @@ HWTEST_F(ZeroBranch1Test, Telephony_EmergencyUtils_001, Function | MediumTest | 
     ASSERT_EQ(emergencyUtils.IsEmergencyCall(SIM1_SLOTID, phoneNum, enabled), TELEPHONY_SUCCESS);
 }
 
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+static int32_t g_setPreferredNetworkByConfigSlotId = -1;
+void SetPreferredNetworkByConfigMock(int32_t slotId)
+{
+    g_setPreferredNetworkByConfigSlotId = slotId;
+}
+ 
+static int32_t g_handleRedcapFactoryResetSlotId = -1;
+void HandleRedcapFactoryResetMock(int32_t slotId)
+{
+    g_handleRedcapFactoryResetSlotId = slotId;
+}
+#endif
+
+#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+/**
+ * @tc.number   Telephony_CellularCallConfig_SetRadioOn_001
+ * @tc.name     Test SetRadioOn
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_SetRadioOn_001, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    /* isRadioOn_ default false */
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    CellularCallConfig::SetRadioOn(true);
+    ASSERT_TRUE(CellularCallConfig::isRadioOn_);
+    CellularCallConfig::SetRadioOn(false);
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_SetPreferredNetworkByConfig_001
+ * @tc.name     Test SetPreferredNetworkByConfig when both flags false
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_SetPreferredNetworkByConfig_001,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isRadioOn_ = false;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    config.SetPreferredNetworkByConfig(SIM1_SLOTID);
+    /* both flags false, ext wrapper should NOT be called */
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, -1);
+    /* flags should be reset to false */
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_SetPreferredNetworkByConfig_002
+ * @tc.name     Test SetPreferredNetworkByConfig when isRadioOn_ true
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_SetPreferredNetworkByConfig_002,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isRadioOn_ = true;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    config.SetPreferredNetworkByConfig(SIM1_SLOTID);
+    /* isRadioOn_ true, ext wrapper should be called */
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, SIM1_SLOTID);
+    /* flags should be reset to false */
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_SetPreferredNetworkByConfig_003
+ * @tc.name     Test SetPreferredNetworkByConfig when isOperatorConfigChanged_ true
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_SetPreferredNetworkByConfig_003,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isRadioOn_ = false;
+    CellularCallConfig::isOperatorConfigChanged_ = true;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    config.SetPreferredNetworkByConfig(SIM2_SLOTID);
+    /* isOperatorConfigChanged_ true, ext wrapper should be called */
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, SIM2_SLOTID);
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_SetPreferredNetworkByConfig_004
+ * @tc.name     Test SetPreferredNetworkByConfig with nullptr ext wrapper
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_SetPreferredNetworkByConfig_004,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isRadioOn_ = true;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+    /* nullptr ext wrapper should not crash */
+    config.SetPreferredNetworkByConfig(SIM1_SLOTID);
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_HandleOperatorConfigChanged_001
+ * @tc.name     Test HandleOperatorConfigChanged sets isOperatorConfigChanged_
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_HandleOperatorConfigChanged_001,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    config.HandleOperatorConfigChanged(SIM1_SLOTID, 0);
+    ASSERT_TRUE(CellularCallConfig::isOperatorConfigChanged_);
+    /* reset for other tests */
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_HandleFactoryReset_001
+ * @tc.name     Test HandleFactoryReset calls handleRedcapFactoryReset_
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_HandleFactoryReset_001,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    g_handleRedcapFactoryResetSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.handleRedcapFactoryReset_ = HandleRedcapFactoryResetMock;
+    config.HandleFactoryReset(SIM1_SLOTID);
+    ASSERT_EQ(g_handleRedcapFactoryResetSlotId, SIM1_SLOTID);
+    TELEPHONY_EXT_WRAPPER.handleRedcapFactoryReset_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_HandleFactoryReset_002
+ * @tc.name     Test HandleFactoryReset with nullptr ext wrapper
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_HandleFactoryReset_002,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    TELEPHONY_EXT_WRAPPER.handleRedcapFactoryReset_ = nullptr;
+    /* nullptr ext wrapper should not crash */
+    config.HandleFactoryReset(SIM1_SLOTID);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_HandleSetLteImsSwitchResult_001
+ * @tc.name     Test HandleSetLteImsSwitchResult calls SetPreferredNetworkByConfig
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallConfig_HandleSetLteImsSwitchResult_001,
+    Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    CellularCallConfig::isRadioOn_ = true;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    config.HandleSetLteImsSwitchResult(SIM1_SLOTID, ErrType::NONE);
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, SIM1_SLOTID);
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallHandler_GetImsSwitchStatusResponse_001
+ * @tc.name     Test GetImsSwitchStatusResponse active == isVolteSupport calls SetPreferredNetworkByConfig
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_GetImsSwitchStatusResponse_001,
+    Function | MediumTest | Level3)
+{
+    AccessToken token;
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+ 
+    /* active == 0, IsVolteSupport returns false by default, so active == isVolteSupport */
+    CellularCallConfig::isRadioOn_ = true;
+    CellularCallConfig::isOperatorConfigChanged_ = false;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    auto imsActive = std::make_shared<int32_t>(0);
+    auto responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
+    handler.GetImsSwitchStatusResponse(responseEvent);
+    /* active == isVolteSupport, should call SetPreferredNetworkByConfig then SetRadioOn(false) */
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, SIM1_SLOTID);
+    ASSERT_FALSE(CellularCallConfig::isRadioOn_);
+    ASSERT_FALSE(CellularCallConfig::isOperatorConfigChanged_);
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallHandler_GetImsSwitchStatusResponse_002
+ * @tc.name     Test GetImsSwitchStatusResponse active != isVolteSupport returns early
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_GetImsSwitchStatusResponse_002,
+    Function | MediumTest | Level3)
+{
+    AccessToken token;
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+ 
+    /* active == 1, IsVolteSupport returns false by default, so active != isVolteSupport */
+    CellularCallConfig::isRadioOn_ = true;
+    g_setPreferredNetworkByConfigSlotId = -1;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = SetPreferredNetworkByConfigMock;
+    auto imsActive = std::make_shared<int32_t>(1);
+    auto responseEvent = AppExecFwk::InnerEvent::Get(0, imsActive);
+    handler.GetImsSwitchStatusResponse(responseEvent);
+    /* active != isVolteSupport, should return early without calling SetPreferredNetworkByConfig */
+    ASSERT_EQ(g_setPreferredNetworkByConfigSlotId, -1);
+    /* isRadioOn_ should NOT be reset since we returned early */
+    ASSERT_TRUE(CellularCallConfig::isRadioOn_);
+    CellularCallConfig::isRadioOn_ = false;
+    TELEPHONY_EXT_WRAPPER.setPreferredNetworkByConfig_ = nullptr;
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallHandler_RadioStateChangeProcess_001
+ * @tc.name     Test RadioStateChangeProcess calls SetRadioOn(true) on CORE_SERVICE_POWER_ON
+ * @tc.desc     Function test
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_RadioStateChangeProcess_001,
+    Function | MediumTest | Level3)
+{
+    AccessToken token;
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+ 
+    CellularCallConfig::isRadioOn_ = false;
+    auto radioState = std::make_shared<Int32Parcel>();
+    radioState->data = CORE_SERVICE_POWER_ON;
+    auto event = AppExecFwk::InnerEvent::Get(0, radioState);
+    handler.RadioStateChangeProcess(event);
+    ASSERT_TRUE(CellularCallConfig::isRadioOn_);
+    CellularCallConfig::isRadioOn_ = false;
+}
+#endif
 } // namespace Telephony
 } // namespace OHOS

@@ -25,7 +25,8 @@
             "cellular_call_tel_power_mode",
             "cellular_call_support_UT",
             "cellular_call_satellite",
-            "cellular_call_support_rtt"
+            "cellular_call_support_rtt",
+            "cellular_call_redcap_ability"
         ],
         "adapted_system_type": [
             "standard"
