@@ -28,7 +28,7 @@
 #include "string_ex.h"
 #include "telephony_types.h"
 #include "network_search_types.h"
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
 #include "telephony_ext_wrapper.h"
 #endif
 
@@ -88,7 +88,7 @@ std::map<int32_t, std::string> CellularCallConfig::curPlmn_;
 std::map<int32_t, CellularCallConfig::cellularNetworkState> CellularCallConfig::networkServiceState_;
 std::map<int32_t, bool> CellularCallConfig::readyToCall_;
 bool CellularCallConfig::isOperatorConfigInit_ = false;
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
 bool CellularCallConfig::isRadioOn_ = false;
 bool CellularCallConfig::isOperatorConfigChanged_ = false;
 #endif
@@ -276,7 +276,7 @@ void CellularCallConfig::HandleFactoryReset(int32_t slotId)
     int32_t ret = SaveImsSwitch(slotId, BooleanToImsSwitchValue(imsSwitchOnByDefault_[slotId]));
     TELEPHONY_LOGI("Save ims switch ret: %{public}d", ret);
     UpdateImsCapabilities(slotId, true, false, INVALID_OPERATOR_CONFIG_STATE);
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
     TELEPHONY_EXT_WRAPPER.HandleRedcapFactoryResetFunc(slotId);
 #endif
 }
@@ -487,7 +487,7 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state)
 {
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
     std::unique_lockstd::shared_mutex lock(mutex_);
     isOperatorConfigChanged_ = true;
 #endif
@@ -809,12 +809,12 @@ void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, ErrType res
         TELEPHONY_LOGE("HandleSetLteImsSwitchResult set ims switch to modem failed!");
         // need to reset the Ims Switch parameter and notify APP to update UI.
     }
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
     SetPreferredNetworkByConfig(slotId);
 #endif
 }
 
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
 void CellularCallConfig::SetRadioOn(bool isRadioOn)
 {
     std::unique_lockstd::shared_mutex lock(mutex_);
