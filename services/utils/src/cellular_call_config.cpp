@@ -826,10 +826,12 @@ void CellularCallConfig::SetPreferredNetworkByConfig(int32_t slotId)
     std::unique_lockstd::shared_mutex lock(mutex_);
     TELEPHONY_LOGI("SetPreferredNetworkByConfig isOperatorConfigChanged: %{public}d, isRadioOn: %{public}d",
         isOperatorConfigChanged_, isRadioOn_);
-    if (isOperatorConfigChanged_ || isRadioOn_) {
+    bool isProcess = isOperatorConfigChanged_ || isRadioOn_;
+    isOperatorConfigChanged_ = false;
+    lock.unlock(); 
+    if (isProcess) {
         TELEPHONY_EXT_WRAPPER.SetPreferredNetworkByConfigFunc(slotId);
     }
-    isOperatorConfigChanged_ = false;
 }
 #endif
 
