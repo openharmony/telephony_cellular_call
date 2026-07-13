@@ -488,7 +488,7 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state)
 {
 #ifdef CELLULAR_CALL_REDCAP_ABILITY
-    std::unique_lockstd::shared_mutex lock(mutex_);
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     isOperatorConfigChanged_ = true;
 #endif
     UpdateImsConfiguration(slotId, state, true);
@@ -817,13 +817,13 @@ void CellularCallConfig::HandleSetLteImsSwitchResult(int32_t slotId, ErrType res
 #ifdef CELLULAR_CALL_REDCAP_ABILITY
 void CellularCallConfig::SetRadioOn(bool isRadioOn)
 {
-    std::unique_lockstd::shared_mutex lock(mutex_);
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     isRadioOn_ = isRadioOn;
 }
 
 void CellularCallConfig::SetPreferredNetworkByConfig(int32_t slotId)
 {
-    std::unique_lockstd::shared_mutex lock(mutex_);
+    std::unique_lock<std::shared_mutex> lock(mutex_);
     TELEPHONY_LOGI("SetPreferredNetworkByConfig isOperatorConfigChanged: %{public}d, isRadioOn: %{public}d",
         isOperatorConfigChanged_, isRadioOn_);
     bool isProcess = isOperatorConfigChanged_ || isRadioOn_;
