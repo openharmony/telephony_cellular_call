@@ -828,7 +828,7 @@ void CellularCallConfig::SetPreferredNetworkByConfig(int32_t slotId)
         isOperatorConfigChanged_, isRadioOn_);
     bool isProcess = isOperatorConfigChanged_ || isRadioOn_;
     isOperatorConfigChanged_ = false;
-    lock.unlock(); 
+    lock.unlock();
     if (isProcess) {
         TELEPHONY_EXT_WRAPPER.SetPreferredNetworkByConfigFunc(slotId);
     }
