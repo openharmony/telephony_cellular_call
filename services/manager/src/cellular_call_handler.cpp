@@ -2063,6 +2063,9 @@ void CellularCallHandler::RadioStateChangeProcess(const AppExecFwk::InnerEvent::
 #endif
     } else {
         serviceInstance->setRadioOnFlag(false, slotId_);
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
+        CellularCallConfig::SetRadioOn(false);
+#endif
     }
 }
 

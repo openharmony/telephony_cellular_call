@@ -1297,7 +1297,7 @@ HWTEST_F(ZeroBranch1Test, Telephony_EmergencyUtils_001, Function | MediumTest | 
     ASSERT_EQ(emergencyUtils.IsEmergencyCall(SIM1_SLOTID, phoneNum, enabled), TELEPHONY_SUCCESS);
 }
 
-#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
 static int32_t g_setPreferredNetworkByConfigSlotId = -1;
 void SetPreferredNetworkByConfigMock(int32_t slotId)
 {
@@ -1311,7 +1311,7 @@ void HandleRedcapFactoryResetMock(int32_t slotId)
 }
 #endif
 
-#ifdef BASE_POWER_IMPROVEMENT_FEATURE
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
 /**
  * @tc.number   Telephony_CellularCallConfig_SetRadioOn_001
  * @tc.name     Test SetRadioOn

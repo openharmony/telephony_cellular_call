@@ -489,7 +489,7 @@ public:
     bool IsVolteSupport(int32_t slotId);
     void HandleEccListChange();
     void SetClearCode(int32_t slotId, int32_t cause);
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
     static void SetRadioOn(bool isRadioOn);
     void SetPreferredNetworkByConfig(int32_t slotId);
 #endif
@@ -571,7 +571,7 @@ private:
     static std::map<int32_t, bool> shouldCheckImsAfterNvUpdate_;
     static int32_t lastDisconnectCode_;
     static bool isOperatorConfigInit_;
-#ifdef CELLUAR_CALL_REDCAP_ABILITY
+#ifdef CELLULAR_CALL_REDCAP_ABILITY
     static bool isRadioOn_;
     static bool isOperatorConfigChanged_;
 #endif

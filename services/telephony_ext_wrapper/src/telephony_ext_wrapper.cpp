@@ -64,7 +64,7 @@ void TelephonyExtWrapper::SetPreferredNetworkByConfigFunc(int32_t slotId)
 
 void TelephonyExtWrapper::HandleRedcapFactoryResetFunc(int32_t slotId)
 {
-    if (handleRedcapFactoryReset_) {
+    if (handleRedcapFactoryReset_ != nullptr) {
         handleRedcapFactoryReset_(slotId);
     }
 }
