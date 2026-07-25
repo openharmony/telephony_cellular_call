@@ -1140,5 +1140,153 @@ HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfigRequest_001, Function | Med
     ASSERT_EQ(configReq.UpdateImsCapabilities(SIM1_SLOTID, imsCapabilityList), TELEPHONY_SUCCESS);
 #endif
 }
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_001
+ * @tc.name     Test UpdateImsVoiceCapabilities with NR mode in valid range
+ * @tc.desc     Function test - networkMode is within NR_MODE_MIN and NR_MODE_MAX range,
+ *              should add both VoNR and VoLTE capabilities
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_001, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList;
+    int32_t VONR_SWITCH_STATUS_ON = 1;
+    config.volteSupported_[SIM1_SLOTID] = true;
+    config.imsGbaRequired_[SIM1_SLOTID] = false;
+    config.vonrSwithStatus_[SIM1_SLOTID] = VONR_SWITCH_STATUS_ON;
+    config.nrModeSupportedList_[SIM1_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.UpdateImsVoiceCapabilities(SIM1_SLOTID, imsCapabilityList);
+    ASSERT_EQ(imsCapabilityList.imsCapabilities.size(), 2);
+    bool hasVolte = false;
+    bool hasVonr = false;
+    for (const auto& cap : imsCapabilityList.imsCapabilities) {
+        if (cap.imsCapabilityType == ImsCapabilityType::CAPABILITY_TYPE_VOICE) {
+            if (cap.imsRadioTech == ImsRegTech::IMS_REG_TECH_LTE) {
+                hasVolte = true;
+            } else if (cap.imsRadioTech == ImsRegTech::IMS_REG_TECH_NR) {
+                hasVonr = true;
+            }
+        }
+    }
+    ASSERT_TRUE(hasVolte);
+    ASSERT_TRUE(hasVonr);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_002
+ * @tc.name     Test UpdateImsVoiceCapabilities with NR mode out of range
+ * @tc.desc     Function test - networkMode is outside NR_MODE_MIN and NR_MODE_MAX range,
+ *              should only add VoLTE capability
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_002, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList;
+    int32_t VONR_SWITCH_STATUS_ON = 1;
+    config.volteSupported_[SIM1_SLOTID] = true;
+    config.imsGbaRequired_[SIM1_SLOTID] = false;
+    config.vonrSwithStatus_[SIM1_SLOTID] = VONR_SWITCH_STATUS_ON;
+    config.nrModeSupportedList_[SIM1_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.UpdateImsVoiceCapabilities(SIM1_SLOTID, imsCapabilityList);
+    ASSERT_EQ(imsCapabilityList.imsCapabilities.size(), 1);
+    bool hasVolte = false;
+    bool hasVonr = false;
+    for (const auto& cap : imsCapabilityList.imsCapabilities) {
+        if (cap.imsCapabilityType == ImsCapabilityType::CAPABILITY_TYPE_VOICE) {
+            if (cap.imsRadioTech == ImsRegTech::IMS_REG_TECH_LTE) {
+                hasVolte = true;
+            } else if (cap.imsRadioTech == ImsRegTech::IMS_REG_TECH_NR) {
+                hasVonr = true;
+            }
+        }
+    }
+    ASSERT_TRUE(hasVolte);
+    ASSERT_FALSE(hasVonr);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_003
+ * @tc.name     Test UpdateImsVoiceCapabilities with VoLTE disabled
+ * @tc.desc     Function test - VoLTE is disabled, should not add VoLTE capability
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_003, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList;
+    int32_t VONR_SWITCH_STATUS_OFF = 0;
+    config.volteSupported_[SIM1_SLOTID] = false;
+    config.imsGbaRequired_[SIM1_SLOTID] = false;
+    config.vonrSwithStatus_[SIM1_SLOTID] = VONR_SWITCH_STATUS_OFF;
+    config.nrModeSupportedList_[SIM1_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.UpdateImsVoiceCapabilities(SIM1_SLOTID, imsCapabilityList);
+    ASSERT_EQ(imsCapabilityList.imsCapabilities.size(), 1);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_004
+ * @tc.name     Test UpdateImsVoiceCapabilities with invalid slotId
+ * @tc.desc     Function test - invalid slotId should still work without crash
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_004, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList;
+    config.volteSupported_[INVALID_SLOTID] = true;
+    config.imsGbaRequired_[INVALID_SLOTID] = false;
+    config.UpdateImsVoiceCapabilities(INVALID_SLOTID, imsCapabilityList);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_005
+ * @tc.name     Test UpdateImsVoiceCapabilities with VoNR disabled
+ * @tc.desc     Function test - VoNR is disabled, should not add VoNR capability
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_005, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList;
+    int32_t VONR_SWITCH_STATUS_OFF = 0;
+    config.volteSupported_[SIM1_SLOTID] = true;
+    config.imsGbaRequired_[SIM1_SLOTID] = false;
+    config.vonrSwithStatus_[SIM1_SLOTID] = VONR_SWITCH_STATUS_OFF;
+    config.nrModeSupportedList_[SIM1_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.UpdateImsVoiceCapabilities(SIM1_SLOTID, imsCapabilityList);
+    bool hasVonr = false;
+    for (const auto& cap : imsCapabilityList.imsCapabilities) {
+        if (cap.imsCapabilityType == ImsCapabilityType::CAPABILITY_TYPE_VOICE
+            && cap.imsRadioTech == ImsRegTech::IMS_REG_TECH_NR) {
+            hasVonr = true;
+            break;
+        }
+    }
+    ASSERT_FALSE(hasVonr);
+}
+ 
+/**
+ * @tc.number   Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_006
+ * @tc.name     Test UpdateImsVoiceCapabilities with both SIM slots
+ * @tc.desc     Function test - test both slot IDs to ensure all cases covered
+ */
+HWTEST_F(ZeroBranchTest, Telephony_CellularCallConfig_UpdateImsVoiceCapabilities_006, Function | MediumTest | Level3)
+{
+    CellularCallConfig config;
+    ImsCapabilityList imsCapabilityList1;
+    ImsCapabilityList imsCapabilityList2;
+    int32_t VONR_SWITCH_STATUS_OFF = 0;
+    int32_t VONR_SWITCH_STATUS_ON = 1;
+    config.volteSupported_[SIM1_SLOTID] = true;
+    config.volteSupported_[SIM2_SLOTID] = true;
+    config.imsGbaRequired_[SIM1_SLOTID] = false;
+    config.imsGbaRequired_[SIM2_SLOTID] = false;
+    config.vonrSwithStatus_[SIM1_SLOTID] = VONR_SWITCH_STATUS_ON;
+    config.vonrSwithStatus_[SIM2_SLOTID] = VONR_SWITCH_STATUS_OFF;
+    config.nrModeSupportedList_[SIM1_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.nrModeSupportedList_[SIM2_SLOTID] = {CARRIER_NR_AVAILABILITY_NSA, CARRIER_NR_AVAILABILITY_SA};
+    config.UpdateImsVoiceCapabilities(SIM1_SLOTID, imsCapabilityList1);
+    config.UpdateImsVoiceCapabilities(SIM2_SLOTID, imsCapabilityList2);
+    ASSERT_EQ(imsCapabilityList1.imsCapabilities.size(), 2);
+    ASSERT_EQ(imsCapabilityList2.imsCapabilities.size(), 1);
+}
 } // namespace Telephony
 } // namespace OHOS
