@@ -54,7 +54,7 @@ constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
 constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
 constexpr const char *NETWORK_SEARCH_SETTING_URI =
     "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true&key=preferred_network_mode";
-constexpr const char *SETTINGS_NETWORK_SEARCH_PREFERRED_NETWORK_MODE = "settings.telephony.preferrednetworkmode";
+constexpr const char *PREFERRED_NETWORK_MODE = "settings.telephony.preferrednetworkmode";
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
 const std::string VONR_STATE = "persist.telephony.vonrswitch";
@@ -629,27 +629,22 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
     return true;
 }
 
-__attribute__((always_inline)) inline int32_t GetPreferredNetworkModeValue(int32_t slotId)
+__attribute__((always_inline)) inline void GetPreferredNetworkModeValue(int32_t slotId, int32_t networkMode)
 {
     char key[64];
-    int32_t ret = snprintf_s(key, sizeof(key), sizeof(key), "%s_%d",
-        SETTINGS_NETWORK_SEARCH_PREFERRED_NETWORK_MODE, slotId);
-    if (ret < 0) {
-        return TELEPHONY_ERROR;
+    if (snprintf_s(key, sizeof(key), sizeof(key), "%s_%d", PREFERRED_NETWORK_MODE, slotId) < 0) {
+        return;
     }
     std::string value;
-    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->Query(NETWORK_SEARCH_SETTING_URI, key, value)
-        == TELEPHONY_SUCCESS) {
-        int32_t networkMode = DEFAULT_NETWORK_MODE;
+    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->Query(NETWORK_SEARCH_SETTING_URI, key, value) == 0) {
         StrToInt(value, networkMode);
-        return networkMode;
     }
-    return DEFAULT_NETWORK_MODE;
 }
 
 void CellularCallConfig::UpdateImsVoiceCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
 {
-    int32_t networkMode = GetPreferredNetworkModeValue(slotId);
+    int32_t networkMode = DEFAULT_NETWORK_MODE;
+    GetPreferredNetworkModeValue(slotId, networkMode);
     if (networkMode >= NR_MODE_MIN && networkMode <= NR_MODE_MAX) {
         ImsCapability vonrCapability;
         vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
