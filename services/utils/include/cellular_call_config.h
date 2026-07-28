@@ -28,7 +28,6 @@
 
 namespace OHOS {
 namespace Telephony {
-constexpr const char *KEY_CONST_TELEPHONY_READ_THIRD_PARTY_LIB = "const.telephony.read_third_party_lib";
 constexpr int32_t INVALID_OPERATOR_CONFIG_STATE = -1;
 class CellularCallConfig {
 public:
@@ -462,9 +461,7 @@ public:
     void UpdateImsCapabilities(int32_t slotId, bool needUpdateUtCapability, bool isOperatorConfigChanged,
         int32_t state);
 
-    bool NeedReadThirdParyLib();
-
-        /**
+    /**
      * On Inquire video Call Waiting
      *
      * @param data  send data

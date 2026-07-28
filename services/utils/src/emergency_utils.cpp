@@ -60,6 +60,13 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
         })) {
             return TELEPHONY_ERR_SUCCESS;
         }
+        if (!countryIsoCode.empty()) {
+            TELEPHONY_LOGD("IsEmergencyCallProcessing countryIsoCode is not empty");
+            i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
+            transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
+            enabled = shortNumberInfo.IsEmergencyNumber(formatString, countryIsoCode);
+            return TELEPHONY_ERR_SUCCESS;
+        }
     } else {
         //Determine whether the watch device is DYNAMIC_POWEROFF_MODEM
         bool isDynamicPoweroffModem = system::GetBoolParameter(DYNAMIC_POWEROFF_MODEM, false);
@@ -69,13 +76,6 @@ int32_t EmergencyUtils::IsEmergencyCallProcessing(int32_t slotId, const std::str
                 return TELEPHONY_ERR_SUCCESS;
             }
         }
-    }
-    if (config.NeedReadThirdParyLib() && !countryIsoCode.empty()) {
-        TELEPHONY_LOGD("IsEmergencyCallProcessing countryIsoCode is not empty");
-        i18n::phonenumbers::ShortNumberInfo shortNumberInfo;
-        transform(countryIsoCode.begin(), countryIsoCode.end(), countryIsoCode.begin(), ::toupper);
-        enabled = shortNumberInfo.IsEmergencyNumber(formatString, countryIsoCode);
-        return TELEPHONY_ERR_SUCCESS;
     }
     TELEPHONY_LOGI("IsEmergencyCallProcessing, not an emergency number.");
     enabled = false;

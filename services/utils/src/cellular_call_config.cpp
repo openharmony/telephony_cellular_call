@@ -1294,15 +1294,6 @@ bool CellularCallConfig::IsReadyToCall(int32_t slotId)
     return readyToCall_[slotId];
 }
 
-bool CellularCallConfig::NeedReadThirdParyLib()
-{
-    std::string readThirdParty = system::GetParameter(KEY_CONST_TELEPHONY_READ_THIRD_PARTY_LIB, "");
-    if (readThirdParty.compare("false") == 0) {
-        return false;
-    }
-    return true;
-}
-
 int32_t CellularCallConfig::GetVideoCallWaiting(int32_t slotId, bool &enabled)
 {
     TELEPHONY_LOGE("entry, slotId: %{public}d", slotId);

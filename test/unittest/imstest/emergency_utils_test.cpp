@@ -17,18 +17,37 @@
 #define protected public
 
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "telephony_errors.h"
 #include "emergency_utils.h"
+#include "core_manager_inner.h"
+#include "cellular_call_config.h"
+#include "mock_sim_manager.h"
+#include "mock_tel_ril_manager.h"
+#include "mock_network_search.h"
 
 namespace OHOS {
 namespace Telephony {
 using namespace testing::ext;
+using ::testing::_;
 class EmergencyUtilsTest : public testing::Test {
 public:
     static void SetUpTestCase();
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+
+    EmergencyUtilsTest()
+    {
+        std::shared_ptr<MockTelRilManager> mockTelRilManagerPtr(mockTelRilManager);
+        std::shared_ptr<MockNetworkSearch> mockNetworkSearchPtr(mockNetworkSearch);
+        std::shared_ptr<MockSimManager> mockSimManagerPtr(mockSimManager);
+        CoreManagerInner::GetInstance().OnInit(mockNetworkSearchPtr, mockSimManagerPtr, mockTelRilManagerPtr);
+    }
+
+    MockTelRilManager *mockTelRilManager = new MockTelRilManager();
+    MockNetworkSearch *mockNetworkSearch = new MockNetworkSearch();
+    MockSimManager *mockSimManager = new MockSimManager();
 };
 void EmergencyUtilsTest::SetUpTestCase() {}
 
@@ -103,6 +122,74 @@ HWTEST_F(EmergencyUtilsTest, EmergencyUtilsTest_0002, Function | MediumTest | Le
     EXPECT_EQ(emergencyUtils.IsEmergencyCallProcessing(slotId, formatString, enabled), TELEPHONY_SUCCESS);
     
     formatString = "999";
+    EXPECT_EQ(emergencyUtils.IsEmergencyCallProcessing(slotId, formatString, enabled), TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   EmergencyUtilsTest_0003
+ * @tc.name     Test EmergencyUtilsTest
+ * @tc.desc     Function test
+ */
+HWTEST_F(EmergencyUtilsTest, EmergencyUtilsTest_0003, Function | MediumTest | Level1)
+{
+    CellularCallConfig config;
+    std::vector<EmergencyCall> emptyEccList;
+    config.SetEmergencyCallList(0, emptyEccList);
+    std::u16string isoCode = u"";
+    EXPECT_CALL(*mockNetworkSearch, GetIsoCountryCodeForNetwork(_, _))
+        .WillRepeatedly([&](int32_t, std::u16string &code) {
+            code = isoCode;
+            return 0;
+        });
+    EmergencyUtils emergencyUtils;
+    int32_t slotId = 0;
+    bool enabled = false;
+    std::string formatString = "555555";
+    EXPECT_EQ(emergencyUtils.IsEmergencyCallProcessing(slotId, formatString, enabled), TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   EmergencyUtilsTest_0004
+ * @tc.name     Test EmergencyUtilsTest
+ * @tc.desc     Function test
+ */
+HWTEST_F(EmergencyUtilsTest, EmergencyUtilsTest_0004, Function | MediumTest | Level1)
+{
+    CellularCallConfig config;
+    std::vector<EmergencyCall> eccList;
+    EmergencyCall ecc;
+    ecc.eccNum = "119";
+    ecc.mcc = "460";
+    eccList.push_back(ecc);
+    config.SetEmergencyCallList(0, eccList);
+    
+    EmergencyUtils emergencyUtils;
+    int32_t slotId = 0;
+    bool enabled = false;
+    std::string formatString = "119";
+    EXPECT_EQ(emergencyUtils.IsEmergencyCallProcessing(slotId, formatString, enabled), TELEPHONY_SUCCESS);
+}
+
+/**
+ * @tc.number   EmergencyUtilsTest_0005
+ * @tc.name     Test EmergencyUtilsTest
+ * @tc.desc     Function test
+ */
+HWTEST_F(EmergencyUtilsTest, EmergencyUtilsTest_0005, Function | MediumTest | Level1)
+{
+    CellularCallConfig config;
+    std::vector<EmergencyCall> emptyEccList;
+    config.SetEmergencyCallList(0, emptyEccList);
+    std::u16string isoCode = u"CN";
+    EXPECT_CALL(*mockNetworkSearch, GetIsoCountryCodeForNetwork(_, _))
+        .WillRepeatedly([&](int32_t, std::u16string &code) {
+            code = isoCode;
+            return 0;
+        });
+    EmergencyUtils emergencyUtils;
+    int32_t slotId = 0;
+    bool enabled = false;
+    std::string formatString = "555555";
     EXPECT_EQ(emergencyUtils.IsEmergencyCallProcessing(slotId, formatString, enabled), TELEPHONY_SUCCESS);
 }
 } // namespace Telephony
