@@ -50,6 +50,7 @@ const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
+const int32_t PREFERRED_NETWORK_MODE_KEY_LEN = 64;
 constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
 constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
 constexpr const char *NETWORK_SEARCH_SETTING_URI =
@@ -631,12 +632,14 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
 
 __attribute__((always_inline)) inline void GetPreferredNetworkModeValue(int32_t slotId, int32_t networkMode)
 {
-    char key[64];
-    if (snprintf_s(key, sizeof(key), sizeof(key), "%s_%d", PREFERRED_NETWORK_MODE, slotId) < 0) {
+    std::vector<char> key(PREFERRED_NETWORK_MODE_KEY_LEN);
+    if (snprintf_s(key.data(), key.size(), key.size(), "%s_%d", PREFERRED_NETWORK_MODE, slotId) < 0) {
         return;
     }
-    std::string value;
-    if (DelayedSingleton<CellularCallRdbHelper>::GetInstance()->Query(NETWORK_SEARCH_SETTING_URI, key, value) == 0) {
+    std::string keyStr(key.data());
+    std::string value = "";
+    auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
+    if (rdbHelper != nullptr && rdbHelper->Query(NETWORK_SEARCH_SETTING_URI, keyStr, value) == 0) {
         StrToInt(value, networkMode);
     }
 }
