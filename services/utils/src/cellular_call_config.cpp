@@ -630,7 +630,7 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
     return true;
 }
 
-__attribute__((always_inline)) inline void GetPreferredNetworkModeValue(int32_t slotId, int32_t networkMode)
+__attribute__((always_inline)) inline void GetPreferredNetworkModeValue(int32_t slotId, int32_t &networkMode)
 {
     std::vector<char> key(PREFERRED_NETWORK_MODE_KEY_LEN);
     if (snprintf_s(key.data(), key.size(), key.size(), "%s_%d", PREFERRED_NETWORK_MODE, slotId) < 0) {
