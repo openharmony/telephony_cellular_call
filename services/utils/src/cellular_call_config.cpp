@@ -50,11 +50,19 @@ const int32_t IMS_GBA_BIT = 0x02;
 const int32_t SYSTEM_PARAMETER_LENGTH = 0x02;
 const int MCC_LEN = 3;
 const int32_t IMS_CAUSE_BASE = 18432;
+const int32_t PREFERRED_NETWORK_MODE_KEY_LEN = 64;
 constexpr const char *DISCONNECT_CODE = "telephony.call.disconnectCode";
 constexpr const char *KEY_IMS_SIP_CAUSE_CODE_ENABLE_ON_BOOL = "ims_sip_cause_code_enable";
+constexpr const char *NETWORK_SEARCH_SETTING_URI =
+    "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true&key=preferred_network_mode";
+constexpr const char *PREFERRED_NETWORK_MODE = "settings.telephony.preferrednetworkmode";
 const std::string LAST_ICCID_KEY = "persist.telephony.last_iccid";
 const std::string IMSSWITCH_STATE = "persist.telephony.imsswitch";
 const std::string VONR_STATE = "persist.telephony.vonrswitch";
+static constexpr int32_t NR_MODE_MIN = static_cast<int32_t>(PreferredNetworkMode::CORE_NETWORK_MODE_NR);
+static constexpr int32_t NR_MODE_MAX =
+    static_cast<int32_t>(PreferredNetworkMode::CORE_NETWORK_MODE_NR_LTE_TDSCDMA_WCDMA_GSM_EVDO_CDMA);
+static constexpr int32_t DEFAULT_NETWORK_MODE = static_cast<int32_t>(PreferredNetworkMode::CORE_NETWORK_MODE_MAX_VALUE);
 
 std::map<int32_t, int32_t> CellularCallConfig::modeMap_;
 std::map<int32_t, int32_t> CellularCallConfig::modeTempMap_;
@@ -488,8 +496,10 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
 void CellularCallConfig::HandleOperatorConfigChanged(int32_t slotId, int32_t state)
 {
 #ifdef CELLULAR_CALL_REDCAP_ABILITY
-    std::unique_lock<std::shared_mutex> lock(mutex_);
-    isOperatorConfigChanged_ = true;
+    {
+        std::unique_lock<std::shared_mutex> lock(mutex_);
+        isOperatorConfigChanged_ = true;
+    }
 #endif
     UpdateImsConfiguration(slotId, state, true);
 }
@@ -603,6 +613,7 @@ void CellularCallConfig::UpdateImsCapabilities(int32_t slotId, bool needUpdateUt
     configRequest_.UpdateImsCapabilities(slotId, imsCapabilityList);
     configRequest_.SetImsSwitchStatusRequest(slotId, IsNeedTurnOnIms(imsCapabilityList));
 }
+
 bool CellularCallConfig::IsGbaValid(int32_t slotId)
 {
     if (imsGbaRequired_[slotId]) {
@@ -619,21 +630,37 @@ bool CellularCallConfig::IsGbaValid(int32_t slotId)
     return true;
 }
 
+__attribute__((always_inline)) inline void GetPreferredNetworkModeValue(int32_t slotId, int32_t &networkMode)
+{
+    std::vector<char> key(PREFERRED_NETWORK_MODE_KEY_LEN);
+    if (snprintf_s(key.data(), key.size(), key.size(), "%s_%d", PREFERRED_NETWORK_MODE, slotId) < 0) {
+        return;
+    }
+    std::string keyStr(key.data());
+    std::string value = "";
+    auto rdbHelper = DelayedSingleton<CellularCallRdbHelper>::GetInstance();
+    if (rdbHelper != nullptr && rdbHelper->Query(NETWORK_SEARCH_SETTING_URI, keyStr, value) == 0) {
+        StrToInt(value, networkMode);
+    }
+}
+
 void CellularCallConfig::UpdateImsVoiceCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
 {
-    ImsCapability vonrCapability;
-    vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
-    vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
-    vonrCapability.enable = IsVonrSupportedForImsSwitch(slotId, IsGbaValid(slotId));
-    imsCapabilityList.imsCapabilities.push_back(vonrCapability);
+    int32_t networkMode = DEFAULT_NETWORK_MODE;
+    GetPreferredNetworkModeValue(slotId, networkMode);
+    if (networkMode >= NR_MODE_MIN && networkMode <= NR_MODE_MAX) {
+        ImsCapability vonrCapability;
+        vonrCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
+        vonrCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_NR;
+        vonrCapability.enable = IsVonrSupportedForImsSwitch(slotId, IsGbaValid(slotId));
+        imsCapabilityList.imsCapabilities.push_back(vonrCapability);
+    }
 
     ImsCapability volteCapability;
     volteCapability.imsCapabilityType = ImsCapabilityType::CAPABILITY_TYPE_VOICE;
     volteCapability.imsRadioTech = ImsRegTech::IMS_REG_TECH_LTE;
     volteCapability.enable = IsVolteSupport(slotId);
     imsCapabilityList.imsCapabilities.push_back(volteCapability);
-    TELEPHONY_LOGI("slotId = %{public}d, vonrCapability = %{public}d, volteCapability = %{public}d,",
-        slotId, vonrCapability.enable, volteCapability.enable);
 }
 
 void CellularCallConfig::UpdateImsUtCapabilities(int32_t slotId, ImsCapabilityList &imsCapabilityList)
@@ -943,7 +970,6 @@ void CellularCallConfig::InitModeActive()
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("118", SimpresentType::TYPE_NO_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("119", SimpresentType::TYPE_NO_CARD));
     eccList3gppNoSim_.push_back(BuildDefaultEmergencyCall("999", SimpresentType::TYPE_NO_CARD));
-    TELEPHONY_LOGD("InitModeActive finish");
 }
 
 EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &number, SimpresentType simType)
