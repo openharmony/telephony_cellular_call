@@ -195,7 +195,6 @@ int32_t CellularCallConfig::SetImsSwitchStatus(int32_t slotId, bool active)
 
 int32_t CellularCallConfig::GetImsSwitchStatus(int32_t slotId, bool &enabled)
 {
-    TELEPHONY_LOGD("entry, slotId: %{public}d", slotId);
     auto itorHide = hideImsSwitch_.find(slotId);
     if (itorHide != hideImsSwitch_.end() && itorHide->second) {
         enabled = true;
@@ -490,6 +489,7 @@ void CellularCallConfig::HandleSimAccountLoaded(int32_t slotId)
     }
     TELEPHONY_LOGI("entry, slotId: %{public}d", slotId);
     CheckAndUpdateSimState(slotId);
+    UpdateImsConfiguration(slotId, INVALID_OPERATOR_CONFIG_STATE, false);
     UpdateEccNumberList(slotId);
 }
 
