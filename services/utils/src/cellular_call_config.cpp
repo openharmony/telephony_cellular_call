@@ -14,6 +14,7 @@
  */
 
 #include "cellular_call_config.h"
+#include "parse_ecc_category.h"
 
 #include "cellular_call_data_struct.h"
 #include "cellular_call_hisysevent.h"
@@ -985,7 +986,12 @@ EmergencyCall CellularCallConfig::BuildDefaultEmergencyCall(const std::string &n
     if (pos != std::string::npos) {
         int32_t startOps = 0;
         std::string category = number.substr(startOps, pos);
-        emergencyCall.eccType = static_cast<EccType>(std::atoi(category.c_str()));
+        int32_t categoryValue = 0;
+        if (!ParseEccCategory(category, categoryValue)) {
+            TELEPHONY_LOGE("parse ecc category failed, category %{public}s", category.c_str());
+            return emergencyCall;
+        }
+        emergencyCall.eccType = static_cast<EccType>(categoryValue);
         emergencyCall.eccNum = number.substr(pos, number.size());
     }
     return emergencyCall;
