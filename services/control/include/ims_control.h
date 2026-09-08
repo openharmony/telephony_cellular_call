@@ -183,6 +183,8 @@ public:
 
     void DialAfterHold(int32_t slotId);
 
+    void SetSilentCsRedialFlag(bool isSilentCsRedial);
+
     /**
      * Report being hang up data
      *

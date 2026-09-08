@@ -269,6 +269,7 @@ private:
     void InitImsRttFuncMap();
 #endif
 
+    bool IsSilentCsRedial();
     void ReportCsCallsData(const CallInfoList &callInfoList);
     void ReportNoCsCallsData(const CallInfoList &callInfoList,  const int32_t state,
         const std::shared_ptr<CSControl> &csControl);

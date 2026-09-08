@@ -439,6 +439,11 @@ int32_t IMSControl::ReportCallsData(int32_t slotId, const CallInfoList &callInfo
     return TELEPHONY_ERROR;
 }
 
+void IMSControl::SetSilentCsRedialFlag(bool isSilentCsRedial)
+{
+    isSilentCsRedial_ = isSilentCsRedial;
+}
+
 int32_t IMSControl::ReportHangUpInfo(int32_t slotId)
 {
     TELEPHONY_LOGI("ReportHangUpInfo entry");
@@ -463,8 +468,9 @@ int32_t IMSControl::ReportHangUpInfo(int32_t slotId)
         return TELEPHONY_ERR_LOCAL_PTR_NULL;
     }
     callsReportInfo.slotId = slotId;
-    if (isIgnoredIncomingCall_) {
+    if (isIgnoredIncomingCall_ || isSilentCsRedial_) {
         isIgnoredIncomingCall_ = false;
+        isSilentCsRedial_ = false;
     } else {
         DelayedSingleton<CellularCallRegister>::GetInstance()->ReportCallsInfo(callsReportInfo);
     }

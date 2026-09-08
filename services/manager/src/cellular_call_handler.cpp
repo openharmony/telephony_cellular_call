@@ -418,6 +418,25 @@ void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
     }
 }
 
+bool CellularCallHandler::IsSilentCsRedial()
+{
+    if (currentCallList_.callSize != 1 || currentCsCallInfoList_.callSize != 1) {
+        return false;
+    }
+
+    if (currentCallList_.calls.empty() || currentCsCallInfoList_.calls.empty()) {
+        return false;
+    }
+
+    const auto& imsCall = currentCallList_.calls[0];
+    const auto& csCall = currentCsCallInfoList_.calls[0];
+
+    return (imsCall.index == csCall.index &&
+            imsCall.dir == csCall.dir &&
+            imsCall.state = csCall.state &&
+            imsCall.number == csCall.number);
+}
+
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
@@ -451,6 +470,10 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(callInfo.state);
+    }
+    if (IsSilentCsRedial()) {
+        auto imsControl = serviceInstance->GetImsControl(slotId_);
+        imsControl->SetSilentCsRedialFlag(true);
     }
 }
 

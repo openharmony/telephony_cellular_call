@@ -418,6 +418,7 @@ public:
 
 protected:
     bool isIgnoredIncomingCall_ = false;
+    bool isSilentCsRedial_ = false;
 
 private:
     /**
