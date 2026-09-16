@@ -90,7 +90,7 @@ call_manager CellularCallProxy
 RIL 或 IMS 服务上报
   └─ CellularCallHandler::ProcessEvent（按卡槽的 TelEventHandler，requestFuncMap_ 以事件号分发）
        例：CsCallStatusInfoReport（SRVCC 进行中时忽略）→ 查询当前通话列表
-       └─ CSControl::ReportCallsData / IMSControl::ReportImsCallsData
+       └─ CSControl::ReportCsCallsData / IMSControl::ReportImsCallsData
             持 connectionMapMutex_（ffrt::recursive_mutex）对比 connectionMap_ 与上报列表
             分为来电、更新、挂断三种情形
             └─ CellularCallRegister::ReportCallsInfo → callManagerCallBack_（ICallStatusCallback）→ call_manager
@@ -133,7 +133,7 @@ SIM 状态变化、卡记录加载、网络状态变化、运营商配置变更�
 | 拨号、接听、挂断、保持等请求处理 | `manager/src/cellular_call_service.cpp`，再到 `control/src/cs_control.cpp` 或 `ims_control.cpp` |
 | 通话状态回报异常 | `manager/src/cellular_call_handler.cpp` 与 `control/` 的 `ReportXxx` 函数 |
 | 新增一个 modem 事件处理 | `cellular_call_handler.cpp` 的构造函数与 `requestFuncMap_` |
-| 新增 IPC 接口 | 见 [`boundaries.md`](boundaries.md)「新增 IPC 接口的清单」，涉及 call_manager 仓 |
+| 新增 IPC 接口 | 见 [`boundaries.md`](boundaries.md)「IPC 定义在 call_manager 仓」，涉及 call_manager 仓 |
 | IMS 开关、VoLTE、VoNR、运营商配置 | `utils/src/cellular_call_config.cpp` 与 `utils/src/config_request.cpp` |
 | 紧急号码 | `utils/src/emergency_utils.cpp` 与 `cellular_call_config.cpp` 的紧急号码列表 |
 | 呼转、呼限、呼等、CLIP、CLIR | `utils/src/cellular_call_supplement.cpp` 与 `common/src/supplement_request_*.cpp` |

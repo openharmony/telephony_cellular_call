@@ -130,7 +130,9 @@ Radio 状态变化 →  开关机、modem 重启相关处理
 
 ## 上行回报约束
 
-- `ReportCallsData` 在 `connectionMapMutex_` 内对比上报列表与 `connectionMap_`，分为来电、更新、挂断三类，**三类都要处理**，漏掉一类即表现为状态不回报或残留连接。
+- `ReportCsCallsData` 与 `ReportImsCallsData` 在 `connectionMapMutex_` 内对比上报列表与 `connectionMap_`，分为来电、更新、挂断三类，**三类都要处理**，漏掉一类即表现为状态不回报或残留连接。
+- 挂断与状态更新两种情形下，`isNeedQuery` 默认为真；连接表中存在挂断原因仍为 `DISCONNECTED_REASON_INVALID` 的连接时，先向 modem 查询挂断原因并直接返回，本次不回报，待 `RADIO_GET_CALL_FAIL_REASON` 响应后以 `isNeedQuery` 为假再回报一次。
+- 基类还声明了 `ReportCallsData`，三个 Control 都有实现，但产品代码没有调用点，只有测试用例调用；排查上行回报时不要读错函数。
 - SRVCC 进行中，`CsCallStatusInfoReport` 忽略 CS 状态上报，SRVCC 结束后依赖后续上报恢复。
 - 回报出口 `CellularCallRegister` 在 `callManagerCallBack_` 为空时丢弃并打印日志，call_manager 重启期间的回报会丢失。
 - call_manager 被移除时 `HandleCallManagerException` 挂断全部连接。
