@@ -433,7 +433,7 @@ bool CellularCallHandler::IsSilentCsRedial()
 
     return (imsCall.index == csCall.index &&
             imsCall.dir == csCall.dir &&
-            imsCall.state = csCall.state &&
+            imsCall.state == csCall.state &&
             imsCall.number == csCall.number);
 }
 
