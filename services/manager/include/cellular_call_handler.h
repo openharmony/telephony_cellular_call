@@ -19,6 +19,7 @@
 #include <memory>
 #include <mutex>
 #include <regex>
+#include "ffrt.h"
 
 #include "cellular_call_config.h"
 #include "cellular_call_data_struct.h"
@@ -323,7 +324,8 @@ private:
     bool isDuringRSRVCC_ = false;
     int32_t indexCommand_ = 0;
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
-    std::mutex mutex_;
+    ffrt::mutex mutex_;
++   ffrt::mutex callListMutex_;
     ImsCurrentCallList currentCallList_{};
     CallInfoList currentCsCallInfoList_{};
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE

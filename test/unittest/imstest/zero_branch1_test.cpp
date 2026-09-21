@@ -1561,5 +1561,819 @@ HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_RadioStateChangeProcess_
     CellularCallConfig::isRadioOn_ = false;
 }
 #endif
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_001
+ * @tc.name     Test IsSilentCsRedial returns false when ims call size is not one
+ * @tc.desc     Function test - currentCallList_.callSize is 2 while cs call size is 1
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    InitImsCallInfoList(handler.currentCallList_, 2);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 1);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_002
+ * @tc.name     Test IsSilentCsRedial returns false when cs call size is not one
+ * @tc.desc     Function test - currentCsCallInfoList_.callSize is 2 while ims call size is 1
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_002, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    InitImsCallInfoList(handler.currentCallList_, 1);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 2);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_003
+ * @tc.name     Test IsSilentCsRedial returns false when calls vectors are empty
+ * @tc.desc     Function test - both callSize are 1 but calls vectors are empty, no out of bounds access
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_003, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    handler.currentCallList_.callSize = 1;
+    handler.currentCallList_.calls.clear();
+    handler.currentCsCallInfoList_.callSize = 1;
+    handler.currentCsCallInfoList_.calls.clear();
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_004
+ * @tc.name     Test IsSilentCsRedial returns true when all four fields match
+ * @tc.desc     Function test - index, dir, state and number of ims call and cs call are identical
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_004, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = 2;
+    csCall.number = testNumber;
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_TRUE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_005
+ * @tc.name     Test IsSilentCsRedial returns false when index mismatch
+ * @tc.desc     Function test - only index of ims call and cs call is different
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_005, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 2;
+    csCall.dir = 0;
+    csCall.state = 2;
+    csCall.number = testNumber;
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_006
+ * @tc.name     Test IsSilentCsRedial returns false when dir mismatch
+ * @tc.desc     Function test - only dir of ims call and cs call is different
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_006, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 1;
+    csCall.state = 2;
+    csCall.number = testNumber;
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_007
+ * @tc.name     Test IsSilentCsRedial returns false when state mismatch
+ * @tc.desc     Function test - only state of ims call and cs call is different
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_007, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = 3;
+    csCall.number = testNumber;
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_008
+ * @tc.name     Test IsSilentCsRedial returns false when number mismatch
+ * @tc.desc     Function test - only number of ims call and cs call is different
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_008, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = "112";
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = 2;
+    csCall.number = "911";
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_001
+ * @tc.name     Test ReportCsCallsData sets silent cs redial flag on silent redial
+ * @tc.desc     Function test - ims call list matches cs call list (silent cs redial of 112), verify
+ *               isSilentCsRedial_ of ims control is set to true, then consumed by ReportHangUpInfo
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+
+    CallInfoList csList;
+    csList.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = 2;
+    csCall.number = testNumber;
+    csList.calls.push_back(csCall);
+    handler.ReportCsCallsData(csList);
+    ASSERT_TRUE(imsControl->isSilentCsRedial_);
+
+    // linked scenario: the flag set by silent cs redial is consumed once by ReportHangUpInfo
+    ASSERT_EQ(imsControl->ReportHangUpInfo(SIM1_SLOTID), TELEPHONY_SUCCESS);
+    ASSERT_FALSE(imsControl->isSilentCsRedial_);
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_002
+ * @tc.name     Test ReportCsCallsData does not set flag when not silent redial
+ * @tc.desc     Function test - ims call list differs from cs call list, verify isSilentCsRedial_ stays false
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_002, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = 2;
+    imsCall.number = "112";
+    handler.currentCallList_.calls.push_back(imsCall);
+
+    CallInfoList csList;
+    csList.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = 2;
+    csCall.number = "911";
+    csList.calls.push_back(csCall);
+    handler.ReportCsCallsData(csList);
+    ASSERT_FALSE(imsControl->isSilentCsRedial_);
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_009
+ * @tc.name     Test IsSilentCsRedial returns false when ims call state is not dialing
+ * @tc.desc     Function test - index, dir and number match but ims and cs call states are alerting
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_009, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ALERTING);
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_ALERTING);
+    csCall.number = testNumber;
+    handler.currentCsCallInfoList_.calls.push_back(csCall);
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_IsSilentCsRedial_010
+ * @tc.name     Test IsSilentCsRedial returns false when cs calls vector is empty
+ * @tc.desc     Function test - ims calls vector has one call while cs callSize is 1 but cs calls vector is empty,
+ *               no out of bounds access
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_IsSilentCsRedial_010, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    imsCall.number = "112";
+    handler.currentCallList_.calls.push_back(imsCall);
+    handler.currentCsCallInfoList_.callSize = 1;
+    handler.currentCsCallInfoList_.calls.clear();
+    ASSERT_FALSE(handler.IsSilentCsRedial());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_003
+ * @tc.name     Test ReportCsCallsData does not crash when ims control is null on silent redial
+ * @tc.desc     Function test - ims call list matches cs call list but ims control is null, verify null check
+ *               branch is hit and no ims control is created
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_003, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+
+    CallInfoList csList;
+    csList.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    csCall.number = testNumber;
+    csList.calls.push_back(csCall);
+    handler.ReportCsCallsData(csList);
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_004
+ * @tc.name     Test ReportCsCallsData reports no cs calls when callSize is zero
+ * @tc.desc     Function test - cs callSize is 0, verify ReportNoCsCallsData branch is hit and no cs control is created
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_004, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+
+    CallInfoList csList;
+    handler.ReportCsCallsData(csList);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_005
+ * @tc.name     Test ReportCsCallsData ignores cs call change during rsrvcc
+ * @tc.desc     Function test - isDuringRSRVCC_ is true, verify early return before cs control create and linkage
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_005, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+    handler.isDuringRSRVCC_ = true;
+
+    const std::string testNumber = "112";
+    handler.currentCallList_.callSize = 1;
+    ImsCurrentCall imsCall;
+    imsCall.index = 1;
+    imsCall.dir = 0;
+    imsCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    imsCall.number = testNumber;
+    handler.currentCallList_.calls.push_back(imsCall);
+
+    CallInfoList csList;
+    csList.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    csCall.number = testNumber;
+    csList.calls.push_back(csCall);
+    handler.ReportCsCallsData(csList);
+    ASSERT_FALSE(imsControl->isSilentCsRedial_);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), nullptr);
+    handler.isDuringRSRVCC_ = false;
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportCsCallsData_006
+ * @tc.name     Test ReportCsCallsData reuses existing cs control
+ * @tc.desc     Function test - callSize is 1 and cs control was preset, verify no new cs control is created
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportCsCallsData_006, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    auto csControl = std::make_shared<CSControl>();
+    serviceInstance->SetCsControl(SIM1_SLOTID, csControl);
+
+    CallInfoList csList;
+    csList.callSize = 1;
+    CallInfo csCall;
+    csCall.index = 1;
+    csCall.dir = 0;
+    csCall.state = static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING);
+    csCall.number = "112";
+    csList.calls.push_back(csCall);
+    handler.ReportCsCallsData(csList);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), csControl);
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ReportImsCallsData_SrvccIgnore
+ * @tc.name     Test ReportImsCallsData ignores ims call change during srvcc
+ * @tc.desc     Function test - srvccState_ is STARTED with callSize 1, verify early return before ims control create
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ReportImsCallsData_SrvccIgnore, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    handler.srvccState_ = SrvccState::STARTED;
+
+    ImsCurrentCallList imsCallList;
+    InitImsCallInfoList(imsCallList, 1);
+    handler.ReportImsCallsData(imsCallList);
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), nullptr);
+    handler.srvccState_ = SrvccState::SRVCC_NONE;
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_HandleCallDisconnectReason_001
+ * @tc.name     Test HandleCallDisconnectReason logs error when both controls are null
+ * @tc.desc     Function test - ims control and cs control are both null, verify early return branch
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_HandleCallDisconnectReason_001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+    InitImsCallInfoList(handler.currentCallList_, 1);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 1);
+
+    handler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), nullptr);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_HandleCallDisconnectReason_002
+ * @tc.name     Test HandleCallDisconnectReason updates ims control when call lists are not empty
+ * @tc.desc     Function test - ims control exists and call size of both lists is 1, verify ims path without
+ *               releasing controls
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_HandleCallDisconnectReason_002, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+    InitImsCallInfoList(handler.currentCallList_, 1);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 1);
+
+    handler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), imsControl);
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_HandleCallDisconnectReason_003
+ * @tc.name     Test HandleCallDisconnectReason releases both controls when all calls disconnected
+ * @tc.desc     Function test - ims control exists and call size of both lists is 0, verify ims path with controls
+ *               released to null
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_HandleCallDisconnectReason_003, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    auto imsControl = std::make_shared<IMSControl>();
+    serviceInstance->SetImsControl(SIM1_SLOTID, imsControl);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+    InitImsCallInfoList(handler.currentCallList_, 0);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 0);
+
+    handler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), nullptr);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_HandleCallDisconnectReason_004
+ * @tc.name     Test HandleCallDisconnectReason updates cs control when ims control is null
+ * @tc.desc     Function test - only cs control exists with empty call lists, verify cs path and controls released
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_HandleCallDisconnectReason_004, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+    handler.SetSlotId(SIM1_SLOTID);
+
+    auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
+    serviceInstance->SetImsControl(SIM1_SLOTID, nullptr);
+    auto csControl = std::make_shared<CSControl>();
+    serviceInstance->SetCsControl(SIM1_SLOTID, csControl);
+    InitImsCallInfoList(handler.currentCallList_, 0);
+    InitCsCallInfoList(handler.currentCsCallInfoList_, 0);
+
+    handler.HandleCallDisconnectReason(RilDisconnectedReason::DISCONNECTED_REASON_NORMAL, "");
+    ASSERT_EQ(serviceInstance->GetImsControl(SIM1_SLOTID), nullptr);
+    ASSERT_EQ(serviceInstance->GetCsControl(SIM1_SLOTID), nullptr);
+    serviceInstance->SetCsControl(SIM1_SLOTID, nullptr);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_SaveSsRequestCommand_001
+ * @tc.name     Test SaveSsRequestCommand ignores null command
+ * @tc.desc     Function test - utCommand is nullptr, verify no entry is saved to utCommandMap_
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_SaveSsRequestCommand_001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    handler.SaveSsRequestCommand(nullptr, handler.indexCommand_);
+    ASSERT_TRUE(handler.utCommandMap_.empty());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_SaveSsRequestCommand_002
+ * @tc.name     Test SaveSsRequestCommand saves valid command
+ * @tc.desc     Function test - save a ss request command, verify entry is stored with indexCommand_ key
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_SaveSsRequestCommand_002, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    ASSERT_EQ(handler.utCommandMap_.size(), 1);
+    ASSERT_NE(handler.utCommandMap_[handler.indexCommand_], nullptr);
+    ASSERT_EQ(handler.utCommandMap_[handler.indexCommand_]->flag, 1);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_001
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&) returns error on invalid index
+ * @tc.desc     Function test - index is INVALID_INDEX, verify TELEPHONY_ERROR returned without touching map
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_001,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    int32_t flag = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(INVALID_INDEX, flag), TELEPHONY_ERROR);
+    ASSERT_EQ(flag, 0);
+    ASSERT_EQ(handler.utCommandMap_.size(), 1);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_002
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&) returns error when index not found
+ * @tc.desc     Function test - index is not in utCommandMap_, verify TELEPHONY_ERROR returned and map untouched
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_002,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    int32_t flag = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(DEFAULT_INDEX, flag), TELEPHONY_ERROR);
+    ASSERT_EQ(flag, 0);
+    ASSERT_TRUE(handler.utCommandMap_.empty());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_003
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&) confirms and removes saved command
+ * @tc.desc     Function test - saved command exists, verify flag returned and entry erased from map
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_003,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    int32_t flag = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(handler.indexCommand_, flag), TELEPHONY_SUCCESS);
+    ASSERT_EQ(flag, 1);
+    ASSERT_TRUE(handler.utCommandMap_.empty());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_004
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&, int32_t&) returns error on invalid index
+ * @tc.desc     Function test - index is INVALID_INDEX, verify TELEPHONY_ERROR returned without touching map
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_004,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    int32_t flag = 0;
+    int32_t action = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(INVALID_INDEX, flag, action), TELEPHONY_ERROR);
+    ASSERT_EQ(flag, 0);
+    ASSERT_EQ(action, 0);
+    ASSERT_EQ(handler.utCommandMap_.size(), 1);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_005
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&, int32_t&) returns error when not found
+ * @tc.desc     Function test - index is not in utCommandMap_, verify TELEPHONY_ERROR returned and map untouched
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_005,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    int32_t flag = 0;
+    int32_t action = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(DEFAULT_INDEX, flag, action), TELEPHONY_ERROR);
+    ASSERT_EQ(flag, 0);
+    ASSERT_EQ(action, 0);
+    ASSERT_TRUE(handler.utCommandMap_.empty());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_006
+ * @tc.name     Test ConfirmAndRemoveSsRequestCommand(int32_t, int32_t&, int32_t&) confirms and removes command
+ * @tc.desc     Function test - saved command exists, verify flag and action returned and entry erased from map
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_ConfirmAndRemoveSsRequestCommand_006,
+    Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    command->action = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    int32_t flag = 0;
+    int32_t action = 0;
+    ASSERT_EQ(handler.ConfirmAndRemoveSsRequestCommand(handler.indexCommand_, flag, action), TELEPHONY_SUCCESS);
+    ASSERT_EQ(flag, 1);
+    ASSERT_EQ(action, 1);
+    ASSERT_TRUE(handler.utCommandMap_.empty());
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_GetSsRequestCommand_001
+ * @tc.name     Test GetSsRequestCommand returns error when index not found
+ * @tc.desc     Function test - index is not in utCommandMap_, verify TELEPHONY_ERROR returned
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_GetSsRequestCommand_001, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    SsRequestCommand ss;
+    ASSERT_EQ(handler.GetSsRequestCommand(DEFAULT_INDEX, ss), TELEPHONY_ERROR);
+}
+
+/**
+ * @tc.number   Telephony_CellularCallHandler_GetSsRequestCommand_002
+ * @tc.name     Test GetSsRequestCommand gets saved command
+ * @tc.desc     Function test - saved command exists, verify command fields are copied and map untouched
+ */
+HWTEST_F(ZeroBranch1Test, Telephony_CellularCallHandler_GetSsRequestCommand_002, Function | MediumTest | Level3)
+{
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_OPERATOR_CONFIG_CHANGED);
+    EventFwk::CommonEventSubscribeInfo subscriberInfo(matchingSkills);
+    CellularCallHandler handler(subscriberInfo);
+
+    auto command = std::make_shared<SsRequestCommand>();
+    command->flag = 1;
+    handler.SaveSsRequestCommand(command, handler.indexCommand_);
+    SsRequestCommand ss;
+    ASSERT_EQ(handler.GetSsRequestCommand(handler.indexCommand_, ss), TELEPHONY_SUCCESS);
+    ASSERT_EQ(ss.flag, 1);
+    ASSERT_EQ(handler.utCommandMap_.size(), 1);
+}
 } // namespace Telephony
 } // namespace OHOS

@@ -16,6 +16,7 @@
 #ifndef CELLULAR_CALL_CONTROL_IMS_H
 #define CELLULAR_CALL_CONTROL_IMS_H
 
+#include <atomic>
 #include "tel_ril_call_parcel.h"
 #include "cellular_call_data_struct.h"
 #include "cellular_call_connection_ims.h"
@@ -183,8 +184,13 @@ public:
 
     void DialAfterHold(int32_t slotId);
 
-    void SetSilentCsRedialFlag(bool isSilentCsRedial);
-
+    /**
++     * SetSilentCsRedialFlag
++     *
++     * @param isSilentCsRedial
++     */
++    void SetSilentCsRedialFlag(bool isSilentCsRedial);
++
     /**
      * Report being hang up data
      *
@@ -289,6 +295,7 @@ private:
     ImsConnectionMap connectionMap_; // save callConnection map
     std::string pendingPhoneNumber_;
     ffrt::recursive_mutex connectionMapMutex_;
+    std::atomic<bool> isSilentCsRedial_ = false;
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
     CellularCallInfo pendingEmcDialCallInfo_;
     bool isPendingEmc_ = false;
