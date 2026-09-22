@@ -185,12 +185,12 @@ public:
     void DialAfterHold(int32_t slotId);
 
     /**
-+     * SetSilentCsRedialFlag
-+     *
-+     * @param isSilentCsRedial
-+     */
-+    void SetSilentCsRedialFlag(bool isSilentCsRedial);
-+
+     * SetSilentCsRedialFlag
+     *
+     * @param isSilentCsRedial
+     */
+    void SetSilentCsRedialFlag(bool isSilentCsRedial);
+
     /**
      * Report being hang up data
      *

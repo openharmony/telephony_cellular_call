@@ -325,7 +325,7 @@ private:
     int32_t indexCommand_ = 0;
     std::map<int32_t, std::shared_ptr<SsRequestCommand>> utCommandMap_;
     ffrt::mutex mutex_;
-+   ffrt::mutex callListMutex_;
+    ffrt::mutex callListMutex_;
     ImsCurrentCallList currentCallList_{};
     CallInfoList currentCsCallInfoList_{};
 #ifdef BASE_POWER_IMPROVEMENT_FEATURE
