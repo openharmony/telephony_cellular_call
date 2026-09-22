@@ -418,6 +418,33 @@ void CellularCallHandler::CellularCallIncomingFinishTrace(const int32_t state)
     }
 }
 
+bool CellularCallHandler::IsSilentCsRedial()
+{
+    ImsCurrentCallList imsCallList;
+    CallInfoList csCallList;
+    {
+        std::lock_guard<ffrt::mutex> lock(callListMutex_);
+        imsCallList = currentCallList_;
+        csCallList = currentCsCallInfoList_;
+    }
+    if (imsCallList.callSize != 1 || csCallList.callSize != 1) {
+        return false;
+    }
+ 
+    if (imsCallList.calls.empty() || csCallList.calls.empty()) {
+        return false;
+    }
+ 
+    const auto& imsCall = imsCallList.calls[0];
+    const auto& csCall = csCallList.calls[0];
+ 
+    return (imsCall.index == csCall.index &&
+            imsCall.dir == csCall.dir &&
+            imsCall.state == static_cast<int32_t>(TelCallState::CALL_STATUS_DIALING) &&
+            csCall.state == imsCall.state &&
+            imsCall.number == csCall.number);
+}
+
 void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
 {
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
@@ -429,7 +456,10 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     TELEPHONY_LOGI("[slot%{public}d] callInfoList.callSize:%{public}d", slotId_, callInfoList.callSize);
     CellularCallIncomingStartTrace(callInfo.state);
     auto csControl = serviceInstance->GetCsControl(slotId_);
-    currentCsCallInfoList_ = callInfoList;
+    {
+        std::lock_guard<ffrt::mutex> lock(callListMutex_);
+        currentCsCallInfoList_ = callInfoList;
+    }
     if (callInfoList.callSize == 0) {
         ReportNoCsCallsData(callInfoList, callInfo.state, csControl);
         return;
@@ -451,6 +481,14 @@ void CellularCallHandler::ReportCsCallsData(const CallInfoList &callInfoList)
     }
     if (csControl->ReportCsCallsData(slotId_, callInfoList) != TELEPHONY_SUCCESS) {
         CellularCallIncomingFinishTrace(callInfo.state);
+    }
+    if (IsSilentCsRedial()) {
+        auto imsControl = serviceInstance->GetImsControl(slotId_);
+        if (imsControl == nullptr) {
+            TELEPHONY_LOGE("[slot%{public}d] ims_control is null", slotId_);
+            return;
+        }
+        imsControl->SetSilentCsRedialFlag(true);
     }
 }
 
@@ -490,7 +528,10 @@ void CellularCallHandler::ReportImsCallsData(const ImsCurrentCallList &imsCallIn
     TELEPHONY_LOGI("[slot%{public}d] imsCallInfoList.callSize:%{public}d", slotId_, imsCallInfoList.callSize);
     CellularCallIncomingStartTrace(imsCallInfo.state);
     auto imsControl = serviceInstance->GetImsControl(slotId_);
-    currentCallList_ = imsCallInfoList;
+    {
+        std::lock_guard<ffrt::mutex> lock(callListMutex_);
+        currentCallList_ = imsCallInfoList;
+    }
     if (imsCallInfoList.callSize == 0) {
         ReportNoImsCallsData(imsCallInfoList, imsCallInfo.state, imsControl);
         return;
@@ -1908,7 +1949,7 @@ void CellularCallHandler::SaveSsRequestCommand(const std::shared_ptr<SsRequestCo
         return;
     }
     int32_t indexCommand = indexCommand_;
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     utCommandMap_.insert(std::make_pair(indexCommand, utCommand));
 }
 
@@ -1919,7 +1960,7 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
         TELEPHONY_LOGI("[slot%{public}d] index is invalid, nothing need to do", slotId_);
         return TELEPHONY_ERROR;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     auto itor = utCommandMap_.find(index);
     if (itor == utCommandMap_.end()) {
         TELEPHONY_LOGE("[slot%{public}d] the index(%{public}d) in utCommandMap_ haven't been found", slotId_, index);
@@ -1937,7 +1978,7 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
         TELEPHONY_LOGI("[slot%{public}d] index is invalid, nothing need to do", slotId_);
         return TELEPHONY_ERROR;
     }
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     auto itor = utCommandMap_.find(index);
     if (itor == utCommandMap_.end()) {
         TELEPHONY_LOGE("[slot%{public}d] the index(%{public}d) in utCommandMap_ haven't been found", slotId_, index);
@@ -1951,7 +1992,7 @@ int32_t CellularCallHandler::ConfirmAndRemoveSsRequestCommand(int32_t index, int
 
 int32_t CellularCallHandler::GetSsRequestCommand(int32_t index, SsRequestCommand &ss)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    std::lock_guard<ffrt::mutex> lock(mutex_);
     auto itor = utCommandMap_.find(index);
     if (itor == utCommandMap_.end()) {
         TELEPHONY_LOGE("[slot%{public}d] the index in utCommandMap_ haven't been found", slotId_);
@@ -2186,21 +2227,28 @@ void CellularCallHandler::HandleCallDisconnectReason(RilDisconnectedReason reaso
     auto serviceInstance = DelayedSingleton<CellularCallService>::GetInstance();
     auto imsControl = serviceInstance->GetImsControl(slotId_);
     auto csControl = serviceInstance->GetCsControl(slotId_);
+    ImsCurrentCallList imsCallList;
+    CallInfoList csCallList;
+    {
+        std::lock_guard<ffrt::mutex> lock(callListMutex_);
+        imsCallList = currentCallList_;
+        csCallList = currentCsCallInfoList_;
+    }
     if (imsControl != nullptr) {
-        imsControl->UpdateDisconnectedReason(currentCallList_, reason, message);
-        imsControl->ReportImsCallsData(slotId_, currentCallList_, false);
+        imsControl->UpdateDisconnectedReason(imsCallList, reason, message);
+        imsControl->ReportImsCallsData(slotId_, imsCallList, false);
     } else if (csControl != nullptr) {
-        csControl->UpdateDisconnectedReason(currentCsCallInfoList_, reason);
-        csControl->ReportCsCallsData(slotId_, currentCsCallInfoList_, false);
+        csControl->UpdateDisconnectedReason(csCallList, reason);
+        csControl->ReportCsCallsData(slotId_, csCallList, false);
     } else {
         TELEPHONY_LOGE("imsControl and csControl get failed!");
         return;
     }
-    if (currentCallList_.callSize == 0) {
+    if (imsCallList.callSize == 0) {
         TELEPHONY_LOGW("all ims calls disconnected, set ims control to nullptr.");
         serviceInstance->SetImsControl(slotId_, nullptr);
     }
-    if (currentCsCallInfoList_.callSize == 0) {
+    if (csCallList.callSize == 0) {
         TELEPHONY_LOGW("all cs calls disconnected, set cs control to nullptr.");
         serviceInstance->SetCsControl(slotId_, nullptr);
     }
