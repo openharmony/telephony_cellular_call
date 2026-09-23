@@ -69,7 +69,8 @@ ohos_fuzztest("SatelliteCallbackFuzzTest") {
     "TELEPHONY_LOG_TAG = \"SatelliteCallbackFuzzTest\"",
     "LOG_DOMAIN = 0xD000F00",
   ]
-
+  defines += global_defines
+  
   cflags = [
     "-g",
     "-O0",
